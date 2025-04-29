@@ -1,0 +1,158 @@
+@font-face {
+  font-family: "Lufga-light";
+  src: url("Lufga-Light.woff2") format("woff2"),
+    url("Lufga-Light.woff") format("woff");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lufga-extrabold";
+  src: url("Lufga-ExtraBold.woff2") format("woff2"),
+    url("Lufga-ExtraBold.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lufga-extralight";
+  src: url("Lufga-ExtraLight.woff2") format("woff2"),
+    url("Lufga-ExtraLight.woff") format("woff");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lufga-black";
+  src: url("Lufga-Black.woff2") format("woff2"),
+    url("Lufga-Black.woff") format("woff");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lufga";
+  src: url("Lufga-Medium.woff2") format("woff2"),
+    url("Lufga-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lufga-regular";
+  src: url("../fonts/Lufga-Regular.woff2") format("woff2"),
+    url("../fonts/Lufga-Regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Lufga-bold";
+  src: url("Lufga-Bold.woff2") format("woff2"),
+    url("Lufga-Bold.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lufga-semibold";
+  src: url("Lufga-SemiBold.woff2") format("woff2"),
+    url("Lufga-SemiBold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lufga-thin";
+  src: url("Lufga-Thin.woff2") format("woff2"),
+    url("Lufga-Thin.woff") format("woff");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+:root {
+  --body-font: "Lufga-regular";
+}
+* {
+  font-family: var(--body-font);
+}
+body {
+  margin: 0;
+  font-family: var(--body-font);
+  background: #fffcf5;
+}
+h4.logo a img {
+  background: rgb(255 252 245 / 20%);
+  padding: 20px;
+  border-radius: 20px;
+}
+ul.nav li a svg {
+  font-size: 22px;
+}
+
+ul.nav li.rounded a svg {
+  fill: #1e96dd;
+}
+ul.nav li a {
+  color: rgb(255 255 255 / 60%);
+}
+ul.nav li {
+  padding: 8px;
+  border-top-left-radius: 40px !important;
+  border-bottom-left-radius: 40px !important;
+  background: linear-gradient(
+    to right,
+    rgb(255 255 255 / 10%) 0%,
+    rgb(30 150 221 / 10%) 100%
+  );
+}
+li.rounded {
+  border-top-left-radius: 40px !important;
+  border-bottom-left-radius: 40px !important;
+}
+.sidebar {
+  transition: all 0.3s ease-in-out;
+  width: 255px;
+  background: #1e96dd;
+  border-radius: 30px;
+  padding-right: 0 !important;
+  position: relative;
+}
+.mr-3 {
+  margin-right: 20px;
+}
+.collapse-sidebar {
+  width: 0px;
+  padding: 0px !important;
+  margin: 0px;
+}
+.nav-link {
+  color: #000;
+  transition: background-color 0.2s;
+}
+
+.nav-link.active {
+  background-color: #ced4da;
+  color: #000;
+}
+ul.nav li.rounded a {
+  color: #434800;
+}
+.nav-link:hover {
+  color: #fff;
+}
+li.logout-row {
+  position: absolute;
+  bottom: 22px;
+  width: 93%;
+}
+.logout-btn {
+  width: 100%;
+}
