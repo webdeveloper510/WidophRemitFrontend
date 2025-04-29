@@ -49,7 +49,7 @@ const Sidebar = ({ collapsed }) => {
             </Link>
           </li>
         ))}
-        <li className="mt-auto pt-3 logout-row">
+        <li className="mt-auto logout-row">
           <button className="logout-btn nav-link  d-flex align-items-center gap-2">
             <HiOutlineLogout /> Logout
           </button>

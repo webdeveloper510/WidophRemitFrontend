@@ -102,9 +102,9 @@ ul.nav li.rounded a svg {
 }
 ul.nav li a {
   color: rgb(255 255 255 / 60%);
+  padding: 18px;
 }
 ul.nav li {
-  padding: 8px;
   border-top-left-radius: 40px !important;
   border-bottom-left-radius: 40px !important;
   background: linear-gradient(
@@ -124,6 +124,7 @@ li.rounded {
   border-radius: 30px;
   padding-right: 0 !important;
   position: relative;
+  padding-left: 0px !important;
 }
 .mr-3 {
   margin-right: 20px;
@@ -155,4 +156,31 @@ li.logout-row {
 }
 .logout-btn {
   width: 100%;
+  padding: 18px;
+  color: rgb(255 255 255 / 60%) !important;
+}
+.logout-btn:hover {
+  color: #fff !important;
+}
+.logout-btn svg {
+  font-size: 22px;
+}
+nav.navbar.menus a {
+  color: #434800;
+  font-weight: 600;
+  font-size: 17px;
+}
+.toggle-btn {
+  background: #1e96dd;
+  border-radius: 30px;
+}
+.toggle-btn svg {
+  font-size: 25px;
+}
+.toggle-btn:hover {
+  border: 1px solid #1e96dd;
+  color: #1e96dd;
+}
+ul.nav.flex-column {
+  padding-left: 1rem !important;
 }

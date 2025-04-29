@@ -13,9 +13,9 @@ const Layout = () => {
     <div className="p-3 d-flex flex-row vh-100">
       <Sidebar collapsed={collapsed} />
 
-      <div className="flex-grow-1 d-flex flex-column bg-light">
+      <div className="flex-grow-1 d-flex flex-column">
         <TopNavbar onToggleSidebar={() => setCollapsed(!collapsed)} />
-        <main className="flex-grow-1 p-4 overflow-auto">
+        <main className="flex-grow-1 p-3 mt-3 overflow-auto">
           <AnimatePresence mode="wait">
             <Outlet key={location.pathname} />
           </AnimatePresence>
