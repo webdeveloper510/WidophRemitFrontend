@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import logo from "../assets/images/logo.png";
+import logoFull from "../assets/images/logo.png";
+import logoSmall from "../assets/images/mobile-logo.png";
 import { VscDashboard } from "react-icons/vsc";
 import { RiExchangeDollarFill } from "react-icons/ri";
 import { TbCreditCard } from "react-icons/tb";
@@ -9,7 +10,7 @@ import { LuUsers } from "react-icons/lu";
 import { HiOutlineLogout } from "react-icons/hi";
 
 const menuItems = [
-  { path: "/", name: "Dashboard", icon: <VscDashboard /> },
+  { path: "/dashboard", name: "Dashboard", icon: <VscDashboard /> },
   { path: "/send-money", name: "Send Money", icon: <RiExchangeDollarFill /> },
   { path: "/payment-info", name: "Payment Info", icon: <TbCreditCard /> },
   { path: "/transfers", name: "Transfers", icon: <TbExchange /> },
@@ -28,7 +29,11 @@ const Sidebar = ({ collapsed }) => {
     >
       <h4 className="text-center mb-4 logo">
         <a href="/">
-          <img src={logo} alt="logo" />
+          <img
+            src={collapsed ? logoSmall : logoFull}
+            alt="logo"
+            style={{ height: collapsed ? "auto" : "auto", transition: "0.3s" }}
+          />
         </a>
       </h4>
       <ul className="nav flex-column">
@@ -51,7 +56,7 @@ const Sidebar = ({ collapsed }) => {
         ))}
         <li className="mt-auto logout-row">
           <button className="logout-btn nav-link  d-flex align-items-center gap-2">
-            <HiOutlineLogout /> Logout
+            <HiOutlineLogout /> <span>Logout</span>
           </button>
         </li>
       </ul>
