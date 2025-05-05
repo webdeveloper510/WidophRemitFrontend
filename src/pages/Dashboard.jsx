@@ -3,6 +3,8 @@ import stats1 from "../assets/images/info1.png";
 import stats2 from "../assets/images/info2.png";
 import stats3 from "../assets/images/info3.png";
 import stats4 from "../assets/images/info4.png";
+import ReceiverTable from "./ReceiverTable";
+import LatestTransfer from "./LatestTransfer";
 
 const Dashboard = () => (
   <AnimatedPage>
@@ -13,46 +15,55 @@ const Dashboard = () => (
     <div className="page-content-section mt-3">
       <div className="row">
         <div className="col-md-7">
-          <div className="dashbaord-bg-image p-3">
+          <div className="dashbaord-bg-image p-4">
             <h2>
               Dashboard<br></br>
               <span>info</span>
             </h2>
             <div className="row mt-5">
-              <div className="col-md-4 mb-2" style={{ paddingRight: 0 }}>
-                <div className="d-flex bg-white p-3 border-r">
+              <div
+                className="col-md-4 mb-2 custom-width"
+                style={{ paddingRight: 0 }}
+              >
+                <div className="bg-white p-3 border-r stats-box">
                   <img src={stats1} alt="stats" />
-                  <div className="d-flex flex-column">
+                  <div className="d-flex flex-column stats-row">
                     <span>Receivers</span>
                     <h4>878</h4>
                   </div>
                 </div>
               </div>
-              <div className="col-md-4 mb-2" style={{ paddingleft: 0 }}>
-                <div className="d-flex bg-white p-3 border-r">
+              <div
+                className="col-md-4 mb-2 custom-width"
+                style={{ paddingleft: 0 }}
+              >
+                <div className="bg-white p-3 border-r stats-box">
                   <img src={stats2} alt="stats" />
-                  <div className="d-flex flex-column">
-                    <span>Receivers</span>
+                  <div className="d-flex flex-column stats-row">
+                    <span>Send Money</span>
                     <h4>878</h4>
                   </div>
                 </div>
               </div>
             </div>
             <div className="row">
-              <div className="col-md-4" style={{ paddingRight: 0 }}>
-                <div className="d-flex bg-white p-3 border-r">
+              <div
+                className="col-md-4 custom-width"
+                style={{ paddingRight: 0 }}
+              >
+                <div className="bg-white p-3 border-r stats-box">
                   <img src={stats3} alt="stats" />
-                  <div className="d-flex flex-column">
-                    <span>Receivers</span>
+                  <div className="d-flex flex-column stats-row">
+                    <span>Send Money</span>
                     <h4>878</h4>
                   </div>
                 </div>
               </div>
-              <div className="col-md-4" style={{ paddingleft: 0 }}>
-                <div className="d-flex bg-white p-3 border-r">
+              <div className="col-md-4 custom-width" style={{ paddingleft: 0 }}>
+                <div className="bg-white p-3 border-r stats-box">
                   <img src={stats4} alt="stats" />
-                  <div className="d-flex flex-column">
-                    <span>Receivers</span>
+                  <div className="d-flex flex-column stats-row">
+                    <span>Profile</span>
                     <h4>878</h4>
                   </div>
                 </div>
@@ -60,7 +71,15 @@ const Dashboard = () => (
             </div>
           </div>
         </div>
-        <div className="col-md-5">dsf</div>
+        <div className="col-md-5">
+          <ReceiverTable />
+        </div>
+      </div>
+
+      <div className="row mt-3">
+        <div className="col-md-12">
+          <LatestTransfer />
+        </div>
       </div>
     </div>
   </AnimatedPage>
