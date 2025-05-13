@@ -148,7 +148,7 @@ li.rounded {
 ul.nav.flex-column li a span,
 ul.nav.flex-column li button span {
   display: block;
-  transition: all 1s ease-in-out;
+  /* transition: all 1s ease-in-out; */
 }
 .collapse-sidebar ul.nav.flex-column li a span,
 .collapse-sidebar ul.nav.flex-column li button span {
@@ -236,7 +236,9 @@ div#basic-navbar-nav a {
   color: #1e96dd;
   font-weight: 600;
 }
-
+#dropdown-basic::after {
+  display: none;
+}
 /*********** dashbaord css ********/
 .page-title h1 {
   color: #434800;
@@ -332,6 +334,116 @@ span.status-badge.processing {
 span.status-badge.review {
   color: #434800;
 }
+
+/*************** trsnafer details css ****************/
+
+.stripe1 {
+  background: #cfda2f;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 30px 20px !important;
+}
+
+.stripe1 h2 {
+  color: #434800;
+  font-weight: 800;
+}
+.stripe1 h2 span {
+  font-weight: 400;
+  color: #7c994a;
+  margin-left: 10px;
+  font-size: 20px;
+}
+.stripe1 h2 span b {
+  color: #434800;
+}
+.stripe2 {
+  background: #da982f;
+  border-radius: 10px;
+  margin-right: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px 20px !important;
+}
+.stripe2 h2,
+.stripe3 h2 {
+  font-weight: 800;
+}
+.stripe3 {
+  background: #1e96dd;
+  border-radius: 10px;
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px 20px !important;
+}
+
+.stripe2 span,
+.stripe3 span {
+  color: rgb(255 255 255 / 70%);
+  margin-bottom: 5px;
+  float: left;
+  width: 100%;
+}
+.table-column {
+  border-radius: 10px;
+  border: 1px solid rgb(67 72 0 / 23%);
+}
+.table-column h2 {
+  padding: 15px 15px;
+  margin: 0;
+  color: #434800;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.table-column table tr {
+  border: 1px solid #e0e3b7;
+}
+.table-column table tr th,
+.table-column table tr td {
+  padding: 10px 15px;
+  color: #434800;
+}
+
+.table-column table tr:last-child {
+  border-bottom: none !important;
+}
+.table-column table {
+  margin-bottom: 0px;
+}
+
+.box {
+  color: #434800;
+}
+.box h3 {
+  font-size: 18px;
+  font-weight: 600;
+}
+.box span {
+  margin-bottom: 5px;
+  width: 100%;
+  float: left;
+}
+.receiver-card {
+  background: #fffcf5 !important;
+}
+
+.download-button {
+  background: #434800;
+  border: none;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #fff;
+}
+/*************** responsive css ****************/
+
 @media screen and (max-width: 1500px) {
   .custom-width {
     width: 50%;

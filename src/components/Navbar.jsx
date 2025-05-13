@@ -59,7 +59,7 @@ const TopNavbar = ({ onToggleSidebar }) => {
 
             <Nav className="ms-auto">
               <Nav.Link
-                href="#"
+                href="profile-information"
                 className="d-flex align-items-center gap-2 logged_user"
               >
                 <img src={LoggedUser} alt="user" />
@@ -68,7 +68,6 @@ const TopNavbar = ({ onToggleSidebar }) => {
                   style={{ fontFamily: "Lufga-regular" }}
                 >
                   <h5>Peter Willson</h5>
-
                   <span>View Profile</span>
                 </div>
               </Nav.Link>

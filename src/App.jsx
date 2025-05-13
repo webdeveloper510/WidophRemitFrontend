@@ -5,6 +5,8 @@ import SendMoney from "./pages/SendMoney";
 import PaymentInfo from "./pages/PaymentInfo";
 import Transfers from "./pages/Transfers";
 import Receivers from "./pages/Receivers";
+import TransferDetails from "./pages/TransferDetails";
+import ProfileInformation from "./pages/ProfileInformation";
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
         <Route path="payment-info" element={<PaymentInfo />} />
         <Route path="transfers" element={<Transfers />} />
         <Route path="receivers" element={<Receivers />} />
+        <Route path="transfer-details" element={<TransferDetails />} />
+        <Route path="profile-information" element={<ProfileInformation />} />
 
         {/* Redirect / to /dashboard */}
         <Route index element={<Navigate to="dashboard" replace />} />

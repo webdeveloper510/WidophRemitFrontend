@@ -3,6 +3,8 @@ import Card from "react-bootstrap/Card";
 import DataTable from "react-data-table-component";
 import { FaArrowRotateRight } from "react-icons/fa6";
 import RecentReceiver from "../assets/images/icons1.png";
+import { BsThreeDots } from "react-icons/bs";
+import Dropdown from "react-bootstrap/Dropdown";
 
 const handleSendAgain = (row) => {
   console.log("Send Again clicked for:", row.name);
@@ -124,10 +126,20 @@ const columns = [
     ),
   },
   {
-    name: "Send Again",
+    name: "Action",
     cell: (row) => (
       <div className="send-again-btn" onClick={() => handleSendAgain(row)}>
-        <FaArrowRotateRight />
+        <Dropdown>
+          <Dropdown.Toggle variant="success" id="dropdown-basic">
+            <BsThreeDots />
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu>
+            <Dropdown.Item href="#">Delete</Dropdown.Item>
+            <Dropdown.Item href="#">Edit</Dropdown.Item>
+            <Dropdown.Item href="transfer-details">View</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
       </div>
     ),
     ignoreRowClick: true,
