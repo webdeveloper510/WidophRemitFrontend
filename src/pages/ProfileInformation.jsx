@@ -1,15 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import AnimatedPage from "../components/AnimatedPage";
 import Back from "../assets/images/back.png";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
-import Form from "react-bootstrap/Form";
+import { Form, FloatingLabel, Col, InputGroup } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
-import FloatingLabel from "react-bootstrap/FloatingLabel";
+import "react-phone-number-input/style.css";
+import PhoneInput from "react-phone-number-input";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const ProfileInformation = () => {
+  const [value, setValue] = useState();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [visibility, setVisibility] = useState({
+    current: false,
+    new: false,
+    confirm: false,
+  });
+
+  const toggleVisibility = (field) => {
+    setVisibility((prev) => ({
+      ...prev,
+      [field]: !prev[field],
+    }));
+  };
+
   return (
     <AnimatedPage>
       <div className="page-title">
@@ -22,11 +39,12 @@ const ProfileInformation = () => {
       </div>
 
       <div className="page-content-section mt-3">
-        <Card className="receiver-card">
-          <Card.Body>
-            <div className="row">
-              <div className="col-md-12">
-                <Form>
+        <div className="row">
+          <div className="col-md-12">
+            <Form className="profile-form">
+              <Card className="receiver-card bg-white">
+                <Card.Body>
+                  <Card.Title>Personal Details</Card.Title>
                   <Row className="mb-3">
                     <FloatingLabel
                       as={Col}
@@ -75,16 +93,22 @@ const ProfileInformation = () => {
                       as={Col}
                       controlId="floatingInput"
                       label="Mobile"
-                      className="mb-3"
+                      className="mb-3 mobileinput"
                     >
-                      <Form.Control type="number" placeholder="Enter Mobile" />
+                      <PhoneInput
+                        international
+                        countryCallingCodeEditable={false}
+                        defaultCountry="AU"
+                        value={value}
+                        onChange={setValue}
+                      />
                     </FloatingLabel>
                   </Row>
                   <Row className="mb-3">
                     <FloatingLabel
                       as={Col}
                       controlId="floatingInput"
-                      label="Mobile"
+                      label="Date of Birth"
                       className="mb-3"
                     >
                       <Form.Control type="date" placeholder="Select Date" />
@@ -108,11 +132,143 @@ const ProfileInformation = () => {
                       <Form.Control type="text" placeholder="Occupation" />
                     </FloatingLabel>
                   </Row>
-                </Form>
-              </div>
-            </div>
-          </Card.Body>
-        </Card>
+                </Card.Body>
+              </Card>
+
+              <Card className="receiver-card mt-4 bg-white">
+                <Card.Body>
+                  <Card.Title>Your Address</Card.Title>
+                  <Row className="mb-3">
+                    <FloatingLabel
+                      as={Col}
+                      controlId="floatingInput"
+                      label="Country"
+                      className="mb-3"
+                    >
+                      <Form.Control type="text" placeholder="Country" />
+                    </FloatingLabel>
+                    <FloatingLabel
+                      as={Col}
+                      controlId="floatingTextarea2"
+                      label="Address"
+                    >
+                      <Form.Control
+                        as="textarea"
+                        placeholder="Street Address"
+                        style={{ height: "50px" }}
+                      />
+                    </FloatingLabel>
+                  </Row>
+                  <Row className="mb-3">
+                    <FloatingLabel
+                      as={Col}
+                      controlId="floatingInput"
+                      label="City"
+                      className="mb-3"
+                    >
+                      <Form.Control type="text" placeholder="City" />
+                    </FloatingLabel>
+                    <FloatingLabel
+                      as={Col}
+                      controlId="floatingInput"
+                      label="Zip/Postal Code*"
+                      className="mb-3"
+                    >
+                      <Form.Control
+                        type="number"
+                        placeholder="Zip/Postal Code*"
+                      />
+                    </FloatingLabel>
+
+                    <FloatingLabel
+                      as={Col}
+                      controlId="floatingInput"
+                      label="State"
+                      className="mb-3"
+                    >
+                      <Form.Control type="text" placeholder="State" />
+                    </FloatingLabel>
+                  </Row>
+                </Card.Body>
+              </Card>
+
+              <Card className="receiver-card mt-4 bg-white">
+                <Card.Body>
+                  <Card.Title>Change Password</Card.Title>
+                  <Row className="mb-3">
+                    {/* Current Password */}
+                    <FloatingLabel
+                      as={Col}
+                      controlId="floatingCurrentPassword"
+                      label="Current Password"
+                      className="mb-3 position-relative"
+                    >
+                      <Form.Control
+                        placeholder="Current Password"
+                        className="passowrdinput"
+                        type={visibility.current ? "text" : "password"}
+                      />
+                      <span
+                        onClick={() => toggleVisibility("current")}
+                        className="password-eye"
+                      >
+                        {visibility.current ? <FaEyeSlash /> : <FaEye />}
+                      </span>
+                    </FloatingLabel>
+
+                    {/* New Password */}
+                    <FloatingLabel
+                      as={Col}
+                      controlId="floatingNewPassword"
+                      label="New Password"
+                      className="mb-3 position-relative"
+                    >
+                      <Form.Control
+                        placeholder="New Password"
+                        className="passowrdinput"
+                        type={visibility.new ? "text" : "password"}
+                      />
+                      <span
+                        onClick={() => toggleVisibility("new")}
+                        className="password-eye"
+                      >
+                        {visibility.new ? <FaEyeSlash /> : <FaEye />}
+                      </span>
+                    </FloatingLabel>
+
+                    {/* Confirm Password */}
+                    <FloatingLabel
+                      as={Col}
+                      controlId="floatingConfirmPassword"
+                      label="Confirm Password"
+                      className="position-relative"
+                    >
+                      <Form.Control
+                        placeholder="Confirm Password"
+                        className="passowrdinput"
+                        type={visibility.confirm ? "text" : "password"}
+                      />
+                      <span
+                        onClick={() => toggleVisibility("confirm")}
+                        className="password-eye"
+                      >
+                        {visibility.confirm ? <FaEyeSlash /> : <FaEye />}
+                      </span>
+                    </FloatingLabel>
+                  </Row>
+
+                  <Row className="mb-3">
+                    <Col>
+                      <Button variant="primary" className="float-end">
+                        Update
+                      </Button>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
+            </Form>
+          </div>
+        </div>
       </div>
     </AnimatedPage>
   );

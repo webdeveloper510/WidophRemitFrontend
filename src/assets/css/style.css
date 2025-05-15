@@ -442,6 +442,88 @@ span.status-badge.review {
   gap: 7px;
   color: #fff;
 }
+
+/************** profile information css **********/
+
+.bg-white {
+  background: #fff !important;
+  padding: 10px 20px;
+}
+.bg-white .card-title.h5 {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+form.profile-form input,
+form.profile-form textarea {
+  border: 1px solid #e0e3b7;
+  resize: none;
+  border-radius: 10px;
+}
+.form-floating label {
+  padding: 15px 20px;
+  color: #9cb417;
+  font-weight: 400;
+}
+.form-floating > .form-control-plaintext ~ label,
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label,
+.form-floating > .form-select ~ label {
+  transform: scale(0.85) translateY(-1.5rem) translateX(2.15rem) !important;
+  background: #fff;
+  height: 43px;
+  padding: 0;
+  line-height: 43px;
+}
+.form-floating > .form-control-plaintext:-webkit-autofill,
+.form-floating > .form-control:-webkit-autofill {
+  padding-top: 0.625rem !important;
+  padding-bottom: 0.625rem;
+}
+.form-floating > .form-control {
+  padding-top: 0.625rem !important;
+}
+.form-control:focus {
+  box-shadow: none;
+  border: 1px solid #e0e3b7;
+}
+.PhoneInput {
+  border: 1px solid #e0e3b7;
+  resize: none;
+  border-radius: 10px;
+  height: calc(3.5rem 56px + calc(var(--bs-border-width) * 2));
+  min-height: calc(3.5rem + calc(var(--bs-border-width) * 2));
+  line-height: 1.25;
+  padding: 1rem 0.75rem;
+}
+.PhoneInput input {
+  border: none !important;
+  border-radius: 0 !important;
+}
+.mobileinput {
+  position: relative;
+}
+.mobileinput label {
+  position: absolute;
+  top: -23px;
+  background: #fff;
+  height: 43px;
+  padding: 0;
+  line-height: 43px;
+  left: 34px;
+  font-size: 14px;
+}
+.PhoneInput input:focus {
+  border: none !important;
+  outline: none;
+}
+.passowrdinput {
+  padding-right: 60px !important;
+}
+span.password-eye {
+  position: absolute;
+  top: 14px;
+  right: 37px;
+}
 /*************** responsive css ****************/
 
 @media screen and (max-width: 1500px) {
