@@ -9,10 +9,13 @@ import Row from "react-bootstrap/Row";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import Modal from "react-bootstrap/Modal";
+import UpdatePopup from "../assets/images/profilepopup.png";
 
 const ProfileInformation = () => {
   const [value, setValue] = useState();
   const [showPassword, setShowPassword] = useState(false);
+  const [modalShow, setModalShow] = React.useState(false);
 
   const [visibility, setVisibility] = useState({
     current: false,
@@ -259,7 +262,11 @@ const ProfileInformation = () => {
 
                   <Row className="mb-3">
                     <Col>
-                      <Button variant="primary" className="float-end">
+                      <Button
+                        variant="primary"
+                        className="float-end updateform"
+                        onClick={() => setModalShow(true)}
+                      >
                         Update
                       </Button>
                     </Col>
@@ -267,6 +274,28 @@ const ProfileInformation = () => {
                 </Card.Body>
               </Card>
             </Form>
+
+            <Modal
+              size="md"
+              aria-labelledby="contained-modal-title-vcenter"
+              centered
+              show={modalShow}
+              onHide={() => setModalShow(false)}
+              className="profileupdate"
+            >
+              <Modal.Header closeButton></Modal.Header>
+              <Modal.Body>
+                <h4>Profile information Updated Successfully</h4>
+                <p className="m-4">
+                  <img src={UpdatePopup} alt="image" width="250px" />
+                </p>
+              </Modal.Body>
+              <Modal.Footer className="PopupButton">
+                <Button onClick={() => setModalShow(false)}>
+                  Go Back to Dashboard
+                </Button>
+              </Modal.Footer>
+            </Modal>
           </div>
         </div>
       </div>

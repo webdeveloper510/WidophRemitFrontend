@@ -524,6 +524,25 @@ span.password-eye {
   top: 14px;
   right: 37px;
 }
+.updateform {
+  background: #2499db;
+  border: none;
+  padding: 10px 45px;
+  text-transform: uppercase;
+}
+.profileupdate .modal-body h4 {
+  color: #434800;
+  font-weight: 700;
+  font-size: 30px;
+}
+.PopupButton.modal-footer {
+  justify-content: center;
+}
+.PopupButton.modal-footer button {
+  background: #2499db;
+  border: none;
+  padding: 10px 45px;
+}
 /*************** responsive css ****************/
 
 @media screen and (max-width: 1500px) {
