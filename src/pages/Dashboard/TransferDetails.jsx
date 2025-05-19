@@ -1,12 +1,12 @@
 import React from "react";
-import AnimatedPage from "../components/AnimatedPage";
-import Back from "../assets/images/back.png";
+import AnimatedPage from "../../components/AnimatedPage";
+import Back from "../../assets/images/back.png";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Table from "react-bootstrap/Table";
-import DownloadIcon from "../assets/images/download.png";
+import DownloadIcon from "../../assets/images/download.png";
 import Button from "react-bootstrap/Button";
 
 const TransferDetails = () => {

@@ -2,7 +2,7 @@ import React from "react";
 import Card from "react-bootstrap/Card";
 import DataTable from "react-data-table-component";
 import { FaArrowRotateRight } from "react-icons/fa6";
-import RecentReceiver from "../assets/images/icons1.png";
+import RecentReceiver from "../../assets/images/icons1.png";
 
 const handleSendAgain = (row) => {
   console.log("Send Again clicked for:", row.name);

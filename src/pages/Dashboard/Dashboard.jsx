@@ -1,8 +1,8 @@
-import AnimatedPage from "../components/AnimatedPage";
-import stats1 from "../assets/images/info1.png";
-import stats2 from "../assets/images/info2.png";
-import stats3 from "../assets/images/info3.png";
-import stats4 from "../assets/images/info4.png";
+import AnimatedPage from "../../components/AnimatedPage";
+import stats1 from "../../assets/images/info1.png";
+import stats2 from "../../assets/images/info2.png";
+import stats3 from "../../assets/images/info3.png";
+import stats4 from "../../assets/images/info4.png";
 import ReceiverTable from "./ReceiverTable";
 import LatestTransfer from "./LatestTransfer";
 

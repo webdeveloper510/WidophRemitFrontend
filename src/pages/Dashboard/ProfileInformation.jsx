@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import AnimatedPage from "../components/AnimatedPage";
-import Back from "../assets/images/back.png";
+import AnimatedPage from "../../components/AnimatedPage";
+import Back from "../../assets/images/back.png";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
@@ -10,7 +10,7 @@ import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Modal from "react-bootstrap/Modal";
-import UpdatePopup from "../assets/images/profilepopup.png";
+import UpdatePopup from "../../assets/images/profilepopup.png";
 
 const ProfileInformation = () => {
   const [value, setValue] = useState();
@@ -291,9 +291,11 @@ const ProfileInformation = () => {
                 </p>
               </Modal.Body>
               <Modal.Footer className="PopupButton">
-                <Button onClick={() => setModalShow(false)}>
-                  Go Back to Dashboard
-                </Button>
+                <a href="dashboard">
+                  <Button onClick={() => setModalShow(false)}>
+                    Go Back to Dashboard
+                  </Button>
+                </a>
               </Modal.Footer>
             </Modal>
           </div>

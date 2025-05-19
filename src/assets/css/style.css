@@ -530,6 +530,9 @@ span.password-eye {
   padding: 10px 45px;
   text-transform: uppercase;
 }
+.profileupdate .modal-body {
+  text-align: center;
+}
 .profileupdate .modal-body h4 {
   color: #434800;
   font-weight: 700;
@@ -543,6 +546,68 @@ span.password-eye {
   border: none;
   padding: 10px 45px;
 }
+.profileupdate .modal-header {
+  border: none;
+}
+.profileupdate button.btn-close {
+  position: absolute;
+  right: -8px;
+  background-color: #cfda2f;
+  opacity: 1;
+  color: #fff !important;
+  border-radius: 100%;
+  top: -6px;
+  padding: 16px !important;
+}
+.profileupdate .btn-close:hover {
+  opacity: 1;
+}
+
+/************** send money css ************************/
+
+.exchangerate {
+  background: #cfda2f;
+  border-radius: 10px;
+  text-align: center;
+  color: #434800;
+  position: relative;
+}
+
+.exchangerate::before,
+.exchangerate::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 30%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+.exchangerate::before {
+  left: 0;
+  background-image: url("../images/arm-left.png");
+  background-position: right;
+}
+
+.exchangerate::after {
+  right: 0;
+  background-image: url("../images/arm-right.png");
+  background-position: left;
+}
+button.cancel-btn {
+  text-transform: uppercase;
+  color: #434800;
+}
+
+button.submit-btn {
+  background: #2499db;
+  border: none;
+  padding: 10px 45px;
+  text-transform: uppercase;
+}
+
 /*************** responsive css ****************/
 
 @media screen and (max-width: 1500px) {

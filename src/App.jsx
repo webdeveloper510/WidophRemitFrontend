@@ -1,12 +1,15 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout";
-import Dashboard from "./pages/Dashboard";
-import SendMoney from "./pages/SendMoney";
+import Dashboard from "./pages/Dashboard/Dashboard";
+import SendMoney from "./pages/SendMoney/SendMoney";
 import PaymentInfo from "./pages/PaymentInfo";
 import Transfers from "./pages/Transfers";
 import Receivers from "./pages/Receivers";
-import TransferDetails from "./pages/TransferDetails";
-import ProfileInformation from "./pages/ProfileInformation";
+import TransferDetails from "./pages/Dashboard/TransferDetails";
+import ProfileInformation from "./pages/Dashboard/ProfileInformation";
+import ReceiverList from "./pages/SendMoney/ReceiverList";
+import ReceiverDetail from "./pages/SendMoney/ReceiverDetail";
+import ReviewTransfer from "./pages/SendMoney/ReviewTransfer";
 
 function App() {
   return (
@@ -19,6 +22,9 @@ function App() {
         <Route path="receivers" element={<Receivers />} />
         <Route path="transfer-details" element={<TransferDetails />} />
         <Route path="profile-information" element={<ProfileInformation />} />
+        <Route path="receivers-list" element={<ReceiverList />} />
+        <Route path="receiver-detail" element={<ReceiverDetail />} />
+        <Route path="review-transfer" element={<ReviewTransfer />} />
 
         {/* Redirect / to /dashboard */}
         <Route index element={<Navigate to="dashboard" replace />} />
