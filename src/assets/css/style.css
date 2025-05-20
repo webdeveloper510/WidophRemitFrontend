@@ -557,10 +557,29 @@ span.password-eye {
   color: #fff !important;
   border-radius: 100%;
   top: -6px;
-  padding: 16px !important;
+  padding: 9px !important;
+  background-size: 18px;
 }
 .profileupdate .btn-close:hover {
   opacity: 1;
+}
+span.Ortext {
+  color: #1e96dd;
+  font-weight: 900;
+}
+.form-floating > .form-select {
+  padding-top: 0.625rem;
+}
+span.copyText {
+  position: absolute;
+  top: 15px;
+  right: 34px;
+  color: #cfda2f;
+}
+/************************** resend otp popup css **********************/
+
+a.resendOTP {
+  color: #9cb417;
 }
 
 /************** send money css ************************/
@@ -608,6 +627,72 @@ button.submit-btn {
   text-transform: uppercase;
 }
 
+/************************ payment detail css **********************/
+
+.payment-options {
+  background: #fffcf5;
+  width: 50%;
+  padding: 20px;
+  border: 1px solid rgb(67 72 0 / 23%);
+  border-radius: 10px;
+  padding-left: 40px;
+}
+.payment-options input {
+  border: 1px solid #e0e3b7;
+}
+.payment-options .form-check-input:checked {
+  background-color: #cfda2f;
+  border: 1px solid #e0e3b7;
+}
+
+.paymentdetail {
+  background: #cfda2f;
+  border-radius: 10px;
+  text-align: center;
+  color: #434800;
+  position: relative;
+}
+
+.paymentdetail::before,
+.paymentdetail::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 30%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+.paymentdetail::before {
+  left: 0;
+  background-image: url("../images/arm-left.png");
+  background-position: right;
+}
+
+.paymentdetail::after {
+  right: 0;
+  background-image: url("../images/transaction-vector.png");
+  background-position: bottom;
+  background-size: contain;
+}
+span.divider {
+  width: 1px;
+  height: 101px;
+  background: rgb(67 72 0 / 10%);
+  margin: 0px 20px;
+}
+.payment-popup {
+  background: #1e96dd;
+  padding: 30px;
+  color: #fff;
+  font-size: 30px;
+  justify-content: center;
+  border-radius: 14px;
+  width: 98%;
+  margin: 5px auto;
+}
 /*************** responsive css ****************/
 
 @media screen and (max-width: 1500px) {

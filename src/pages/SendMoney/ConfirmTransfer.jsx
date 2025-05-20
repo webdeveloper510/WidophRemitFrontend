@@ -1,19 +1,24 @@
 import React, { useState } from "react";
+import OtpInput from "react-otp-input";
 import AnimatedPage from "../../components/AnimatedPage";
 import Back from "../../assets/images/back.png";
 import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
 import { Col, Row, Button } from "react-bootstrap";
+import Modal from "react-bootstrap/Modal";
+import OtpImage from "../../assets/images/Otp-image.png";
 
-const ReviewTransfer = () => {
+const ConfirmTransfer = () => {
+  const [modalShow, setModalShow] = React.useState(false);
+  const [otp, setOtp] = useState("");
   return (
     <AnimatedPage>
       <div className="page-title">
         <div className="d-flex">
-          <a href="receiver-detail">
+          <a href="payment-detail">
             <img src={Back} />
           </a>
-          <h1>Review Your Transfer</h1>
+          <h1>Confirm Your Transfer</h1>
         </div>
       </div>
 
@@ -92,25 +97,78 @@ const ReviewTransfer = () => {
             </Card>
             <Row className="mt-5">
               <Col>
-                <a href="receiver-detail">
+                <a href="payment-detail">
                   <Button variant="light" className="cancel-btn float-start">
                     Back
                   </Button>
                 </a>
               </Col>
               <Col>
-                <a href="payment-detail">
-                  <Button variant="primary" className="float-end updateform">
-                    Save & Continue
-                  </Button>
-                </a>
+                <Button
+                  variant="primary"
+                  className="float-end updateform"
+                  onClick={() => setModalShow(true)}
+                >
+                  Save & Continue
+                </Button>
               </Col>
             </Row>
           </div>
         </div>
+        <Modal
+          size="md"
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+          show={modalShow}
+          onHide={() => setModalShow(false)}
+          className="profileupdate"
+        >
+          <Modal.Header closeButton></Modal.Header>
+          <Modal.Body>
+            <h4>Verify your account by entering the code</h4>
+            <p className="m-4">
+              <img src={OtpImage} alt="image" />
+            </p>
+            <OtpInput
+              value={otp}
+              onChange={setOtp}
+              numInputs={4}
+              renderSeparator={<span>-</span>}
+              renderInput={(props) => <input {...props} />}
+            />
+            <a href="#" className="resendOTP">
+              Resend OTP
+            </a>
+          </Modal.Body>
+
+          <Modal.Footer className="d-flex justify-content-center align-items-center">
+            <Row className="mb-3">
+              <Col>
+                <Button
+                  variant="light"
+                  className="cancel-btn float-start"
+                  onClick={() => setModalShow(false)}
+                >
+                  Cancel
+                </Button>
+              </Col>
+              <Col>
+                <a href="send-money">
+                  <Button
+                    onClick={() => setModalShow(false)}
+                    variant="primary"
+                    className="submit-btn float-end"
+                  >
+                    Continue
+                  </Button>
+                </a>
+              </Col>
+            </Row>
+          </Modal.Footer>
+        </Modal>
       </div>
     </AnimatedPage>
   );
 };
 
-export default ReviewTransfer;
+export default ConfirmTransfer;

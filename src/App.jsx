@@ -10,6 +10,8 @@ import ProfileInformation from "./pages/Dashboard/ProfileInformation";
 import ReceiverList from "./pages/SendMoney/ReceiverList";
 import ReceiverDetail from "./pages/SendMoney/ReceiverDetail";
 import ReviewTransfer from "./pages/SendMoney/ReviewTransfer";
+import PaymentDetail from "./pages/SendMoney/PaymentDetail";
+import ConfirmTransfer from "./pages/SendMoney/ConfirmTransfer";
 
 function App() {
   return (
@@ -25,7 +27,8 @@ function App() {
         <Route path="receivers-list" element={<ReceiverList />} />
         <Route path="receiver-detail" element={<ReceiverDetail />} />
         <Route path="review-transfer" element={<ReviewTransfer />} />
-
+        <Route path="payment-detail" element={<PaymentDetail />} />
+        <Route path="confirm-transfer" element={<ConfirmTransfer />} />
         {/* Redirect / to /dashboard */}
         <Route index element={<Navigate to="dashboard" replace />} />
       </Route>

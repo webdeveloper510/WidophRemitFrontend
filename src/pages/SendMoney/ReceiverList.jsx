@@ -1,6 +1,7 @@
 import AnimatedPage from "../../components/AnimatedPage";
 import Back from "../../assets/images/back.png";
 import Button from "react-bootstrap/Button";
+import { Row, Col } from "react-bootstrap";
 import AddReceiver from "../../assets/images/add-receiver.png";
 import Card from "react-bootstrap/Card";
 import DataTable from "react-data-table-component";
@@ -27,11 +28,9 @@ const columns = [
   {
     name: "Action",
     cell: (row) => (
-      <a href="receiver-detail">
-        <div className="send-again-btn" onClick={() => handleSendAgain(row)}>
-          <MdOutlineKeyboardArrowRight />
-        </div>
-      </a>
+      <div className="send-again-btn" onClick={() => handleSendAgain(row)}>
+        <MdOutlineKeyboardArrowRight />
+      </div>
     ),
     ignoreRowClick: true,
     allowOverflow: true,
@@ -110,12 +109,14 @@ const ReceiverList = () => {
             </a>
             <h1>Select a Receiver to Send Money</h1>
           </div>
-          <button
-            type="button"
-            class="float-end download-button btn btn-success"
-          >
-            <img src={AddReceiver} alt="img" /> Add Receiver
-          </button>
+          <a href="receiver-detail">
+            <button
+              type="button"
+              class="float-end download-button btn btn-success"
+            >
+              <img src={AddReceiver} alt="img" /> Add Receiver
+            </button>
+          </a>
         </div>
       </div>
 
@@ -129,13 +130,16 @@ const ReceiverList = () => {
           highlightOnHover
         />
       </div>
-      <div className="row mt-4">
-        <a href="send-money">
-          <Button variant="primary" className="submit-btn float-end">
-            Cancel
-          </Button>
-        </a>
-      </div>
+
+      <Row className="mt-4">
+        <Col className="float-end">
+          <a href="send-money">
+            <Button variant="primary" className="float-end submit-btn">
+              Cancel
+            </Button>
+          </a>
+        </Col>
+      </Row>
     </AnimatedPage>
   );
 };
