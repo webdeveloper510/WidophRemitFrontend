@@ -239,11 +239,14 @@ div#basic-navbar-nav a {
 #dropdown-basic::after {
   display: none;
 }
-/*********** dashbaord css ********/
 .page-title h1 {
   color: #434800;
   font-weight: 900;
+  font-size: 32px;
+  margin: 0;
 }
+/*********** dashbaord css ********/
+
 .dashbaord-bg-image {
   background: url("../images/info-banner.png");
   background-size: cover;
@@ -580,8 +583,38 @@ span.copyText {
 
 a.resendOTP {
   color: #9cb417;
+  margin: 30px 0px 5px !important;
+  float: left;
+  width: 100%;
+}
+input.inputBoxStyle {
+  width: 3rem !important;
+  height: 3rem;
+  margin: 0 12px;
+  border: 1px solid #e0e3b7;
+  background: #fffcf5;
+  border-radius: 15px;
+  font-size: 17px;
+  color: #434800;
 }
 
+img.processing-vector {
+  position: absolute;
+  bottom: 0;
+  right: 50px;
+}
+.processing-info-text {
+  color: #434800;
+}
+.processing-info-text ul {
+  padding-left: 15px;
+}
+.processing-info-text ul li {
+  color: #434800;
+  font-weight: 600;
+  line-height: 30px;
+  list-style: auto;
+}
 /************** send money css ************************/
 
 .exchangerate {
@@ -692,6 +725,49 @@ span.divider {
   border-radius: 14px;
   width: 98%;
   margin: 5px auto;
+}
+
+/************************* payment info css *****************/
+
+.payment-types h5 {
+  margin: 0;
+  color: #434800;
+  font-weight: 600;
+  font-size: 20px;
+}
+.payment-types label {
+  color: rgb(67 72 0 / 70%);
+}
+.payment-types p {
+  color: #434800;
+}
+
+/********************** tranfers list css **************/
+
+.incomplete {
+  color: #2499db;
+}
+.complete {
+  color: #9cb417;
+}
+.cancelled {
+  color: #fd6063;
+}
+
+.filter-input {
+  border: 1px solid rgb(67 72 0 / 23%);
+  border-radius: 22px;
+  width: 400px;
+  background: url("../../assets/images/search-icon.png");
+  background-size: auto;
+  background-position: right 20px center;
+  background-repeat: no-repeat;
+  padding-right: 40px;
+}
+.filter-select {
+  border: 1px solid rgb(67 72 0 / 23%);
+  border-radius: 22px;
+  width: 35%;
 }
 /*************** responsive css ****************/
 

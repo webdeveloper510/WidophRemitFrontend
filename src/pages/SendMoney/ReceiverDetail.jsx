@@ -31,11 +31,11 @@ const ReceiverDetail = () => {
   return (
     <AnimatedPage>
       <div className="page-title">
-        <div className="d-flex">
+        <div className="d-flex align-items-center">
           <a href="receivers-list">
             <img src={Back} />
           </a>
-          <h1>Receiver Bank Details</h1>
+          <h1>Add Receiver</h1>
         </div>
       </div>
 

@@ -103,7 +103,7 @@ const ReceiverList = () => {
     <AnimatedPage>
       <div className="page-title">
         <div className="d-flex justify-content-between">
-          <div className="d-flex">
+          <div className="d-flex align-items-center">
             <a href="send-money">
               <img src={Back} />
             </a>
@@ -133,9 +133,9 @@ const ReceiverList = () => {
 
       <Row className="mt-4">
         <Col className="float-end">
-          <a href="send-money">
+          <a href="review-transfer">
             <Button variant="primary" className="float-end submit-btn">
-              Cancel
+              Continue
             </Button>
           </a>
         </Col>

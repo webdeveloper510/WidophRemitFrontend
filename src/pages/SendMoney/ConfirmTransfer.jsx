@@ -14,7 +14,7 @@ const ConfirmTransfer = () => {
   return (
     <AnimatedPage>
       <div className="page-title">
-        <div className="d-flex">
+        <div className="d-flex align-items-center">
           <a href="payment-detail">
             <img src={Back} />
           </a>
@@ -131,8 +131,9 @@ const ConfirmTransfer = () => {
             </p>
             <OtpInput
               value={otp}
+              inputStyle="inputBoxStyle"
               onChange={setOtp}
-              numInputs={4}
+              numInputs={6}
               renderSeparator={<span>-</span>}
               renderInput={(props) => <input {...props} />}
             />
@@ -153,7 +154,7 @@ const ConfirmTransfer = () => {
                 </Button>
               </Col>
               <Col>
-                <a href="send-money">
+                <a href="payment-processed">
                   <Button
                     onClick={() => setModalShow(false)}
                     variant="primary"

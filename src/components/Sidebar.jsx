@@ -13,7 +13,7 @@ const menuItems = [
   { path: "/dashboard", name: "Dashboard", icon: <VscDashboard /> },
   { path: "/send-money", name: "Send Money", icon: <RiExchangeDollarFill /> },
   { path: "/payment-info", name: "Payment Info", icon: <TbCreditCard /> },
-  { path: "/transfers", name: "Transfers", icon: <TbExchange /> },
+  { path: "/transfers-list", name: "Transfers", icon: <TbExchange /> },
   { path: "/receivers", name: "Receivers", icon: <LuUsers /> },
 ];
 

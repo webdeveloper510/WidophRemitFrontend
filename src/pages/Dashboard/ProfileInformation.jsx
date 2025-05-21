@@ -33,7 +33,7 @@ const ProfileInformation = () => {
   return (
     <AnimatedPage>
       <div className="page-title">
-        <div className="d-flex">
+        <div className="d-flex align-items-center">
           <a href="dashboard">
             <img src={Back} />
           </a>
