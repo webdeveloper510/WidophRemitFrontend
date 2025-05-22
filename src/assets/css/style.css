@@ -127,6 +127,7 @@ li.rounded {
   position: relative;
   padding-left: 0px !important;
 }
+
 .mr-3 {
   margin-right: 20px;
 }
@@ -246,7 +247,10 @@ div#basic-navbar-nav a {
   margin: 0;
 }
 /*********** dashbaord css ********/
-
+.scroll-table-body .rdt_TableBody {
+  max-height: 600px;
+  overflow-y: auto;
+}
 .dashbaord-bg-image {
   background: url("../images/info-banner.png");
   background-size: cover;

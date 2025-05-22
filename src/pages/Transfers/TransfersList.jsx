@@ -100,11 +100,38 @@ const data = [
   {
     id: 11,
     transferid: "ADPFT20250",
+    name: "Kat Spears",
+    amount: "180.00 AUD",
+    date: "26-March-2025",
+    reason: "Lorem Ipsum",
+    status: "cancelled",
+  },
+  {
+    id: 12,
+    transferid: "ADPFT20250",
     name: "Kathy",
     amount: "180.00 AUD",
     date: "26-March-2025",
     reason: "Lorem Ipsum",
     status: "Complete",
+  },
+  {
+    id: 13,
+    transferid: "ADPFT20250",
+    name: "Kathy",
+    amount: "180.00 AUD",
+    date: "26-March-2025",
+    reason: "Lorem Ipsum",
+    status: "Complete",
+  },
+  {
+    id: 14,
+    transferid: "ADPFT20250",
+    name: "Kat Spears",
+    amount: "180.00 AUD",
+    date: "26-March-2025",
+    reason: "Lorem Ipsum",
+    status: "Incomplete",
   },
 ];
 
@@ -260,17 +287,20 @@ const TransfersList = () => {
         </div>
         <div className="row mt-3">
           <div className="col-md-12">
-            <DataTable
-              columns={columns}
-              data={displayData}
-              customStyles={customStyles}
-              noHeader
-              striped
-              highlightOnHover
-              pagination
-              paginationPerPage={15}
-              paginationRowsPerPageOptions={[5, 10, 15, 20]}
-            />
+            <div className="scroll-table-body">
+              <DataTable
+                className="TranferList"
+                columns={columns}
+                data={displayData}
+                customStyles={customStyles}
+                noHeader
+                striped
+                highlightOnHover
+                pagination
+                paginationPerPage={15}
+                paginationRowsPerPageOptions={[5, 10, 15, 20]}
+              />
+            </div>
           </div>
         </div>
       </AnimatedPage>
