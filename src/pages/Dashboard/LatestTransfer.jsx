@@ -174,26 +174,6 @@ const customStyles = {
 };
 
 const LatestTransfer = () => {
-  const [filterText, setFilterText] = useState("");
-
-  const filteredData = data.filter((item) =>
-    (item.name + item.status + item.date + item.amount)
-      .toLowerCase()
-      .includes(filterText.toLowerCase())
-  );
-
-  const displayData = filteredData;
-
-  const subHeaderComponent = (
-    <input
-      type="text"
-      className="form-control form-control-sm w-25"
-      placeholder="Filter transfers..."
-      value={filterText}
-      onChange={(e) => setFilterText(e.target.value)}
-    />
-  );
-
   return (
     <Card className="receiver-card">
       <Card.Body>
@@ -205,7 +185,7 @@ const LatestTransfer = () => {
         </div>
         <DataTable
           columns={columns}
-          data={displayData}
+          data={data}
           customStyles={customStyles}
           noHeader
           striped
