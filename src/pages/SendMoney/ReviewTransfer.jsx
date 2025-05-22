@@ -10,7 +10,7 @@ const ReviewTransfer = () => {
     <AnimatedPage>
       <div className="page-title">
         <div className="d-flex align-items-center">
-          <a href="receiver-detail">
+          <a href="receivers-list">
             <img src={Back} />
           </a>
           <h1>Review Your Transfer</h1>
@@ -92,7 +92,7 @@ const ReviewTransfer = () => {
             </Card>
             <Row className="mt-5">
               <Col>
-                <a href="receiver-detail">
+                <a href="receivers-list">
                   <Button variant="light" className="cancel-btn float-start">
                     Back
                   </Button>

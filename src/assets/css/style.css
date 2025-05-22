@@ -769,6 +769,21 @@ span.divider {
   border-radius: 22px;
   width: 35%;
 }
+
+nav.sc-dTUlgT.jWqsSS.rdt_Pagination {
+  background: #434800;
+  border-radius: 15px;
+  color: #fff;
+}
+nav.sc-dTUlgT.jWqsSS.rdt_Pagination button {
+  background: rgb(47 50 0 / 70%);
+  border-radius: 10px;
+  margin: 0px 6px;
+}
+.fAPQyl {
+  background-color: #cfda2f !important;
+  fill: #434800;
+}
 /*************** responsive css ****************/
 
 @media screen and (max-width: 1500px) {

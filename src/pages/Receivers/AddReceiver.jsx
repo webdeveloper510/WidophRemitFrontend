@@ -8,17 +8,17 @@ import Row from "react-bootstrap/Row";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 
-const ReceiverDetail = () => {
+const AddReceiver = () => {
   const [value, setValue] = useState();
 
   return (
     <AnimatedPage>
       <div className="page-title">
         <div className="d-flex align-items-center">
-          <a href="review-transfer">
+          <a href="receivers">
             <img src={Back} />
           </a>
-          <h1>Receiver Bank Details</h1>
+          <h1>Add Receivers</h1>
         </div>
       </div>
 
@@ -161,7 +161,7 @@ const ReceiverDetail = () => {
                   </Row>
                   <Row className="mb-3">
                     <Col>
-                      <a href="review-transfer">
+                      <a href="receivers">
                         <Button
                           variant="light"
                           className="cancel-btn float-start"
@@ -176,7 +176,7 @@ const ReceiverDetail = () => {
                           variant="primary"
                           className="float-end updateform"
                         >
-                          Save & Continue
+                          Create Receiver
                         </Button>
                       </a>
                     </Col>
@@ -191,4 +191,4 @@ const ReceiverDetail = () => {
   );
 };
 
-export default ReceiverDetail;
+export default AddReceiver;

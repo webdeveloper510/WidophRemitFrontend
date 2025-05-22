@@ -4,7 +4,6 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import SendMoney from "./pages/SendMoney/SendMoney";
 import PaymentInfo from "./pages/PaymentInfo/PaymentInfo";
 import TransfersList from "./pages/Transfers/TransfersList";
-import Receivers from "./pages/Receivers";
 import TransferDetails from "./pages/Dashboard/TransferDetails";
 import ProfileInformation from "./pages/Dashboard/ProfileInformation";
 import ReceiverList from "./pages/SendMoney/ReceiverList";
@@ -13,6 +12,8 @@ import ReviewTransfer from "./pages/SendMoney/ReviewTransfer";
 import PaymentDetail from "./pages/SendMoney/PaymentDetail";
 import ConfirmTransfer from "./pages/SendMoney/ConfirmTransfer";
 import PaymentProcessed from "./pages/SendMoney/PaymentProcessed";
+import Receivers from "./pages/Receivers/Receivers";
+import AddReceiver from "./pages/Receivers/AddReceiver";
 
 function App() {
   return (
@@ -31,7 +32,7 @@ function App() {
         <Route path="payment-detail" element={<PaymentDetail />} />
         <Route path="confirm-transfer" element={<ConfirmTransfer />} />
         <Route path="payment-processed" element={<PaymentProcessed />} />
-
+        <Route path="add-receiver" element={<AddReceiver />} />
         {/* Redirect / to /dashboard */}
         <Route index element={<Navigate to="dashboard" replace />} />
       </Route>
