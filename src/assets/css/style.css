@@ -251,6 +251,16 @@ div#basic-navbar-nav a {
   max-height: 600px;
   overflow-y: auto;
 }
+.send-again-btn button,
+.send-again-btn button:hover {
+  background: transparent;
+  border: 1px solid rgb(67 72 0 / 23%);
+  line-height: 10px;
+  border-radius: 14px;
+}
+.send-again-btn button svg {
+  color: #434800;
+}
 .dashbaord-bg-image {
   background: url("../images/info-banner.png");
   background-size: cover;
