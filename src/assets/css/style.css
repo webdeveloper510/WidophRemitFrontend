@@ -226,7 +226,7 @@ div#basic-navbar-nav a {
   border: 1px solid rgb(67 72 0 / 23%);
   border-radius: 30px;
   background: #fff;
-  padding: 15px 25px !important;
+  padding: 10px 20px !important;
 }
 .logged_user h5 {
   margin: 0;
@@ -324,7 +324,7 @@ div#basic-navbar-nav a {
 } */
 .stats-row span {
   color: rgb(67 72 0 / 70%);
-  font-size: 18px;
+  font-size: 16px;
 }
 .stats-row h4 {
   font-size: 40px;
