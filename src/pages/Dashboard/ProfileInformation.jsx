@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import AnimatedPage from "../../components/AnimatedPage";
+import OtpInput from "react-otp-input";
 import Back from "../../assets/images/back.png";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
@@ -11,11 +12,15 @@ import PhoneInput from "react-phone-number-input";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Modal from "react-bootstrap/Modal";
 import UpdatePopup from "../../assets/images/profilepopup.png";
+import OtpImage from "../../assets/images/Otp-image.png";
 
 const ProfileInformation = () => {
   const [value, setValue] = useState();
   const [showPassword, setShowPassword] = useState(false);
   const [modalShow, setModalShow] = React.useState(false);
+  const [modalShowVerify, setModalShowVerify] = React.useState(false);
+
+  const [otp, setOtp] = useState("");
 
   const [visibility, setVisibility] = useState({
     current: false,
@@ -291,11 +296,67 @@ const ProfileInformation = () => {
                 </p>
               </Modal.Body>
               <Modal.Footer className="PopupButton">
-                <a href="dashboard">
-                  <Button onClick={() => setModalShow(false)}>
-                    Go Back to Dashboard
-                  </Button>
+                <Button
+                  onClick={() => {
+                    setModalShow(false);
+                    setTimeout(() => setModalShowVerify(true), 300); // Adjust delay if needed
+                  }}
+                >
+                  Update
+                </Button>
+              </Modal.Footer>
+            </Modal>
+
+            <Modal
+              size="md"
+              aria-labelledby="contained-modal-title-vcenter"
+              centered
+              show={modalShowVerify}
+              onHide={() => setModalShowVerify(false)}
+              className="profileupdate"
+            >
+              <Modal.Header closeButton></Modal.Header>
+              <Modal.Body>
+                <h4>Verify your account by entering the code</h4>
+                <p className="m-4">
+                  <img src={OtpImage} alt="image" />
+                </p>
+                <OtpInput
+                  value={otp}
+                  inputStyle="inputBoxStyle"
+                  onChange={setOtp}
+                  numInputs={6}
+                  renderSeparator={<span>-</span>}
+                  renderInput={(props) => <input {...props} />}
+                />
+                <a href="#" className="resendOTP">
+                  Resend OTP
                 </a>
+              </Modal.Body>
+
+              <Modal.Footer className="d-flex justify-content-center align-items-center">
+                <Row className="mb-3">
+                  <Col>
+                    <Button
+                      variant="light"
+                      className="cancel-btn float-start"
+                      onClick={() => setModalShowVerify(false)}
+                    >
+                      Cancel
+                    </Button>
+                  </Col>
+                  <Col>
+                    <a href="dashboard">
+                      <Button
+                        onClick={() => setModalShowVerify(false)}
+                        variant="primary"
+                        className="submit-btn float-end"
+                      >
+                        Continue
+                      </Button>
+                    </a>
+                  </Col>
+                </Row>
               </Modal.Footer>
             </Modal>
           </div>

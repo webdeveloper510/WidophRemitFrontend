@@ -3,6 +3,7 @@ import AnimatedPage from "../../components/AnimatedPage";
 import DataTable from "react-data-table-component";
 import { BsThreeDots } from "react-icons/bs";
 import Dropdown from "react-bootstrap/Dropdown";
+import RecentReceiver from "../../assets/images/icons1.png";
 
 const handleSendAgain = (row) => {
   console.log("Send Again clicked for:", row.name);
@@ -156,7 +157,7 @@ const Receivers = () => {
         <div className="page-title">
           <div className="d-flex justify-content-between">
             <div className="d-flex align-items-center">
-              <h1>Receivers List</h1>
+              <img src={RecentReceiver} alt="img" /> <h1>Receivers List</h1>
             </div>
             {subHeaderComponent}
             {/* <a href="add-receiver">

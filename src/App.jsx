@@ -14,10 +14,18 @@ import ConfirmTransfer from "./pages/SendMoney/ConfirmTransfer";
 import PaymentProcessed from "./pages/SendMoney/PaymentProcessed";
 import Receivers from "./pages/Receivers/Receivers";
 import AddReceiver from "./pages/Receivers/AddReceiver";
+import LoginLayout from "./components/LoginLayout";
+import Login from "./components/Login";
+import SignUp from "./components/Signup";
 
 function App() {
   return (
     <Routes>
+      <Route element={<LoginLayout />}>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+      </Route>
+
       <Route path="/" element={<Layout />}>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="send-money" element={<SendMoney />} />

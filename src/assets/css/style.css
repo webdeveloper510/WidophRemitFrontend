@@ -113,13 +113,34 @@ ul.nav li {
     rgb(255 255 255 / 10%) 0%,
     rgb(30 150 221 / 10%) 100%
   );
+  position: relative;
 }
+
+ul.nav li.rounded:before {
+  position: absolute;
+  content: url(/src/assets/images/top-curve.png);
+  right: 0px;
+  top: -29px;
+}
+ul.nav li.rounded:after {
+  position: absolute;
+  content: url("../../assets/images/bottom-curve.png");
+  right: 0px;
+  bottom: -36px;
+}
+
+.collapse-sidebar ul.nav li.rounded:after,
+.collapse-sidebar ul.nav li.rounded:before {
+  display: none;
+}
+
 li.rounded {
   border-top-left-radius: 40px !important;
   border-bottom-left-radius: 40px !important;
+  position: relative;
 }
 .sidebar {
-  transition: all 0.2s ease-in-out;
+  transition: all 0.1s ease-in-out;
   width: 255px;
   background: #1e96dd;
   border-radius: 30px;
@@ -127,7 +148,15 @@ li.rounded {
   position: relative;
   padding-left: 0px !important;
 }
+ul.nav.flex-column li a span,
+ul.nav.flex-column li button span {
+  display: block;
+}
 
+.collapse-sidebar ul.nav.flex-column li a span,
+.collapse-sidebar ul.nav.flex-column li button span {
+  display: none;
+}
 .mr-3 {
   margin-right: 20px;
 }
@@ -146,15 +175,7 @@ li.rounded {
 .collapse-sidebar ul.nav.flex-column {
   padding-right: 1rem !important;
 }
-ul.nav.flex-column li a span,
-ul.nav.flex-column li button span {
-  display: block;
-  /* transition: all 1s ease-in-out; */
-}
-.collapse-sidebar ul.nav.flex-column li a span,
-.collapse-sidebar ul.nav.flex-column li button span {
-  display: none;
-}
+
 .collapse-sidebar ul.nav.flex-column li {
   border-radius: 40px !important;
 }
@@ -172,13 +193,12 @@ ul.nav li.rounded a {
   color: #fff;
 }
 li.logout-row {
-  position: absolute;
+  position: absolute !important;
   bottom: 22px;
   width: 93%;
 }
 .logout-btn {
   width: 100%;
-  padding: 18px;
   color: rgb(255 255 255 / 60%) !important;
 }
 .logout-btn:hover {
@@ -302,7 +322,7 @@ div#basic-navbar-nav a {
 }
 
 .send-again-btn {
-  background: #eaf4ff;
+  /* background: #eaf4ff; */
   border-radius: 8px;
   padding: 6px 12px;
   display: inline-flex;
@@ -313,9 +333,9 @@ div#basic-navbar-nav a {
   transition: all 0.2s ease;
 }
 
-.send-again-btn:hover {
+/* .send-again-btn:hover {
   background-color: #dbeeff;
-}
+} */
 .receiver-card.card {
   border-radius: 30px;
 }
@@ -798,6 +818,122 @@ nav.sc-dTUlgT.jWqsSS.rdt_Pagination button {
   background-color: #cfda2f !important;
   fill: #434800;
 }
+
+/******************** footer css **************/
+
+footer.footer ul li a {
+  color: #434800;
+  line-height: 30px;
+  text-decoration: none;
+  font-size: 16px;
+}
+footer.footer {
+  color: #434800;
+}
+footer.footer ul li svg {
+  margin-right: 5px;
+}
+footer.footer ul li {
+  display: flex;
+  align-items: center;
+}
+
+footer.footer h6 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #191c1f;
+}
+.sitelinks a {
+  color: #434800;
+  line-height: 30px;
+  text-decoration: none;
+  font-size: 16px;
+}
+footer.footer button {
+  background: #434800;
+  border: none;
+}
+
+/************ login css *****************/
+.top-strip {
+  background-color: #cadb00;
+  font-size: 14px;
+}
+
+.logo-strip {
+  background-color: #fefdf7; /* Light background as in image */
+}
+
+.logo-img {
+  max-height: 45px;
+}
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-form {
+  background-color: #fff;
+  padding: 40px 30px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-form h2 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 12px 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.login-form button {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.login-form button:hover {
+  background-color: #0056b3;
+}
+
+/************ signup ************************/
+
+.login-form-wrapper {
+  background-color: #fefdf7;
+  font-family: "Segoe UI", sans-serif;
+  padding: 20px;
+}
+
+.form-title {
+  font-weight: bold;
+}
+
+.custom-signin-btn {
+  background-color: #cadb00;
+  border: none;
+  font-weight: bold;
+  padding: 10px 0;
+  font-size: 16px;
+}
+
+.custom-signin-btn:hover {
+  background-color: #b5c900;
+}
+
 /*************** responsive css ****************/
 
 @media screen and (max-width: 1500px) {
