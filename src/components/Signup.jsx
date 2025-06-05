@@ -1,91 +1,174 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  FloatingLabel,
+} from "react-bootstrap";
+import PhoneInput from "react-phone-number-input";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import SignupImage from "../assets/images/signup-image.png"; // Change path as needed
 
 const Signup = () => {
+  const [value, setValue] = useState();
+  const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [otp, setOtp] = useState("");
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    console.log("Logging in with", { email, password });
-    // Add actual login logic here (API call etc.)
+  const [visibility, setVisibility] = useState({
+    current: false,
+    confirm: false,
+  });
+
+  const toggleVisibility = (field) => {
+    setVisibility((prev) => ({
+      ...prev,
+      [field]: !prev[field],
+    }));
   };
 
   return (
-    <div className="signup-page">
-      <Container className="login-form-wrapper d-flex align-items-center justify-content-center min-vh-100">
-        <Row className="vh-100">
-          {/* Left Form Column */}
-          <Col
-            md={6}
-            className="d-flex align-items-center justify-content-center"
-          >
-            <div className="form-box w-100" style={{ maxWidth: "450px" }}>
-              <h2 className="form-title mb-3">
+    <Container className="login-form-wrapper  min-vh-100">
+      <Row className="vh-100">
+        {/* Left Form Column */}
+        <Col md={7} className="d-flex align-items-center justify-content-start">
+          <div className="login-form-wrapper w-100">
+            <div className="exchange-title">
+              Sign <br></br>Up
+              <span className="exchange_rate">
+                Where are you sending money from?
+              </span>
+            </div>
+            {/* <h2 className="form-title">
                 <span className="text-primary">Sign</span>
-                <span className="text-success">In</span>
-                <small className="text-muted ms-2">
-                  To send money securely.
-                </small>
-              </h2>
+                <span className="text-success">Up</span>
+                <span className="small text-muted">
+                  {" "}
+                  Where are you sending money from?
+                </span>
+              </h2> */}
+            <Form className="exchange-form">
+              <Row className="mb-3">
+                <FloatingLabel
+                  controlId="floatingSelect"
+                  as={Col}
+                  label="Location"
+                >
+                  <Form.Select aria-label="Floating label select example">
+                    <option value="1">AUD</option>
+                    <option value="2">USD</option>
+                  </Form.Select>
+                </FloatingLabel>
+              </Row>
 
-              <Form>
-                <Form.Group className="mb-3" controlId="formPhoneOrEmail">
-                  <Form.Label>Email/Mobile Number*</Form.Label>
-                  <div className="d-flex">
-                    <Form.Select className="me-2" style={{ maxWidth: "100px" }}>
-                      <option>+61</option>
-                      <option>+91</option>
-                      <option>+1</option>
-                    </Form.Select>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter Email or Phone..."
-                    />
-                  </div>
-                </Form.Group>
+              <Row className="mb-3">
+                <FloatingLabel
+                  as={Col}
+                  controlId="floatingInput"
+                  label="Email/Mobile Number"
+                  className="mb-3 mobileinput"
+                >
+                  <PhoneInput
+                    international
+                    countryCallingCodeEditable={false}
+                    defaultCountry="AU"
+                    value={value}
+                    onChange={setValue}
+                  />
+                </FloatingLabel>
+                <FloatingLabel
+                  as={Col}
+                  controlId="floatingInput"
+                  label="Email"
+                  className="mb-3"
+                >
+                  <Form.Control type="email" placeholder="Enter email" />
+                </FloatingLabel>
+              </Row>
 
-                <Form.Group className="mb-3" controlId="formPassword">
-                  <Form.Label>Your Password*</Form.Label>
-                  <Form.Control type="password" placeholder="Enter Password" />
-                </Form.Group>
-
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <Form.Check label="Remember me" />
-                  <a
-                    href="/forgot-password"
-                    className="text-success fw-semibold small"
+              <Row className="mb-3">
+                {/* Current Password */}
+                <FloatingLabel
+                  as={Col}
+                  controlId="floatingCurrentPassword"
+                  label="Current Password"
+                  className="mb-3 position-relative"
+                >
+                  <Form.Control
+                    placeholder="Current Password"
+                    className="passowrdinput"
+                    type={visibility.current ? "text" : "password"}
+                  />
+                  <span
+                    onClick={() => toggleVisibility("current")}
+                    className="password-eye"
                   >
-                    Forgot password?
-                  </a>
-                </div>
+                    {visibility.current ? <FaEyeSlash /> : <FaEye />}
+                  </span>
+                </FloatingLabel>
 
-                <Button type="submit" className="w-100 custom-signin-btn mb-3">
-                  SIGN IN
-                </Button>
+                {/* Confirm Password */}
+                <FloatingLabel
+                  as={Col}
+                  controlId="floatingConfirmPassword"
+                  label="Confirm Password"
+                  className="position-relative"
+                >
+                  <Form.Control
+                    placeholder="Confirm Password"
+                    className="passowrdinput"
+                    type={visibility.confirm ? "text" : "password"}
+                  />
+                  <span
+                    onClick={() => toggleVisibility("confirm")}
+                    className="password-eye"
+                  >
+                    {visibility.confirm ? <FaEyeSlash /> : <FaEye />}
+                  </span>
+                </FloatingLabel>
+              </Row>
 
-                <div className="text-center">
-                  Don’t have any account?{" "}
-                  <a href="/signup" className="text-success fw-bold">
-                    Sign Up
-                  </a>
-                </div>
-              </Form>
-            </div>
-          </Col>
-          {/* Right Image Column */}
-          <Col
-            md={6}
-            className="d-none d-md-flex align-items-center justify-content-center bg-light"
-          >
-            <div className="image-wrapper">
-              <img src={SignupImage} alt="Login Art" className="clipped-img" />
-            </div>
-          </Col>
-        </Row>
-      </Container>
-    </div>
+              <Form.Group className="mb-3 d-flex align-items-center">
+                <Form.Check />
+                <span className="ms-2 small">
+                  Reference site about Lorem Ipsum, giving info on its origins.
+                </span>
+              </Form.Group>
+
+              <Button
+                variant="success"
+                className="custom-signin-btn mb-3 btn btn-primary"
+              >
+                SIGN UP
+              </Button>
+
+              <div className="mt-3">
+                Already have an account?{" "}
+                <a
+                  href="/login"
+                  className="text-success fw-bold forgotpassword-text"
+                >
+                  Sign in
+                </a>
+              </div>
+            </Form>
+          </div>
+        </Col>
+
+        {/* Right Image Column */}
+        <Col
+          md={5}
+          className="d-none d-md-flex align-items-center justify-content-end bg-light"
+        >
+          <div className="image-wrapper">
+            <img src={SignupImage} alt="Login Art" className="clipped-img" />
+          </div>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
