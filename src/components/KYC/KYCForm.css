@@ -1,0 +1,95 @@
+.nav-pills .nav-link {
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background-color: #f7f7f7;
+  color: #444;
+}
+
+.nav-pills .nav-link.active {
+  background-color: #b3d42a;
+  color: #fff;
+}
+.sidebar-steps {
+  background: rgb(208 219 52 / 50%);
+  border-radius: 20px;
+  height: 70vh;
+  padding-right: 0 !important;
+}
+.tab-content {
+  height: 70vh;
+}
+.stepper {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  margin-top: 2rem;
+  position: relative;
+}
+
+.step-wrapper {
+  position: relative;
+  padding-left: 40px;
+}
+
+.step-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #bbb;
+  position: absolute;
+  left: 0;
+  top: 6px;
+  color: white;
+  font-size: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.step-dot.active {
+  background-color: #5a8e16;
+  border: 2px solid #5a8e16;
+}
+
+.step-dot.completed {
+  background-color: #5a8e16;
+}
+
+.step-line {
+  width: 2px;
+  height: 40px;
+  background-color: #bbb;
+  position: absolute;
+  left: 6px;
+  top: 20px;
+}
+
+.step-label {
+  font-size: 0.95rem;
+  color: #333;
+  padding: 0.7rem 1rem;
+  border-top-left-radius: 40px !important;
+  border-bottom-left-radius: 40px !important;
+  border-top-right-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+  background: transparent;
+  transition: all 0.3s ease;
+  background: linear-gradient(to right, #cfda2f 0%, #e8eda9 100%) !important;
+}
+.step-label.active {
+  background: linear-gradient(to right, #9cb417 0%, #e8eda9 100%) !important;
+  color: #fff;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-top-left-radius: 40px !important;
+  border-bottom-left-radius: 40px !important;
+  border-top-right-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+}
+strong.steps-number {
+  color: #434800;
+}
+.steps-name {
+  color: rgb(67 72 0 / 60%);
+  font-weight: 400 !important;
+}

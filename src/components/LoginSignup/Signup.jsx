@@ -9,7 +9,7 @@ import {
 } from "react-bootstrap";
 import PhoneInput from "react-phone-number-input";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import SignupImage from "../assets/images/signup-image.png"; // Change path as needed
+import SignupImage from "../../assets/images/signup-image.png"; // Change path as needed
 
 const Signup = () => {
   const [value, setValue] = useState();

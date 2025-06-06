@@ -856,13 +856,74 @@ footer.footer button {
   background: #434800;
   border: none;
 }
+.social-icons a {
+  color: #434800;
+  border: 1px solid rgb(67 72 0 / 10%);
+  border-radius: 100px;
+  width: 35px;
+  height: 35px;
+  text-align: center;
+  line-height: 26px;
+}
 
+.social-icons a:hover {
+  background: #434800;
+  color: #fff;
+}
 /************ login css *****************/
+.login {
+  background-color: #2499db;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-radius: 10px 10px 10px 10px !important;
+  padding: 15px 25px;
+  color: #fff;
+  text-decoration: none;
+}
+.signup {
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-radius: 10px 10px 10px 10px !important;
+  padding: 15px 25px;
+  color: #fff;
+  text-decoration: none;
+}
+.top-navbar .dropdown-item {
+  width: 220px;
+  white-space: pre-wrap;
+}
+.top-navbar .nav-link:hover,
+.top-navbar .nav-link:focus {
+  color: #212529;
+}
+.top-navbar .dropdown-menu.show a {
+  border-bottom: 1px solid #c4c4c4 !important;
+  padding: 10px;
+}
+.top-navbar .dropdown-menu.show a:last-child {
+  border-bottom: none !important;
+}
+.login-header a {
+  color: #434800;
+  text-decoration: none;
+  margin-left: 10px;
+}
+.login-header svg {
+  color: #434800;
+}
+.login-header a:hover svg {
+  color: #fff !important;
+}
 .top-strip {
   background-color: #cadb00;
   font-size: 14px;
 }
-
+.login-header span svg,
+.login-header span svg a {
+  font-size: 16px;
+}
 .logo-strip {
   background-color: #fefdf7; /* Light background as in image */
 }

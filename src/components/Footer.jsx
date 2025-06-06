@@ -30,11 +30,19 @@ const Footer = () => {
               In publishing and graphic design, Lorem Ipsum is a placeholder
               text commonly...
             </p>
-            <div className="d-flex gap-3">
-              <FaFacebookF />
-              <FaXTwitter />
-              <FaInstagram />
-              <FaRss />
+            <div className="d-flex gap-2 social-icons">
+              <a href="https://www.facebook.com/widophRemit">
+                <FaFacebookF />
+              </a>
+              <a href="https://x.com/WidophRemit">
+                <FaXTwitter />
+              </a>
+              <a href="https://www.instagram.com/widophremit/">
+                <FaInstagram />
+              </a>
+              <a href="https://widophremit.com/feed/">
+                <FaRss />
+              </a>
             </div>
           </Col>
 

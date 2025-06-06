@@ -14,9 +14,10 @@ import ConfirmTransfer from "./pages/SendMoney/ConfirmTransfer";
 import PaymentProcessed from "./pages/SendMoney/PaymentProcessed";
 import Receivers from "./pages/Receivers/Receivers";
 import AddReceiver from "./pages/Receivers/AddReceiver";
-import LoginLayout from "./components/LoginLayout";
-import Login from "./components/Login";
-import SignUp from "./components/Signup";
+import LoginLayout from "./components/LoginSignup/LoginLayout";
+import Login from "./components/LoginSignup/Login";
+import SignUp from "./components/LoginSignup/Signup";
+import KYCForm from "./components/KYC/KYCForm";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
       <Route element={<LoginLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/kyc" element={<KYCForm />} />
       </Route>
 
       <Route path="/" element={<Layout />}>

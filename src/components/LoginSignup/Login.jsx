@@ -6,7 +6,7 @@ import Row from "react-bootstrap/Row";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import LoginImage from "../assets/images/login-image.png"; // Change path as needed
+import LoginImage from "../../assets/images/login-image.png"; // Change path as needed
 
 const Login = () => {
   const [value, setValue] = useState();
