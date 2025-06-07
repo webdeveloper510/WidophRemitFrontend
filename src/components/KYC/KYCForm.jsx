@@ -1,10 +1,35 @@
-import React, { useState } from "react";
-import { Container, Row, Col, Nav, Tab, Form, Button } from "react-bootstrap";
+import React, { useRef, useState } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Nav,
+  Tab,
+  Form,
+  Button,
+  FloatingLabel,
+} from "react-bootstrap";
+import PhoneInput from "react-phone-number-input";
+
 import "./KYCForm.css";
 
 const KYCForm = () => {
   const [activeKey, setActiveKey] = useState("step1");
+  const [value, setValue] = useState();
 
+  const fileInputRef = useRef(null);
+
+  const handleClick = () => {
+    fileInputRef.current.click(); // opens file dialog
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      console.log("Selected file:", file.name);
+      // Upload or process file here
+    }
+  };
   const goToNext = () => {
     if (activeKey === "step1") setActiveKey("step2");
     if (activeKey === "step2") setActiveKey("step3");
@@ -38,7 +63,7 @@ const KYCForm = () => {
                           isCompleted ? "completed" : ""
                         } ${isActive ? "active" : ""}`}
                       >
-                        {isCompleted ? "✔" : ""}
+                        {isCompleted ? "●" : ""}
                       </div>
                       {num !== 3 && <div className="step-line" />}
                     </div>
@@ -65,7 +90,7 @@ const KYCForm = () => {
 
           {/* Right side content */}
           <Col md={9} className="px-5">
-            <Tab.Content>
+            <Tab.Content className="kyc-content-form">
               {/* Step 1 */}
               <Tab.Pane eventKey="step1">
                 <h2 className="mb-1">Please complete KYC</h2>
@@ -73,93 +98,230 @@ const KYCForm = () => {
                   You are only three steps away from completing your KYC
                 </p>
 
-                <Form>
-                  <h5>Personal Info</h5>
-                  <Row className="mb-3">
-                    <Col>
-                      <Form.Control placeholder="First Name*" />
-                    </Col>
-                    <Col>
-                      <Form.Control placeholder="Middle Name*" />
-                    </Col>
-                    <Col>
-                      <Form.Control placeholder="Last Name*" />
-                    </Col>
-                  </Row>
-                  <Row className="mb-3">
-                    <Col>
-                      <Form.Control placeholder="Email*" />
-                    </Col>
-                    <Col>
-                      <Form.Control placeholder="Phone*" />
-                    </Col>
-                  </Row>
-                  <Row className="mb-3">
-                    <Col>
-                      <Form.Control type="date" placeholder="DOB*" />
-                    </Col>
-                    <Col>
-                      <Form.Select>
-                        <option>Country of Birth*</option>
-                      </Form.Select>
-                    </Col>
-                    <Col>
-                      <Form.Control placeholder="Occupation*" />
-                    </Col>
-                  </Row>
+                <div className="page-content-section mt-3">
+                  <div className="row">
+                    <div className="col-md-12">
+                      <Form className="profile-form">
+                        <Row className="mb-3 mt-3">
+                          <h3>Personal Details</h3>
+                          <FloatingLabel
+                            as={Col}
+                            controlId="floatingInput"
+                            label="First Name"
+                            className="mb-3"
+                          >
+                            <Form.Control
+                              type="text"
+                              placeholder="First Name"
+                            />
+                          </FloatingLabel>
+                          <FloatingLabel
+                            as={Col}
+                            controlId="floatingInput"
+                            label="Middle Name"
+                            className="mb-3"
+                          >
+                            <Form.Control
+                              type="text"
+                              placeholder="Middle Name"
+                            />
+                          </FloatingLabel>
+                          <FloatingLabel
+                            as={Col}
+                            controlId="floatingInput"
+                            label="Last Name"
+                            className="mb-3"
+                          >
+                            <Form.Control type="text" placeholder="Last Name" />
+                          </FloatingLabel>
+                        </Row>
+                        <Row className="mb-3">
+                          <FloatingLabel
+                            as={Col}
+                            controlId="floatingInput"
+                            label="Email"
+                            className="mb-3"
+                          >
+                            <Form.Control
+                              type="email"
+                              placeholder="Enter email"
+                            />
+                          </FloatingLabel>
 
-                  <h5 className="mt-4">Address Info</h5>
-                  <Row className="mb-3">
-                    <Col md={4}>
-                      <Form.Select>
-                        <option>Country*</option>
-                      </Form.Select>
-                    </Col>
-                    <Col md={8}>
-                      <Form.Control placeholder="Street Address*" />
-                    </Col>
-                  </Row>
-                  <Row className="mb-4">
-                    <Col>
-                      <Form.Control placeholder="City*" />
-                    </Col>
-                    <Col>
-                      <Form.Control placeholder="Postal Code*" />
-                    </Col>
-                    <Col>
-                      <Form.Control placeholder="State*" />
-                    </Col>
-                  </Row>
+                          <FloatingLabel
+                            as={Col}
+                            controlId="floatingInput"
+                            label="Mobile"
+                            className="mb-3 mobileinput"
+                          >
+                            <PhoneInput
+                              international
+                              countryCallingCodeEditable={false}
+                              defaultCountry="AU"
+                              value={value}
+                              onChange={setValue}
+                            />
+                          </FloatingLabel>
+                        </Row>
+                        <Row className="mb-3">
+                          <FloatingLabel
+                            as={Col}
+                            controlId="floatingInput"
+                            label="Date of Birth"
+                            className="mb-3"
+                          >
+                            <Form.Control
+                              type="date"
+                              placeholder="Select Date"
+                            />
+                          </FloatingLabel>
 
-                  <div className="d-flex justify-content-between">
-                    <Button variant="success" onClick={goToNext}>
-                      NEXT STEP
-                    </Button>
-                    <Button
-                      variant="link"
-                      onClick={() => setActiveKey("step3")}
-                    >
-                      SKIP
-                    </Button>
+                          <FloatingLabel
+                            as={Col}
+                            controlId="floatingInput"
+                            label="Country of Birth"
+                            className="mb-3"
+                          >
+                            <Form.Control
+                              type="text"
+                              placeholder="Customer ID"
+                            />
+                          </FloatingLabel>
+
+                          <FloatingLabel
+                            as={Col}
+                            controlId="floatingInput"
+                            label="Occupation"
+                            className="mb-3"
+                          >
+                            <Form.Control
+                              type="text"
+                              placeholder="Occupation"
+                            />
+                          </FloatingLabel>
+                        </Row>
+
+                        <Row className="mb-3 mt-3">
+                          <h3>Your Address</h3>
+                          <FloatingLabel
+                            as={Col}
+                            controlId="floatingInput"
+                            label="Country"
+                            className="mb-3"
+                          >
+                            <Form.Control type="text" placeholder="Country" />
+                          </FloatingLabel>
+                          <FloatingLabel
+                            as={Col}
+                            controlId="floatingTextarea2"
+                            label="Address"
+                          >
+                            <Form.Control
+                              as="textarea"
+                              placeholder="Street Address"
+                              style={{ height: "50px" }}
+                            />
+                          </FloatingLabel>
+                        </Row>
+
+                        <Row className="mb-3">
+                          <FloatingLabel
+                            as={Col}
+                            controlId="floatingInput"
+                            label="City"
+                            className="mb-3"
+                          >
+                            <Form.Control type="text" placeholder="City" />
+                          </FloatingLabel>
+                          <FloatingLabel
+                            as={Col}
+                            controlId="floatingInput"
+                            label="Zip/Postal Code*"
+                            className="mb-3"
+                          >
+                            <Form.Control
+                              type="number"
+                              placeholder="Zip/Postal Code*"
+                            />
+                          </FloatingLabel>
+
+                          <FloatingLabel
+                            as={Col}
+                            controlId="floatingInput"
+                            label="State"
+                            className="mb-3"
+                          >
+                            <Form.Control type="text" placeholder="State" />
+                          </FloatingLabel>
+                        </Row>
+
+                        <Row className="mb-3">
+                          <Col>
+                            <Button
+                              variant="success"
+                              className="nextbtn"
+                              onClick={goToNext}
+                            >
+                              NEXT STEP
+                            </Button>
+                            <Button
+                              variant="link"
+                              className="skipbtn"
+                              onClick={() => setActiveKey("step3")}
+                            >
+                              SKIP
+                            </Button>
+                          </Col>
+                        </Row>
+                      </Form>
+                    </div>
                   </div>
-                </Form>
+                </div>
               </Tab.Pane>
 
               {/* Step 2 */}
               <Tab.Pane eventKey="step2">
-                <h2 className="mb-3">Verify Your ID</h2>
+                <h2 className="mb-3">Please complete KYC</h2>
+                <p>You are only three steps away from completing your KYC</p>
                 <Form>
-                  <Form.Group className="mb-4">
-                    <Form.Label>Upload Passport / ID Card / License</Form.Label>
-                    <Form.Control type="file" />
-                  </Form.Group>
+                  <div className="verify-container">
+                    <button
+                      className="verify-btn"
+                      type="button"
+                      onClick={handleClick}
+                    >
+                      VERIFY YOUR ID
+                    </button>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      style={{ display: "none" }}
+                      onChange={handleFileChange}
+                      accept="image/*,.pdf"
+                    />
+                    <p className="verify-description">
+                      <strong>Veriff</strong> is an identity verification
+                      provider that helps companies connect with customers.
+                    </p>
+                  </div>
 
-                  <div className="d-flex justify-content-between">
+                  <div className="d-flex gap-2">
                     <Button variant="secondary" onClick={goToPrevious}>
                       Back
                     </Button>
-                    <Button variant="success" onClick={goToNext}>
+                    <Button
+                      variant="success"
+                      className="nextbtn"
+                      onClick={goToNext}
+                    >
                       NEXT STEP
+                    </Button>
+                    <Button
+                      variant="link"
+                      className="skipbtn"
+                      onClick={() => setActiveKey("step3")}
+                    >
+                      SKIP
                     </Button>
                   </div>
                 </Form>

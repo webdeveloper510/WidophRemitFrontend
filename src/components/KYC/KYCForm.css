@@ -12,11 +12,11 @@
 .sidebar-steps {
   background: rgb(208 219 52 / 50%);
   border-radius: 20px;
-  height: 70vh;
+  height: 90vh;
   padding-right: 0 !important;
 }
-.tab-content {
-  height: 70vh;
+.kyc-content-form {
+  height: 90vh;
 }
 .stepper {
   display: flex;
@@ -35,35 +35,31 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background-color: #bbb;
+  background-color: transparent;
   position: absolute;
-  left: 0;
-  top: 6px;
-  color: white;
-  font-size: 10px;
+  left: 7px;
+  top: 20px;
+  color: #9cb417;
+  font-size: 20px;
   display: flex;
   justify-content: center;
+  border: 2px solid #7e841f;
   align-items: center;
-}
-
-.step-dot.active {
-  background-color: #5a8e16;
-  border: 2px solid #5a8e16;
+  padding: 8px;
 }
 
 .step-dot.completed {
-  background-color: #5a8e16;
+  border: 2px solid #9cb417;
 }
 
 .step-line {
   width: 2px;
-  height: 40px;
-  background-color: #bbb;
+  height: 100%;
+  background-color: #7e841f;
   position: absolute;
-  left: 6px;
-  top: 20px;
+  left: 16px;
+  top: 42px;
 }
-
 .step-label {
   font-size: 0.95rem;
   color: #333;
@@ -92,4 +88,64 @@ strong.steps-number {
 .steps-name {
   color: rgb(67 72 0 / 60%);
   font-weight: 400 !important;
+}
+.kyc-content-form h2 {
+  color: #434800;
+  font-weight: 900;
+}
+.kyc-content-form p {
+  color: #7c804d;
+}
+form.profile-form h3 {
+  color: #434800;
+}
+button.skipbtn {
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-radius: 10px 10px 10px 10px !important;
+  padding: 20px 25px;
+  color: #434800;
+  text-decoration: none;
+}
+button.nextbtn {
+  background-color: #cadb00;
+  border: none;
+  font-weight: bold;
+  padding: 20px 25px;
+  font-size: 16px;
+  color: #434800;
+}
+form.profile-form h3 {
+  font-size: 20px;
+  font-weight: 600;
+}
+.verify-container {
+  text-align: left;
+  padding: 40px 0;
+  font-family: Arial, sans-serif;
+}
+
+.verify-btn {
+  background-color: #28a5e2;
+  color: white;
+  border: none;
+  padding: 16px 32px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background-color 0.3s ease;
+  width: 45%;
+}
+
+.verify-btn:hover {
+  background-color: #1b8ac5;
+}
+
+.verify-description {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #7d7c7c;
 }
