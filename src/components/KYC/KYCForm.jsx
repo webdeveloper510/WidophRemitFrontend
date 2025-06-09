@@ -11,23 +11,26 @@ import {
 } from "react-bootstrap";
 import PhoneInput from "react-phone-number-input";
 
+import KYCImage from "../../assets/images/kyc-image.png";
+
 import "./KYCForm.css";
 
 const KYCForm = () => {
   const [activeKey, setActiveKey] = useState("step1");
   const [value, setValue] = useState();
-
+  const [selectedFileName, setSelectedFileName] = useState("");
   const fileInputRef = useRef(null);
 
   const handleClick = () => {
-    fileInputRef.current.click(); // opens file dialog
+    fileInputRef.current.click();
   };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
+      setSelectedFileName(file.name);
       console.log("Selected file:", file.name);
-      // Upload or process file here
+      // Handle the file as needed
     }
   };
   const goToNext = () => {
@@ -88,7 +91,6 @@ const KYCForm = () => {
             </Nav>
           </Col>
 
-          {/* Right side content */}
           <Col md={9} className="px-5">
             <Tab.Content className="kyc-content-form">
               {/* Step 1 */}
@@ -281,9 +283,14 @@ const KYCForm = () => {
 
               {/* Step 2 */}
               <Tab.Pane eventKey="step2">
-                <h2 className="mb-3">Please complete KYC</h2>
-                <p>You are only three steps away from completing your KYC</p>
-                <Form>
+                <div className="kyc-complete-wrapper">
+                  <div>
+                    <h2 className="mb-3">Please complete KYC</h2>
+                    <p>
+                      You are only three steps away from completing your KYC
+                    </p>
+                  </div>
+
                   <div className="verify-container">
                     <button
                       className="verify-btn"
@@ -292,6 +299,7 @@ const KYCForm = () => {
                     >
                       VERIFY YOUR ID
                     </button>
+
                     <input
                       type="file"
                       ref={fileInputRef}
@@ -299,15 +307,26 @@ const KYCForm = () => {
                       onChange={handleFileChange}
                       accept="image/*,.pdf"
                     />
+
+                    {selectedFileName && (
+                      <p className="selected-file-name mt-3">
+                        <b>Selected file: </b>
+                        {selectedFileName}
+                      </p>
+                    )}
                     <p className="verify-description">
                       <strong>Veriff</strong> is an identity verification
                       provider that helps companies connect with customers.
                     </p>
                   </div>
 
-                  <div className="d-flex gap-2">
-                    <Button variant="secondary" onClick={goToPrevious}>
-                      Back
+                  <div className="d-flex gap-2 justify-content-start">
+                    <Button
+                      variant="secondary"
+                      className="prevbtn"
+                      onClick={goToPrevious}
+                    >
+                      Previous
                     </Button>
                     <Button
                       variant="success"
@@ -324,17 +343,33 @@ const KYCForm = () => {
                       SKIP
                     </Button>
                   </div>
-                </Form>
+                </div>
               </Tab.Pane>
 
               {/* Step 3 */}
               <Tab.Pane eventKey="step3">
-                <div className="text-center">
-                  <h2 className="text-success">✅ KYC Completed!</h2>
-                  <p>Your KYC data is under review.</p>
-                  <Button variant="primary" className="mt-3">
-                    Go to Dashboard
-                  </Button>
+                <div className="kyc-complete-wrapper">
+                  <div className="kyc-complete-content">
+                    <h2>KYC Completed!</h2>
+                    <p>Request has been submitted. It may take some time.</p>
+                  </div>
+
+                  <div>
+                    <img
+                      src={KYCImage}
+                      alt="KYC success"
+                      className="kyc-image"
+                    />
+                  </div>
+
+                  <div className="kyc-complete-footer">
+                    <Button variant="success" className="nextbtn">
+                      Go to Dashboard
+                    </Button>
+                    <p className="redirect-msg">
+                      You will be redirected in <span>10 Seconds</span>
+                    </p>
+                  </div>
                 </div>
               </Tab.Pane>
             </Tab.Content>

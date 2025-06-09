@@ -108,6 +108,16 @@ button.skipbtn {
   color: #434800;
   text-decoration: none;
 }
+button.skipbtn:hover {
+  color: #434800;
+}
+button.prevbtn {
+  background: transparent;
+  border: 1px solid rgb(67 72 0 / 23%);
+  color: #cfda2f !important;
+  text-transform: uppercase;
+  padding: 20px 25px;
+}
 button.nextbtn {
   background-color: #cadb00;
   border: none;
@@ -121,9 +131,7 @@ form.profile-form h3 {
   font-weight: 600;
 }
 .verify-container {
-  text-align: left;
   padding: 40px 0;
-  font-family: Arial, sans-serif;
 }
 
 .verify-btn {
@@ -148,4 +156,90 @@ form.profile-form h3 {
   margin-top: 20px;
   font-size: 14px;
   color: #7d7c7c;
+}
+
+.kyc-wrapper {
+  min-height: 100vh;
+  display: flex;
+}
+
+.kyc-inner {
+  width: 100%;
+}
+
+.kyc-inner h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #3c3c00;
+}
+
+.kyc-inner p {
+  font-size: 1rem;
+  color: #4d4d2f;
+  margin-bottom: 2rem;
+}
+
+.verify-container {
+  margin-bottom: 2rem;
+}
+
+.verify-btn {
+  background-color: #1798e3;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.verify-description {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: #666666;
+}
+
+.kyc-complete-wrapper {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.kyc-complete-content h2 {
+  font-size: 2rem;
+  color: #2d2d00;
+  margin-bottom: 0.5rem;
+}
+
+.kyc-complete-content p {
+  color: #666600;
+  margin-bottom: 2rem;
+}
+
+.kyc-image {
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.kyc-complete-footer {
+  display: flex;
+  align-items: center;
+}
+
+.redirect-msg {
+  margin: 0;
+  margin-left: 10px;
+  color: #434800;
+}
+.redirect-msg span {
+  font-weight: bold;
+  color: #9cb417;
+}
+p.selected-file-name {
+  color: #434800;
 }
