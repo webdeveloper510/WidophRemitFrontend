@@ -981,7 +981,9 @@ footer.footer button {
 .form-box {
   padding-right: 70px;
 }
-
+li.nav-item.mb-2.bg-light.text-dark.rounded {
+  background: #fff;
+}
 /************ signup ************************/
 
 .login-form-wrapper {

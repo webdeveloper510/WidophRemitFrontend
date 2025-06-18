@@ -14,6 +14,7 @@ import ConfirmTransfer from "./pages/SendMoney/ConfirmTransfer";
 import PaymentProcessed from "./pages/SendMoney/PaymentProcessed";
 import Receivers from "./pages/Receivers/Receivers";
 import AddReceiver from "./pages/Receivers/AddReceiver";
+import MonoovaPaymentGateway from "./pages/PaymentGateway/MonoovaPaymentGateway";
 import LoginLayout from "./components/LoginSignup/LoginLayout";
 import Login from "./components/LoginSignup/Login";
 import SignUp from "./components/LoginSignup/Signup";
@@ -43,6 +44,7 @@ function App() {
         <Route path="confirm-transfer" element={<ConfirmTransfer />} />
         <Route path="payment-processed" element={<PaymentProcessed />} />
         <Route path="add-receiver" element={<AddReceiver />} />
+        <Route path="monoova" element={<MonoovaPaymentGateway />} />
         {/* Redirect / to /dashboard */}
         <Route index element={<Navigate to="dashboard" replace />} />
       </Route>

@@ -15,6 +15,7 @@ const menuItems = [
   { path: "/payment-info", name: "Payment Info", icon: <TbCreditCard /> },
   { path: "/transfers-list", name: "Transfers", icon: <TbExchange /> },
   { path: "/receivers", name: "Receivers", icon: <LuUsers /> },
+  { path: "/monoova", name: "Monoova", icon: <TbCreditCard /> },
 ];
 
 const Sidebar = ({ collapsed }) => {
