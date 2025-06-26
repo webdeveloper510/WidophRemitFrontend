@@ -20,7 +20,12 @@ const menuItems = [
 
 const Sidebar = ({ collapsed }) => {
   const location = useLocation();
-  const navigate = useNavigate()
+  const handleLogout = () => {
+
+    sessionStorage.removeItem("token");
+    navigate("/login");
+  };
+
   return (
     <div
       className={`p-3 ${collapsed ? "d-none d-md-block collapse-sidebar" : "col-2 col-md-3"
@@ -56,6 +61,7 @@ const Sidebar = ({ collapsed }) => {
         <li className="mt-auto logout-row">
           <a
             className="nav-link  d-flex align-items-center gap-2"
+            onClick={handleLogout} // Call handleLogout on click
           >
             <button type="button" className="logout-btn nav-link  d-flex align-items-center" onClick={() => {
               sessionStorage.clear();
