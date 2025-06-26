@@ -14,6 +14,8 @@ import {
   sendEmail,
   registerOtpResend,
   verifyEmail,
+  updateProfile,
+  resendOtp
 } from "../../services/Api";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -26,7 +28,7 @@ const OtpVerification = () => {
   const location = useLocation();
   const from = location.state?.from || "signup";
 
-  useEffect(() => {
+ useEffect(() => {
     if (from === "signup") {
       const storedData = sessionStorage.getItem("signupData");
       if (storedData) {
@@ -45,6 +47,14 @@ const OtpVerification = () => {
       } else {
         toast.error("Missing login data. Please login again.");
         navigate("/login");
+      }
+    } else if (from === "profile") {
+      const profileOtpData = location.state?.otpData;
+      if (profileOtpData) {
+        setUserData(profileOtpData);
+      } else {
+        toast.error("Missing profile data. Please try again.");
+        navigate("/profile");
       }
     } else {
       toast.error("Invalid access. Please start again.");
@@ -69,13 +79,14 @@ const OtpVerification = () => {
         otp,
       };
 
-      let response;
+   let response;
       if (from === "login") {
         response = await verifyEmail(payload);
+      } else if (from === "profile") {
+        response = await resendOtp(payload);
       } else {
         response = await userRegisterVerify(payload);
       }
-
       console.log("OTP Verification response:", response);
 
       if (response && response.code === "200") {
@@ -87,6 +98,24 @@ const OtpVerification = () => {
           }
           return navigate("/dashboard");
         }
+        if (from === "profile") {
+  const updateData = JSON.parse(sessionStorage.getItem("pendingProfileUpdate"));
+
+  try {
+    const updateResponse = await updateProfile(updateData); // You must import this API
+    if (updateResponse?.code === "200") {
+      toast.success("Profile updated successfully!");
+    } else {
+      toast.warning(updateResponse?.message || "Failed to update profile.");
+    }
+  } catch (err) {
+    console.error("Profile update failed:", err);
+    toast.error("Error updating profile");
+  }
+
+  sessionStorage.removeItem("pendingProfileUpdate");
+  return navigate("/profile-information");
+}
         if (response?.access_token) {
           sessionStorage.setItem("token", response.access_token);
 
