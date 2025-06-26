@@ -1,211 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AnimatedPage from "../../components/AnimatedPage";
 import Card from "react-bootstrap/Card";
 import DataTable from "react-data-table-component";
 import { BsThreeDots } from "react-icons/bs";
 import Dropdown from "react-bootstrap/Dropdown";
 import TransferList from "../../assets/images/transfer-list-icon.png";
+import { transactionHistory } from "../../services/Api";
 
-const data = [
-  {
-    id: 1,
-    transferid: "ADPFT20250",
-    name: "William Spears",
-    amount: "180.00 AUD",
-    date: "26-March-2025",
-    reason: "Lorem Ipsum",
-    status: "pending",
-  },
-  {
-    id: 2,
-    transferid: "ADPFT20250",
-    name: "William Spears",
-    amount: "180.00 AUD",
-    date: "26-March-2025",
-    reason: "Lorem Ipsum",
-    status: "Complete",
-  },
-  {
-    id: 3,
-    transferid: "ADPFT20250",
-    name: "William Spears",
-    amount: "180.00 AUD",
-    date: "26-March-2025",
-    reason: "Lorem Ipsum",
-    status: "cancelled",
-  },
-  {
-    id: 4,
-    transferid: "ADPFT20250",
-    name: "William Spears",
-    amount: "180.00 AUD",
-    date: "26-March-2025",
-    reason: "Lorem Ipsum",
-    status: "Incomplete",
-  },
-  {
-    id: 5,
-    transferid: "ADPFT20250",
-    name: "Kathy",
-    amount: "180.00 AUD",
-    date: "26-March-2025",
-    reason: "Lorem Ipsum",
-    status: "Incomplete",
-  },
-  {
-    id: 6,
-    transferid: "ADPFT20250",
-    name: "William Spears",
-    amount: "180.00 AUD",
-    date: "26-March-2025",
-    reason: "Lorem Ipsum",
-    status: "Complete",
-  },
-  {
-    id: 7,
-    transferid: "ADPFT20250",
-    name: "Kat Spears",
-    amount: "180.00 AUD",
-    date: "26-March-2025",
-    reason: "Lorem Ipsum",
-    status: "Incomplete",
-  },
-  {
-    id: 8,
-    transferid: "ADPFT20250",
-    name: "John Spears",
-    amount: "180.00 AUD",
-    date: "26-March-2025",
-    reason: "Lorem Ipsum",
-    status: "pending",
-  },
-  {
-    id: 9,
-    transferid: "ADPFT20250",
-    name: "William Spears",
-    amount: "180.00 AUD",
-    date: "26-March-2025",
-    reason: "Lorem Ipsum",
-    status: "cancelled",
-  },
-  {
-    id: 10,
-    transferid: "ADPFT20250",
-    name: "Kat Spears",
-    amount: "180.00 AUD",
-    date: "26-March-2025",
-    reason: "Lorem Ipsum",
-    status: "Complete",
-  },
-  {
-    id: 11,
-    transferid: "ADPFT20250",
-    name: "Kat Spears",
-    amount: "180.00 AUD",
-    date: "26-March-2025",
-    reason: "Lorem Ipsum",
-    status: "cancelled",
-  },
-  {
-    id: 12,
-    transferid: "ADPFT20250",
-    name: "Kathy",
-    amount: "180.00 AUD",
-    date: "26-March-2025",
-    reason: "Lorem Ipsum",
-    status: "Complete",
-  },
-  {
-    id: 13,
-    transferid: "ADPFT20250",
-    name: "Kathy",
-    amount: "180.00 AUD",
-    date: "26-March-2025",
-    reason: "Lorem Ipsum",
-    status: "Complete",
-  },
-  {
-    id: 14,
-    transferid: "ADPFT20250",
-    name: "Kat Spears",
-    amount: "180.00 AUD",
-    date: "26-March-2025",
-    reason: "Lorem Ipsum",
-    status: "Incomplete",
-  },
-];
-
-const columns = [
-  {
-    name: "S. No.",
-    selector: (row, index) => index + 1,
-    width: "80px",
-    center: true,
-  },
-  {
-    name: "Transfer ID",
-    selector: (row) => row.transferid,
-    sortable: true,
-    cell: (row) => <strong>{row.transferid}</strong>,
-  },
-  {
-    name: "Receiver",
-    selector: (row) => row.name,
-    sortable: true,
-    cell: (row) => <strong>{row.name}</strong>,
-  },
-  {
-    name: "Amount Paid",
-    selector: (row) => row.amount,
-    sortable: true,
-    cell: (row) => <strong>{row.amount}</strong>,
-  },
-  {
-    name: "Date",
-    selector: (row) => row.date,
-    sortable: true,
-    cell: (row) => <strong>{row.date}</strong>,
-  },
-
-  {
-    name: "Transfer Reason",
-    selector: (row) => row.reason,
-    sortable: true,
-    cell: (row) => <strong>{row.reason}</strong>,
-  },
-  {
-    name: "Status",
-    selector: (row) => row.status,
-    sortable: true,
-    cell: (row) => (
-      <span className={`status-badge ${row.status.toLowerCase()}`}>
-        {row.status}
-      </span>
-    ),
-  },
-  {
-    name: "Action",
-    cell: (row) => (
-      <div className="send-again-btn" onClick={() => handleSendAgain(row)}>
-        <Dropdown>
-          <Dropdown.Toggle variant="success" id="dropdown-basic">
-            <BsThreeDots />
-          </Dropdown.Toggle>
-
-          <Dropdown.Menu>
-            <Dropdown.Item href="#">Download Receipt</Dropdown.Item>
-            <Dropdown.Item href="transfer-details">View Details</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      </div>
-    ),
-    ignoreRowClick: true,
-    allowOverflow: true,
-    button: true,
-    center: true,
-    width: "120px",
-  },
-];
 
 const customStyles = {
   headCells: {
@@ -233,19 +34,21 @@ const customStyles = {
 const TransfersList = () => {
   const [filterText, setFilterText] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
+  const [list, setList] = useState([]);
 
-  const filteredData = data.filter((item) => {
-    const matchesText = (item.name + item.status + item.date + item.amount)
+  const filteredData = list.filter((item) => {
+    const matchesText = (item.name + item.payment_status + item.date + item.amount)
       .toLowerCase()
       .includes(filterText.toLowerCase());
 
     const matchesStatus = selectedStatus
-      ? item.status.toLowerCase() === selectedStatus.toLowerCase()
+      ? item.payment_status.toLowerCase().includes(selectedStatus.toLowerCase())
       : true;
 
     return matchesText && matchesStatus;
   });
 
+  console.log("lis", list)
   const displayData = filteredData;
 
   const statusOptions = ["", "Cancelled", "Pending", "Incomplete", "Complete"];
@@ -272,6 +75,92 @@ const TransfersList = () => {
       </select>
     </div>
   );
+
+  const fetchList = async () => {
+    const response = await transactionHistory();
+
+    if (response.code === "200") {
+      setList(response.data.data)
+    }
+  }
+
+  useEffect(() => {
+    fetchList();
+  }, [])
+
+
+
+  const columns = [
+    {
+      name: "S. No.",
+      selector: (row, index) => index + 1,
+      width: "80px",
+      center: true,
+    },
+    {
+      name: "Transfer ID",
+      selector: (row) => row.transaction_id,
+      sortable: true,
+      cell: (row) => <strong>{row.transaction_id}</strong>,
+    },
+    {
+      name: "Receiver",
+      selector: (row) => row.recipient_name,
+      sortable: true,
+      cell: (row) => <strong>{row.recipient_name}</strong>,
+    },
+    {
+      name: "Amount Paid",
+      selector: (row) => row.amount,
+      sortable: true,
+      cell: (row) => <strong>{row.send_currency + " " + row.amount}</strong>,
+    },
+    {
+      name: "Date",
+      selector: (row) => row.date,
+      sortable: true,
+      cell: (row) => <strong>{row.date}</strong>,
+    },
+
+    {
+      name: "Transfer Reason",
+      selector: (row) => row.reason,
+      sortable: true,
+      cell: (row) => <strong>{row.reason}</strong>,
+    },
+    {
+      name: "Status",
+      selector: (row) => row.payment_status,
+      sortable: true,
+      cell: (row) => (
+        <span className={`status-badge ${row.payment_status.toLowerCase()}`}>
+          {row.payment_status}
+        </span>
+      ),
+    },
+    {
+      name: "Action",
+      cell: (row) => (
+        <div className="send-again-btn">
+          <Dropdown>
+            <Dropdown.Toggle variant="success" id="dropdown-basic">
+              <BsThreeDots />
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+              <Dropdown.Item href={`${import.meta.env.VITE_APP_API_URI}/payment/receipt/${row.id}`}>Download Receipt</Dropdown.Item>
+              <Dropdown.Item href="transfer-details">View Details</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+      center: true,
+      width: "120px",
+    },
+  ];
 
   return (
     <>

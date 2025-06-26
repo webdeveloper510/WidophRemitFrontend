@@ -1,5 +1,5 @@
 const useAuth = () => {
-    const user = localStorage.getItem('access-token');
+    const user = sessionStorage.getItem('token');
     console.log("🚀 ~ useAuth ~ user:", user)
     return {
         isAuthenticated: !!user,

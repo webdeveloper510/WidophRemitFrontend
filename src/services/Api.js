@@ -320,6 +320,19 @@ export const updateUserRecipient = async (id, data) => {
   return response
 }
 
+export const deleteRecipient = async (id) => {
+  const response = await private_instance.delete(`/payment/recipient-update/${id}`, {
+    headers: {
+      "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
+    },
+  }).then(res => {
+    return res?.data
+  }).catch(error => {
+    return error.response.data
+  })
+  return response
+}
+
 
 export const cardList = async (data) => {
   const response = await private_instance.post("/payment/card-list/", data, {
