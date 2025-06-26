@@ -20,6 +20,11 @@ const menuItems = [
 
 const Sidebar = ({ collapsed }) => {
   const location = useLocation();
+ const handleLogout = () => {
+
+    sessionStorage.removeItem("token"); 
+    navigate("/login");
+  };
 
   return (
     <div
@@ -59,6 +64,7 @@ const Sidebar = ({ collapsed }) => {
           <a
             href="/login"
             className="nav-link  d-flex align-items-center gap-2"
+            onClick={handleLogout} // Call handleLogout on click
           >
             <button className="logout-btn nav-link  d-flex align-items-center">
               <HiOutlineLogout /> <span>Logout</span>

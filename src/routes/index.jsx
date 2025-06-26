@@ -22,6 +22,7 @@ import LoginLayout from "../components/LoginSignup/LoginLayout";
 import Login from "../components/LoginSignup/Login";
 import SignUp from "../components/LoginSignup/Signup";
 import KYCForm from "../components/KYC/KYCForm";
+import OtpVerification from "../components/LoginSignup/OTP";
 
 const AppRoutes = () => {
   return (
@@ -36,6 +37,7 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/kyc" element={<KYCForm />} />
+        <Route path="/otp-verification" element={<OtpVerification />} />
       </Route>
 
       <Route
@@ -46,7 +48,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       >
-        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="send-money" element={<SendMoney />} />
         <Route path="payment-info" element={<PaymentInfo />} />
         <Route path="transfers-list" element={<TransfersList />} />
