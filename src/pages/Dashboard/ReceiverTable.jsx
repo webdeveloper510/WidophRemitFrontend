@@ -1,74 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Card from "react-bootstrap/Card";
 import DataTable from "react-data-table-component";
 import { FaArrowRotateRight } from "react-icons/fa6";
 import RecentReceiver from "../../assets/images/icons1.png";
+import { recipientList } from "../../services/Api";
 
 const handleSendAgain = (row) => {
   console.log("Send Again clicked for:", row.name);
 };
 
-const columns = [
-  {
-    name: "S. No.",
-    selector: (row, index) => index + 1,
-    width: "80px",
-    center: true,
-  },
-  {
-    name: "Destination",
-    selector: (row) => row.destination,
-    sortable: true,
-    cell: (row) => <strong>{row.destination}</strong>,
-  },
-  {
-    name: "Name",
-    selector: (row) => row.name,
-    sortable: true,
-    cell: (row) => <strong>{row.name}</strong>,
-  },
-  {
-    name: "Send Again",
-    cell: (row) => (
-      <div className="send-again-btn" onClick={() => handleSendAgain(row)}>
-        <FaArrowRotateRight />
-      </div>
-    ),
-    ignoreRowClick: true,
-    allowOverflow: true,
-    button: true,
-    center: true,
-    width: "120px",
-  },
-];
 
-const data = [
-  {
-    id: 1,
-    destination: "Australia",
-    name: "Alice Johnson",
-  },
-  {
-    id: 2,
-    destination: "United States Of America",
-    name: "Britney Adams",
-  },
-  {
-    id: 3,
-    destination: "India",
-    name: "William Spears",
-  },
-  {
-    id: 4,
-    destination: "United Kingdom",
-    name: "Whitney Blue",
-  },
-  {
-    id: 5,
-    destination: "New Zealand",
-    name: "William Spears",
-  },
-];
+
 
 const customStyles = {
   headCells: {
@@ -94,6 +36,55 @@ const customStyles = {
 };
 
 const ReceiverTable = () => {
+
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      const response = await recipientList();
+      if (response.code === "200") {
+        if (response.data.length >= 5)
+          setData(response.data.slice(0, 5))
+        else
+          setData(response.data)
+      }
+    })();
+  }, [])
+
+  const columns = [
+    {
+      name: "S. No.",
+      selector: (row, index) => index + 1,
+      width: "80px",
+      center: true,
+    },
+    {
+      name: "Destination",
+      selector: (row) => row.country,
+      sortable: true,
+      cell: (row) => <strong>{row.country}</strong>,
+    },
+    {
+      name: "Name",
+      selector: (row) => { `${row.first_name} ${row.last_name}` },
+      sortable: true,
+      cell: (row) => <strong>{`${row.first_name} ${row.last_name}`}</strong>,
+    },
+    {
+      name: "Send Again",
+      cell: (row) => (
+        <div className="send-again-btn" onClick={() => handleSendAgain(row)}>
+          <FaArrowRotateRight />
+        </div>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+      center: true,
+      width: "120px",
+    },
+  ];
+
   return (
     <Card className="receiver-card">
       <Card.Body>

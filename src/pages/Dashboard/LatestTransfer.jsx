@@ -1,154 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Card from "react-bootstrap/Card";
 import DataTable from "react-data-table-component";
 import { FaArrowRotateRight } from "react-icons/fa6";
 import RecentReceiver from "../../assets/images/icons1.png";
 import { BsThreeDots } from "react-icons/bs";
 import Dropdown from "react-bootstrap/Dropdown";
-
-const handleSendAgain = (row) => {
-  console.log("Send Again clicked for:", row.name);
-};
-
-const data = [
-  {
-    id: 1,
-    date: "24-March-2025",
-    amount: "104.00 AUD",
-    name: "Alice Johnson",
-    status: "pending",
-  },
-  {
-    id: 2,
-    date: "24-March-2025",
-    amount: "104.00 AUD",
-    name: "Britney Adams",
-    status: "processing",
-  },
-  {
-    id: 3,
-    date: "24-March-2025",
-    amount: "104.00 AUD",
-    name: "William Spears",
-    status: "review",
-  },
-  {
-    id: 4,
-    date: "25-March-2025",
-    amount: "250.00 AUD",
-    name: "Whitney Blue",
-    status: "processing",
-  },
-  {
-    id: 5,
-    date: "26-March-2025",
-    amount: "180.00 AUD",
-    name: "William Spears",
-    status: "pending",
-  },
-  {
-    id: 6,
-    date: "26-March-2025",
-    amount: "180.00 AUD",
-    name: "William Spears",
-    status: "pending",
-  },
-  {
-    id: 7,
-    date: "26-March-2025",
-    amount: "180.00 AUD",
-    name: "William Spears",
-    status: "pending",
-  },
-  {
-    id: 8,
-    date: "26-March-2025",
-    amount: "180.00 AUD",
-    name: "William Spears",
-    status: "pending",
-  },
-  {
-    id: 9,
-    date: "26-March-2025",
-    amount: "180.00 AUD",
-    name: "William Spears",
-    status: "pending",
-  },
-  {
-    id: 10,
-    date: "26-March-2025",
-    amount: "180.00 AUD",
-    name: "William Spears",
-    status: "pending",
-  },
-  {
-    id: 11,
-    date: "26-March-2025",
-    amount: "180.00 AUD",
-    name: "William Spears",
-    status: "pending",
-  },
-];
-
-const columns = [
-  {
-    name: "S. No.",
-    selector: (row, index) => index + 1,
-    width: "80px",
-    center: true,
-  },
-  {
-    name: "Date",
-    selector: (row) => row.date,
-    sortable: true,
-    cell: (row) => <strong>{row.date}</strong>,
-  },
-  {
-    name: "Receiver",
-    selector: (row) => row.name,
-    sortable: true,
-    cell: (row) => <strong>{row.name}</strong>,
-  },
-  {
-    name: "Amount Paid",
-    selector: (row) => row.amount,
-    sortable: true,
-    cell: (row) => <strong>{row.amount}</strong>,
-  },
-  {
-    name: "Status",
-    selector: (row) => row.status,
-    sortable: true,
-    cell: (row) => (
-      <span className={`status-badge ${row.status.toLowerCase()}`}>
-        {row.status}
-      </span>
-    ),
-  },
-  {
-    name: "Action",
-    cell: (row) => (
-      <div className="send-again-btn" onClick={() => handleSendAgain(row)}>
-        <Dropdown>
-          <Dropdown.Toggle variant="success" id="dropdown-basic">
-            <BsThreeDots />
-          </Dropdown.Toggle>
-
-          <Dropdown.Menu>
-            <Dropdown.Item href="#">Delete</Dropdown.Item>
-            <Dropdown.Item href="#">Edit</Dropdown.Item>
-            <Dropdown.Item href="transfer-details">View</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      </div>
-    ),
-    ignoreRowClick: true,
-    allowOverflow: true,
-    button: true,
-    center: true,
-    width: "120px",
-  },
-];
+import { pendingTransactions, transactionHistory } from "../../services/Api";
 
 const customStyles = {
   headCells: {
@@ -174,6 +31,88 @@ const customStyles = {
 };
 
 const LatestTransfer = () => {
+  const columns = [
+    {
+      name: "S. No.",
+      selector: (row, index) => index + 1,
+      width: "80px",
+      center: true,
+    },
+    {
+      name: "Date",
+      selector: (row) => row.date,
+      sortable: true,
+      cell: (row) => <strong>{row.date}</strong>,
+    },
+    {
+      name: "Receiver",
+      selector: (row) => row.recipient_name,
+      sortable: true,
+      cell: (row) => <strong>{row.recipient_name}</strong>,
+    },
+    {
+      name: "Amount Paid",
+      selector: (row) => row.amount,
+      sortable: true,
+      cell: (row) => <strong>{row.amount}</strong>,
+    },
+    {
+      name: "Status",
+      selector: (row) => row.payment_status,
+      sortable: true,
+      cell: (row) => (
+        <span className={`status-badge ${row.payment_status.toLowerCase()}`}>
+          {row.payment_status}
+        </span>
+      ),
+    },
+    {
+      name: "Action",
+      cell: (row) => (
+        <div className="send-again-btn" onClick={() => handleSendAgain(row)}>
+          <Dropdown>
+            <Dropdown.Toggle variant="success" id="dropdown-basic">
+              <BsThreeDots />
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+              <Dropdown.Item href="transfer-details">View</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+      center: true,
+      width: "120px",
+    },
+  ];
+
+
+  const [list, setList] = useState([]);
+
+  useEffect(() => {
+    (
+      async () => {
+        let data = []
+        const response = await transactionHistory();
+        const pend_res = await pendingTransactions();
+
+        if (response.code === "200") {
+          data = response.data.data;
+        }
+
+        if (pend_res.code === "200") {
+          data = [...data, ...pend_res.data];
+        }
+
+        data.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+        setList(data.length >= 5 ? data.slice(0, 5) : data)
+      }
+    )()
+  }, [])
+
   return (
     <Card className="receiver-card">
       <Card.Body>
@@ -185,7 +124,7 @@ const LatestTransfer = () => {
         </div>
         <DataTable
           columns={columns}
-          data={data}
+          data={list}
           customStyles={customStyles}
           noHeader
           striped

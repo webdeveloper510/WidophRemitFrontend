@@ -5,7 +5,7 @@ import DataTable from "react-data-table-component";
 import { BsThreeDots } from "react-icons/bs";
 import Dropdown from "react-bootstrap/Dropdown";
 import TransferList from "../../assets/images/transfer-list-icon.png";
-import { transactionHistory } from "../../services/Api";
+import { pendingTransactions, transactionHistory } from "../../services/Api";
 
 
 const customStyles = {
@@ -77,10 +77,16 @@ const TransfersList = () => {
   );
 
   const fetchList = async () => {
+    let data = []
     const response = await transactionHistory();
+    const pend_res = await pendingTransactions();
 
     if (response.code === "200") {
-      setList(response.data.data)
+      data = response.data.data;
+    }
+
+    if (pend_res.code === "200") {
+      setList([...data, ...pend_res.data])
     }
   }
 
