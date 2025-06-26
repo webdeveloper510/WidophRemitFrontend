@@ -9,14 +9,16 @@ import {
 } from "react-bootstrap";
 import PhoneInput from "react-phone-number-input";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import SignupImage from "../../assets/images/signup-image.png"; // Change path as needed
+import SignupImage from "../../assets/images/signup-image.png";
+import { userRegisterCheck } from "../../services/Api";
+import { parsePhoneNumber } from "libphonenumber-js";
+import { toast } from "react-toastify";
 
 const Signup = () => {
-  const [value, setValue] = useState();
-  const [showPassword, setShowPassword] = useState(false);
+  const [value, setValue] = useState(""); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [otp, setOtp] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const [visibility, setVisibility] = useState({
     current: false,
@@ -30,27 +32,54 @@ const Signup = () => {
     }));
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    let country_code = "";
+    let phone_number = value;
+
+    try {
+      const phoneNumberParsed = parsePhoneNumber(value);
+      country_code = phoneNumberParsed.countryCallingCode;
+      phone_number = phoneNumberParsed.nationalNumber;
+    } catch (error) {
+      toast.error("Invalid phone number format");
+      return;
+    }
+
+    const payload = {
+      email,
+      mobile: phone_number,
+      country_code: `+${country_code}`,
+      password,
+      confirmPassword,
+      location: "Australia",
+    };
+
+    const response = await userRegisterCheck(payload);
+    console.log("Register response: ", response);
+
+    if (response?.code === 200) {
+      toast.success("Registration check successful");
+    } else {
+      toast.error("Something went wrong");
+    }
+  };
+
   return (
     <Container className="login-form-wrapper  min-vh-100">
       <Row className="vh-100">
-        {/* Left Form Column */}
         <Col md={7} className="d-flex align-items-center justify-content-start">
           <div className="login-form-wrapper w-100">
             <div className="exchange-title">
-              Sign <br></br>Up
+              Sign <br />
+              Up
               <span className="exchange_rate">
                 Where are you sending money from?
               </span>
             </div>
-            {/* <h2 className="form-title">
-                <span className="text-primary">Sign</span>
-                <span className="text-success">Up</span>
-                <span className="small text-muted">
-                  {" "}
-                  Where are you sending money from?
-                </span>
-              </h2> */}
-            <Form className="exchange-form">
+
+            <Form className="exchange-form" onSubmit={handleSubmit}>
               <Row className="mb-3">
                 <FloatingLabel
                   controlId="floatingSelect"
@@ -58,8 +87,7 @@ const Signup = () => {
                   label="Location"
                 >
                   <Form.Select aria-label="Floating label select example">
-                    <option value="1">AUD</option>
-                    <option value="2">USD</option>
+                    <option value="Australia">Australia</option>
                   </Form.Select>
                 </FloatingLabel>
               </Row>
@@ -67,8 +95,8 @@ const Signup = () => {
               <Row className="mb-3">
                 <FloatingLabel
                   as={Col}
-                  controlId="floatingInput"
-                  label="Email/Mobile Number"
+                  controlId="floatingInputPhone"
+                  label="Mobile Number"
                   className="mb-3 mobileinput"
                 >
                   <PhoneInput
@@ -79,28 +107,35 @@ const Signup = () => {
                     onChange={setValue}
                   />
                 </FloatingLabel>
+
                 <FloatingLabel
                   as={Col}
-                  controlId="floatingInput"
+                  controlId="floatingInputEmail"
                   label="Email"
                   className="mb-3"
                 >
-                  <Form.Control type="email" placeholder="Enter email" />
+                  <Form.Control
+                    type="email"
+                    placeholder="Enter email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
                 </FloatingLabel>
               </Row>
 
               <Row className="mb-3">
-                {/* Current Password */}
                 <FloatingLabel
                   as={Col}
                   controlId="floatingCurrentPassword"
-                  label="Current Password"
+                  label="Password"
                   className="mb-3 position-relative"
                 >
                   <Form.Control
-                    placeholder="Current Password"
+                    placeholder="Password"
                     className="passowrdinput"
                     type={visibility.current ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                   <span
                     onClick={() => toggleVisibility("current")}
@@ -110,7 +145,6 @@ const Signup = () => {
                   </span>
                 </FloatingLabel>
 
-                {/* Confirm Password */}
                 <FloatingLabel
                   as={Col}
                   controlId="floatingConfirmPassword"
@@ -121,6 +155,8 @@ const Signup = () => {
                     placeholder="Confirm Password"
                     className="passowrdinput"
                     type={visibility.confirm ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                   />
                   <span
                     onClick={() => toggleVisibility("confirm")}
@@ -141,6 +177,7 @@ const Signup = () => {
               <Button
                 variant="success"
                 className="custom-signin-btn mb-3 btn btn-primary"
+                type="submit"
               >
                 SIGN UP
               </Button>
@@ -158,7 +195,6 @@ const Signup = () => {
           </div>
         </Col>
 
-        {/* Right Image Column */}
         <Col
           md={5}
           className="d-none d-md-flex align-items-center justify-content-end bg-light"

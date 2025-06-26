@@ -6,18 +6,16 @@ import Row from "react-bootstrap/Row";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import LoginImage from "../../assets/images/login-image.png"; // Change path as needed
+import { toast } from "react-toastify";
+import { parsePhoneNumber } from "libphonenumber-js";
+
+import LoginImage from "../../assets/images/login-image.png";
+import { userLogin } from "../../services/Api";
 
 const Login = () => {
-  const [value, setValue] = useState();
-  const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
+  const [value, setValue] = useState(""); 
   const [password, setPassword] = useState("");
-  const [otp, setOtp] = useState("");
-
-  const [visibility, setVisibility] = useState({
-    current: false,
-  });
+  const [visibility, setVisibility] = useState({ current: false });
 
   const toggleVisibility = (field) => {
     setVisibility((prev) => ({
@@ -26,29 +24,54 @@ const Login = () => {
     }));
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    let payload = {
+      password,
+    };
+
+    if (value.includes("@")) {
+      payload.email = value;
+    } else {
+      try {
+        const phone = parsePhoneNumber(value);
+        payload.mobile = phone.nationalNumber;
+        payload.country_code = `+${phone.countryCallingCode}`;
+      } catch (err) {
+        toast.error("Invalid mobile number");
+        return;
+      }
+    }
+
+    const response = await userLogin(payload);
+    console.log("Login response:", response);
+
+    if (response?.status === 200) {
+      toast.success("Login successful");
+      // localStorage.setItem("token", response.token); // if needed
+      // navigate("/dashboard"); // if using react-router
+    } else {
+      toast.error(response?.data?.message || "Login failed");
+    }
+  };
+
   return (
-    <Container className="login-form-wrapper  min-vh-100">
+    <Container className="login-form-wrapper min-vh-100">
       <Row className="vh-100">
-        {/* Left Form Column */}
         <Col md={7} className="d-flex align-items-center justify-content-start">
           <div className="login-form-wrapper w-100">
             <div className="exchange-title">
-              Sign <br></br>In
+              Sign <br /> In
               <span className="exchange_rate">To send money securely.</span>
             </div>
-            {/* <h2 className="form-title mb-3">
-                Sign In
-                <small className="text-muted ms-2">
-                  To send money securely.
-                </small>
-              </h2> */}
 
-            <Form className="exchange-form">
+            <Form className="exchange-form" onSubmit={handleSubmit}>
               <Row className="mb-3">
                 <FloatingLabel
                   as={Col}
                   controlId="floatingInput"
-                  label="Email/Mobile Number"
+                  label="Email / Mobile Number"
                   className="mb-3 mobileinput"
                 >
                   <PhoneInput
@@ -65,13 +88,15 @@ const Login = () => {
                 <FloatingLabel
                   as={Col}
                   controlId="floatingCurrentPassword"
-                  label="Current Password"
+                  label="Password"
                   className="mb-3 position-relative"
                 >
                   <Form.Control
-                    placeholder="Current Password"
+                    placeholder="Password"
                     className="passowrdinput"
                     type={visibility.current ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                   <span
                     onClick={() => toggleVisibility("current")}
@@ -100,7 +125,7 @@ const Login = () => {
                 Don’t have any account?{" "}
                 <a
                   href="/signup"
-                  className="text-success fw-bold forgotpassword-text "
+                  className="text-success fw-bold forgotpassword-text"
                 >
                   Sign Up
                 </a>
@@ -108,7 +133,7 @@ const Login = () => {
             </Form>
           </div>
         </Col>
-        {/* Right Image Column */}
+
         <Col
           md={5}
           className="d-none d-md-flex align-items-center justify-content-end bg-light"
