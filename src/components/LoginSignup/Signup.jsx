@@ -182,25 +182,25 @@ const Signup = () => {
                     </Row>
 
                     {/* Phone Number */}
-                    <Row className="mb-3">
+                    <Row className="mb-3 mobile_numbero">
                       <Col>
-                        <Form.Label>Mobile Number</Form.Label>
-                        <div className="d-flex align-items-stretch">
-                          <Form.Select
-                            name="countryCode"
-                            value={values.countryCode}
-                            onChange={handleCustomChange}
-                            onBlur={handleBlur}
-                            style={{
-                              maxWidth: "110px",
-                              borderTopRightRadius: 0,
-                              borderBottomRightRadius: 0,
+                        <FloatingLabel label="Mobile Number">
+                          <div className="d-flex align-items-stretch">
+                            <Form.Select
+                              name="countryCode"
+                              value={values.countryCode}
+                              onChange={handleCustomChange}
+                              onBlur={handleBlur}
+                              style={{
+                                maxWidth: "110px",
+                                borderTopRightRadius: 0,
+                                borderBottomRightRadius: 0,
                             }}
                           >
                             <option value="61">+61 (AU)</option>
                             <option value="64">+64 (NZ)</option>
                           </Form.Select>
-
+                         
                           <Form.Control
                             type="text"
                             name="phone"
@@ -220,8 +220,10 @@ const Signup = () => {
                             {errors.phone}
                           </div>
                         )}
+                         </FloatingLabel>
                       </Col>
                     </Row>
+                    
                     <Row className="mb-3">
                       <FloatingLabel
                         controlId="floatingEmail"
