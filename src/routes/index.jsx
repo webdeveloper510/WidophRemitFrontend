@@ -23,6 +23,7 @@ import Login from "../components/LoginSignup/Login";
 import SignUp from "../components/LoginSignup/Signup";
 import KYCForm from "../components/KYC/KYCForm";
 import OtpVerification from "../components/LoginSignup/OTP";
+import TransactionSuccess from "../pages/SendMoney/TranscationSuccess";
 
 const AppRoutes = () => {
   return (
@@ -49,6 +50,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       >
+        <Route path="/transaction-success" element={<TransactionSuccess />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="send-money" element={<SendMoney />} />
         <Route path="payment-info" element={<PaymentInfo />} />
@@ -56,13 +58,13 @@ const AppRoutes = () => {
         <Route path="receivers" element={<Receivers />} />
         <Route path="transfer-details" element={<TransferDetails />} />
         <Route path="profile-information" element={<ProfileInformation />} />
-        <Route path="receivers-list" element={<ReceiverList />} />
-        <Route path="receiver-detail" element={<ReceiverDetail />} />
+        <Route path="/receivers-list" element={<ReceiverList />} />
+        <Route path="receiver-add" element={<ReceiverDetail />} />
         <Route path="review-transfer" element={<ReviewTransfer />} />
         <Route path="payment-detail" element={<PaymentDetail />} />
         <Route path="confirm-transfer" element={<ConfirmTransfer />} />
         <Route path="payment-processed" element={<PaymentProcessed />} />
-        <Route path="add-receiver" element={<AddReceiver />} />
+        <Route path="/add-receiver" element={<AddReceiver />} />
         <Route path="monoova" element={<MonoovaPaymentGateway />} />
         {/* Redirect / to /dashboard */}
         <Route index element={<Navigate to="dashboard" replace />} />

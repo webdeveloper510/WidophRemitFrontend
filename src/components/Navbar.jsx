@@ -14,8 +14,8 @@ const TopNavbar = ({ onToggleSidebar }) => {
     onToggleSidebar();
   };
 
-  const user = JSON.parse(sessionStorage.getItem("user_name")) || {};
-  const fullName = `${user.firstName || ""} ${user.lastName || ""}`.trim();
+  // const user = JSON.parse(sessionStorage.getItem("user_name")) || {};
+  // const fullName = `${user.firstName || ""} ${user.lastName || ""}`.trim();
 
   return (
     <div className="d-flex align-items-center">
@@ -67,7 +67,7 @@ const TopNavbar = ({ onToggleSidebar }) => {
                   className="d-none d-sm-block"
                   style={{ fontFamily: "Lufga-regular" }}
                 >
-                  <h5>{fullName || "User"}</h5>
+                  {/* <h5>{fullName || "User"}</h5> */}
                   <span>View Profile</span>
                 </div>
               </Nav.Link>

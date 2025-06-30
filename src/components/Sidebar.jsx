@@ -20,12 +20,10 @@ const menuItems = [
 
 const Sidebar = ({ collapsed }) => {
   const location = useLocation();
-  const handleLogout = () => {
-
-    sessionStorage.removeItem("token");
-    navigate("/login");
-  };
-
+ const handleLogout = () => {
+  sessionStorage.clear(); 
+  window.location.href = "/login"; 
+};
   return (
     <div
       className={`p-3 ${collapsed ? "d-none d-md-block collapse-sidebar" : "col-2 col-md-3"

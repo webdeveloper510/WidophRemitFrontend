@@ -102,6 +102,19 @@ export const userLogin = async (data) => {
   })
   return response
 }
+export const createMonovaPayment = async (data) => {
+  try {
+    const response = await private_instance.post(
+      "http://127.0.0.1:8000/monoova/direct-debit/",
+      data,
+      {
+      }
+    );
+    return response.data;
+  } catch (error) {
+    return error?.response || { error: "Unknown error occurred" };
+  }
+};
 
 export const verifyEmail = async (data) => {
   const response = await public_instance.post("/verify-email/", data)

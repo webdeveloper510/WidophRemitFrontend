@@ -27,40 +27,48 @@ const OtpVerification = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || "signup";
-
- useEffect(() => {
-    if (from === "signup") {
-      const storedData = sessionStorage.getItem("signupData");
-      if (storedData) {
-        setUserData(JSON.parse(storedData));
-      } else {
-        toast.error("No signup data found. Please complete signup first.");
-        navigate("/signup");
-      }
-    } else if (from === "login") {
-      const loginOtpData = location.state?.otpData;
-      if (loginOtpData) {
-        setUserData({
-          ...loginOtpData,
-          account_type: "individual",
-        });
-      } else {
-        toast.error("Missing login data. Please login again.");
-        navigate("/login");
-      }
-    } else if (from === "profile") {
-      const profileOtpData = location.state?.otpData;
-      if (profileOtpData) {
-        setUserData(profileOtpData);
-      } else {
-        toast.error("Missing profile data. Please try again.");
-        navigate("/profile");
-      }
+useEffect(() => {
+  if (from === "signup") {
+    const storedData = sessionStorage.getItem("signupData");
+    if (storedData) {
+      setUserData(JSON.parse(storedData));
     } else {
-      toast.error("Invalid access. Please start again.");
+      toast.error("No signup data found. Please complete signup first.");
+      navigate("/signup");
+    }
+  } else if (from === "login") {
+    const loginOtpData = location.state?.otpData;
+    if (loginOtpData) {
+      setUserData({
+        ...loginOtpData,
+        account_type: "individual",
+      });
+    } else {
+      toast.error("Missing login data. Please login again.");
       navigate("/login");
     }
-  }, [from, location.state, navigate]);
+  } else if (from === "profile") {
+    const profileOtpData = location.state?.otpData;
+    if (profileOtpData) {
+      setUserData(profileOtpData);
+    } else {
+      toast.error("Missing profile data. Please try again.");
+      navigate("/profile");
+    }
+  } else if (from === "transfer") {
+    const transferOtpData = sessionStorage.getItem("transferOtpData");
+    if (transferOtpData) {
+      setUserData(JSON.parse(transferOtpData));
+    } else {
+      toast.error("Transfer data not found. Please try again.");
+      navigate("/payment-detail");
+    }
+  } else {
+    toast.error("Invalid access. Please start again.");
+    navigate("/login");
+  }
+}, [from, location.state, navigate]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -82,7 +90,7 @@ const OtpVerification = () => {
    let response;
       if (from === "login") {
         response = await verifyEmail(payload);
-      } else if (from === "profile") {
+      } else if (from === "profile"|| from === "transfer") {
         response = await resendOtp(payload);
       } else {
         response = await userRegisterVerify(payload);
@@ -98,6 +106,16 @@ const OtpVerification = () => {
           }
           return navigate("/dashboard");
         }
+        if (from === "transfer") {
+  response = await verifyEmail(payload); // ✅ OTP submit: verifyEmail
+  if (response?.code === "200") {
+    toast.success("OTP Verified Successfully!");
+    return navigate("/transaction-success");
+  } else {
+    toast.error(response?.message || "Invalid OTP");
+  }
+}
+
         if (from === "profile") {
   const updateData = JSON.parse(sessionStorage.getItem("pendingProfileUpdate"));
 
