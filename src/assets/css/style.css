@@ -614,7 +614,9 @@ span.copyText {
   color: #cfda2f;
 }
 img.clipped-img {
-  width: 100%;
+  width: 75%;
+  margin: 0 auto;
+  float: right;
 }
 /************************** resend otp popup css **********************/
 

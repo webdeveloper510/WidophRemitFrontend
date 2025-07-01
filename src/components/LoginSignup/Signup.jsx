@@ -31,8 +31,8 @@ const Signup = () => {
   };
 
   return (
-    <Container className="login-form-wrapper  min-vh-100">
-      <Row className="vh-100">
+    <Container className="login-form-wrapper">
+      <Row>
         {/* Left Form Column */}
         <Col md={7} className="d-flex align-items-center justify-content-start">
           <div className="login-form-wrapper w-100">

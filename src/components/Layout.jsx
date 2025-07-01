@@ -12,7 +12,7 @@ const Layout = () => {
 
   return (
     <>
-      <div className="p-3 d-flex flex-row vh-100">
+      <div className="p-3 d-flex flex-row">
         <Sidebar collapsed={collapsed} />
 
         <div className="flex-grow-1 d-flex flex-column right-side-content">
