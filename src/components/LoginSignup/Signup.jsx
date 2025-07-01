@@ -7,16 +7,36 @@ import {
   Button,
   FloatingLabel,
 } from "react-bootstrap";
-import PhoneInput from "react-phone-number-input";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import SignupImage from "../../assets/images/signup-image.png"; // Change path as needed
+import SignupImage from "../../assets/images/signup-image.png";
+import { userRegisterCheck } from "../../services/Api";
+import { parsePhoneNumber } from "libphonenumber-js";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { Formik } from "formik";
+import * as Yup from "yup";
+
+// Validation Schema
+const validationSchema = Yup.object({
+  location: Yup.string().required("Location is required"),
+  phone: Yup.string()
+    .required("Mobile number is required")
+    .min(9, "Mobile number must be at least 9 digits"),
+
+  email: Yup.string()
+    .email("Invalid email format")
+    .required("Email is required"),
+  password: Yup.string()
+    .min(8, "Password must be at least 8 characters")
+    .required("Password is required"),
+  confirmPassword: Yup.string()
+    .required("Confirm password is required")
+    .oneOf([Yup.ref("password")], "Passwords do not match"),
+});
 
 const Signup = () => {
-  const [value, setValue] = useState();
-  const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [otp, setOtp] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const [visibility, setVisibility] = useState({
     current: false,
@@ -30,135 +50,286 @@ const Signup = () => {
     }));
   };
 
+  const initialValues = {
+    location: "Australia",
+    phone: "",
+    email: "",
+    password: "",
+    countryCode: "61", // default for Australia
+    confirmPassword: "",
+  };
+
+  const handleSubmit = async (values, { setSubmitting }) => {
+    setLoading(true);
+
+    const fullPhone = `+${values.countryCode}${values.phone}`;
+    let parsedMobile = fullPhone;
+    let country_code = values.countryCode === "61" ? "AU" : "NZ";
+
+    try {
+      const parsed = parsePhoneNumber(fullPhone);
+      parsedMobile = parsed.number;
+      country_code = parsed.country || "AU";
+    } catch (error) {
+      toast.error("Invalid phone number format");
+      setLoading(false);
+      setSubmitting(false);
+      return;
+    }
+
+    const payload = {
+      account_type: "individual",
+      location: values.location,
+      email: values.email,
+      password: values.password,
+      confirmPassword: values.confirmPassword,
+      mobile: parsedMobile,
+      promo_marketing: "0",
+      country_code: country_code,
+    };
+
+    try {
+      const response = await userRegisterCheck(payload);
+      console.log("Register response: ", response);
+
+      if (response?.code === "200") {
+        sessionStorage.setItem("signupData", JSON.stringify(payload));
+         navigate("/otp-verification", { state: { from: "signup" } });
+      } else {
+        toast.error(response?.message || "Registration failed");
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      toast.error("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+      setSubmitting(false);
+    }
+  };
+
   return (
-    <Container className="login-form-wrapper">
-      <Row>
+    <Container className="login-form-wrapper  min-vh-100">
+      <Row className="vh-100">
         {/* Left Form Column */}
         <Col md={7} className="d-flex align-items-center justify-content-start">
           <div className="login-form-wrapper w-100">
             <div className="exchange-title">
-              Sign <br></br>Up
+              Sign <br />
+              Up
               <span className="exchange_rate">
                 Where are you sending money from?
               </span>
             </div>
-            {/* <h2 className="form-title">
-                <span className="text-primary">Sign</span>
-                <span className="text-success">Up</span>
-                <span className="small text-muted">
-                  {" "}
-                  Where are you sending money from?
-                </span>
-              </h2> */}
-            <Form className="exchange-form">
-              <Row className="mb-3">
-                <FloatingLabel
-                  controlId="floatingSelect"
-                  as={Col}
-                  label="Location"
-                >
-                  <Form.Select aria-label="Floating label select example">
-                    <option value="1">AUD</option>
-                    <option value="2">USD</option>
-                  </Form.Select>
-                </FloatingLabel>
-              </Row>
 
-              <Row className="mb-3">
-                <FloatingLabel
-                  as={Col}
-                  controlId="floatingInput"
-                  label="Email/Mobile Number"
-                  className="mb-3 mobileinput"
-                >
-                  <PhoneInput
-                    international
-                    countryCallingCodeEditable={false}
-                    defaultCountry="AU"
-                    value={value}
-                    onChange={setValue}
-                  />
-                </FloatingLabel>
-                <FloatingLabel
-                  as={Col}
-                  controlId="floatingInput"
-                  label="Email"
-                  className="mb-3"
-                >
-                  <Form.Control type="email" placeholder="Enter email" />
-                </FloatingLabel>
-              </Row>
+            <Formik
+              initialValues={initialValues}
+              validationSchema={validationSchema}
+              onSubmit={handleSubmit}
+            >
+              {({
+                values,
+                errors,
+                touched,
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                setFieldValue,
+                setFieldTouched,
+                isSubmitting,
+              }) => {
+                const handleCustomChange = (e) => {
+                  const { name, value } = e.target;
+                  setFieldValue(name, value);
+                  setFieldTouched(name, true);
 
-              <Row className="mb-3">
-                {/* Current Password */}
-                <FloatingLabel
-                  as={Col}
-                  controlId="floatingCurrentPassword"
-                  label="Current Password"
-                  className="mb-3 position-relative"
-                >
-                  <Form.Control
-                    placeholder="Current Password"
-                    className="passowrdinput"
-                    type={visibility.current ? "text" : "password"}
-                  />
-                  <span
-                    onClick={() => toggleVisibility("current")}
-                    className="password-eye"
-                  >
-                    {visibility.current ? <FaEyeSlash /> : <FaEye />}
-                  </span>
-                </FloatingLabel>
+                  if (name === "location") {
+                    if (value === "Australia") {
+                      setFieldValue("countryCode", "61");
+                    } else if (value === "New Zealand") {
+                      setFieldValue("countryCode", "64");
+                    }
+                  } else if (name === "countryCode") {
+                    if (value === "61") {
+                      setFieldValue("location", "Australia");
+                    } else if (value === "64") {
+                      setFieldValue("location", "New Zealand");
+                    }
+                  }
+                };
 
-                {/* Confirm Password */}
-                <FloatingLabel
-                  as={Col}
-                  controlId="floatingConfirmPassword"
-                  label="Confirm Password"
-                  className="position-relative"
-                >
-                  <Form.Control
-                    placeholder="Confirm Password"
-                    className="passowrdinput"
-                    type={visibility.confirm ? "text" : "password"}
-                  />
-                  <span
-                    onClick={() => toggleVisibility("confirm")}
-                    className="password-eye"
-                  >
-                    {visibility.confirm ? <FaEyeSlash /> : <FaEye />}
-                  </span>
-                </FloatingLabel>
-              </Row>
+                return (
+                  <Form className="exchange-form" onSubmit={handleSubmit}>
+                    {/* Location */}
+                    <Row className="mb-3">
+                      <FloatingLabel
+                        controlId="floatingSelect"
+                        as={Col}
+                        label="Location"
+                      >
+                        <Form.Select
+                          name="location"
+                          value={values.location}
+                          onChange={handleCustomChange}
+                          onBlur={handleBlur}
+                          isInvalid={touched.location && errors.location}
+                        >
+                          <option value="Australia">Australia</option>
+                          <option value="New Zealand">New Zealand</option>
+                        </Form.Select>
+                        <Form.Control.Feedback type="invalid">
+                          {errors.location}
+                        </Form.Control.Feedback>
+                      </FloatingLabel>
+                    </Row>
 
-              <Form.Group className="mb-3 d-flex align-items-center">
-                <Form.Check />
-                <span className="ms-2 small">
-                  Reference site about Lorem Ipsum, giving info on its origins.
-                </span>
-              </Form.Group>
+                    {/* Phone Number */}
+                    <Row className="mb-3 mobile_numbero">
+                      <Col>
+                        <FloatingLabel label="Mobile Number">
+                          <div className="d-flex align-items-stretch">
+                            <Form.Select
+                              name="countryCode"
+                              value={values.countryCode}
+                              onChange={handleCustomChange}
+                              onBlur={handleBlur}
+                              style={{
+                                maxWidth: "110px",
+                                borderTopRightRadius: 0,
+                                borderBottomRightRadius: 0,
+                            }}
+                          >
+                            <option value="61">+61 (AU)</option>
+                            <option value="64">+64 (NZ)</option>
+                          </Form.Select>
+                         
+                          <Form.Control
+                            type="text"
+                            name="phone"
+                            placeholder="Enter mobile number"
+                            value={values.phone}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={touched.phone && errors.phone}
+                            style={{
+                              borderTopLeftRadius: 0,
+                              borderBottomLeftRadius: 0,
+                            }}
+                          />
+                        </div>
+                        {touched.phone && errors.phone && (
+                          <div className="invalid-feedback d-block">
+                            {errors.phone}
+                          </div>
+                        )}
+                         </FloatingLabel>
+                      </Col>
+                    </Row>
+                    
+                    <Row className="mb-3">
+                      <FloatingLabel
+                        controlId="floatingEmail"
+                        as={Col}
+                        label="Email Address"
+                      >
+                        <Form.Control
+                          type="email"
+                          name="email"
+                          placeholder="Enter email address"
+                          value={values.email}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          isInvalid={touched.email && errors.email}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.email}
+                        </Form.Control.Feedback>
+                      </FloatingLabel>
+                    </Row>
+                    {/* Passwords */}
+                    <Row className="mb-3">
+                      <FloatingLabel
+                        as={Col}
+                        controlId="floatingCurrentPassword"
+                        label="Password"
+                        className="mb-3 position-relative"
+                      >
+                        <Form.Control
+                          placeholder="Password"
+                          className="passowrdinput"
+                          type={visibility.current ? "text" : "password"}
+                          name="password"
+                          value={values.password}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          isInvalid={touched.password && errors.password}
+                        />
+                        <span
+                          onClick={() => toggleVisibility("current")}
+                          className="password-eye"
+                        >
+                          {visibility.current ? <FaEyeSlash /> : <FaEye />}
+                        </span>
+                        <Form.Control.Feedback type="invalid">
+                          {errors.password}
+                        </Form.Control.Feedback>
+                      </FloatingLabel>
 
-              <Button
-                variant="success"
-                className="custom-signin-btn mb-3 btn btn-primary"
-              >
-                SIGN UP
-              </Button>
+                      <FloatingLabel
+                        as={Col}
+                        controlId="floatingConfirmPassword"
+                        label="Confirm Password"
+                        className="position-relative"
+                      >
+                        <Form.Control
+                          placeholder="Confirm Password"
+                          className="passowrdinput"
+                          type={visibility.confirm ? "text" : "password"}
+                          name="confirmPassword"
+                          value={values.confirmPassword}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          isInvalid={
+                            touched.confirmPassword && errors.confirmPassword
+                          }
+                        />
+                        <span
+                          onClick={() => toggleVisibility("confirm")}
+                          className="password-eye"
+                        >
+                          {visibility.confirm ? <FaEyeSlash /> : <FaEye />}
+                        </span>
+                        <Form.Control.Feedback type="invalid">
+                          {errors.confirmPassword}
+                        </Form.Control.Feedback>
+                      </FloatingLabel>
+                    </Row>
 
-              <div className="mt-3">
-                Already have an account?{" "}
-                <a
-                  href="/login"
-                  className="text-success fw-bold forgotpassword-text"
-                >
-                  Sign in
-                </a>
-              </div>
-            </Form>
+                    {/* Submit */}
+                    <Button
+                      variant="success"
+                      className="custom-signin-btn mb-3 btn btn-primary"
+                      type="submit"
+                      disabled={loading || isSubmitting}
+                    >
+                      {loading || isSubmitting ? "Processing..." : "SIGN UP"}
+                    </Button>
+
+                    <div className="mt-3">
+                      Already have an account?{" "}
+                      <a
+                        href="/login"
+                        className="text-success fw-bold forgotpassword-text"
+                      >
+                        Sign in
+                      </a>
+                    </div>
+                  </Form>
+                );
+              }}
+            </Formik>
           </div>
         </Col>
 
-        {/* Right Image Column */}
         <Col
           md={5}
           className="d-none d-md-flex align-items-center justify-content-end bg-light"

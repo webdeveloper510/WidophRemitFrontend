@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import logoFull from "../assets/images/logo.png";
 import logoSmall from "../assets/images/mobile-logo.png";
 import { VscDashboard } from "react-icons/vsc";
@@ -20,12 +20,14 @@ const menuItems = [
 
 const Sidebar = ({ collapsed }) => {
   const location = useLocation();
-
+ const handleLogout = () => {
+  sessionStorage.clear(); 
+  window.location.href = "/login"; 
+};
   return (
     <div
-      className={`p-3 ${
-        collapsed ? "d-none d-md-block collapse-sidebar" : "col-2 col-md-3"
-      } sidebar mr-3`}
+      className={`p-3 ${collapsed ? "d-none d-md-block collapse-sidebar" : "col-2 col-md-3"
+        } sidebar mr-3`}
       style={{ minHeight: "100%" }}
     >
       <h4 className="text-center mb-4 logo">
@@ -41,11 +43,10 @@ const Sidebar = ({ collapsed }) => {
         {menuItems.map((item) => (
           <li
             key={item.path}
-            className={`nav-item mb-2 ${
-              location.pathname === item.path
-                ? "bg-light text-dark rounded"
-                : ""
-            }`}
+            className={`nav-item mb-2 ${location.pathname === item.path
+              ? "bg-light text-dark rounded"
+              : ""
+              }`}
           >
             <Link
               to={item.path}
@@ -57,10 +58,13 @@ const Sidebar = ({ collapsed }) => {
         ))}
         <li className="mt-auto logout-row">
           <a
-            href="/login"
             className="nav-link  d-flex align-items-center gap-2"
+            onClick={handleLogout} // Call handleLogout on click
           >
-            <button className="logout-btn nav-link  d-flex align-items-center">
+            <button type="button" className="logout-btn nav-link  d-flex align-items-center" onClick={() => {
+              sessionStorage.clear();
+              navigate("/login")
+            }}>
               <HiOutlineLogout /> <span>Logout</span>
             </button>
           </a>

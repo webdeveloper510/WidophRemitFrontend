@@ -1,145 +1,138 @@
 import AnimatedPage from "../../components/AnimatedPage";
 import Back from "../../assets/images/back.png";
 import Button from "react-bootstrap/Button";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Spinner } from "react-bootstrap";
 import AddReceiver from "../../assets/images/add-receiver.png";
 import Card from "react-bootstrap/Card";
 import DataTable from "react-data-table-component";
-
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
+import { useEffect, useState } from "react";
+import { recipientList } from "../../services/Api";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+const ReceiverList = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true); // loading state
+  const navigate = useNavigate();
 
 const handleSendAgain = (row) => {
-  console.log("Send Again clicked for:", row.name);
+  console.log("Send Again clicked for:", row.account_name);
+  sessionStorage.setItem("selected_receiver", JSON.stringify(row));
+  navigate("/review-transfer"); 
 };
 
-const columns = [
-  {
-    name: "S. No.",
-    selector: (row, index) => index + 1,
-    width: "80px",
-    center: true,
-  },
-  {
-    name: "Receivers Name",
-    selector: (row) => row.name,
-    sortable: true,
-    cell: (row) => <strong>{row.name}</strong>,
-  },
-  {
-    name: "Action",
-    cell: (row) => (
-      <div className="send-again-btn" onClick={() => handleSendAgain(row)}>
-        <MdOutlineKeyboardArrowRight />
-      </div>
-    ),
-    ignoreRowClick: true,
-    allowOverflow: true,
-    button: true,
-    center: true,
-    width: "120px",
-  },
-];
-
-const data = [
-  {
-    id: 1,
-    name: "Alice Johnson",
-  },
-  {
-    id: 2,
-    name: "Britney Adams",
-  },
-  {
-    id: 3,
-    name: "William Spears",
-  },
-  {
-    id: 4,
-    name: "Whitney Blue",
-  },
-  {
-    id: 5,
-    name: "William Spears",
-  },
-  {
-    id: 6,
-    name: "Alice Johnson",
-  },
-  {
-    id: 7,
-    name: "Whitney Blue",
-  },
-  {
-    id: 8,
-    name: "William Spears",
-  },
-];
-
-const customStyles = {
-  headCells: {
-    style: {
-      backgroundColor: "#CFDA2F",
-      fontWeight: "bold",
-      fontSize: "14px",
-      color: "#434800",
+  const columns = [
+    {
+      name: "S. No.",
+      selector: (row, index) => index + 1,
+      width: "80px",
+      center: true,
     },
-  },
-  rows: {
-    style: {
-      minHeight: "55px",
+    {
+      name: "Receiver Name",
+      selector: (row) => row.account_name,
+      cell: (row) => <strong>{row.account_name}</strong>,
     },
-  },
-  cells: {
-    style: {
-      fontSize: "14px",
-      paddingLeft: "16px",
-      paddingRight: "16px",
+    {
+      name: "Action",
+      cell: (row) => (
+        <div
+          className="send-again-btn"
+          onClick={() => handleSendAgain(row)}
+          style={{ cursor: "pointer" }}
+        >
+          <MdOutlineKeyboardArrowRight />
+        </div>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+      center: true,
+      width: "120px",
     },
-  },
-};
+  ];
 
-const ReceiverList = () => {
+  const customStyles = {
+    headCells: {
+      style: {
+        backgroundColor: "#CFDA2F",
+        fontWeight: "bold",
+        fontSize: "14px",
+        color: "#434800",
+      },
+    },
+    rows: {
+      style: {
+        minHeight: "55px",
+      },
+    },
+    cells: {
+      style: {
+        fontSize: "14px",
+        paddingLeft: "16px",
+        paddingRight: "16px",
+      },
+    },
+  };
+
+  useEffect(() => {
+    const fetchRecipients = async () => {
+      setLoading(true);
+      const res = await recipientList({}); 
+      if (res?.code === "200" && res?.data) {
+        setData(res.data);
+      } else {
+        toast.error("Failed to fetch receiver list", {
+          autoClose: 3000,
+          position: "bottom-right",
+        });
+      }
+      setLoading(false);
+    };
+
+    fetchRecipients();
+  }, []);
+
   return (
     <AnimatedPage>
       <div className="page-title">
         <div className="d-flex justify-content-between">
           <div className="d-flex align-items-center">
             <a href="send-money">
-              <img src={Back} />
+              <img src={Back} alt="Back" />
             </a>
-            <h1>Select a Receiver to Send Money</h1>
+            <h1>Select a recipient to send money
+</h1>
           </div>
-          <a href="receiver-detail">
-            <button
-              type="button"
-              class="float-end download-button btn btn-success"
-            >
-              <img src={AddReceiver} alt="img" /> Add Receiver
-            </button>
-          </a>
+        <Button
+  type="button"
+  className="float-end download-button btn btn-success"
+  onClick={() => navigate("/receiver-add")}
+>
+  <img src={AddReceiver} alt="Add" /> Add Recipient
+</Button>
+
         </div>
       </div>
 
       <div className="row mt-4">
-        <DataTable
-          columns={columns}
-          data={data}
-          customStyles={customStyles}
-          noHeader
-          striped
-          highlightOnHover
-        />
+        {loading ? (
+          <div className="text-center py-5">
+            <Spinner animation="border" variant="primary" />
+            <p className="mt-2"></p>
+          </div>
+        ) : (
+          <DataTable
+            columns={columns}
+            data={data}
+            customStyles={customStyles}
+            noHeader
+            striped
+            onRowClicked={handleSendAgain} 
+            highlightOnHover
+          />
+        )}
       </div>
-
-      <Row className="mt-4">
-        <Col className="float-end">
-          <a href="review-transfer">
-            <Button variant="primary" className="float-end submit-btn">
-              Continue
-            </Button>
-          </a>
-        </Col>
-      </Row>
     </AnimatedPage>
   );
 };

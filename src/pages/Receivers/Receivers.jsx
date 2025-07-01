@@ -1,109 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AnimatedPage from "../../components/AnimatedPage";
 import DataTable from "react-data-table-component";
 import { BsThreeDots } from "react-icons/bs";
 import Dropdown from "react-bootstrap/Dropdown";
 import RecentReceiver from "../../assets/images/icons1.png";
+import { deleteRecipient, recipientList } from "../../services/Api";
+import { Button, Modal } from "react-bootstrap";
 
-const handleSendAgain = (row) => {
-  console.log("Send Again clicked for:", row.name);
-};
 
-const columns = [
-  {
-    name: "S. No.",
-    selector: (row, index) => index + 1,
-    width: "80px",
-    center: true,
-  },
-  {
-    name: "Receivers Name",
-    selector: (row) => row.name,
-    sortable: true,
-    cell: (row) => <strong>{row.name}</strong>,
-  },
-  {
-    name: "Sender Email",
-    selector: (row) => row.senderemail,
-    sortable: true,
-    cell: (row) => <strong>{row.senderemail}</strong>,
-  },
-  {
-    name: "Action",
-    cell: (row) => (
-      <div className="send-again-btn" onClick={() => handleSendAgain(row)}>
-        <Dropdown>
-          <Dropdown.Toggle variant="success" id="dropdown-basic">
-            <BsThreeDots />
-          </Dropdown.Toggle>
-
-          <Dropdown.Menu>
-            <Dropdown.Item href="#">Delete</Dropdown.Item>
-            {/* <Dropdown.Item href="transfer-details">View</Dropdown.Item> */}
-          </Dropdown.Menu>
-        </Dropdown>
-      </div>
-    ),
-    ignoreRowClick: true,
-    allowOverflow: true,
-    button: true,
-    center: true,
-    width: "120px",
-  },
-];
-
-const data = [
-  {
-    id: 1,
-    name: "Alice Johnson",
-    senderemail: "peterwillson@gmail.com",
-  },
-  {
-    id: 2,
-    name: "Britney Adams",
-    senderemail: "ammar@untitledui.com",
-  },
-  {
-    id: 3,
-    name: "William Spears",
-    senderemail: "ammar@untitledui.com",
-  },
-  {
-    id: 4,
-    name: "Whitney Blue",
-    senderemail: "ammar@untitledui.com",
-  },
-  {
-    id: 5,
-    name: "William Spears",
-    senderemail: "sushma@untitledui.com",
-  },
-  {
-    id: 6,
-    name: "Alice Johnson",
-    senderemail: "ammar@untitledui.com",
-  },
-  {
-    id: 7,
-    name: "Whitney Blue",
-    senderemail: "olly@untitledui.com",
-  },
-  {
-    id: 8,
-    name: "William Spears",
-    senderemail: "mathilde@untitledui.com",
-  },
-  {
-    id: 9,
-    name: "Whitney Blue",
-    senderemail: "olly@untitledui.com",
-  },
-  {
-    id: 10,
-    name: "Alice Johnson",
-    senderemail: "mathilde@untitledui.com",
-  },
-];
 
 const customStyles = {
   headCells: {
@@ -128,11 +32,58 @@ const customStyles = {
   },
 };
 
-const Receivers = () => {
-  const [filterText, setFilterText] = useState("");
 
-  const filteredData = data.filter((item) =>
-    (item.name + item.senderemail)
+const Receivers = () => {
+
+  const [list, setList] = useState([])
+  const [filterText, setFilterText] = useState("");
+  const [show, setShow] = useState(false)
+
+  const columns = [
+    {
+      name: "S. No.",
+      selector: (row, index) => index + 1,
+      width: "80px",
+      center: true,
+    },
+    {
+      name: "Receivers Name",
+      selector: (row) => { `${row.first_name} ${row.middle_name} ${row.last_name}` },
+      sortable: true,
+      cell: (row) => <strong>{`${row.first_name} ${row.middle_name} ${row.last_name}`}</strong>,
+    },
+    {
+      name: "Sender Email",
+      selector: (row) => row.email,
+      sortable: true,
+      cell: (row) => <strong>{row.email}</strong>,
+    },
+    {
+      name: "Action",
+      cell: (row) => (
+        <div className="send-again-btn" onClick={() => setShow(row.id)}>
+          <Dropdown>
+            <Dropdown.Toggle variant="success" id="dropdown-basic">
+              <BsThreeDots />
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+              <Dropdown.Item href="#">Delete</Dropdown.Item>
+              {/* <Dropdown.Item href="transfer-details">View</Dropdown.Item> */}
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+      center: true,
+      width: "120px",
+    },
+  ];
+
+  const filteredData = list.filter((item) =>
+    (item.first_name + item.middle_name + item.last_name + item.email)
       .toLowerCase()
       .includes(filterText.toLowerCase())
   );
@@ -150,6 +101,34 @@ const Receivers = () => {
       />
     </div>
   );
+
+  useEffect(() => {
+    fetchList();
+  }, [])
+
+  const fetchList = async () => {
+    try {
+      const response = await recipientList();
+
+      if (response.code === "200") {
+        setList(response.data)
+      }
+
+    } catch (err) {
+      console.error("Error fetching list:", err);
+    }
+  }
+
+  const handleClose = () => {
+    setShow(false)
+  }
+
+  const handleDelete = async () => {
+    const response = await deleteRecipient(show);
+    if (response.code === "200") {
+      fetchList();
+    }
+  }
 
   return (
     <>
@@ -185,6 +164,19 @@ const Receivers = () => {
           />
         </div>
       </AnimatedPage>
+      <Modal show={show} onHide={handleClose} backdrop="static" >
+        <Modal.Header>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete ?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => handleClose()}>
+            Close
+          </Button>
+          <Button className="delete_recipient" variant="danger" onClick={() => { handleDelete() }} >
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };

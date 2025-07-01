@@ -1043,6 +1043,27 @@ li.nav-item.mb-2.bg-light.text-dark.rounded {
   width: 100%;
 }
 
+.mobile_numbero input.form-control {
+    padding: 1rem .75rem;
+}
+.mb-3.mobile_numbero.row {
+    position: relative;
+    margin-top: 15px;
+}
+.mobile_numbero.row label {
+    position: absolute;
+    top: -27px;
+}
+.mobile_numbero input.form-control {
+    padding: 1rem .75rem;
+    background: transparent !important;
+}
+.mobile_numbero select.form-select {
+    background: transparent !important;
+}
+.exchange-form label {
+    background: transparent !important;
+}
 /*************** responsive css ****************/
 
 @media screen and (max-width: 1500px) {

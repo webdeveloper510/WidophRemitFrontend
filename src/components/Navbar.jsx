@@ -2,7 +2,6 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Navbar, Nav, NavDropdown, Container } from "react-bootstrap";
 import { RxHamburgerMenu } from "react-icons/rx";
-import { FaUserCircle } from "react-icons/fa";
 import openToggle from "../assets/images/Left.png";
 import closeToggle from "../assets/images/Right.png";
 import LoggedUser from "../assets/images/loggeduser.png";
@@ -14,11 +13,12 @@ const TopNavbar = ({ onToggleSidebar }) => {
     setCollapsed((prev) => !prev);
     onToggleSidebar();
   };
+
+  // const user = JSON.parse(sessionStorage.getItem("user_name")) || {};
+  // const fullName = `${user.firstName || ""} ${user.lastName || ""}`.trim();
+
   return (
     <div className="d-flex align-items-center">
-      {/* <button className="btn toggle-btn" onClick={onToggleSidebar}>
-        <img src={openToggle} alt="toggle" />
-      </button> */}
       <button className="btn toggle-btn" onClick={handleToggle}>
         <img src={collapsed ? openToggle : closeToggle} alt="toggle" />
       </button>
@@ -67,7 +67,7 @@ const TopNavbar = ({ onToggleSidebar }) => {
                   className="d-none d-sm-block"
                   style={{ fontFamily: "Lufga-regular" }}
                 >
-                  <h5>Peter Willson</h5>
+                  {/* <h5>{fullName || "User"}</h5> */}
                   <span>View Profile</span>
                 </div>
               </Nav.Link>
