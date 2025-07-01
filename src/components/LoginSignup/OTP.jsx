@@ -15,7 +15,10 @@ import {
   registerOtpResend,
   verifyEmail,
   updateProfile,
-  resendOtp
+  resendOtp,
+  createMonovaPayment,
+  getAgreementList,
+  ZaiPayTo
 } from "../../services/Api";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -24,51 +27,212 @@ const OtpVerification = () => {
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [transferData, setTransferData] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || "signup";
-useEffect(() => {
-  if (from === "signup") {
-    const storedData = sessionStorage.getItem("signupData");
-    if (storedData) {
-      setUserData(JSON.parse(storedData));
+
+  useEffect(() => {
+    if (from === "signup") {
+      const storedData = sessionStorage.getItem("signupData");
+      if (storedData) {
+        setUserData(JSON.parse(storedData));
+      } else {
+        toast.error("No signup data found. Please complete signup first.");
+        navigate("/signup");
+      }
+    } else if (from === "login") {
+      const loginOtpData = location.state?.otpData;
+      if (loginOtpData) {
+        setUserData({
+          ...loginOtpData,
+          account_type: "individual",
+        });
+      } else {
+        toast.error("Missing login data. Please login again.");
+        navigate("/login");
+      }
+    } else if (from === "profile") {
+      const profileOtpData = location.state?.otpData;
+      if (profileOtpData) {
+        setUserData(profileOtpData);
+      } else {
+        toast.error("Missing profile data. Please try again.");
+        navigate("/profile");
+      }
+    } else if (from === "transfer") {
+      const transferOtpData = sessionStorage.getItem("transferOtpData");
+      const storedTransferData = sessionStorage.getItem("transfer_data");
+      
+      if (transferOtpData) {
+        setUserData(JSON.parse(transferOtpData));
+      } else {
+        toast.error("Transfer data not found. Please try again.");
+        navigate("/payment-detail");
+      }
+
+      if (storedTransferData) {
+        try {
+          const parsedTransferData = JSON.parse(storedTransferData);
+          setTransferData(parsedTransferData?.amount || {});
+        } catch (error) {
+          console.error("Failed to parse transfer_data:", error);
+        }
+      }
     } else {
-      toast.error("No signup data found. Please complete signup first.");
-      navigate("/signup");
-    }
-  } else if (from === "login") {
-    const loginOtpData = location.state?.otpData;
-    if (loginOtpData) {
-      setUserData({
-        ...loginOtpData,
-        account_type: "individual",
-      });
-    } else {
-      toast.error("Missing login data. Please login again.");
+      toast.error("Invalid access. Please start again.");
       navigate("/login");
     }
-  } else if (from === "profile") {
-    const profileOtpData = location.state?.otpData;
-    if (profileOtpData) {
-      setUserData(profileOtpData);
-    } else {
-      toast.error("Missing profile data. Please try again.");
-      navigate("/profile");
-    }
-  } else if (from === "transfer") {
-    const transferOtpData = sessionStorage.getItem("transferOtpData");
-    if (transferOtpData) {
-      setUserData(JSON.parse(transferOtpData));
-    } else {
-      toast.error("Transfer data not found. Please try again.");
-      navigate("/payment-detail");
-    }
-  } else {
-    toast.error("Invalid access. Please start again.");
-    navigate("/login");
-  }
-}, [from, location.state, navigate]);
+  }, [from, location.state, navigate]);
 
+  // Payment processing functions for transfer flow
+  const handleZaiPayment = async () => {
+    try {
+      console.log("Fetching agreement list...");
+      const agreementResponse = await getAgreementList();
+      
+      if (!agreementResponse || agreementResponse.code !== "200") {
+        toast.error("Failed to fetch agreement list");
+        console.error("Agreement list fetch failed:", agreementResponse);
+        return false;
+      }
+
+      const agreementUuid = agreementResponse?.data?.agreement_uuid;
+
+      if (!agreementUuid) {
+        toast.error("No valid agreement UUID found");
+        console.error("Agreement UUID not found in response:", agreementResponse);
+        return false;
+      }
+
+      console.log("Found agreement UUID:", agreementUuid);
+
+      let transactionId = sessionStorage.getItem("monova_transaction_id") || 
+                         sessionStorage.getItem("transaction_id");
+
+      console.log("Using transaction ID:", transactionId);
+
+      const zaiPayload = {
+        agreement_uuid: agreementUuid,
+        transaction_id: transactionId
+      };
+
+      console.log("Zai PayTo payload:", zaiPayload);
+
+      const zaiResponse = await ZaiPayTo(zaiPayload);
+
+      console.log("Zai PayTo response:", zaiResponse);
+
+      if (zaiResponse && zaiResponse.code === "400") {
+        sessionStorage.setItem("zai_payment_response", JSON.stringify(zaiResponse));
+        sessionStorage.setItem("final_transaction_id", transactionId);
+        return true;
+      } else {
+        toast.error(zaiResponse?.message || "Zai payment processing failed");
+        console.error("Zai payment failed:", zaiResponse);
+        return false;
+      }
+
+    } catch (error) {
+      console.error("Zai payment error:", error);
+      toast.error("Error processing Zai payment");
+      return false;
+    }
+  };
+
+  const handleMonovaPayment = async () => {
+    const monovaFormData = sessionStorage.getItem("monova_form_data");
+    
+    if (!monovaFormData) {
+      toast.error("Monova payment data not found.");
+      return false;
+    }
+    
+    try {
+      const monovaForm = JSON.parse(monovaFormData);
+      
+      const paymentModeMap = {
+        "directDebit": "debit",
+        "NppCreditBankAccount": "npp"
+      };
+
+      const payload = {
+        amount: parseFloat(transferData?.send_amt || 0),
+        bsbNumber: monovaForm.bsb,
+        accountNumber: monovaForm.accountNumber,
+        accountName: monovaForm.accountName,
+        payment_mode: paymentModeMap[monovaForm.paymentMethod] || monovaForm.paymentMethod
+      };
+
+      const response = await createMonovaPayment(payload);
+
+      if (response?.transactionId && response.transactionId !== 0) {
+        sessionStorage.setItem("monova_transaction_id", response.transactionId);
+        toast.success("Monova payment created successfully!");
+        sessionStorage.removeItem("monova_form_data");
+        console.log("Monova Transaction ID:", response.transactionId);
+        return true;
+      } else {
+        toast.error(response?.message || "Monova payment creation failed.");
+        return false;
+      }
+    } catch (err) {
+      toast.error("Error while creating Monova payment.");
+      console.error("Monova payment error:", err);
+      return false;
+    }
+  };
+
+  const processTransferPayments = async () => {
+    const monovaFormData = sessionStorage.getItem("monova_form_data");
+    const payToLimitData = sessionStorage.getItem("payto_limit_data");
+    const payToAgreementData = sessionStorage.getItem("payto_agreement_response");
+    const receiverData = sessionStorage.getItem("selected_receiver");
+    
+    let receiverPaymentMethod = null;
+    if (receiverData) {
+      try {
+        const receiver = JSON.parse(receiverData);
+        receiverPaymentMethod = receiver?.payment_method || receiver?.account_type;
+      } catch (error) {
+        console.error("Error parsing receiver data:", error);
+      }
+    }
+
+    console.log("Processing payments for method:", receiverPaymentMethod);
+
+    // PayTo flow - only Zai payment needed
+    if (payToLimitData && payToAgreementData) {
+      console.log("Processing PayTo flow - calling Zai payment only");
+      const zaiSuccess = await handleZaiPayment();
+      
+      if (zaiSuccess) {
+        sessionStorage.removeItem("payto_limit_data");
+        sessionStorage.removeItem("payto_agreement_response");
+        return true;
+      }
+      return false;
+    } 
+    // Monova flow - both Monova and Zai payments needed
+    else if (monovaFormData && receiverPaymentMethod === "bank_account") {
+      console.log("Processing Monova flow - calling both Monova and Zai payments");
+      
+      const monovaSuccess = await handleMonovaPayment();
+      
+      if (monovaSuccess) {
+        const zaiSuccess = await handleZaiPayment();
+        
+        if (zaiSuccess) {
+          sessionStorage.removeItem("monova_form_data");
+          return true;
+        }
+      }
+      return false;
+    }
+    
+    // Default case - just OTP verification for PayID or other methods
+    return true;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -87,14 +251,43 @@ useEffect(() => {
         otp,
       };
 
-   let response;
+      let response;
+      
+      // Handle different OTP verification flows
       if (from === "login") {
         response = await verifyEmail(payload);
-      } else if (from === "profile"|| from === "transfer") {
+      } else if (from === "profile") {
         response = await resendOtp(payload);
+      } else if (from === "transfer") {
+        // For transfer, first verify OTP
+        response = await verifyEmail(payload);
+        
+        if (response?.code === "200") {
+          toast.success("OTP Verified Successfully!");
+          
+          // Then process the payments based on the payment method
+          const paymentSuccess = await processTransferPayments();
+          
+          if (paymentSuccess) {
+            // Clean up session storage
+            sessionStorage.removeItem("transferOtpData");
+            sessionStorage.removeItem("transfer_data");
+            sessionStorage.removeItem("selected_receiver");
+            
+            navigate("/transaction-success");
+            return;
+          } else {
+            toast.error("Payment processing failed. Please try again.");
+            return;
+          }
+        } else {
+          toast.error(response?.message || "Invalid OTP");
+          return;
+        }
       } else {
         response = await userRegisterVerify(payload);
       }
+
       console.log("OTP Verification response:", response);
 
       if (response && response.code === "200") {
@@ -104,36 +297,31 @@ useEffect(() => {
           if (response?.access_token) {
             sessionStorage.setItem("token", response.access_token);
           }
-          return navigate("/dashboard");
+          navigate("/dashboard");
+          return;
         }
-        if (from === "transfer") {
-  response = await verifyEmail(payload); // ✅ OTP submit: verifyEmail
-  if (response?.code === "200") {
-    toast.success("OTP Verified Successfully!");
-    return navigate("/transaction-success");
-  } else {
-    toast.error(response?.message || "Invalid OTP");
-  }
-}
 
         if (from === "profile") {
-  const updateData = JSON.parse(sessionStorage.getItem("pendingProfileUpdate"));
+          const updateData = JSON.parse(sessionStorage.getItem("pendingProfileUpdate"));
 
-  try {
-    const updateResponse = await updateProfile(updateData); // You must import this API
-    if (updateResponse?.code === "200") {
-      toast.success("Profile updated successfully!");
-    } else {
-      toast.warning(updateResponse?.message || "Failed to update profile.");
-    }
-  } catch (err) {
-    console.error("Profile update failed:", err);
-    toast.error("Error updating profile");
-  }
+          try {
+            const updateResponse = await updateProfile(updateData);
+            if (updateResponse?.code === "200") {
+              toast.success("Profile updated successfully!");
+            } else {
+              toast.warning(updateResponse?.message || "Failed to update profile.");
+            }
+          } catch (err) {
+            console.error("Profile update failed:", err);
+            toast.error("Error updating profile");
+          }
 
-  sessionStorage.removeItem("pendingProfileUpdate");
-  return navigate("/profile-information");
-}
+          sessionStorage.removeItem("pendingProfileUpdate");
+          navigate("/profile-information");
+          return;
+        }
+
+        // Signup flow
         if (response?.access_token) {
           sessionStorage.setItem("token", response.access_token);
 
@@ -218,7 +406,7 @@ useEffect(() => {
                   >
                     <span className="visually-hidden">Loading...</span>
                   </div>
-                  Processing your verification...
+                  {from === "transfer" ? "Processing payment..." : "Processing your verification..."}
                 </div>
               </div>
             )}
@@ -253,7 +441,7 @@ useEffect(() => {
                 {loading
                   ? "Verifying..."
                   : isProcessing
-                  ? "Processing..."
+                  ? from === "transfer" ? "Processing Payment..." : "Processing..."
                   : "Verify OTP"}
               </Button>
 
@@ -268,13 +456,20 @@ useEffect(() => {
                   Resend
                 </button>
               </div>
+              
               <div className="mt-3">
                 <a
-                  href="/signup"
+                  href={from === "transfer" ? "/payment-detail" : "/signup"}
                   className="text-success fw-bold"
-                  onClick={() => sessionStorage.removeItem("signupData")}
+                  onClick={() => {
+                    if (from === "signup") {
+                      sessionStorage.removeItem("signupData");
+                    } else if (from === "transfer") {
+                      sessionStorage.removeItem("transferOtpData");
+                    }
+                  }}
                 >
-                  ← Back to Signup
+                  ← Back to {from === "transfer" ? "Payment Details" : "Signup"}
                 </a>
               </div>
             </Form>

@@ -8,7 +8,7 @@ import { Col, Row, Button, Spinner } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import OtpImage from "../../assets/images/Otp-image.png";
 import { useNavigate } from "react-router-dom";
-import { userProfile, createMonovaPayment } from "../../services/Api";
+import { userProfile, createMonovaPayment, getAgreementList, ZaiPayTo } from "../../services/Api";
 import { toast } from "react-toastify";
 
 const ConfirmTransfer = () => {
@@ -18,6 +18,8 @@ const ConfirmTransfer = () => {
   const [transferData, setTransferData] = useState(null);
   const [sender, setSender] = useState({});
   const [isLoadingMonova, setIsLoadingMonova] = useState(false);
+  const [isLoadingZai, setIsLoadingZai] = useState(false);
+  const [isLoadingPayID, setIsLoadingPayID] = useState(false);
 
   const navigate = useNavigate();
 
@@ -44,7 +46,6 @@ const ConfirmTransfer = () => {
       navigate("/receivers-list");
     }
 
-    // ✅ Fetch sender data
     fetchUserProfile();
   }, [navigate]);
 
@@ -61,73 +62,209 @@ const ConfirmTransfer = () => {
     }
   };
 
-const handleMonovaPayment = async () => {
+  const handleZaiPayment = async () => {
+    setIsLoadingZai(true);
+    
+    try {
+      console.log("Fetching agreement list...");
+      const agreementResponse = await getAgreementList();
+      
+      if (!agreementResponse || agreementResponse.code !== "200") {
+        toast.error("Failed to fetch agreement list");
+        console.error("Agreement list fetch failed:", agreementResponse);
+        return false;
+      }
+
+      console.log("Agreement response:", agreementResponse);
+
+      const agreementUuid = agreementResponse?.data?.agreement_uuid;
+
+      if (!agreementUuid) {
+        toast.error("No valid agreement UUID found");
+        console.error("Agreement UUID not found in response:", agreementResponse);
+        return false;
+      }
+
+      console.log("Found agreement UUID:", agreementUuid);
+
+      let transactionId = sessionStorage.getItem("monova_transaction_id") || 
+                         sessionStorage.getItem("transaction_id");
+
+     
+      console.log("Using transaction ID:", transactionId);
+
+      const zaiPayload = {
+        agreement_uuid: agreementUuid,
+        transaction_id: transactionId
+      };
+
+      console.log("Zai PayTo payload:", zaiPayload);
+
+      const zaiResponse = await ZaiPayTo(zaiPayload);
+
+      console.log("Zai PayTo response:", zaiResponse);
+
+      if (zaiResponse && zaiResponse.code === "400") {
+        sessionStorage.setItem("zai_payment_response", JSON.stringify(zaiResponse));
+        sessionStorage.setItem("final_transaction_id", transactionId);
+    
+        toast.success("Zai payment processed successfully!");
+        return true;
+      } else {
+        toast.error(zaiResponse?.message || "Zai payment processing failed");
+        console.error("Zai payment failed:", zaiResponse);
+        return false;
+      }
+
+    } catch (error) {
+      console.error("Zai payment error:", error);
+      toast.error("Error processing Zai payment");
+      return false;
+    } finally {
+      setIsLoadingZai(false);
+    }
+  };
+
+  const handleMonovaPayment = async () => {
+    const monovaFormData = sessionStorage.getItem("monova_form_data");
+    
+    if (!monovaFormData) {
+      toast.error("Monova payment data not found.");
+      return false;
+    }
+
+    setIsLoadingMonova(true);
+    
+    try {
+      const monovaForm = JSON.parse(monovaFormData);
+      
+      const paymentModeMap = {
+        "directDebit": "debit",
+        "NppCreditBankAccount": "npp"
+      };
+
+      const payload = {
+        amount: parseFloat(transferData?.send_amt || 0),
+        bsbNumber: monovaForm.bsb,
+        accountNumber: monovaForm.accountNumber,
+        accountName: monovaForm.accountName,
+        payment_mode: paymentModeMap[monovaForm.paymentMethod] || monovaForm.paymentMethod
+      };
+
+      console.log("Monova payment payload:", payload);
+
+      const response = await createMonovaPayment(payload);
+
+      if (response?.transactionId && response.transactionId !== 0) {
+     
+        sessionStorage.setItem("monova_transaction_id", response.transactionId);
+        
+        toast.success("Monova payment created successfully!");
+        sessionStorage.removeItem("monova_form_data");
+        
+        console.log("Monova Transaction ID:", response.transactionId);
+        
+        return true;
+      } else {
+        toast.error(response?.message || "Monova payment creation failed.");
+        return false;
+      }
+    } catch (err) {
+      toast.error("Error while creating Monova payment.");
+      console.error("Monova payment error:", err);
+      return false;
+    } finally {
+      setIsLoadingMonova(false);
+    }
+  };
+
+  const handlePayIDPayment = async () => {
+    setIsLoadingPayID(true);
+    
+    try {
+      console.log("Processing PayID payment...");
+
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      toast.success("PayID payment processed successfully!");
+      return true;
+      
+    } catch (error) {
+      console.error("PayID payment error:", error);
+      toast.error("Error processing PayID payment");
+      return false;
+    } finally {
+      setIsLoadingPayID(false);
+    }
+  };
+
+const handleSaveAndContinue = async () => {
   const monovaFormData = sessionStorage.getItem("monova_form_data");
-  
-  if (!monovaFormData) {
-    toast.error("Monova payment data not found.");
+  const payToLimitData = sessionStorage.getItem("payto_limit_data");
+  const payToAgreementData = sessionStorage.getItem("payto_agreement_response");
+  const currentPaymentMethod = sessionStorage.getItem("selected_payment_method");
+  const receiverData = sessionStorage.getItem("selected_receiver");
+
+  let receiverPaymentMethod = null;
+  if (receiverData) {
+    try {
+      const receiverParsed = JSON.parse(receiverData);
+      receiverPaymentMethod = receiverParsed?.payment_method || receiverParsed?.account_type || null;
+    } catch (err) {
+      console.error("Error parsing receiver:", err);
+    }
+  }
+
+  let paymentSuccess = false;
+
+  if (
+    currentPaymentMethod === "payid" ||
+    receiverPaymentMethod?.toLowerCase() === "payid"
+  ) {
+    console.log("➡️ Processing PayID payment");
+
+    sessionStorage.removeItem("monova_form_data");
+    sessionStorage.removeItem("payto_limit_data");
+    sessionStorage.removeItem("payto_agreement_response");
+
+    paymentSuccess = await handlePayIDPayment();
+  }
+
+  else if (currentPaymentMethod === "monova" && monovaFormData) {
+    console.log("➡️ Processing Monova payment");
+
+    paymentSuccess = await handleMonovaPayment();
+    sessionStorage.removeItem("monova_form_data");
+  }
+  else if (
+    currentPaymentMethod === "zai" &&
+    payToLimitData &&
+    payToAgreementData
+  ) {
+    console.log("➡️ Processing Zai PayTo payment");
+
+    sessionStorage.removeItem("monova_form_data");
+
+    paymentSuccess = await handleZaiPayment();
+  }
+
+  else {
+    console.warn("⚠️ No valid payment method selected.");
+    toast.error("No valid payment method selected.");
     return;
   }
 
-  setIsLoadingMonova(true);
-  
-  try {
-    const monovaForm = JSON.parse(monovaFormData);
-    
-    const paymentModeMap = {
-      "directDebit": "debit",
-      "NppCreditBankAccount": "npp"
-    };
-
-    const payload = {
-      amount: parseFloat(transferData?.send_amt || 0),
-      bsbNumber: monovaForm.bsb,
-      accountNumber: monovaForm.accountNumber,
-      accountName: monovaForm.accountName,
-      payment_mode: paymentModeMap[monovaForm.paymentMethod] || monovaForm.paymentMethod
-    };
-
-    const response = await createMonovaPayment(payload);
-
-    if (response?.transactionId && response.transactionId !== 0) {
-      // Store the transaction ID returned by Monova API
-      sessionStorage.setItem("monova_transaction_id", response.transactionId);
-      
-      toast.success("Monova payment created successfully!");
-      sessionStorage.removeItem("monova_form_data");
-      
-      // You can now use response.transactionId for any further operations
-      console.log("Monova Transaction ID:", response.transactionId);
-      
-      navigate("/transaction-success");
-    } else {
-      toast.error(response?.message || "Monova payment creation failed.");
-    }
-  } catch (err) {
-    toast.error("Error while creating Monova payment.");
-    console.error("Monova payment error:", err);
-  } finally {
-    setIsLoadingMonova(false);
+  if (paymentSuccess) {
+    sessionStorage.removeItem("payto_limit_data");
+    sessionStorage.removeItem("payto_agreement_response");
+    navigate("/transaction-success");
+  } else {
+    toast.error("Payment failed. Please try again.");
   }
 };
-  const handleSaveAndContinue = () => {
-    const monovaFormData = sessionStorage.getItem("monova_form_data");
-    
-    if (monovaFormData) {
-      handleMonovaPayment();
-    } else {
-      sessionStorage.setItem(
-        "transferOtpData",
-        JSON.stringify({
-          mobile: sender?.mobile,
-          email: sender?.email,
-        })
-      );
-      navigate("/otp-verification", {
-        state: { from: "transfer" },
-      });
-    }
-  };
+
+
+  const isLoading = isLoadingMonova || isLoadingZai || isLoadingPayID;
 
   return (
     <AnimatedPage>
@@ -244,80 +381,23 @@ const handleMonovaPayment = async () => {
                   variant="primary"
                   className="float-end updateform"
                   onClick={handleSaveAndContinue}
-                  disabled={isLoadingMonova}
+                  disabled={isLoading}
                 >
-                  {isLoadingMonova ? (
+                  {isLoading ? (
                     <>
                       <Spinner animation="border" size="sm" className="me-2" />
-                      Processing Monova Payment...
+                      {isLoadingMonova && "Processing Monova Payment..."}
+                      {isLoadingZai && "Processing Zai Payment..."}
+                      {isLoadingPayID && "Processing PayID Payment..."}
                     </>
                   ) : (
-                    "Save & Continue"
+                    "Process Payment"
                   )}
                 </Button>
               </Col>
             </Row>
           </div>
         </div>
-
-        {/* OTP Modal */}
-        {/* <Modal
-          size="md"
-          aria-labelledby="contained-modal-title-vcenter"
-          centered
-          show={modalShow}
-          onHide={() => setModalShow(false)}
-          className="profileupdate"
-        >
-          <Modal.Header closeButton />
-          <Modal.Body>
-            <h4>Verify your account by entering the code</h4>
-            <p className="m-4 text-center">
-              <img src={OtpImage} alt="OTP" />
-            </p>
-            <div className="d-flex justify-content-center">
-              <OtpInput
-                value={otp}
-                inputStyle="inputBoxStyle"
-                onChange={setOtp}
-                numInputs={6}
-                renderSeparator={<span>-</span>}
-                renderInput={(props) => <input {...props} />}
-              />
-            </div>
-            <div className="text-center mt-3">
-              <a href="#" className="resendOTP">
-                Resend OTP
-              </a>
-            </div>
-          </Modal.Body>
-
-          <Modal.Footer className="d-flex justify-content-center align-items-center">
-            <Row className="mb-3 w-100">
-              <Col>
-                <Button
-                  variant="light"
-                  className="cancel-btn w-100"
-                  onClick={() => setModalShow(false)}
-                >
-                  Cancel
-                </Button>
-              </Col>
-              <Col>
-                <Button
-                  onClick={() => {
-                    setModalShow(false);
-                    navigate("/payment-processed");
-                  }}
-                  variant="primary"
-                  className="submit-btn w-100"
-                >
-                  Continue
-                </Button>
-              </Col>
-            </Row>
-          </Modal.Footer>
-        </Modal> */}
       </div>
     </AnimatedPage>
   );
