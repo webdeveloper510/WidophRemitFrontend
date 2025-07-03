@@ -69,8 +69,6 @@ if (inputType === "email") {
 }
   try {
     const response = await userLogin(payload);
-    console.log("Login response:", response);
-
     if (response?.code === 200 || response?.code === "200") {
       toast.success("Login successful");
    navigate("/otp-verification", {

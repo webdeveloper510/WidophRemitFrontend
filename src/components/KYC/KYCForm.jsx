@@ -29,7 +29,6 @@ const KYCForm = () => {
     const file = event.target.files[0];
     if (file) {
       setSelectedFileName(file.name);
-      console.log("Selected file:", file.name);
       // Handle the file as needed
     }
   };

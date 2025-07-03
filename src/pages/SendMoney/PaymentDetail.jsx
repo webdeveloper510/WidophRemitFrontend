@@ -1,4 +1,3 @@
-// File: PaymentDetail.jsx
 
 import React, { useEffect, useState } from "react";
 import AnimatedPage from "../../components/AnimatedPage";
@@ -28,7 +27,7 @@ const PaymentDetail = () => {
   const [modalShowPayId, setModalShowPayId] = useState(false);
   const [modalShowMonova, setModalShowMonova] = useState(false);
   const [modalShowPayToAgreement, setModalShowPayToAgreement] = useState(false);
-  const [modalShowPayToLimit, setModalShowPayToLimit] = useState(false); 
+  const [modalShowPayToLimit, setModalShowPayToLimit] = useState(false);
   const [isLoadingAgreement, setIsLoadingAgreement] = useState(false);
   const [paymentType, setPaymentType] = useState("");
   const [amount, setAmount] = useState("0.00");
@@ -129,13 +128,14 @@ const PaymentDetail = () => {
     setMonovaFormErrors(errors);
 
     if (Object.keys(errors).length === 0) {
-    
+
       sessionStorage.setItem("monova_payment_data", JSON.stringify(monovaForm));
+
+      sessionStorage.setItem("selected_payment_method", "monova");
       setModalShowMonova(false);
       navigate("/confirm-transfer");
     }
   };
-
   const formatAmountLimit = (limit) => {
     if (!limit) return "Not specified";
     return `AUD ${parseInt(limit).toLocaleString()}`;
@@ -153,7 +153,6 @@ const PaymentDetail = () => {
       toast.error("Failed to copy to clipboard.");
     });
   };
-
   const handleContinue = async () => {
     if (!transferReason) {
       setReasonError("Please select a transfer reason.");
@@ -164,40 +163,35 @@ const PaymentDetail = () => {
       try {
         setIsLoadingAgreement(true);
         const agreementList = await getAgreementList();
-
         if (agreementList?.code === "200" && agreementList?.data) {
-       
           const agreementData = Array.isArray(agreementList.data) ? agreementList.data[0] : agreementList.data;
-
-          if (agreementData) {
-      
+          if (agreementData && (agreementData.payid || (agreementData.bsb && agreementData.account_number))) {
             setPayToLimitForm({
               payId: agreementData.payid || "",
-              bsb: "",
-              accountNumber: "",
+              bsb: agreementData.bsb || "",
+              accountNumber: agreementData.account_number || "",
               amountLimit: agreementData.max_amount || "",
               startDate: agreementData.agreement_start_date || new Date().toISOString().split("T")[0]
             });
+
             if (agreementData.payid && agreementData.payid_type) {
               setPayToForm({
                 payIdType: agreementData.payid_type,
                 payId: agreementData.payid,
-                bsb: "",
-                accountNumber: ""
+                bsb: agreementData.bsb || "",
+                accountNumber: agreementData.account_number || ""
               });
             }
             setModalShowPayToAgreement(true);
           } else {
-           
             setModalShowPayTo(true);
           }
         } else {
-    
+
+          setModalShowPayTo(true);
         }
       } catch (err) {
         console.error("Error fetching agreement list:", err);
-        toast.error("Error fetching agreement list.");
-     
         setModalShowPayTo(true);
       } finally {
         setIsLoadingAgreement(false);
@@ -243,16 +237,16 @@ const PaymentDetail = () => {
       let payload;
       if (payToLimitForm.payId) {
         payload = {
-          payid: payToLimitForm.payId,
-          max_amount: payToLimitForm.amountLimit, 
-          agreement_start_date: payToLimitForm.startDate,
+          pay_id: payToLimitForm.payId,
+          agreement_amount: payToLimitForm.amountLimit,
+          start_date: payToLimitForm.startDate,
           payid_type: payToForm.payIdType || "EMAL"
         };
       } else {
         payload = {
           bsb: payToLimitForm.bsb,
           account_number: payToLimitForm.accountNumber,
-          max_amount: payToLimitForm.amountLimit, 
+          max_amount: payToLimitForm.amountLimit,
           agreement_start_date: payToLimitForm.startDate
         };
       }
@@ -326,8 +320,9 @@ const PaymentDetail = () => {
                         onChange={() => {
                           setPaymentType("payto");
                           sessionStorage.setItem("selected_payment_method", "zai");
-                        }}
-                      />
+                          sessionStorage.removeItem("monova_payment_data");
+                          sessionStorage.removeItem("payid_data");
+                        }} />
                       <Form.Check
                         inline
                         label="Pay ID"
@@ -337,19 +332,43 @@ const PaymentDetail = () => {
                         onChange={() => {
                           setPaymentType("payid");
                           sessionStorage.setItem("selected_payment_method", "payid");
-                        }}
-                      />
+                          sessionStorage.removeItem("monova_payment_data");
+                          sessionStorage.removeItem("payto_limit_data");
+                          sessionStorage.removeItem("payto_agreement_response");
+                        }} />
                       <Form.Check
                         inline
-                        label="Monova"
+                        label="Bank Transfer"
                         name="paymentType"
                         type="radio"
-                        checked={paymentType === "monova"}
+                        checked={paymentType === "bank_transfer"}
                         onChange={() => {
-                          setPaymentType("monova");
-                          sessionStorage.setItem("selected_payment_method", "monova");
+                          setPaymentType("bank_transfer");
+                          // Reset selected gateway
+                          sessionStorage.removeItem("payto_limit_data");
+                          sessionStorage.removeItem("payto_agreement_response");
+                          sessionStorage.removeItem("payid_data");
+                          sessionStorage.removeItem("monova_payment_data");
                         }}
                       />
+
+                      {paymentType === "bank_transfer" && (
+                        <Form.Select
+                          className="ms-3"
+                          style={{ width: "200px" }}
+                          onChange={(e) => {
+                            const selectedGateway = e.target.value;
+                            if (selectedGateway === "monova") {
+                              sessionStorage.setItem("selected_payment_method", "monova");
+                              setModalShowMonova(true);
+                            }
+                          }}
+                        >
+                          <option value="">Select Gateway</option>
+                          <option value="monova">Monova</option>
+                          {/* Future: add more gateways here */}
+                        </Form.Select>
+                      )}
 
                     </div>
                   </Row>

@@ -61,14 +61,23 @@ const OtpVerification = () => {
         navigate("/profile");
       }
     } else if (from === "transfer") {
+      // Fix: Check for transferOtpData instead of signupData
       const transferOtpData = sessionStorage.getItem("transferOtpData");
       const storedTransferData = sessionStorage.getItem("transfer_data");
       
       if (transferOtpData) {
-        setUserData(JSON.parse(transferOtpData));
+        try {
+          setUserData(JSON.parse(transferOtpData));
+        } catch (error) {
+          console.error("Failed to parse transferOtpData:", error);
+          toast.error("Invalid transfer data. Please try again.");
+          navigate("/payment-detail");
+          return;
+        }
       } else {
         toast.error("Transfer data not found. Please try again.");
         navigate("/payment-detail");
+        return;
       }
 
       if (storedTransferData) {
@@ -85,63 +94,50 @@ const OtpVerification = () => {
     }
   }, [from, location.state, navigate]);
 
-  // Payment processing functions for transfer flow
-  const handleZaiPayment = async () => {
-    try {
-      console.log("Fetching agreement list...");
-      const agreementResponse = await getAgreementList();
-      
-      if (!agreementResponse || agreementResponse.code !== "200") {
-        toast.error("Failed to fetch agreement list");
-        console.error("Agreement list fetch failed:", agreementResponse);
-        return false;
-      }
+const handleZaiPayment = async () => {
+  try {
+    const agreementResponse = await getAgreementList();
 
-      const agreementUuid = agreementResponse?.data?.agreement_uuid;
-
-      if (!agreementUuid) {
-        toast.error("No valid agreement UUID found");
-        console.error("Agreement UUID not found in response:", agreementResponse);
-        return false;
-      }
-
-      console.log("Found agreement UUID:", agreementUuid);
-
-      let transactionId = sessionStorage.getItem("monova_transaction_id") || 
-                         sessionStorage.getItem("transaction_id");
-
-      console.log("Using transaction ID:", transactionId);
-
-      const zaiPayload = {
-        agreement_uuid: agreementUuid,
-        transaction_id: transactionId
-      };
-
-      console.log("Zai PayTo payload:", zaiPayload);
-
-      const zaiResponse = await ZaiPayTo(zaiPayload);
-
-      console.log("Zai PayTo response:", zaiResponse);
-
-      if (zaiResponse && zaiResponse.code === "400") {
-        sessionStorage.setItem("zai_payment_response", JSON.stringify(zaiResponse));
-        sessionStorage.setItem("final_transaction_id", transactionId);
-        return true;
-      } else {
-        toast.error(zaiResponse?.message || "Zai payment processing failed");
-        console.error("Zai payment failed:", zaiResponse);
-        return false;
-      }
-
-    } catch (error) {
-      console.error("Zai payment error:", error);
-      toast.error("Error processing Zai payment");
+    if (!agreementResponse || agreementResponse.code !== "200") {
+      toast.error("Failed to fetch agreement list");
+      console.error("Agreement list fetch failed:", agreementResponse);
       return false;
     }
-  };
+
+    const agreementUuid = agreementResponse?.data?.agreement_uuid;
+
+    if (!agreementUuid) {
+      toast.error("No valid agreement UUID found");
+      console.error("Agreement UUID not found in response:", agreementResponse);
+      return false;
+    }
+    let transactionId =
+      sessionStorage.getItem("monova_transaction_id") ||
+      sessionStorage.getItem("transaction_id");
+    const zaiPayload = {
+      agreement_uuid: agreementUuid,
+      transaction_id: transactionId,
+    };s
+    const zaiResponse = await ZaiPayTo(zaiPayload);
+    if (zaiResponse && zaiResponse.code === "200") {
+      sessionStorage.setItem("zai_payment_response", JSON.stringify(zaiResponse));
+      sessionStorage.setItem("final_transaction_id", transactionId);
+      return true;
+    } else {
+      toast.error(zaiResponse?.message || "Zai payment processing failed");
+      console.error("Zai payment failed:", zaiResponse);
+      return false;
+    }
+  } catch (error) {
+    console.error("Zai payment error:", error);
+    toast.error("Error processing Zai payment");
+    return false;
+  }
+};
+
 
   const handleMonovaPayment = async () => {
-    const monovaFormData = sessionStorage.getItem("monova_form_data");
+    const monovaFormData = sessionStorage.getItem("monova_payment_data");
     
     if (!monovaFormData) {
       toast.error("Monova payment data not found.");
@@ -169,8 +165,8 @@ const OtpVerification = () => {
       if (response?.transactionId && response.transactionId !== 0) {
         sessionStorage.setItem("monova_transaction_id", response.transactionId);
         toast.success("Monova payment created successfully!");
-        sessionStorage.removeItem("monova_form_data");
-        console.log("Monova Transaction ID:", response.transactionId);
+        sessionStorage.removeItem("monova_payment_data");
+
         return true;
       } else {
         toast.error(response?.message || "Monova payment creation failed.");
@@ -183,57 +179,46 @@ const OtpVerification = () => {
     }
   };
 
-  const processTransferPayments = async () => {
-    const monovaFormData = sessionStorage.getItem("monova_form_data");
-    const payToLimitData = sessionStorage.getItem("payto_limit_data");
-    const payToAgreementData = sessionStorage.getItem("payto_agreement_response");
-    const receiverData = sessionStorage.getItem("selected_receiver");
-    
-    let receiverPaymentMethod = null;
-    if (receiverData) {
-      try {
-        const receiver = JSON.parse(receiverData);
-        receiverPaymentMethod = receiver?.payment_method || receiver?.account_type;
-      } catch (error) {
-        console.error("Error parsing receiver data:", error);
-      }
+const processTransferPayments = async () => {
+  const monovaFormData = sessionStorage.getItem("monova_payment_data");
+  const payToLimitData = sessionStorage.getItem("payto_limit_data");
+  const payToAgreementData = sessionStorage.getItem("payto_agreement_response");
+  const selectedPaymentMethod = sessionStorage.getItem("selected_payment_method");
+  const receiverData = sessionStorage.getItem("selected_receiver");
+  
+  let receiverPaymentMethod = null;
+  if (receiverData) {
+    try {
+      const receiver = JSON.parse(receiverData);
+      receiverPaymentMethod = receiver?.payment_method || receiver?.account_type;
+    } catch (error) {
+      console.error("Error parsing receiver data:", error);
     }
+  }
 
-    console.log("Processing payments for method:", receiverPaymentMethod);
-
-    // PayTo flow - only Zai payment needed
-    if (payToLimitData && payToAgreementData) {
-      console.log("Processing PayTo flow - calling Zai payment only");
-      const zaiSuccess = await handleZaiPayment();
-      
-      if (zaiSuccess) {
-        sessionStorage.removeItem("payto_limit_data");
-        sessionStorage.removeItem("payto_agreement_response");
-        return true;
-      }
-      return false;
-    } 
-    // Monova flow - both Monova and Zai payments needed
-    else if (monovaFormData && receiverPaymentMethod === "bank_account") {
-      console.log("Processing Monova flow - calling both Monova and Zai payments");
-      
-      const monovaSuccess = await handleMonovaPayment();
-      
-      if (monovaSuccess) {
-        const zaiSuccess = await handleZaiPayment();
-        
-        if (zaiSuccess) {
-          sessionStorage.removeItem("monova_form_data");
-          return true;
-        }
-      }
-      return false;
+  if (selectedPaymentMethod === "monova" && monovaFormData) {
+    const monovaSuccess = await handleMonovaPayment();
+    if (monovaSuccess) {
+      sessionStorage.removeItem("monova_payment_data");
+      return true;
     }
+    return false;
+  }
+  else if (selectedPaymentMethod === "zai" || (payToLimitData && payToAgreementData)) {
+    const zaiSuccess = await handleZaiPayment();
     
-    // Default case - just OTP verification for PayID or other methods
-    return true;
-  };
-
+    if (zaiSuccess) {
+      sessionStorage.removeItem("payto_limit_data");
+      sessionStorage.removeItem("payto_agreement_response");
+      return true;
+    }
+    return false;
+  } 
+  else if (selectedPaymentMethod === "payid") 
+    {    return true;
+  }
+  return true;
+};
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -253,23 +238,20 @@ const OtpVerification = () => {
 
       let response;
       
-      // Handle different OTP verification flows
       if (from === "login") {
         response = await verifyEmail(payload);
       } else if (from === "profile") {
         response = await resendOtp(payload);
       } else if (from === "transfer") {
-        // For transfer, first verify OTP
+  
         response = await verifyEmail(payload);
         
         if (response?.code === "200") {
           toast.success("OTP Verified Successfully!");
-          
-          // Then process the payments based on the payment method
+        
           const paymentSuccess = await processTransferPayments();
           
           if (paymentSuccess) {
-            // Clean up session storage
             sessionStorage.removeItem("transferOtpData");
             sessionStorage.removeItem("transfer_data");
             sessionStorage.removeItem("selected_receiver");
@@ -287,9 +269,6 @@ const OtpVerification = () => {
       } else {
         response = await userRegisterVerify(payload);
       }
-
-      console.log("OTP Verification response:", response);
-
       if (response && response.code === "200") {
         toast.success("OTP Verified Successfully!");
 
@@ -297,7 +276,7 @@ const OtpVerification = () => {
           if (response?.access_token) {
             sessionStorage.setItem("token", response.access_token);
           }
-          navigate("/dashboard");
+          navigate("/kyc");
           return;
         }
 
@@ -320,8 +299,6 @@ const OtpVerification = () => {
           navigate("/profile-information");
           return;
         }
-
-        // Signup flow
         if (response?.access_token) {
           sessionStorage.setItem("token", response.access_token);
 
@@ -363,8 +340,6 @@ const OtpVerification = () => {
       };
 
       const response = await registerOtpResend(payload);
-      console.log("🚀 ~ handleResendOtp ~ response:", response);
-
       if (response?.code === "200") {
         toast.success("OTP has been resent successfully!");
       } else {

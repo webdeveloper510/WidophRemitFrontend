@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; 
 import AnimatedPage from "../../components/AnimatedPage";
 import Back from "../../assets/images/back.png";
 import Card from "react-bootstrap/Card";
@@ -12,6 +13,8 @@ import Bank_list from "../../utils/Bank_list";
 import { createRecipient } from "../../services/Api";
 
 const AddReceiver = () => {
+  const navigate = useNavigate(); 
+  const [isSubmitting, setIsSubmitting] = useState(false); 
 
   const initialValues = {
     bank_name: "",
@@ -43,11 +46,24 @@ const AddReceiver = () => {
   const { values, touched, handleChange, handleBlur, handleSubmit, errors } = useFormik({
     initialValues,
     onSubmit: async (values) => {
-      let payload = { ...values };
-      payload.account_type = "individual";
-      const response = await createRecipient(payload);
-      if (response.code === "200") {
-        navigate("/receivers")
+      setIsSubmitting(true);
+      try {
+        let payload = { ...values };
+        payload.account_type = "individual";
+        const response = await createRecipient(payload);
+        if (response.code === "200") {
+       
+          navigate("/review-transfer", { 
+            state: { 
+              receiverData: response.data || payload,
+              senderName: `${values.first_name} ${values.middle_name} ${values.last_name}`.trim()
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Error creating receiver:", error);
+      } finally {
+        setIsSubmitting(false);
       }
     }
   })
@@ -77,9 +93,10 @@ const AddReceiver = () => {
                       label="Bank Name"
                     >
                       <Form.Select aria-label="Floating label select example" name="bank_name" onChange={handleChange} value={values.bank_name}>
+                        <option value="">Select a bank</option>
                         {
-                          Bank_list.map((bank) => {
-                            return <option id={bank.label} value={bank.value}>{bank.label}</option>
+                          Bank_list.map((bank, index) => {
+                            return <option key={index} value={bank.value}>{bank.label}</option>
                           })
                         }
                       </Form.Select>
@@ -158,9 +175,10 @@ const AddReceiver = () => {
                       label="Country"
                     >
                       <Form.Select aria-label="Floating label select example" name="country" value={values.country} onChange={handleChange}>
+                        <option value="">Select a country</option>
                         {
-                          countryList.map((coun) => (
-                            <option value={coun.name}>{coun.name}</option>
+                          countryList.map((coun, index) => (
+                            <option key={index} value={coun.name}>{coun.name}</option>
                           ))
                         }
                       </Form.Select>
@@ -216,24 +234,24 @@ const AddReceiver = () => {
                   </Row>
                   <Row className="mb-3">
                     <Col>
-                      <a href="receivers">
-                        <Button
-                          variant="light"
-                          className="cancel-btn float-start"
-                        >
-                          Back
-                        </Button>
-                      </a>
+                      <Button
+                        variant="light"
+                        className="cancel-btn float-start"
+                        onClick={() => navigate("/receivers")}
+                        type="button"
+                      >
+                        Back
+                      </Button>
                     </Col>
                     <Col>
-                      <a href="review-transfer">
-                        <Button
-                          variant="primary"
-                          className="float-end updateform"
-                        >
-                          Create Receiver
-                        </Button>
-                      </a>
+                      <Button
+                        variant="primary"
+                        className="float-end updateform"
+                        type="submit"
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? "Creating..." : "Create Receiver"}
+                      </Button>
                     </Col>
                   </Row>
                 </Card.Body>

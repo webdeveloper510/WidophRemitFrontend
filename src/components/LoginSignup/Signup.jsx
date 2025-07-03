@@ -90,8 +90,6 @@ const Signup = () => {
 
     try {
       const response = await userRegisterCheck(payload);
-      console.log("Register response: ", response);
-
       if (response?.code === "200") {
         sessionStorage.setItem("signupData", JSON.stringify(payload));
          navigate("/otp-verification", { state: { from: "signup" } });
