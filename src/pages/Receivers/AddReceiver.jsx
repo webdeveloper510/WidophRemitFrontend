@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import AnimatedPage from "../../components/AnimatedPage";
 import Back from "../../assets/images/back.png";
 import Card from "react-bootstrap/Card";
@@ -13,8 +13,8 @@ import Bank_list from "../../utils/Bank_list";
 import { createRecipient } from "../../services/Api";
 
 const AddReceiver = () => {
-  const navigate = useNavigate(); 
-  const [isSubmitting, setIsSubmitting] = useState(false); 
+  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const initialValues = {
     bank_name: "",
@@ -27,8 +27,8 @@ const AddReceiver = () => {
     state: "",
     mobile: "",
     city: "",
-    post_code: ""
-  }
+    post_code: "",
+  };
 
   const countryList = [
     { name: "Australia", code: "AU", dialCode: "61" },
@@ -40,33 +40,34 @@ const AddReceiver = () => {
     { name: "Nigeria", code: "NG", dialCode: "234" },
     { name: "Philippines", code: "PH", dialCode: "63" },
     { name: "Thailand", code: "TH", dialCode: "66" },
-    { name: "Vietnam", code: "VN", dialCode: "84" }
-  ]
+    { name: "Vietnam", code: "VN", dialCode: "84" },
+  ];
 
-  const { values, touched, handleChange, handleBlur, handleSubmit, errors } = useFormik({
-    initialValues,
-    onSubmit: async (values) => {
-      setIsSubmitting(true);
-      try {
-        let payload = { ...values };
-        payload.account_type = "individual";
-        const response = await createRecipient(payload);
-        if (response.code === "200") {
-       
-          navigate("/review-transfer", { 
-            state: { 
-              receiverData: response.data || payload,
-              senderName: `${values.first_name} ${values.middle_name} ${values.last_name}`.trim()
-            }
-          });
+  const { values, touched, handleChange, handleBlur, handleSubmit, errors } =
+    useFormik({
+      initialValues,
+      onSubmit: async (values) => {
+        setIsSubmitting(true);
+        try {
+          let payload = { ...values, building: "test", street: "test",country_code:"152123"};
+          payload.account_type = "individual";
+          const response = await createRecipient(payload);
+          if (response.code === "200") {
+            navigate("/review-transfer", {
+              state: {
+                receiverData: response.data || payload,
+                senderName:
+                  `${values.first_name} ${values.middle_name} ${values.last_name}`.trim(),
+              },
+            });
+          }
+        } catch (error) {
+          console.error("Error creating receiver:", error);
+        } finally {
+          setIsSubmitting(false);
         }
-      } catch (error) {
-        console.error("Error creating receiver:", error);
-      } finally {
-        setIsSubmitting(false);
-      }
-    }
-  })
+      },
+    });
 
   return (
     <AnimatedPage>
@@ -92,13 +93,20 @@ const AddReceiver = () => {
                       as={Col}
                       label="Bank Name"
                     >
-                      <Form.Select aria-label="Floating label select example" name="bank_name" onChange={handleChange} value={values.bank_name}>
+                      <Form.Select
+                        aria-label="Floating label select example"
+                        name="bank_name"
+                        onChange={handleChange}
+                        value={values.bank_name}
+                      >
                         <option value="">Select a bank</option>
-                        {
-                          Bank_list.map((bank, index) => {
-                            return <option key={index} value={bank.value}>{bank.label}</option>
-                          })
-                        }
+                        {Bank_list.map((bank, index) => {
+                          return (
+                            <option key={index} value={bank.value}>
+                              {bank.label}
+                            </option>
+                          );
+                        })}
                       </Form.Select>
                     </FloatingLabel>
                     <FloatingLabel
@@ -107,7 +115,13 @@ const AddReceiver = () => {
                       label="Account Number"
                       className="mb-3"
                     >
-                      <Form.Control type="text" placeholder="Account Number" name="account_number" value={values.account_number} onChange={handleChange} />
+                      <Form.Control
+                        type="text"
+                        placeholder="Account Number"
+                        name="account_number"
+                        value={values.account_number}
+                        onChange={handleChange}
+                      />
                     </FloatingLabel>
                   </Row>
                 </Card.Body>
@@ -124,7 +138,13 @@ const AddReceiver = () => {
                       label="First Name"
                       className="mb-3"
                     >
-                      <Form.Control type="text" placeholder="First Name" name="first_name" value={values.first_name} onChange={handleChange} />
+                      <Form.Control
+                        type="text"
+                        placeholder="First Name"
+                        name="first_name"
+                        value={values.first_name}
+                        onChange={handleChange}
+                      />
                     </FloatingLabel>
                     <FloatingLabel
                       as={Col}
@@ -132,7 +152,13 @@ const AddReceiver = () => {
                       label="Middle Name"
                       className="mb-3"
                     >
-                      <Form.Control type="text" placeholder="Middle Name" name="middle_name" value={values.middle_name} onChange={handleChange} />
+                      <Form.Control
+                        type="text"
+                        placeholder="Middle Name"
+                        name="middle_name"
+                        value={values.middle_name}
+                        onChange={handleChange}
+                      />
                     </FloatingLabel>
                     <FloatingLabel
                       as={Col}
@@ -140,7 +166,13 @@ const AddReceiver = () => {
                       label="Last Name"
                       className="mb-3"
                     >
-                      <Form.Control type="text" placeholder="Last Name" name="last_name" value={values.last_name} onChange={handleChange} />
+                      <Form.Control
+                        type="text"
+                        placeholder="Last Name"
+                        name="last_name"
+                        value={values.last_name}
+                        onChange={handleChange}
+                      />
                     </FloatingLabel>
                   </Row>
 
@@ -157,7 +189,9 @@ const AddReceiver = () => {
                         defaultCountry="AU"
                         value={values.mobile}
                         onChange={(val) => {
-                          handleChange({ target: { name: "mobile", value: val } })
+                          handleChange({
+                            target: { name: "mobile", value: val },
+                          });
                         }}
                       />
                     </FloatingLabel>
@@ -174,13 +208,18 @@ const AddReceiver = () => {
                       as={Col}
                       label="Country"
                     >
-                      <Form.Select aria-label="Floating label select example" name="country" value={values.country} onChange={handleChange}>
+                      <Form.Select
+                        aria-label="Floating label select example"
+                        name="country"
+                        value={values.country}
+                        onChange={handleChange}
+                      >
                         <option value="">Select a country</option>
-                        {
-                          countryList.map((coun, index) => (
-                            <option key={index} value={coun.name}>{coun.name}</option>
-                          ))
-                        }
+                        {countryList.map((coun, index) => (
+                          <option key={index} value={coun.name}>
+                            {coun.name}
+                          </option>
+                        ))}
                       </Form.Select>
                     </FloatingLabel>
 
@@ -206,7 +245,13 @@ const AddReceiver = () => {
                       label="City"
                       className="mb-3"
                     >
-                      <Form.Control type="text" placeholder="City" name="city" value={values.city} onChange={handleChange} />
+                      <Form.Control
+                        type="text"
+                        placeholder="City"
+                        name="city"
+                        value={values.city}
+                        onChange={handleChange}
+                      />
                     </FloatingLabel>
                     <FloatingLabel
                       as={Col}
@@ -229,7 +274,13 @@ const AddReceiver = () => {
                       label="State"
                       className="mb-3"
                     >
-                      <Form.Control type="text" placeholder="State" name="state" value={values.state} onChange={handleChange} />
+                      <Form.Control
+                        type="text"
+                        placeholder="State"
+                        name="state"
+                        value={values.state}
+                        onChange={handleChange}
+                      />
                     </FloatingLabel>
                   </Row>
                   <Row className="mb-3">
