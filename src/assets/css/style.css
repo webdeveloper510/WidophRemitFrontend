@@ -375,7 +375,9 @@ span.status-badge.review {
 }
 
 /*************** trsnafer details css ****************/
-
+.banktransfer-select {
+  padding: 5px 8px;
+}
 .stripe1 {
   background: #cfda2f;
   border-radius: 10px;
