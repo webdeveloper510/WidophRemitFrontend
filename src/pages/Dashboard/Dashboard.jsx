@@ -5,6 +5,8 @@ import stats3 from "../../assets/images/info3.png";
 import stats4 from "../../assets/images/info4.png";
 import ReceiverTable from "./ReceiverTable";
 import LatestTransfer from "./LatestTransfer";
+import SendMoney from "../../assets/images/send-money.png";
+import Profile from "../../assets/images/profile.png";
 
 const Dashboard = () => (
   <AnimatedPage>
@@ -26,7 +28,11 @@ const Dashboard = () => (
                 style={{ paddingRight: 0 }}
               >
                 <div className="bg-white p-3 border-r stats-box">
-                  <img src={stats1} alt="stats" />
+                  <img
+                    src={stats1}
+                    alt="stats"
+                    className="dashboard-info-img"
+                  />
                   <div className="d-flex flex-column stats-row">
                     <span>Receivers</span>
                     <h4>878</h4>
@@ -38,10 +44,17 @@ const Dashboard = () => (
                 style={{ paddingleft: 0 }}
               >
                 <div className="bg-white p-3 border-r stats-box">
-                  <img src={stats2} alt="stats" />
+                  <img
+                    src={stats2}
+                    alt="stats"
+                    className="dashboard-info-img"
+                  />
                   <div className="d-flex flex-column stats-row">
                     <span>Send Money</span>
-                    <h4>878</h4>
+
+                    <a href="#">
+                      <img src={SendMoney} alt="send-money" />
+                    </a>
                   </div>
                 </div>
               </div>
@@ -52,19 +65,29 @@ const Dashboard = () => (
                 style={{ paddingRight: 0 }}
               >
                 <div className="bg-white p-3 border-r stats-box">
-                  <img src={stats3} alt="stats" />
+                  <img
+                    src={stats3}
+                    alt="stats"
+                    className="dashboard-info-img"
+                  />
                   <div className="d-flex flex-column stats-row">
-                    <span>Send Money</span>
+                    <span>Transfers</span>
                     <h4>878</h4>
                   </div>
                 </div>
               </div>
               <div className="col-md-4 custom-width" style={{ paddingleft: 0 }}>
                 <div className="bg-white p-3 border-r stats-box">
-                  <img src={stats4} alt="stats" />
+                  <img
+                    src={stats4}
+                    alt="stats"
+                    className="dashboard-info-img"
+                  />
                   <div className="d-flex flex-column stats-row">
                     <span>Profile</span>
-                    <h4>878</h4>
+                    <a href="#">
+                      <img src={Profile} alt="profile" />
+                    </a>
                   </div>
                 </div>
               </div>

@@ -1,35 +1,53 @@
+
 import React, { useEffect, useState } from "react";
 import AnimatedPage from "../../components/AnimatedPage";
-import { Form, FloatingLabel, Col, Spinner, Modal } from "react-bootstrap";
+import {
+  Form,
+  FloatingLabel,
+  Col,
+  Spinner,
+  Modal,
+  Row,
+  Card,
+  Button
+} from "react-bootstrap";
 import Back from "../../assets/images/back.png";
-import Row from "react-bootstrap/Row";
-import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
 import { RiFileCopyLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
-import { createPayId, createMonovaPayment } from "../../services/Api";
+import {
+  createPayId,
+  createMonovaPayment,
+  createAgreement,
+  getAgreementList
+} from "../../services/Api";
 import { toast } from "react-toastify";
 
 const PaymentDetail = () => {
   const [modalShowPayTo, setModalShowPayTo] = useState(false);
   const [modalShowPayId, setModalShowPayId] = useState(false);
   const [modalShowMonova, setModalShowMonova] = useState(false);
+  const [modalShowPayToAgreement, setModalShowPayToAgreement] = useState(false);
+  const [modalShowPayToLimit, setModalShowPayToLimit] = useState(false);
+  const [isLoadingAgreement, setIsLoadingAgreement] = useState(false);
   const [paymentType, setPaymentType] = useState("");
   const [amount, setAmount] = useState("0.00");
   const [currency, setCurrency] = useState("AUD");
   const [receiverName, setReceiverName] = useState("Receiver");
   const [isLoadingPayId, setIsLoadingPayId] = useState(false);
   const [payIdData, setPayIdData] = useState({ payId: "", transferId: "" });
-  const [monovaForm, setMonovaForm] = useState({ 
-    bsb: "", 
-    accountNumber: "", 
+  const [payToForm, setPayToForm] = useState({ payIdType: "", payId: "", bsb: "", accountNumber: "" });
+  const [payToFormErrors, setPayToFormErrors] = useState({});
+  const [payToLimitForm, setPayToLimitForm] = useState({ payId: "", bsb: "", accountNumber: "", amountLimit: "", startDate: "" });
+  const [isCreatingAgreement, setIsCreatingAgreement] = useState(false);
+  const [transferReason, setTransferReason] = useState("");
+  const [reasonError, setReasonError] = useState("");
+  const [monovaForm, setMonovaForm] = useState({
+    bsb: "",
+    accountNumber: "",
     accountName: "",
     paymentMethod: ""
   });
   const [monovaFormErrors, setMonovaFormErrors] = useState({});
-
-  const [transferReason, setTransferReason] = useState("");
-  const [reasonError, setReasonError] = useState("");
 
   const navigate = useNavigate();
 
@@ -41,7 +59,7 @@ const PaymentDetail = () => {
     "Travel Payment",
     "Utility Payment",
     "Personal Use",
-    "Other",
+    "Other"
   ];
 
   useEffect(() => {
@@ -58,74 +76,126 @@ const PaymentDetail = () => {
     }
   }, []);
 
-  const handleCreatePayId = async () => {
-    setIsLoadingPayId(true);
-    try {
-      const transactionId = sessionStorage.getItem("transaction_id");
-      if (!transactionId) {
-        toast.error("Transaction ID not found.");
-        setIsLoadingPayId(false);
-        return;
-      }
-
-      const response = await createPayId({ transaction_id: transactionId });
-
-      if (response?.code === "200") {
-        setPayIdData({
-          payId: response.data.payid || "",
-          transferId: response.data.transaction_id || "",
-        });
-        setModalShowPayId(true);
-      } else {
-        toast.error(response.message || "PayID generation failed.");
-      }
-    } catch (err) {
-      toast.error("Error while generating PayID.");
-    } finally {
-      setIsLoadingPayId(false);
-    }
+  const handlePayToFormChange = (field, value) => {
+    setPayToForm(prev => ({ ...prev, [field]: value }));
   };
 
-  const validateMonovaForm = () => {
-    const errors = {};
-    
-    if (!monovaForm.paymentMethod) {
-      errors.paymentMethod = "Please select a payment method.";
-    }
-    if (!monovaForm.bsb) {
-      errors.bsb = "BSB number is required.";
-    }
-    if (!monovaForm.accountNumber) {
-      errors.accountNumber = "Account number is required.";
-    }
-    if (!monovaForm.accountName) {
-      errors.accountName = "Account name is required.";
-    }
+  const handleMonovaFormChange = (field, value) => {
+    setMonovaForm(prev => ({ ...prev, [field]: value }));
+  };
 
-    setMonovaFormErrors(errors);
+  const validatePayToForm = () => {
+    const errors = {};
+    if (!payToForm.payIdType) errors.payIdType = "Please select PayID type.";
+    if (payToForm.payIdType && !payToForm.payId) errors.payId = "Please enter PayID.";
+    if (!payToForm.payId && !payToForm.bsb) errors.bsb = "BSB is required.";
+    if (!payToForm.payId && !payToForm.accountNumber) errors.accountNumber = "Account number is required.";
+    setPayToFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
-  const handleMonovaContinue = () => {
-    if (!validateMonovaForm()) {
-      return;
+  const handlePayToContinue = () => {
+    const isValid = validatePayToForm();
+    if (isValid) {
+      setModalShowPayTo(false);
+      setModalShowPayToLimit(true);
+      setPayToLimitForm({
+        payId: payToForm.payId,
+        bsb: payToForm.bsb,
+        accountNumber: payToForm.accountNumber,
+        amountLimit: "",
+        startDate: new Date().toISOString().split("T")[0]
+      });
     }
-
-    // Store Monova form data in sessionStorage for later use
-    sessionStorage.setItem("monova_form_data", JSON.stringify(monovaForm));
-    
-    setModalShowMonova(false);
-    navigate("/confirm-transfer");
   };
 
-  const handleContinue = () => {
+  const handlePayToLimitContinue = () => {
+    if (!payToLimitForm.amountLimit) {
+      toast.error("Please select an amount limit.");
+      return;
+    }
+    setModalShowPayToLimit(false);
+    setModalShowPayToAgreement(true);
+  };
+
+  const handleMonovaContinue = () => {
+    const errors = {};
+    if (!monovaForm.paymentMethod) errors.paymentMethod = "Please select payment method.";
+    if (!monovaForm.bsb) errors.bsb = "BSB is required.";
+    if (!monovaForm.accountNumber) errors.accountNumber = "Account number is required.";
+    if (!monovaForm.accountName) errors.accountName = "Account name is required.";
+
+    setMonovaFormErrors(errors);
+
+    if (Object.keys(errors).length === 0) {
+
+      sessionStorage.setItem("monova_payment_data", JSON.stringify(monovaForm));
+
+      sessionStorage.setItem("selected_payment_method", "monova");
+      setModalShowMonova(false);
+      navigate("/confirm-transfer");
+    }
+  };
+  const formatAmountLimit = (limit) => {
+    if (!limit) return "Not specified";
+    return `AUD ${parseInt(limit).toLocaleString()}`;
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "Not specified";
+    return new Date(dateString).toLocaleDateString('en-AU');
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text).then(() => {
+      toast.success("Copied to clipboard!");
+    }).catch(() => {
+      toast.error("Failed to copy to clipboard.");
+    });
+  };
+  const handleContinue = async () => {
     if (!transferReason) {
       setReasonError("Please select a transfer reason.");
       return;
     }
 
     if (paymentType === "payto") {
-      setModalShowPayTo(true);
+      try {
+        setIsLoadingAgreement(true);
+        const agreementList = await getAgreementList();
+        if (agreementList?.code === "200" && agreementList?.data) {
+          const agreementData = Array.isArray(agreementList.data) ? agreementList.data[0] : agreementList.data;
+          if (agreementData && (agreementData.payid || (agreementData.bsb && agreementData.account_number))) {
+            setPayToLimitForm({
+              payId: agreementData.payid || "",
+              bsb: agreementData.bsb || "",
+              accountNumber: agreementData.account_number || "",
+              amountLimit: agreementData.max_amount || "",
+              startDate: agreementData.agreement_start_date || new Date().toISOString().split("T")[0]
+            });
+
+            if (agreementData.payid && agreementData.payid_type) {
+              setPayToForm({
+                payIdType: agreementData.payid_type,
+                payId: agreementData.payid,
+                bsb: agreementData.bsb || "",
+                accountNumber: agreementData.account_number || ""
+              });
+            }
+            setModalShowPayToAgreement(true);
+          } else {
+            setModalShowPayTo(true);
+          }
+        } else {
+
+          setModalShowPayTo(true);
+        }
+      } catch (err) {
+        console.error("Error fetching agreement list:", err);
+        setModalShowPayTo(true);
+      } finally {
+        setIsLoadingAgreement(false);
+      }
     } else if (paymentType === "payid") {
       handleCreatePayId();
     } else if (paymentType === "monova") {
@@ -135,15 +205,66 @@ const PaymentDetail = () => {
     }
   };
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text).catch(console.error);
+  const handleCreatePayId = async () => {
+    setIsLoadingPayId(true);
+    try {
+      const transactionId = sessionStorage.getItem("transaction_id");
+      if (!transactionId) {
+        toast.error("Transaction ID not found.");
+        setIsLoadingPayId(false);
+        return;
+      }
+      const response = await createPayId({ transaction_id: transactionId });
+      if (response?.code === "200") {
+        setPayIdData({
+          payId: response.data.payid || "",
+          transferId: response.data.transaction_id || ""
+        });
+        setModalShowPayId(true);
+      } else {
+        toast.error(response.message || "PayID generation failed.");
+      }
+    } catch (err) {
+      toast.error("Error generating PayID.");
+    } finally {
+      setIsLoadingPayId(false);
+    }
   };
 
-  const handleMonovaFormChange = (field, value) => {
-    setMonovaForm({ ...monovaForm, [field]: value });
-    // Clear the error for this field when user starts typing
-    if (monovaFormErrors[field]) {
-      setMonovaFormErrors({ ...monovaFormErrors, [field]: "" });
+  const handlePayToAgreementContinue = async () => {
+    setIsCreatingAgreement(true);
+    try {
+      let payload;
+      if (payToLimitForm.payId) {
+        payload = {
+          pay_id: payToLimitForm.payId,
+          agreement_amount: payToLimitForm.amountLimit,
+          start_date: payToLimitForm.startDate,
+          payid_type: payToForm.payIdType || "EMAL"
+        };
+      } else {
+        payload = {
+          bsb: payToLimitForm.bsb,
+          account_number: payToLimitForm.accountNumber,
+          max_amount: payToLimitForm.amountLimit,
+          agreement_start_date: payToLimitForm.startDate
+        };
+      }
+
+      const response = await createAgreement(payload);
+      if (response?.code === "200" || response?.success) {
+        sessionStorage.setItem("payto_limit_data", JSON.stringify(payToLimitForm));
+        sessionStorage.setItem("payto_agreement_response", JSON.stringify(response));
+        toast.success("PayTo agreement created successfully!");
+        setModalShowPayToAgreement(false);
+        navigate("/confirm-transfer");
+      } else {
+        toast.error(response?.message || "Failed to create agreement.");
+      }
+    } catch (error) {
+      toast.error("Error creating agreement.");
+    } finally {
+      setIsCreatingAgreement(false);
     }
   };
 
@@ -196,24 +317,59 @@ const PaymentDetail = () => {
                         name="paymentType"
                         type="radio"
                         checked={paymentType === "payto"}
-                        onChange={() => setPaymentType("payto")}
-                      />
+                        onChange={() => {
+                          setPaymentType("payto");
+                          sessionStorage.setItem("selected_payment_method", "zai");
+                          sessionStorage.removeItem("monova_payment_data");
+                          sessionStorage.removeItem("payid_data");
+                        }} />
                       <Form.Check
                         inline
                         label="Pay ID"
                         name="paymentType"
                         type="radio"
                         checked={paymentType === "payid"}
-                        onChange={() => setPaymentType("payid")}
-                      />
+                        onChange={() => {
+                          setPaymentType("payid");
+                          sessionStorage.setItem("selected_payment_method", "payid");
+                          sessionStorage.removeItem("monova_payment_data");
+                          sessionStorage.removeItem("payto_limit_data");
+                          sessionStorage.removeItem("payto_agreement_response");
+                        }} />
                       <Form.Check
                         inline
-                        label="Monova"
+                        label="Bank Transfer"
                         name="paymentType"
                         type="radio"
-                        checked={paymentType === "monova"}
-                        onChange={() => setPaymentType("monova")}
+                        checked={paymentType === "bank_transfer"}
+                        onChange={() => {
+                          setPaymentType("bank_transfer");
+                          // Reset selected gateway
+                          sessionStorage.removeItem("payto_limit_data");
+                          sessionStorage.removeItem("payto_agreement_response");
+                          sessionStorage.removeItem("payid_data");
+                          sessionStorage.removeItem("monova_payment_data");
+                        }}
                       />
+
+                      {paymentType === "bank_transfer" && (
+                        <Form.Select
+                          className="ms-3"
+                          style={{ width: "200px" }}
+                          onChange={(e) => {
+                            const selectedGateway = e.target.value;
+                            if (selectedGateway === "monova") {
+                              sessionStorage.setItem("selected_payment_method", "monova");
+                              setModalShowMonova(true);
+                            }
+                          }}
+                        >
+                          <option value="">Select Gateway</option>
+                          <option value="monova">Monova</option>
+                          {/* Future: add more gateways here */}
+                        </Form.Select>
+                      )}
+
                     </div>
                   </Row>
 
@@ -270,35 +426,92 @@ const PaymentDetail = () => {
           </div>
         </div>
 
-        {/* Pay TO Modal */}
-        <Modal size="lg" centered show={modalShowPayTo} onHide={() => setModalShowPayTo(false)} className="profileupdate">
+        <Modal
+          size="lg"
+          centered
+          show={modalShowPayTo}
+          onHide={() => setModalShowPayTo(false)}
+          className="profileupdate"
+        >
           <Modal.Header closeButton className="payment-popup">PayTo</Modal.Header>
           <Modal.Body>
             <Form className="profile-form">
+              {/* PayID Type */}
               <Row className="mb-3">
                 <FloatingLabel controlId="payid-type" as={Col} label="PayID Type">
-                  <Form.Select>
-                    <option value="1">AUD</option>
-                    <option value="2">USD</option>
+                  <Form.Select
+                    value={payToForm.payIdType}
+                    onChange={(e) => handlePayToFormChange('payIdType', e.target.value)}
+                    isInvalid={!!payToFormErrors.payIdType}
+                  >
+                    <option value="">Select PayID Type</option>
+                    <option value="EMAL">Email</option>
+                    <option value="TEL">Telephone Number</option>
+                    <option value="AUBN">Australian Business Number</option>
+                    <option value="ORGN">Organisation Identifier</option>
                   </Form.Select>
-                </FloatingLabel>
-                <FloatingLabel controlId="payid" as={Col} label="PayID">
-                  <Form.Control type="text" placeholder="PayID" />
+                  <Form.Control.Feedback type="invalid">
+                    {payToFormErrors.payIdType}
+                  </Form.Control.Feedback>
                 </FloatingLabel>
               </Row>
+
+              {/* PayID */}
+              <Row className="mb-3">
+                <FloatingLabel controlId="payid" as={Col} label="PayID">
+                  <Form.Control
+                    type="text"
+                    placeholder="PayID"
+                    value={payToForm.payId}
+                    onChange={(e) => handlePayToFormChange('payId', e.target.value)}
+                    isInvalid={!!payToFormErrors.payId}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {payToFormErrors.payId}
+                  </Form.Control.Feedback>
+                </FloatingLabel>
+              </Row>
+
+              {/* OR divider */}
               <Row className="mb-3">
                 <span className="Ortext">OR</span>
               </Row>
+
+              {/* BSB */}
               <Row className="mb-3">
-                <FloatingLabel controlId="bsb" as={Col} label="BSB">
-                  <Form.Control type="text" placeholder="BSB" />
+                <FloatingLabel controlId="bsb" as={Col} label="BSB Number">
+                  <Form.Control
+                    type="text"
+                    placeholder="BSB Number"
+                    value={payToForm.bsb}
+                    onChange={(e) => handlePayToFormChange('bsb', e.target.value)}
+                    isInvalid={!!payToFormErrors.bsb}
+                    disabled={!!payToForm.payId}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {payToFormErrors.bsb}
+                  </Form.Control.Feedback>
                 </FloatingLabel>
               </Row>
+
+              {/* Account Number */}
               <Row className="mb-3">
-                <FloatingLabel controlId="account-no" as={Col} label="Account No.">
-                  <Form.Control type="text" placeholder="Account Number" />
+                <FloatingLabel controlId="account-no" as={Col} label="Account Number">
+                  <Form.Control
+                    type="text"
+                    placeholder="Account Number"
+                    value={payToForm.accountNumber}
+                    onChange={(e) => handlePayToFormChange('accountNumber', e.target.value)}
+                    isInvalid={!!payToFormErrors.accountNumber}
+                    disabled={!!payToForm.payId}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {payToFormErrors.accountNumber}
+                  </Form.Control.Feedback>
                 </FloatingLabel>
               </Row>
+
+              {/* Buttons */}
               <Row className="mb-3">
                 <Col>
                   <Button variant="light" className="cancel-btn float-start" onClick={() => setModalShowPayTo(false)}>
@@ -306,7 +519,7 @@ const PaymentDetail = () => {
                   </Button>
                 </Col>
                 <Col>
-                  <Button variant="primary" className="submit-btn float-end" onClick={() => navigate("/confirm-transfer")}>
+                  <Button variant="primary" className="submit-btn float-end" onClick={handlePayToContinue}>
                     Continue
                   </Button>
                 </Col>
@@ -314,6 +527,8 @@ const PaymentDetail = () => {
             </Form>
           </Modal.Body>
         </Modal>
+
+
 
         {/* PayID Modal */}
         <Modal size="lg" centered show={modalShowPayId} onHide={() => setModalShowPayId(false)} className="profileupdate">
@@ -428,9 +643,9 @@ const PaymentDetail = () => {
                   </Button>
                 </Col>
                 <Col>
-                  <Button 
-                    variant="primary" 
-                    className="submit-btn float-end" 
+                  <Button
+                    variant="primary"
+                    className="submit-btn float-end"
                     onClick={handleMonovaContinue}
                   >
                     Continue
@@ -438,6 +653,154 @@ const PaymentDetail = () => {
                 </Col>
               </Row>
             </Form>
+          </Modal.Body>
+        </Modal>
+
+        {/* PayTo Limit Modal */}
+        <Modal size="lg" centered show={modalShowPayToLimit} onHide={() => setModalShowPayToLimit(false)} className="profileupdate">
+          <Modal.Header closeButton className="payment-popup">PayTo Limit Setup</Modal.Header>
+          <Modal.Body>
+            <Form className="profile-form">
+              {payToLimitForm.payId && (
+                <Row className="mb-3">
+                  <FloatingLabel as={Col} controlId="payto-limit-payid" label="PayID">
+                    <Form.Control
+                      type="text"
+                      value={payToLimitForm.payId}
+                      readOnly
+                    />
+                  </FloatingLabel>
+                </Row>
+              )}
+
+              {(payToLimitForm.bsb || payToLimitForm.accountNumber) && (
+                <>
+                  <Row className="mb-3">
+                    <FloatingLabel as={Col} controlId="payto-limit-bsb" label="BSB Number">
+                      <Form.Control
+                        type="text"
+                        value={payToLimitForm.bsb}
+                        readOnly
+                      />
+                    </FloatingLabel>
+                  </Row>
+                  <Row className="mb-3">
+                    <FloatingLabel as={Col} controlId="payto-limit-account" label="Account Number">
+                      <Form.Control
+                        type="text"
+                        value={payToLimitForm.accountNumber}
+                        readOnly
+                      />
+                    </FloatingLabel>
+                  </Row>
+                </>
+              )}
+
+              <Row className="mb-3">
+                <FloatingLabel as={Col} controlId="amount-limit" label="Amount Per Transaction Limit">
+                  <Form.Select
+                    value={payToLimitForm.amountLimit}
+                    onChange={(e) => setPayToLimitForm({ ...payToLimitForm, amountLimit: e.target.value })}
+                  >
+                    <option value="">Select Limit</option>
+                    <option value="1000">Up to AUD 1k</option>
+                    <option value="5000">Up to AUD 5k</option>
+                    <option value="10000">Up to AUD 10k</option>
+                    <option value="30000">Up to AUD 30k</option>
+                  </Form.Select>
+                </FloatingLabel>
+              </Row>
+
+              <Row className="mb-3">
+                <FloatingLabel as={Col} controlId="start-date" label="Start Date">
+                  <Form.Control
+                    type="date"
+                    value={payToLimitForm.startDate}
+                    readOnly
+                    style={{ backgroundColor: '#f8f9fa', color: '#6c757d' }}
+                  />
+                </FloatingLabel>
+              </Row>
+
+              <Row className="mb-3">
+                <Col>
+                  <Button variant="light" className="cancel-btn float-start" onClick={() => setModalShowPayToLimit(false)}>
+                    Cancel
+                  </Button>
+                </Col>
+                <Col>
+                  <Button variant="primary" className="submit-btn float-end" onClick={handlePayToLimitContinue}>
+                    Continue
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          </Modal.Body>
+        </Modal>
+
+        {/* PayTo Agreement Modal */}
+        <Modal size="lg" centered show={modalShowPayToAgreement} onHide={() => setModalShowPayToAgreement(false)} className="profileupdate">
+          <Modal.Header closeButton className="payment-popup">PayTo Agreement Details</Modal.Header>
+          <Modal.Body>
+            <div className="agreement-details p-3">
+              <h5 className="mb-4">Please review your PayTo agreement details:</h5>
+
+              <div className="agreement-section mb-4">
+                <h6 className="text-primary">Payment Details</h6>
+                <hr />
+
+                {payToLimitForm.payId && (
+                  <div className="mb-2">
+                    <strong>PayID:</strong> {payToLimitForm.payId}
+                  </div>
+                )}
+
+                {payToForm.payIdType && (
+                  <div className="mb-2">
+                    <strong>PayID Type:</strong> {payToForm.payIdType === 'EMAL' ? 'Email' : payToForm.payIdType}
+                  </div>
+                )}
+
+                {(payToLimitForm.bsb && payToLimitForm.accountNumber) && (
+                  <>
+                    <div className="mb-2">
+                      <strong>BSB Number:</strong> {payToLimitForm.bsb}
+                    </div>
+                    <div className="mb-2">
+                      <strong>Account Number:</strong> {payToLimitForm.accountNumber}
+                    </div>
+                  </>
+                )}
+
+                <div className="mb-2">
+                  <strong>Maximum Amount:</strong> {formatAmountLimit(payToLimitForm.amountLimit)} per transaction
+                </div>
+
+                <div className="mb-2">
+                  <strong>Agreement Start Date:</strong> {formatDate(payToLimitForm.startDate)}
+                </div>
+
+                <div className="mb-2">
+                  <strong>Status:</strong> <span className="text-success">Active</span>
+                </div>
+              </div>
+
+
+
+            </div>
+
+            <Row className="mb-3">
+              <Col>
+                <Button variant="light" className="cancel-btn float-start" onClick={() => setModalShowPayToAgreement(false)}>
+                  Back
+                </Button>
+              </Col>
+              <Col>
+                <Button variant="primary" className="submit-btn float-end" onClick={handlePayToAgreementContinue}>
+                  Confirm & Continue
+                </Button>
+              </Col>
+            </Row>
           </Modal.Body>
         </Modal>
       </div>

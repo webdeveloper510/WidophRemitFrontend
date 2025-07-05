@@ -16,7 +16,6 @@ const ReceiverList = () => {
   const navigate = useNavigate();
 
 const handleSendAgain = (row) => {
-  console.log("Send Again clicked for:", row.account_name);
   sessionStorage.setItem("selected_receiver", JSON.stringify(row));
   navigate("/review-transfer"); 
 };

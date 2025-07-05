@@ -6,7 +6,6 @@ import RecentReceiver from "../../assets/images/icons1.png";
 import { recipientList } from "../../services/Api";
 
 const handleSendAgain = (row) => {
-  console.log("Send Again clicked for:", row.name);
 };
 
 

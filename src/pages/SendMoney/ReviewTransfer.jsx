@@ -4,51 +4,97 @@ import Back from "../../assets/images/back.png";
 import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
 import { Col, Row, Button } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { createTransaction, userProfile } from "../../services/Api";
+import { useNavigate, useLocation } from "react-router-dom";
+import { createTransaction, userProfile,recipientList } from "../../services/Api";
 import { toast } from "react-toastify";
 
 const ReviewTransfer = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [receiver, setReceiver] = useState(null);
   const [sender, setSender] = useState({});
   const [transferData, setTransferData] = useState(null);
+  const [loading, setLoading] = useState(false);
   const transactionId = sessionStorage.getItem("transaction_id") || "";
+const [list,setList]= useState({})
+  useEffect(() => {
+    fetchList();
+  }, [])
+
+  const fetchList = async () => {
+    try {
+      const response = await recipientList();
+    if (response.code === "200" && Array.isArray(response.data) && response.data.length > 0) {
+  setList(response.data[0]); 
+}
+
+    } catch (err) {
+      console.error("Error fetching list:", err);
+    }
+  }
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      const res = await userProfile({});
-      if (res?.code === "200" && res?.data) {
-        setSender(res.data);
-      } else {
-        toast.error(res?.message || "Failed to fetch user profile");
+      try {
+        const res = await userProfile({});
+        if (res?.code === "200" && res?.data) {
+          setSender(res.data);
+        } else {
+          toast.error(res?.message || "Failed to fetch user profile");
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+        toast.error("Failed to fetch user profile");
       }
     };
+    if (location.state && location.state.receiverData) {
+      setReceiver(location.state.receiverData);
+    } else {
 
+      const storedReceiver = sessionStorage.getItem("selected_receiver");
+      if (storedReceiver) {
+        try {
+          setReceiver(JSON.parse(storedReceiver));
+        } catch (error) {
+          console.error("Failed to parse selected_receiver:", error);
+          navigate("/receivers-list");
+        }
+      } else {
+        toast.error("No receiver selected. Please select a receiver first.");
+        navigate("/receivers-list");
+      }
+    }
     const storedAmount = sessionStorage.getItem("transfer_data");
-    const storedReceiver = sessionStorage.getItem("selected_receiver");
-
     if (storedAmount) {
       try {
         const parsedAmount = JSON.parse(storedAmount);
-        setTransferData(parsedAmount?.amount || {});
+        setTransferData(parsedAmount?.amount || parsedAmount || {});
       } catch (error) {
         console.error("Failed to parse transfer_data:", error);
+        toast.error("Invalid transfer data");
       }
     }
 
-    if (storedReceiver) {
-      setReceiver(JSON.parse(storedReceiver));
-    } else {
-      navigate("/receivers-list");
-    }
-
     fetchUserProfile();
-  }, [navigate]);
-
-  const fullName = `${sender?.First_name || ""} ${sender?.Last_name || ""}`.trim();
+  }, [navigate, location.state]);
+  const fullName = `${list?.First_name || list?.first_name || ""} ${list?.Last_name || list?.last_name || ""}`.trim();
+  const receiverFullName = receiver 
+    ? `${receiver.first_name || ""} ${receiver.middle_name || ""} ${receiver.last_name || ""}`.trim()
+    : "";
 
   const handleSaveAndContinue = async () => {
+    if (!receiver) {
+      toast.error("No receiver selected");
+      return;
+    }
+
+    if (!transferData) {
+      toast.error("No transfer data available");
+      return;
+    }
+
+    setLoading(true);
+
     const transactionPayload = {
       transaction_id: transactionId,
       amount: {
@@ -77,6 +123,16 @@ const ReviewTransfer = () => {
     } catch (err) {
       console.error("Transaction API error:", err);
       toast.error("Something went wrong while creating transaction.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBack = () => {
+    if (location.state && location.state.receiverData) {
+      navigate("/receivers-list");
+    } else {
+      navigate("/receivers-list");
     }
   };
 
@@ -86,7 +142,7 @@ const ReviewTransfer = () => {
         <div className="d-flex align-items-center">
           <Button
             variant="link"
-            onClick={() => navigate("/receivers-list")}
+            onClick={handleBack}
             className="p-0 border-0 bg-transparent"
           >
             <img src={Back} alt="Back" />
@@ -110,7 +166,7 @@ const ReviewTransfer = () => {
                             <td>Sending Amount</td>
                             <td>
                               {transferData?.send_amt
-                                ? `${transferData.send_amt} ${transferData.from}`
+                                ? `${transferData.send_amt} ${transferData.from || "AUD"}`
                                 : "N/A"}
                             </td>
                           </tr>
@@ -118,7 +174,7 @@ const ReviewTransfer = () => {
                             <td>Amount Exchanged</td>
                             <td>
                               {transferData?.exchange_amt
-                                ? `${transferData.exchange_amt} ${transferData.to}`
+                                ? `${transferData.exchange_amt} ${transferData.to || "NGN"}`
                                 : "N/A"}
                             </td>
                           </tr>
@@ -126,7 +182,7 @@ const ReviewTransfer = () => {
                             <td>Total To Receiver</td>
                             <td>
                               {transferData?.exchange_amt
-                                ? `${transferData.exchange_amt} ${transferData.to}`
+                                ? `${transferData.exchange_amt} ${transferData.to || "NGN"}`
                                 : "N/A"}
                             </td>
                           </tr>
@@ -134,7 +190,7 @@ const ReviewTransfer = () => {
                             <td>Exchange Rate</td>
                             <td>
                               {transferData?.exchange_rate
-                                ? `1 ${transferData.from} = ${transferData.exchange_rate} ${transferData.to}`
+                                ? `1 ${transferData.from || "AUD"} = ${transferData.exchange_rate} ${transferData.to || "NGN"}`
                                 : "N/A"}
                             </td>
                           </tr>
@@ -154,6 +210,18 @@ const ReviewTransfer = () => {
                             <td>Sender Name</td>
                             <td>{fullName || "N/A"}</td>
                           </tr>
+                          {sender?.email && (
+                            <tr>
+                              <td>Email</td>
+                              <td>{sender.email}</td>
+                            </tr>
+                          )}
+                          {sender?.phone && (
+                            <tr>
+                              <td>Phone</td>
+                              <td>{sender.phone}</td>
+                            </tr>
+                          )}
                         </tbody>
                       </Table>
                     </div>
@@ -166,12 +234,41 @@ const ReviewTransfer = () => {
                         <tbody>
                           <tr>
                             <td>Beneficiary Name</td>
-                            <td>{receiver?.account_name || "N/A"}</td>
+                            <td>{receiver?.account_name || receiverFullName || "N/A"}</td>
                           </tr>
                           <tr>
                             <td>Bank Name</td>
                             <td>{receiver?.bank_name || "N/A"}</td>
                           </tr>
+                          {receiver?.account_number && (
+                            <tr>
+                              <td>Account Number</td>
+                              <td>{receiver.account_number}</td>
+                            </tr>
+                          )}
+                          {receiver?.mobile && (
+                            <tr>
+                              <td>Mobile</td>
+                              <td>{receiver.mobile}</td>
+                            </tr>
+                          )}
+                          {receiver?.country && (
+                            <tr>
+                              <td>Country</td>
+                              <td>{receiver.country}</td>
+                            </tr>
+                          )}
+                          {receiver?.street_address && (
+                            <tr>
+                              <td>Address</td>
+                              <td>
+                                {receiver.street_address}
+                                {receiver.city && `, ${receiver.city}`}
+                                {receiver.state && `, ${receiver.state}`}
+                                {receiver.post_code && ` ${receiver.post_code}`}
+                              </td>
+                            </tr>
+                          )}
                         </tbody>
                       </Table>
                     </div>
@@ -185,7 +282,8 @@ const ReviewTransfer = () => {
                 <Button
                   variant="light"
                   className="cancel-btn float-start"
-                  onClick={() => navigate("/receivers-list")}
+                  onClick={handleBack}
+                  disabled={loading}
                 >
                   Back
                 </Button>
@@ -195,8 +293,9 @@ const ReviewTransfer = () => {
                   variant="primary"
                   className="float-end updateform"
                   onClick={handleSaveAndContinue}
+                  disabled={loading || !receiver || !transferData}
                 >
-                  Save & Continue
+                  {loading ? "Processing..." : "Save & Continue"}
                 </Button>
               </Col>
             </Row>

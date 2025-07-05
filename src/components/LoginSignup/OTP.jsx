@@ -16,6 +16,9 @@ import {
   verifyEmail,
   updateProfile,
   resendOtp,
+  createMonovaPayment,
+  getAgreementList,
+  ZaiPayTo,
 } from "../../services/Api";
 import { useNavigate, useLocation } from "react-router-dom";
 import LoginImage from "../../assets/images/login-image.png";
@@ -25,6 +28,7 @@ const OtpVerification = () => {
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [transferData, setTransferData] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || "signup";
@@ -92,11 +96,32 @@ const OtpVerification = () => {
         response = await verifyEmail(payload);
       } else if (from === "profile" || from === "transfer") {
         response = await resendOtp(payload);
+      } else if (from === "transfer") {
+        response = await verifyEmail(payload);
+
+        if (response?.code === "200") {
+          toast.success("OTP Verified Successfully!");
+
+          const paymentSuccess = await processTransferPayments();
+
+          if (paymentSuccess) {
+            sessionStorage.removeItem("transferOtpData");
+            sessionStorage.removeItem("transfer_data");
+            sessionStorage.removeItem("selected_receiver");
+
+            navigate("/transaction-success");
+            return;
+          } else {
+            toast.error("Payment processing failed. Please try again.");
+            return;
+          }
+        } else {
+          toast.error(response?.message || "Invalid OTP");
+          return;
+        }
       } else {
         response = await userRegisterVerify(payload);
       }
-      console.log("OTP Verification response:", response);
-
       if (response && response.code === "200") {
         toast.success("OTP Verified Successfully!");
 
@@ -181,8 +206,6 @@ const OtpVerification = () => {
       };
 
       const response = await registerOtpResend(payload);
-      console.log("🚀 ~ handleResendOtp ~ response:", response);
-
       if (response?.code === "200") {
         toast.success("OTP has been resent successfully!");
       } else {
@@ -197,8 +220,8 @@ const OtpVerification = () => {
   };
 
   return (
-    <Container className="login-form-wrapper min-vh-100">
-      <Row className="vh-100">
+    <Container className="login-form-wrapper">
+      <Row>
         <Col md={7} className="d-flex align-items-center justify-content-start">
           <div className="login-form-wrapper w-100">
             <div className="exchange-title mb-4">
@@ -224,7 +247,9 @@ const OtpVerification = () => {
                   >
                     <span className="visually-hidden">Loading...</span>
                   </div>
-                  Processing your verification...
+                  {from === "transfer"
+                    ? "Processing payment..."
+                    : "Processing your verification..."}
                 </div>
               </div>
             )}
@@ -260,7 +285,9 @@ const OtpVerification = () => {
                 {loading
                   ? "Verifying..."
                   : isProcessing
-                  ? "Processing..."
+                  ? from === "transfer"
+                    ? "Processing Payment..."
+                    : "Processing..."
                   : "Verify OTP"}
               </Button>
 
@@ -275,13 +302,14 @@ const OtpVerification = () => {
                   Resend
                 </button>
               </div>
+
               <div className="mt-3">
                 <a
                   href="/signup"
-                  className="text-success fw-bold forgotpassword-text"
+                  className="text-success fw-bold"
                   onClick={() => sessionStorage.removeItem("signupData")}
                 >
-                  ← Back to Signup
+                  ← Back to {from === "transfer" ? "Payment Details" : "Signup"}
                 </a>
               </div>
             </Form>
@@ -290,7 +318,7 @@ const OtpVerification = () => {
 
         <Col
           md={5}
-          className="d-none d-md-flex align-items-center justify-content-end bg-light"
+          className="d-none d-md-flex align-items-center justify-content-end"
         >
           <div className="image-wrapper">
             <img src={LoginImage} alt="Login Art" className="clipped-img" />

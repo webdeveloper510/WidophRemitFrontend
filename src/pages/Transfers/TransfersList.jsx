@@ -48,7 +48,6 @@ const TransfersList = () => {
     return matchesText && matchesStatus;
   });
 
-  console.log("lis", list)
   const displayData = filteredData;
 
   const statusOptions = ["", "Cancelled", "Pending", "Incomplete", "Complete"];

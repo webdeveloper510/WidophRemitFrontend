@@ -15,7 +15,7 @@ const menuItems = [
   { path: "/payment-info", name: "Payment Info", icon: <TbCreditCard /> },
   { path: "/transfers-list", name: "Transfers", icon: <TbExchange /> },
   { path: "/receivers", name: "Receivers", icon: <LuUsers /> },
-  { path: "/monoova", name: "Monoova", icon: <TbCreditCard /> },
+  // { path: "/monoova", name: "Monoova", icon: <TbCreditCard /> },
 ];
 
 const Sidebar = ({ collapsed }) => {
@@ -59,7 +59,7 @@ const Sidebar = ({ collapsed }) => {
         <li className="mt-auto logout-row">
           <a
             className="nav-link  d-flex align-items-center gap-2"
-            onClick={handleLogout} // Call handleLogout on click
+            onClick={handleLogout} 
           >
             <button type="button" className="logout-btn nav-link  d-flex align-items-center" onClick={() => {
               sessionStorage.clear();

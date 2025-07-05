@@ -90,11 +90,9 @@ const Signup = () => {
 
     try {
       const response = await userRegisterCheck(payload);
-      console.log("Register response: ", response);
-
       if (response?.code === "200") {
         sessionStorage.setItem("signupData", JSON.stringify(payload));
-         navigate("/otp-verification", { state: { from: "signup" } });
+        navigate("/otp-verification", { state: { from: "signup" } });
       } else {
         toast.error(response?.message || "Registration failed");
       }
@@ -108,8 +106,8 @@ const Signup = () => {
   };
 
   return (
-    <Container className="login-form-wrapper  min-vh-100">
-      <Row className="vh-100">
+    <Container className="login-form-wrapper">
+      <Row>
         {/* Left Form Column */}
         <Col md={7} className="d-flex align-items-center justify-content-start">
           <div className="login-form-wrapper w-100">
@@ -161,147 +159,142 @@ const Signup = () => {
                   <Form className="exchange-form" onSubmit={handleSubmit}>
                     {/* Location */}
                     <Row className="mb-3">
-                      <FloatingLabel
-                        controlId="floatingSelect"
-                        as={Col}
-                        label="Location"
+                      <label className="form-label">
+                        Location<span>*</span>
+                      </label>
+                      <Form.Select
+                        name="location"
+                        value={values.location}
+                        onChange={handleCustomChange}
+                        onBlur={handleBlur}
+                        isInvalid={touched.location && errors.location}
                       >
-                        <Form.Select
-                          name="location"
-                          value={values.location}
-                          onChange={handleCustomChange}
-                          onBlur={handleBlur}
-                          isInvalid={touched.location && errors.location}
-                        >
-                          <option value="Australia">Australia</option>
-                          <option value="New Zealand">New Zealand</option>
-                        </Form.Select>
-                        <Form.Control.Feedback type="invalid">
-                          {errors.location}
-                        </Form.Control.Feedback>
-                      </FloatingLabel>
+                        <option value="Australia">Australia</option>
+                        <option value="New Zealand">New Zealand</option>
+                      </Form.Select>
+                      <Form.Control.Feedback type="invalid">
+                        {errors.location}
+                      </Form.Control.Feedback>
                     </Row>
 
                     {/* Phone Number */}
                     <Row className="mb-3 mobile_numbero">
-                      <Col>
-                        <FloatingLabel label="Mobile Number">
-                          <div className="d-flex align-items-stretch">
-                            <Form.Select
-                              name="countryCode"
-                              value={values.countryCode}
-                              onChange={handleCustomChange}
-                              onBlur={handleBlur}
-                              style={{
-                                maxWidth: "110px",
-                                borderTopRightRadius: 0,
-                                borderBottomRightRadius: 0,
-                            }}
-                          >
-                            <option value="61">+61 (AU)</option>
-                            <option value="64">+64 (NZ)</option>
-                          </Form.Select>
-                         
-                          <Form.Control
-                            type="text"
-                            name="phone"
-                            placeholder="Enter mobile number"
-                            value={values.phone}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            isInvalid={touched.phone && errors.phone}
-                            style={{
-                              borderTopLeftRadius: 0,
-                              borderBottomLeftRadius: 0,
-                            }}
-                          />
-                        </div>
-                        {touched.phone && errors.phone && (
-                          <div className="invalid-feedback d-block">
-                            {errors.phone}
-                          </div>
-                        )}
-                         </FloatingLabel>
-                      </Col>
-                    </Row>
-                    
-                    <Row className="mb-3">
-                      <FloatingLabel
-                        controlId="floatingEmail"
-                        as={Col}
-                        label="Email Address"
-                      >
+                      <label className="form-label">
+                        Mobile Number<span>*</span>
+                      </label>
+                      <div className="d-flex align-items-stretch p-0">
+                        <Form.Select
+                          name="countryCode"
+                          value={values.countryCode}
+                          onChange={handleCustomChange}
+                          onBlur={handleBlur}
+                          style={{
+                            maxWidth: "110px",
+                            borderTopRightRadius: 0,
+                            borderBottomRightRadius: 0,
+                          }}
+                        >
+                          <option value="61">+61 (AU)</option>
+                          <option value="64">+64 (NZ)</option>
+                        </Form.Select>
+
                         <Form.Control
-                          type="email"
-                          name="email"
-                          placeholder="Enter email address"
-                          value={values.email}
+                          type="text"
+                          name="phone"
+                          placeholder="Enter mobile number"
+                          value={values.phone}
                           onChange={handleChange}
                           onBlur={handleBlur}
-                          isInvalid={touched.email && errors.email}
+                          isInvalid={touched.phone && errors.phone}
+                          style={{
+                            borderTopLeftRadius: 0,
+                            borderBottomLeftRadius: 0,
+                          }}
                         />
-                        <Form.Control.Feedback type="invalid">
-                          {errors.email}
-                        </Form.Control.Feedback>
-                      </FloatingLabel>
+                      </div>
+                      {touched.phone && errors.phone && (
+                        <div className="invalid-feedback d-block">
+                          {errors.phone}
+                        </div>
+                      )}
+                    </Row>
+
+                    <Row className="mb-3">
+                      <label className="form-label">
+                        Email Address<span>*</span>
+                      </label>
+
+                      <Form.Control
+                        type="email"
+                        name="email"
+                        placeholder="Enter email address"
+                        value={values.email}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={touched.email && errors.email}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.email}
+                      </Form.Control.Feedback>
                     </Row>
                     {/* Passwords */}
+
                     <Row className="mb-3">
-                      <FloatingLabel
-                        as={Col}
-                        controlId="floatingCurrentPassword"
-                        label="Password"
-                        className="mb-3 position-relative"
-                      >
-                        <Form.Control
-                          placeholder="Password"
-                          className="passowrdinput"
-                          type={visibility.current ? "text" : "password"}
-                          name="password"
-                          value={values.password}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          isInvalid={touched.password && errors.password}
-                        />
-                        <span
-                          onClick={() => toggleVisibility("current")}
-                          className="password-eye"
-                        >
-                          {visibility.current ? <FaEyeSlash /> : <FaEye />}
-                        </span>
+                      <Col>
+                        <label className="form-label">
+                          Password<span>*</span>
+                        </label>
+                        <div className="custom-password">
+                          <Form.Control
+                            placeholder="Password"
+                            className="passowrdinput"
+                            type={visibility.current ? "text" : "password"}
+                            name="password"
+                            value={values.password}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={touched.password && errors.password}
+                          />
+                          <span
+                            onClick={() => toggleVisibility("current")}
+                            className="password-eye"
+                          >
+                            {visibility.current ? <FaEyeSlash /> : <FaEye />}
+                          </span>
+                        </div>
                         <Form.Control.Feedback type="invalid">
                           {errors.password}
                         </Form.Control.Feedback>
-                      </FloatingLabel>
+                      </Col>
 
-                      <FloatingLabel
-                        as={Col}
-                        controlId="floatingConfirmPassword"
-                        label="Confirm Password"
-                        className="position-relative"
-                      >
-                        <Form.Control
-                          placeholder="Confirm Password"
-                          className="passowrdinput"
-                          type={visibility.confirm ? "text" : "password"}
-                          name="confirmPassword"
-                          value={values.confirmPassword}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          isInvalid={
-                            touched.confirmPassword && errors.confirmPassword
-                          }
-                        />
-                        <span
-                          onClick={() => toggleVisibility("confirm")}
-                          className="password-eye"
-                        >
-                          {visibility.confirm ? <FaEyeSlash /> : <FaEye />}
-                        </span>
+                      <Col>
+                        <label className="form-label">
+                          Confirm Password<span>*</span>
+                        </label>
+                        <div className="custom-password">
+                          <Form.Control
+                            placeholder="Confirm Password"
+                            className="passowrdinput"
+                            type={visibility.confirm ? "text" : "password"}
+                            name="confirmPassword"
+                            value={values.confirmPassword}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={
+                              touched.confirmPassword && errors.confirmPassword
+                            }
+                          />
+                          <span
+                            onClick={() => toggleVisibility("confirm")}
+                            className="password-eye"
+                          >
+                            {visibility.confirm ? <FaEyeSlash /> : <FaEye />}
+                          </span>
+                        </div>
                         <Form.Control.Feedback type="invalid">
                           {errors.confirmPassword}
                         </Form.Control.Feedback>
-                      </FloatingLabel>
+                      </Col>
                     </Row>
 
                     {/* Submit */}
@@ -332,7 +325,7 @@ const Signup = () => {
 
         <Col
           md={5}
-          className="d-none d-md-flex align-items-center justify-content-end bg-light"
+          className="d-none d-md-flex align-items-center justify-content-end"
         >
           <div className="image-wrapper">
             <img src={SignupImage} alt="Login Art" className="clipped-img" />
