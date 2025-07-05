@@ -43,7 +43,7 @@ const KYCForm = () => {
   };
 
   return (
-    <Container fluid className="py-5">
+    <Container fluid className="py-5 pt-2">
       <Tab.Container activeKey={activeKey} onSelect={setActiveKey}>
         <Row>
           <Col
