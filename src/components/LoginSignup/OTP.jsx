@@ -306,7 +306,7 @@ const OtpVerification = () => {
               <div className="mt-3">
                 <a
                   href="/signup"
-                  className="text-success fw-bold"
+                  className="text-success fw-bold forgotpassword-text"
                   onClick={() => sessionStorage.removeItem("signupData")}
                 >
                   ← Back to {from === "transfer" ? "Payment Details" : "Signup"}
