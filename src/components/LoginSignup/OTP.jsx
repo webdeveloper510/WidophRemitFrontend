@@ -15,9 +15,10 @@ import {
   registerOtpResend,
   verifyEmail,
   updateProfile,
-  resendOtp
+  resendOtp,
 } from "../../services/Api";
 import { useNavigate, useLocation } from "react-router-dom";
+import LoginImage from "../../assets/images/login-image.png";
 
 const OtpVerification = () => {
   const [otp, setOtp] = useState("");
@@ -27,48 +28,47 @@ const OtpVerification = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || "signup";
-useEffect(() => {
-  if (from === "signup") {
-    const storedData = sessionStorage.getItem("signupData");
-    if (storedData) {
-      setUserData(JSON.parse(storedData));
+  useEffect(() => {
+    if (from === "signup") {
+      const storedData = sessionStorage.getItem("signupData");
+      if (storedData) {
+        setUserData(JSON.parse(storedData));
+      } else {
+        toast.error("No signup data found. Please complete signup first.");
+        navigate("/signup");
+      }
+    } else if (from === "login") {
+      const loginOtpData = location.state?.otpData;
+      if (loginOtpData) {
+        setUserData({
+          ...loginOtpData,
+          account_type: "individual",
+        });
+      } else {
+        toast.error("Missing login data. Please login again.");
+        navigate("/login");
+      }
+    } else if (from === "profile") {
+      const profileOtpData = location.state?.otpData;
+      if (profileOtpData) {
+        setUserData(profileOtpData);
+      } else {
+        toast.error("Missing profile data. Please try again.");
+        navigate("/profile");
+      }
+    } else if (from === "transfer") {
+      const transferOtpData = sessionStorage.getItem("transferOtpData");
+      if (transferOtpData) {
+        setUserData(JSON.parse(transferOtpData));
+      } else {
+        toast.error("Transfer data not found. Please try again.");
+        navigate("/payment-detail");
+      }
     } else {
-      toast.error("No signup data found. Please complete signup first.");
-      navigate("/signup");
-    }
-  } else if (from === "login") {
-    const loginOtpData = location.state?.otpData;
-    if (loginOtpData) {
-      setUserData({
-        ...loginOtpData,
-        account_type: "individual",
-      });
-    } else {
-      toast.error("Missing login data. Please login again.");
+      toast.error("Invalid access. Please start again.");
       navigate("/login");
     }
-  } else if (from === "profile") {
-    const profileOtpData = location.state?.otpData;
-    if (profileOtpData) {
-      setUserData(profileOtpData);
-    } else {
-      toast.error("Missing profile data. Please try again.");
-      navigate("/profile");
-    }
-  } else if (from === "transfer") {
-    const transferOtpData = sessionStorage.getItem("transferOtpData");
-    if (transferOtpData) {
-      setUserData(JSON.parse(transferOtpData));
-    } else {
-      toast.error("Transfer data not found. Please try again.");
-      navigate("/payment-detail");
-    }
-  } else {
-    toast.error("Invalid access. Please start again.");
-    navigate("/login");
-  }
-}, [from, location.state, navigate]);
-
+  }, [from, location.state, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -87,10 +87,10 @@ useEffect(() => {
         otp,
       };
 
-   let response;
+      let response;
       if (from === "login") {
         response = await verifyEmail(payload);
-      } else if (from === "profile"|| from === "transfer") {
+      } else if (from === "profile" || from === "transfer") {
         response = await resendOtp(payload);
       } else {
         response = await userRegisterVerify(payload);
@@ -107,37 +107,43 @@ useEffect(() => {
           return navigate("/dashboard");
         }
         if (from === "transfer") {
-  response = await verifyEmail(payload); // ✅ OTP submit: verifyEmail
-  if (response?.code === "200") {
-    toast.success("OTP Verified Successfully!");
-    return navigate("/transaction-success");
-  } else {
-    toast.error(response?.message || "Invalid OTP");
-  }
-}
+          response = await verifyEmail(payload); // ✅ OTP submit: verifyEmail
+          if (response?.code === "200") {
+            toast.success("OTP Verified Successfully!");
+            return navigate("/transaction-success");
+          } else {
+            toast.error(response?.message || "Invalid OTP");
+          }
+        }
 
         if (from === "profile") {
-  const updateData = JSON.parse(sessionStorage.getItem("pendingProfileUpdate"));
+          const updateData = JSON.parse(
+            sessionStorage.getItem("pendingProfileUpdate")
+          );
 
-  try {
-    const updateResponse = await updateProfile(updateData); // You must import this API
-    if (updateResponse?.code === "200") {
-      toast.success("Profile updated successfully!");
-    } else {
-      toast.warning(updateResponse?.message || "Failed to update profile.");
-    }
-  } catch (err) {
-    console.error("Profile update failed:", err);
-    toast.error("Error updating profile");
-  }
+          try {
+            const updateResponse = await updateProfile(updateData); // You must import this API
+            if (updateResponse?.code === "200") {
+              toast.success("Profile updated successfully!");
+            } else {
+              toast.warning(
+                updateResponse?.message || "Failed to update profile."
+              );
+            }
+          } catch (err) {
+            console.error("Profile update failed:", err);
+            toast.error("Error updating profile");
+          }
 
-  sessionStorage.removeItem("pendingProfileUpdate");
-  return navigate("/profile-information");
-}
+          sessionStorage.removeItem("pendingProfileUpdate");
+          return navigate("/profile-information");
+        }
         if (response?.access_token) {
           sessionStorage.setItem("token", response.access_token);
 
-          const emailLoadingToast = toast.loading("Sending verification email...");
+          const emailLoadingToast = toast.loading(
+            "Sending verification email..."
+          );
           try {
             const emailRes = await sendEmail();
             toast.dismiss(emailLoadingToast);
@@ -198,7 +204,7 @@ useEffect(() => {
             <div className="exchange-title mb-4">
               OTP <br />
               Verification
-              <span className="exchange_rate">
+              <span className="exchange_rate optTagLine">
                 Please enter the code sent to your phone/email.
               </span>
             </div>
@@ -225,21 +231,22 @@ useEffect(() => {
 
             <Form className="exchange-form" onSubmit={handleSubmit}>
               <Row className="mb-4">
-                <Col>
+                <Col className="inputBoxStyle">
                   <OtpInput
                     value={otp}
                     onChange={setOtp}
                     numInputs={6}
                     separator={<span style={{ margin: "0 6px" }}>-</span>}
                     renderInput={(props) => <input {...props} />}
-                    inputStyle={{
-                      width: "3rem",
-                      height: "3rem",
-                      fontSize: "1.5rem",
-                      borderRadius: "8px",
-                      border: "1px solid #ced4da",
-                      textAlign: "center",
-                    }}
+                    // inputStyle={{
+                    //   width: "3rem",
+                    //   height: "3rem",
+                    //   fontSize: "1.5rem",
+                    //   borderRadius: "8px",
+                    //   border: "1px solid #ced4da",
+                    //   textAlign: "center",
+                    //   margin: "0 12px",
+                    // }}
                     disabled={isProcessing}
                   />
                 </Col>
@@ -261,7 +268,7 @@ useEffect(() => {
                 Didn't receive the code?{" "}
                 <button
                   type="button"
-                  className="btn btn-link text-success fw-semibold p-0"
+                  className="btn btn-link text-success fw-semibold p-0 forgotpassword-text"
                   onClick={handleResendOtp}
                   disabled={loading || isProcessing}
                 >
@@ -271,7 +278,7 @@ useEffect(() => {
               <div className="mt-3">
                 <a
                   href="/signup"
-                  className="text-success fw-bold"
+                  className="text-success fw-bold forgotpassword-text"
                   onClick={() => sessionStorage.removeItem("signupData")}
                 >
                   ← Back to Signup
@@ -286,7 +293,7 @@ useEffect(() => {
           className="d-none d-md-flex align-items-center justify-content-end bg-light"
         >
           <div className="image-wrapper">
-            {/* You can place an image here */}
+            <img src={LoginImage} alt="Login Art" className="clipped-img" />
           </div>
         </Col>
       </Row>

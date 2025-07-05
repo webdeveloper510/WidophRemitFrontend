@@ -28,7 +28,6 @@ import TransactionSuccess from "../pages/SendMoney/TranscationSuccess";
 const AppRoutes = () => {
   return (
     <Routes>
-       <Route path="/otp-verification" element={<OtpVerification />} />
       <Route
         element={
           <PublicRoute>
@@ -39,7 +38,7 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/kyc" element={<KYCForm />} />
-
+        <Route path="/otp-verification" element={<OtpVerification />} />
       </Route>
 
       <Route

@@ -619,14 +619,16 @@ img.clipped-img {
   float: right;
 }
 /************************** resend otp popup css **********************/
-
+.optTagLine {
+  margin-left: 20px;
+}
 a.resendOTP {
   color: #9cb417;
   margin: 30px 0px 5px !important;
   float: left;
   width: 100%;
 }
-input.inputBoxStyle {
+.inputBoxStyle input {
   width: 3rem !important;
   height: 3rem;
   margin: 0 12px;
@@ -636,7 +638,9 @@ input.inputBoxStyle {
   font-size: 17px;
   color: #434800;
 }
-
+.inputBoxStyle input:first-child {
+  margin-left: 0;
+}
 img.processing-vector {
   position: absolute;
   bottom: 0;
@@ -1044,25 +1048,25 @@ li.nav-item.mb-2.bg-light.text-dark.rounded {
 }
 
 .mobile_numbero input.form-control {
-    padding: 1rem .75rem;
+  padding: 1rem 0.75rem;
 }
 .mb-3.mobile_numbero.row {
-    position: relative;
-    margin-top: 15px;
+  position: relative;
+  margin-top: 15px;
 }
 .mobile_numbero.row label {
-    position: absolute;
-    top: -27px;
+  position: absolute;
+  top: -27px;
 }
 .mobile_numbero input.form-control {
-    padding: 1rem .75rem;
-    background: transparent !important;
+  padding: 1rem 0.75rem;
+  background: transparent !important;
 }
 .mobile_numbero select.form-select {
-    background: transparent !important;
+  background: transparent !important;
 }
 .exchange-form label {
-    background: transparent !important;
+  background: transparent !important;
 }
 /*************** responsive css ****************/
 
