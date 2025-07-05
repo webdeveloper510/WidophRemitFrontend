@@ -28,22 +28,23 @@ const Login = () => {
     }));
   };
 
-  const handleInputChange = (inputValue, setFieldValue) => {
-    setFieldValue("value", inputValue);
-    if (!inputValue || inputValue.includes("@")) {
-      setInputType("email");
-    } else {
-      setInputType("phone");
-    }
-  };
+ const handleInputChange = (inputValue, setFieldValue) => {
+  setFieldValue("value", inputValue);
+  if (!inputValue || inputValue.includes("@")) {
+    setInputType("email");
+  } else {
+    setInputType("phone");
+  }
+};
 
   // Validation schema
   const validationSchema = Yup.object({
-    value: Yup.string().required("Email or phone number is required"),
+    value: Yup.string()
+      .required("Email or phone number is required"),
     password: Yup.string()
       .required("Password is required")
       .min(6, "Password must be at least 6 characters long"),
-    rememberMe: Yup.boolean(),
+    rememberMe: Yup.boolean()
   });
 
   const initialValues = {
@@ -53,48 +54,51 @@ const Login = () => {
     countryCode: "61",
   };
 
-  const handleSubmit = async (values, { setSubmitting }) => {
-    setLoading(true);
+const handleSubmit = async (values, { setSubmitting }) => {
+  setLoading(true);
 
-    const payload = {
-      password: values.password,
-    };
+  const payload = {
+  password: values.password,
+};
 
-    if (inputType === "email") {
-      payload.email = values.value;
+if (inputType === "email") {
+  payload.email = values.value;
+} else {
+  const fullMobile = `+${values.countryCode}${values.value}`;
+  payload.mobile = fullMobile;
+}
+  try {
+    const response = await userLogin(payload);
+    if (response?.code === 200 || response?.code === "200") {
+      toast.success("Login successful");
+   navigate("/otp-verification", {
+  state: {
+    from: "login",
+    otpData: {
+      email: payload.email || "",
+      mobile: payload.mobile || "",
+      country_code: "AU"
+    },
+  },
+});
+
     } else {
-      const fullMobile = `+${values.countryCode}${values.value}`;
-      payload.mobile = fullMobile;
+      toast.error(response?.message || "Login failed");
     }
-    try {
-      const response = await userLogin(payload);
-      if (response?.code === 200 || response?.code === "200") {
-        toast.success("Login successful");
-        navigate("/otp-verification", {
-          state: {
-            from: "login",
-            otpData: {
-              email: payload.email || "",
-              mobile: payload.mobile || "",
-              country_code: "AU",
-            },
-          },
-        });
-      } else {
-        toast.error(response?.message || "Login failed");
-      }
-    } catch (error) {
-      toast.error("Login failed. Please try again.");
-      console.error("Login error:", error);
-    } finally {
-      setLoading(false);
-      setSubmitting(false);
-    }
-  };
+  } catch (error) {
+    toast.error("Login failed. Please try again.");
+    console.error("Login error:", error);
+  } finally {
+    setLoading(false);
+    setSubmitting(false);
+  }
+};
+
+
 
   return (
-    <Container className="login-form-wrapper ">
-      <Row>
+    <Container className="login-form-wrapper  min-vh-100">
+      <Row className="vh-100">
         {/* Left Form Column */}
         <Col md={7} className="d-flex align-items-center justify-content-start">
           <div className="login-form-wrapper w-100">
@@ -108,97 +112,66 @@ const Login = () => {
               validationSchema={validationSchema}
               onSubmit={handleSubmit}
             >
-              {({
-                values,
-                setFieldValue,
-                errors,
-                touched,
-                isSubmitting,
-                handleChange,
-                handleBlur,
-              }) => (
+              {({ values, setFieldValue, errors, touched, isSubmitting,handleChange,handleBlur }) => (
                 <FormikForm className="exchange-form">
+             <Row className="mb-3">
+  <Col className="mb-3">
+    <label className="form-label">Email / Mobile Number</label>
+
+    {inputType === "email" ? (
+      <Field name="value">
+        {({ field }) => (
+          <Form.Control
+            {...field}
+            type="text"
+            placeholder="Email / Mobile Number"
+            className={`form-control ${errors.value && touched.value ? 'is-invalid' : ''}`}
+            onChange={(e) => handleInputChange(e.target.value, setFieldValue)}
+          />
+        )}
+      </Field>
+    ) : (
+      <div className="d-flex align-items-stretch">
+        <Form.Select
+          name="countryCode"
+          value={values.countryCode}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          style={{ maxWidth: '100px', borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+        >
+          <option value="61">+61(AU)</option>
+          <option value="64">+64(NZ)</option>
+        </Form.Select>
+
+        <Form.Control
+          type="text"
+          name="value"
+          placeholder="Enter mobile number"
+          value={values.value}
+          onChange={(e) => handleInputChange(e.target.value, setFieldValue)}
+          onBlur={handleBlur}
+          isInvalid={touched.value && errors.value}
+          style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+        />
+      </div>
+    )}
+
+    <ErrorMessage name="value" component="div" className="invalid-feedback d-block" />
+  </Col>
+</Row>
                   <Row className="mb-3">
-                    <Col className="mb-3">
-                      <label className="form-label">
-                        Email / Mobile Number<span>*</span>
-                      </label>
-
-                      {inputType === "email" ? (
-                        <Field name="value">
-                          {({ field }) => (
-                            <Form.Control
-                              {...field}
-                              type="text"
-                              placeholder="Email / Mobile Number"
-                              className={`form-control ${
-                                errors.value && touched.value
-                                  ? "is-invalid"
-                                  : ""
-                              }`}
-                              onChange={(e) =>
-                                handleInputChange(e.target.value, setFieldValue)
-                              }
-                            />
-                          )}
-                        </Field>
-                      ) : (
-                        <div className="d-flex align-items-stretch">
-                          <Form.Select
-                            name="countryCode"
-                            value={values.countryCode}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            style={{
-                              maxWidth: "100px",
-                              borderTopRightRadius: 0,
-                              borderBottomRightRadius: 0,
-                            }}
-                          >
-                            <option value="61">+61(AU)</option>
-                            <option value="64">+64(NZ)</option>
-                          </Form.Select>
-
-                          <Form.Control
-                            type="text"
-                            name="value"
-                            placeholder="Enter mobile number"
-                            value={values.value}
-                            onChange={(e) =>
-                              handleInputChange(e.target.value, setFieldValue)
-                            }
-                            onBlur={handleBlur}
-                            isInvalid={touched.value && errors.value}
-                            style={{
-                              borderTopLeftRadius: 0,
-                              borderBottomLeftRadius: 0,
-                            }}
-                          />
-                        </div>
-                      )}
-
-                      <ErrorMessage
-                        name="value"
-                        component="div"
-                        className="invalid-feedback d-block"
-                      />
-                    </Col>
-                  </Row>
-                  <Row className="mb-3">
-                    <label className="form-label">
-                      Your Password<span>*</span>
-                    </label>
-                    <div className="custom-password">
+                    <FloatingLabel
+                      as={Col}
+                      controlId="floatingCurrentPassword"
+                      label="Password"
+                      className="mb-3 position-relative"
+                    >
                       <Field name="password">
                         {({ field }) => (
                           <Form.Control
                             {...field}
                             placeholder="Password"
-                            className={`passowrdinput ${
-                              errors.password && touched.password
-                                ? "is-invalid"
-                                : ""
-                            }`}
+                            className={`passowrdinput ${errors.password && touched.password ? 'is-invalid' : ''}`}
                             type={visibility.current ? "text" : "password"}
                           />
                         )}
@@ -210,18 +183,14 @@ const Login = () => {
                       >
                         {visibility.current ? <FaEyeSlash /> : <FaEye />}
                       </span>
-                    </div>
-                    <ErrorMessage
-                      name="password"
-                      component="div"
-                      className="invalid-feedback"
-                    />
+                      <ErrorMessage name="password" component="div" className="invalid-feedback" />
+                    </FloatingLabel>
                   </Row>
 
                   <div className="d-flex justify-content-between align-items-center mb-3">
                     <Field name="rememberMe">
                       {({ field }) => (
-                        <Form.Check
+                        <Form.Check 
                           {...field}
                           type="checkbox"
                           label="Remember me"
@@ -237,8 +206,8 @@ const Login = () => {
                     </a>
                   </div>
 
-                  <Button
-                    type="submit"
+                  <Button 
+                    type="submit" 
                     className="custom-signin-btn mb-3"
                     disabled={loading || isSubmitting}
                   >
@@ -262,7 +231,7 @@ const Login = () => {
 
         <Col
           md={5}
-          className="d-none d-md-flex align-items-center justify-content-end"
+          className="d-none d-md-flex align-items-center justify-content-end bg-light"
         >
           <div className="image-wrapper">
             <img src={LoginImage} alt="Login Art" className="clipped-img" />

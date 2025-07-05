@@ -5,7 +5,11 @@ import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
 import { Col, Row, Button } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
-import { createTransaction, userProfile,recipientList } from "../../services/Api";
+import {
+  createTransaction,
+  userProfile,
+  recipientList,
+} from "../../services/Api";
 import { toast } from "react-toastify";
 
 const ReviewTransfer = () => {
@@ -16,22 +20,25 @@ const ReviewTransfer = () => {
   const [transferData, setTransferData] = useState(null);
   const [loading, setLoading] = useState(false);
   const transactionId = sessionStorage.getItem("transaction_id") || "";
-const [list,setList]= useState({})
+  const [list, setList] = useState({});
   useEffect(() => {
     fetchList();
-  }, [])
+  }, []);
 
   const fetchList = async () => {
     try {
       const response = await recipientList();
-    if (response.code === "200" && Array.isArray(response.data) && response.data.length > 0) {
-  setList(response.data[0]); 
-}
-
+      if (
+        response.code === "200" &&
+        Array.isArray(response.data) &&
+        response.data.length > 0
+      ) {
+        setList(response.data[0]);
+      }
     } catch (err) {
       console.error("Error fetching list:", err);
     }
-  }
+  };
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -50,7 +57,6 @@ const [list,setList]= useState({})
     if (location.state && location.state.receiverData) {
       setReceiver(location.state.receiverData);
     } else {
-
       const storedReceiver = sessionStorage.getItem("selected_receiver");
       if (storedReceiver) {
         try {
@@ -77,9 +83,13 @@ const [list,setList]= useState({})
 
     fetchUserProfile();
   }, [navigate, location.state]);
-  const fullName = `${list?.First_name || list?.first_name || ""} ${list?.Last_name || list?.last_name || ""}`.trim();
-  const receiverFullName = receiver 
-    ? `${receiver.first_name || ""} ${receiver.middle_name || ""} ${receiver.last_name || ""}`.trim()
+  const fullName = `${list?.First_name || list?.first_name || ""} ${
+    list?.Last_name || list?.last_name || ""
+  }`.trim();
+  const receiverFullName = receiver
+    ? `${receiver.first_name || ""} ${receiver.middle_name || ""} ${
+        receiver.last_name || ""
+      }`.trim()
     : "";
 
   const handleSaveAndContinue = async () => {
@@ -115,7 +125,7 @@ const [list,setList]= useState({})
 
       if (res?.code === "200") {
         navigate("/payment-detail", {
-          state: { transaction_id: res?.data?.id || "" },
+          state: { transaction_id: res?.data?.id || "", transferData },
         });
       } else {
         toast.error(res?.message || "Failed to create transaction.");
@@ -166,7 +176,9 @@ const [list,setList]= useState({})
                             <td>Sending Amount</td>
                             <td>
                               {transferData?.send_amt
-                                ? `${transferData.send_amt} ${transferData.from || "AUD"}`
+                                ? `${transferData.send_amt} ${
+                                    transferData.from || "AUD"
+                                  }`
                                 : "N/A"}
                             </td>
                           </tr>
@@ -174,7 +186,9 @@ const [list,setList]= useState({})
                             <td>Amount Exchanged</td>
                             <td>
                               {transferData?.exchange_amt
-                                ? `${transferData.exchange_amt} ${transferData.to || "NGN"}`
+                                ? `${transferData.exchange_amt} ${
+                                    transferData.to || "NGN"
+                                  }`
                                 : "N/A"}
                             </td>
                           </tr>
@@ -182,7 +196,9 @@ const [list,setList]= useState({})
                             <td>Total To Receiver</td>
                             <td>
                               {transferData?.exchange_amt
-                                ? `${transferData.exchange_amt} ${transferData.to || "NGN"}`
+                                ? `${transferData.exchange_amt} ${
+                                    transferData.to || "NGN"
+                                  }`
                                 : "N/A"}
                             </td>
                           </tr>
@@ -190,7 +206,9 @@ const [list,setList]= useState({})
                             <td>Exchange Rate</td>
                             <td>
                               {transferData?.exchange_rate
-                                ? `1 ${transferData.from || "AUD"} = ${transferData.exchange_rate} ${transferData.to || "NGN"}`
+                                ? `1 ${transferData.from || "AUD"} = ${
+                                    transferData.exchange_rate
+                                  } ${transferData.to || "NGN"}`
                                 : "N/A"}
                             </td>
                           </tr>
@@ -234,7 +252,11 @@ const [list,setList]= useState({})
                         <tbody>
                           <tr>
                             <td>Beneficiary Name</td>
-                            <td>{receiver?.account_name || receiverFullName || "N/A"}</td>
+                            <td>
+                              {receiver?.account_name ||
+                                receiverFullName ||
+                                "N/A"}
+                            </td>
                           </tr>
                           <tr>
                             <td>Bank Name</td>

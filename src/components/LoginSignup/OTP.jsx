@@ -21,17 +21,18 @@ import {
   ZaiPayTo,
 } from "../../services/Api";
 import { useNavigate, useLocation } from "react-router-dom";
-import LoginImage from "../../assets/images/login-image.png";
 
 const OtpVerification = () => {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [sendamount, setsendamount] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [transferData, setTransferData] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || "signup";
+
   useEffect(() => {
     if (from === "signup") {
       const storedData = sessionStorage.getItem("signupData");
@@ -61,12 +62,33 @@ const OtpVerification = () => {
         navigate("/profile");
       }
     } else if (from === "transfer") {
+      // Fix: Check for transferOtpData instead of signupData
       const transferOtpData = sessionStorage.getItem("transferOtpData");
+      const storedTransferData = sessionStorage.getItem("transfer_data");
+      setsendamount(JSON.parse(storedTransferData).send_amt);
+
       if (transferOtpData) {
-        setUserData(JSON.parse(transferOtpData));
+        try {
+          setUserData(JSON.parse(transferOtpData));
+        } catch (error) {
+          console.error("Failed to parse transferOtpData:", error);
+          toast.error("Invalid transfer data. Please try again.");
+          navigate("/payment-detail");
+          return;
+        }
       } else {
         toast.error("Transfer data not found. Please try again.");
         navigate("/payment-detail");
+        return;
+      }
+
+      if (storedTransferData) {
+        try {
+          const parsedTransferData = JSON.parse(storedTransferData);
+          setTransferData(parsedTransferData?.amount || {});
+        } catch (error) {
+          console.error("Failed to parse transfer_data:", error);
+        }
       }
     } else {
       toast.error("Invalid access. Please start again.");
@@ -74,6 +96,144 @@ const OtpVerification = () => {
     }
   }, [from, location.state, navigate]);
 
+  const handleZaiPayment = async () => {
+    try {
+      const agreementResponse = await getAgreementList();
+
+      if (!agreementResponse || agreementResponse.code !== "200") {
+        toast.error("Failed to fetch agreement list");
+        console.error("Agreement list fetch failed:", agreementResponse);
+        return false;
+      }
+
+      const agreementUuid = agreementResponse?.data?.agreement_uuid;
+
+      if (!agreementUuid) {
+        toast.error("No valid agreement UUID found");
+        console.error(
+          "Agreement UUID not found in response:",
+          agreementResponse
+        );
+        return false;
+      }
+      let transactionId =
+        sessionStorage.getItem("monova_transaction_id") ||
+        sessionStorage.getItem("transaction_id");
+      const zaiPayload = {
+        agreement_uuid: agreementUuid,
+        transaction_id: transactionId,
+      };
+      s;
+      const zaiResponse = await ZaiPayTo(zaiPayload);
+      if (zaiResponse && zaiResponse.code === "200") {
+        sessionStorage.setItem(
+          "zai_payment_response",
+          JSON.stringify(zaiResponse)
+        );
+        sessionStorage.setItem("final_transaction_id", transactionId);
+        return true;
+      } else {
+        toast.error(zaiResponse?.message || "Zai payment processing failed");
+        console.error("Zai payment failed:", zaiResponse);
+        return false;
+      }
+    } catch (error) {
+      console.error("Zai payment error:", error);
+      toast.error("Error processing Zai payment");
+      return false;
+    }
+  };
+
+  const handleMonovaPayment = async () => {
+    const monovaFormData = sessionStorage.getItem("monova_payment_data");
+
+    if (!monovaFormData) {
+      toast.error("Monova payment data not found.");
+      return false;
+    }
+
+    try {
+      const monovaForm = JSON.parse(monovaFormData);
+
+      const paymentModeMap = {
+        directDebit: "debit",
+        NppCreditBankAccount: "npp",
+      };
+
+      const payload = {
+        amount: parseFloat(sendamount || 10000),
+        bsbNumber: monovaForm.bsb,
+        accountNumber: monovaForm.accountNumber,
+        accountName: monovaForm.accountName,
+        payment_mode:
+          paymentModeMap[monovaForm.paymentMethod] || monovaForm.paymentMethod,
+      };
+
+      const response = await createMonovaPayment(payload);
+
+      if (response?.transactionId && response.transactionId !== 0) {
+        sessionStorage.setItem("monova_transaction_id", response.transactionId);
+        toast.success("Monova payment created successfully!");
+        sessionStorage.removeItem("monova_payment_data");
+
+        return true;
+      } else {
+        toast.error(response?.message || "Monova payment creation failed.");
+        return false;
+      }
+    } catch (err) {
+      toast.error("Error while creating Monova payment.");
+      console.error("Monova payment error:", err);
+      return false;
+    }
+  };
+
+  const processTransferPayments = async () => {
+    const monovaFormData = sessionStorage.getItem("monova_payment_data");
+    const payToLimitData = sessionStorage.getItem("payto_limit_data");
+    const payToAgreementData = sessionStorage.getItem(
+      "payto_agreement_response"
+    );
+    const selectedPaymentMethod = sessionStorage.getItem(
+      "selected_payment_method"
+    );
+    const receiverData = sessionStorage.getItem("selected_receiver");
+
+    let receiverPaymentMethod = null;
+    if (receiverData) {
+      try {
+        const receiver = JSON.parse(receiverData);
+        receiverPaymentMethod =
+          receiver?.payment_method || receiver?.account_type;
+      } catch (error) {
+        console.error("Error parsing receiver data:", error);
+      }
+    }
+
+    if (selectedPaymentMethod === "monova" && monovaFormData) {
+      const monovaSuccess = await handleMonovaPayment();
+      if (monovaSuccess) {
+        sessionStorage.removeItem("monova_payment_data");
+        return true;
+      }
+      return false;
+    } else if (
+      selectedPaymentMethod === "zai" ||
+      (payToLimitData && payToAgreementData)
+    ) {
+      const zaiSuccess = await handleZaiPayment();
+
+      if (zaiSuccess) {
+        sessionStorage.removeItem("payto_limit_data");
+        sessionStorage.removeItem("payto_agreement_response");
+        return true;
+      }
+      return false;
+    } else if (selectedPaymentMethod === "payid") {
+      return true;
+    }
+    return true;
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -92,9 +252,10 @@ const OtpVerification = () => {
       };
 
       let response;
+
       if (from === "login") {
         response = await verifyEmail(payload);
-      } else if (from === "profile" || from === "transfer") {
+      } else if (from === "profile") {
         response = await resendOtp(payload);
       } else if (from === "transfer") {
         response = await verifyEmail(payload);
@@ -125,20 +286,18 @@ const OtpVerification = () => {
       if (response && response.code === "200") {
         toast.success("OTP Verified Successfully!");
 
+        if (from == "signup") {
+          sessionStorage.setItem("token", response.access_token);
+          navigate("/kyc");
+          return;
+        }
+
         if (from === "login") {
           if (response?.access_token) {
             sessionStorage.setItem("token", response.access_token);
           }
-          return navigate("/dashboard");
-        }
-        if (from === "transfer") {
-          response = await verifyEmail(payload); // ✅ OTP submit: verifyEmail
-          if (response?.code === "200") {
-            toast.success("OTP Verified Successfully!");
-            return navigate("/transaction-success");
-          } else {
-            toast.error(response?.message || "Invalid OTP");
-          }
+          navigate("/kyc");
+          return;
         }
 
         if (from === "profile") {
@@ -147,7 +306,7 @@ const OtpVerification = () => {
           );
 
           try {
-            const updateResponse = await updateProfile(updateData); // You must import this API
+            const updateResponse = await updateProfile(updateData);
             if (updateResponse?.code === "200") {
               toast.success("Profile updated successfully!");
             } else {
@@ -161,10 +320,12 @@ const OtpVerification = () => {
           }
 
           sessionStorage.removeItem("pendingProfileUpdate");
-          return navigate("/profile-information");
+          navigate("/profile-information");
+          return;
         }
         if (response?.access_token) {
           sessionStorage.setItem("token", response.access_token);
+          console.log(response.access_token);
 
           const emailLoadingToast = toast.loading(
             "Sending verification email..."
@@ -220,14 +381,14 @@ const OtpVerification = () => {
   };
 
   return (
-    <Container className="login-form-wrapper">
-      <Row>
+    <Container className="login-form-wrapper min-vh-100">
+      <Row className="vh-100">
         <Col md={7} className="d-flex align-items-center justify-content-start">
           <div className="login-form-wrapper w-100">
             <div className="exchange-title mb-4">
               OTP <br />
               Verification
-              <span className="exchange_rate optTagLine">
+              <span className="exchange_rate">
                 Please enter the code sent to your phone/email.
               </span>
             </div>
@@ -256,22 +417,21 @@ const OtpVerification = () => {
 
             <Form className="exchange-form" onSubmit={handleSubmit}>
               <Row className="mb-4">
-                <Col className="inputBoxStyle">
+                <Col>
                   <OtpInput
                     value={otp}
                     onChange={setOtp}
                     numInputs={6}
                     separator={<span style={{ margin: "0 6px" }}>-</span>}
                     renderInput={(props) => <input {...props} />}
-                    // inputStyle={{
-                    //   width: "3rem",
-                    //   height: "3rem",
-                    //   fontSize: "1.5rem",
-                    //   borderRadius: "8px",
-                    //   border: "1px solid #ced4da",
-                    //   textAlign: "center",
-                    //   margin: "0 12px",
-                    // }}
+                    inputStyle={{
+                      width: "3rem",
+                      height: "3rem",
+                      fontSize: "1.5rem",
+                      borderRadius: "8px",
+                      border: "1px solid #ced4da",
+                      textAlign: "center",
+                    }}
                     disabled={isProcessing}
                   />
                 </Col>
@@ -295,7 +455,7 @@ const OtpVerification = () => {
                 Didn't receive the code?{" "}
                 <button
                   type="button"
-                  className="btn btn-link text-success fw-semibold p-0 forgotpassword-text"
+                  className="btn btn-link text-success fw-semibold p-0"
                   onClick={handleResendOtp}
                   disabled={loading || isProcessing}
                 >
@@ -305,9 +465,15 @@ const OtpVerification = () => {
 
               <div className="mt-3">
                 <a
-                  href="/signup"
+                  href={from === "transfer" ? "/payment-detail" : "/signup"}
                   className="text-success fw-bold"
-                  onClick={() => sessionStorage.removeItem("signupData")}
+                  onClick={() => {
+                    if (from === "signup") {
+                      sessionStorage.removeItem("signupData");
+                    } else if (from === "transfer") {
+                      sessionStorage.removeItem("transferOtpData");
+                    }
+                  }}
                 >
                   ← Back to {from === "transfer" ? "Payment Details" : "Signup"}
                 </a>
@@ -318,10 +484,10 @@ const OtpVerification = () => {
 
         <Col
           md={5}
-          className="d-none d-md-flex align-items-center justify-content-end"
+          className="d-none d-md-flex align-items-center justify-content-end bg-light"
         >
           <div className="image-wrapper">
-            <img src={LoginImage} alt="Login Art" className="clipped-img" />
+            {/* You can place an image here */}
           </div>
         </Col>
       </Row>

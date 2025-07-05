@@ -67,13 +67,14 @@ const PaymentDetail = () => {
     const receiver = JSON.parse(sessionStorage.getItem("selected_receiver"));
 
     if (transferData?.amount) {
+      console.log(transferData.amount.send_amt);
       setAmount(transferData.amount.send_amt || "0.00");
       setCurrency(transferData.amount.from || "AUD");
     }
 
     if (receiver?.account_name) {
       setReceiverName(receiver.account_name);
-    }
+    }    
   }, []);
 
   const handlePayToFormChange = (field, value) => {
@@ -110,6 +111,8 @@ const PaymentDetail = () => {
   };
 
   const handlePayToLimitContinue = () => {
+    console.log("coming");
+    
     if (!payToLimitForm.amountLimit) {
       toast.error("Please select an amount limit.");
       return;
@@ -119,6 +122,7 @@ const PaymentDetail = () => {
   };
 
   const handleMonovaContinue = () => {
+    // console.log("coming");
     const errors = {};
     if (!monovaForm.paymentMethod) errors.paymentMethod = "Please select payment method.";
     if (!monovaForm.bsb) errors.bsb = "BSB is required.";

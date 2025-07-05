@@ -1,5 +1,5 @@
-// components/Footer.js
 import React from "react";
+import { useLocation } from "react-router-dom"; // <-- Import here
 import footerlogo from "../../src/assets/images/footer-logo.png";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import {
@@ -12,7 +12,11 @@ import {
   FaWhatsapp,
 } from "react-icons/fa6";
 
+
 const Footer = () => {
+  const location = useLocation();
+  const isKYC = location.pathname === "/kyc"; // true if /kyc
+
   return (
     <footer
       className="footer"
@@ -46,34 +50,37 @@ const Footer = () => {
             </div>
           </Col>
 
-          <Col md={3}>
-            <h6>
-              <strong>Quick Links</strong>
-            </h6>
-            <ul className="list-unstyled">
-              <li>
-                <a href="https://widophremit.com/">Home</a>
-              </li>
-              <li>
-                <a href="https://widophremit.com/notify-me/">
-                  International Money Transfer
-                </a>
-              </li>
-              <li>
-                <a href="https://widophremit.com/blog/">Blog</a>
-              </li>
-              <li>
-                <a href="https://widophremit.com/transfer-money-online-from-australia-to-nigeria/">
-                  Transfer Money online from Australia to Nigeria
-                </a>
-              </li>
-              <li>
-                <a href="https://widophremit.com/community-responsibility/">
-                  Social Responsibility
-                </a>
-              </li>
-            </ul>
-          </Col>
+          {/* ⬇️ Conditionally hide this on /kyc */}
+          {!isKYC && (
+            <Col md={3}>
+              <h6>
+                <strong>Quick Links</strong>
+              </h6>
+              <ul className="list-unstyled">
+                <li>
+                  <a href="https://widophremit.com/">Home</a>
+                </li>
+                <li>
+                  <a href="https://widophremit.com/notify-me/">
+                    International Money Transfer
+                  </a>
+                </li>
+                <li>
+                  <a href="https://widophremit.com/blog/">Blog</a>
+                </li>
+                <li>
+                  <a href="https://widophremit.com/transfer-money-online-from-australia-to-nigeria/">
+                    Transfer Money online from Australia to Nigeria
+                  </a>
+                </li>
+                <li>
+                  <a href="https://widophremit.com/community-responsibility/">
+                    Social Responsibility
+                  </a>
+                </li>
+              </ul>
+            </Col>
+          )}
 
           <Col md={3}>
             <h6>
@@ -148,5 +155,6 @@ const Footer = () => {
     </footer>
   );
 };
+
 
 export default Footer;

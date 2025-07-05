@@ -10,16 +10,32 @@ import {
   FloatingLabel,
 } from "react-bootstrap";
 import PhoneInput from "react-phone-number-input";
-
 import KYCImage from "../../assets/images/kyc-image.png";
-
 import "./KYCForm.css";
+import { useNavigate } from "react-router-dom";
 
 const KYCForm = () => {
+  const navigate=useNavigate()
   const [activeKey, setActiveKey] = useState("step1");
   const [value, setValue] = useState();
   const [selectedFileName, setSelectedFileName] = useState("");
   const fileInputRef = useRef(null);
+
+  const [formData, setFormData] = useState({
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    dob: "",
+    countryOfBirth: "",
+    occupation: "",
+    country: "",
+    address: "",
+    city: "",
+    zip: "",
+    state: "",
+  });
 
   const handleClick = () => {
     fileInputRef.current.click();
@@ -29,12 +45,52 @@ const KYCForm = () => {
     const file = event.target.files[0];
     if (file) {
       setSelectedFileName(file.name);
-      // Handle the file as needed
     }
   };
+
   const goToNext = () => {
-    if (activeKey === "step1") setActiveKey("step2");
-    if (activeKey === "step2") setActiveKey("step3");
+    if (activeKey === "step1") {
+      const {
+        firstName,
+        lastName,
+        email,
+        phone,
+        dob,
+        countryOfBirth,
+        occupation,
+        country,
+        address,
+        city,
+        zip,
+        state,
+      } = formData;
+
+      if (
+        !firstName ||
+        !lastName ||
+        !email ||
+        !phone ||
+        !dob ||
+        !countryOfBirth ||
+        !occupation ||
+        !country ||
+        !address ||
+        !city ||
+        !zip ||
+        !state
+      ) {
+        alert("Please fill all required fields.");
+        return;
+      }
+
+      setActiveKey("step2");
+    } else if (activeKey === "step2") {
+      if (!selectedFileName) {
+        alert("Please upload your ID to continue.");
+        return;
+      }
+      setActiveKey("step3");
+    }
   };
 
   const goToPrevious = () => {
@@ -46,10 +102,7 @@ const KYCForm = () => {
     <Container fluid className="py-5">
       <Tab.Container activeKey={activeKey} onSelect={setActiveKey}>
         <Row>
-          <Col
-            md={3}
-            className="sidebar-steps d-flex justify-content-center align-items-center flex-column"
-          >
+          <Col md={3} className="sidebar-steps d-flex justify-content-center align-items-center flex-column">
             <Nav variant="pills" className="flex-column gap-4 w-100">
               {[1, 2, 3].map((num) => {
                 const stepKey = `step${num}`;
@@ -61,9 +114,7 @@ const KYCForm = () => {
                   <Nav.Item key={num} className="step-wrapper">
                     <div className="step-connector">
                       <div
-                        className={`step-dot ${
-                          isCompleted ? "completed" : ""
-                        } ${isActive ? "active" : ""}`}
+                        className={`step-dot ${isCompleted ? "completed" : ""} ${isActive ? "active" : ""}`}
                       >
                         {isCompleted ? "●" : ""}
                       </div>
@@ -95,189 +146,137 @@ const KYCForm = () => {
               {/* Step 1 */}
               <Tab.Pane eventKey="step1">
                 <h2 className="mb-1">Please complete KYC</h2>
-                <p className="text-muted mb-4">
-                  You are only three steps away from completing your KYC
-                </p>
+                <p className="text-muted mb-4">You are only three steps away from completing your KYC</p>
 
-                <div className="page-content-section mt-3">
-                  <div className="row">
-                    <div className="col-md-12">
-                      <Form className="profile-form">
-                        <Row className="mb-3 mt-3">
-                          <h3>Personal Details</h3>
-                          <FloatingLabel
-                            as={Col}
-                            controlId="floatingInput"
-                            label="First Name"
-                            className="mb-3"
-                          >
-                            <Form.Control
-                              type="text"
-                              placeholder="First Name"
-                            />
-                          </FloatingLabel>
-                          <FloatingLabel
-                            as={Col}
-                            controlId="floatingInput"
-                            label="Middle Name"
-                            className="mb-3"
-                          >
-                            <Form.Control
-                              type="text"
-                              placeholder="Middle Name"
-                            />
-                          </FloatingLabel>
-                          <FloatingLabel
-                            as={Col}
-                            controlId="floatingInput"
-                            label="Last Name"
-                            className="mb-3"
-                          >
-                            <Form.Control type="text" placeholder="Last Name" />
-                          </FloatingLabel>
-                        </Row>
-                        <Row className="mb-3">
-                          <FloatingLabel
-                            as={Col}
-                            controlId="floatingInput"
-                            label="Email"
-                            className="mb-3"
-                          >
-                            <Form.Control
-                              type="email"
-                              placeholder="Enter email"
-                            />
-                          </FloatingLabel>
+                <Form className="profile-form">
+                  <Row className="mb-3 mt-3">
+                    <h3>Personal Details</h3>
+                    <FloatingLabel as={Col} label="First Name" className="mb-3">
+                      <Form.Control
+                        type="text"
+                        value={formData.firstName}
+                        onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                      />
+                    </FloatingLabel>
+                    <FloatingLabel as={Col} label="Middle Name" className="mb-3">
+                      <Form.Control
+                        type="text"
+                        value={formData.middleName}
+                        onChange={(e) => setFormData({ ...formData, middleName: e.target.value })}
+                      />
+                    </FloatingLabel>
+                    <FloatingLabel as={Col} label="Last Name" className="mb-3">
+                      <Form.Control
+                        type="text"
+                        value={formData.lastName}
+                        onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                      />
+                    </FloatingLabel>
+                  </Row>
 
-                          <FloatingLabel
-                            as={Col}
-                            controlId="floatingInput"
-                            label="Mobile"
-                            className="mb-3 mobileinput"
-                          >
-                            <PhoneInput
-                              international
-                              countryCallingCodeEditable={false}
-                              defaultCountry="AU"
-                              value={value}
-                              onChange={setValue}
-                            />
-                          </FloatingLabel>
-                        </Row>
-                        <Row className="mb-3">
-                          <FloatingLabel
-                            as={Col}
-                            controlId="floatingInput"
-                            label="Date of Birth"
-                            className="mb-3"
-                          >
-                            <Form.Control
-                              type="date"
-                              placeholder="Select Date"
-                            />
-                          </FloatingLabel>
+                  <Row className="mb-3">
+                    <FloatingLabel as={Col} label="Email" className="mb-3">
+                      <Form.Control
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      />
+                    </FloatingLabel>
 
-                          <FloatingLabel
-                            as={Col}
-                            controlId="floatingInput"
-                            label="Country of Birth"
-                            className="mb-3"
-                          >
-                            <Form.Control
-                              type="text"
-                              placeholder="Customer ID"
-                            />
-                          </FloatingLabel>
+                    <FloatingLabel as={Col} label="Mobile" className="mb-3 mobileinput">
+                      <PhoneInput
+                        international
+                        countryCallingCodeEditable={false}
+                        defaultCountry="AU"
+                        value={value}
+                        onChange={(val) => {
+                          setValue(val);
+                          setFormData({ ...formData, phone: val });
+                        }}
+                      />
+                    </FloatingLabel>
+                  </Row>
 
-                          <FloatingLabel
-                            as={Col}
-                            controlId="floatingInput"
-                            label="Occupation"
-                            className="mb-3"
-                          >
-                            <Form.Control
-                              type="text"
-                              placeholder="Occupation"
-                            />
-                          </FloatingLabel>
-                        </Row>
+                  <Row className="mb-3">
+                    <FloatingLabel as={Col} label="Date of Birth" className="mb-3">
+                      <Form.Control
+                        type="date"
+                        value={formData.dob}
+                        onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
+                      />
+                    </FloatingLabel>
 
-                        <Row className="mb-3 mt-3">
-                          <h3>Your Address</h3>
-                          <FloatingLabel
-                            as={Col}
-                            controlId="floatingInput"
-                            label="Country"
-                            className="mb-3"
-                          >
-                            <Form.Control type="text" placeholder="Country" />
-                          </FloatingLabel>
-                          <FloatingLabel
-                            as={Col}
-                            controlId="floatingTextarea2"
-                            label="Address"
-                          >
-                            <Form.Control
-                              as="textarea"
-                              placeholder="Street Address"
-                              style={{ height: "50px" }}
-                            />
-                          </FloatingLabel>
-                        </Row>
+                    <FloatingLabel as={Col} label="Country of Birth" className="mb-3">
+                      <Form.Control
+                        type="text"
+                        value={formData.countryOfBirth}
+                        onChange={(e) => setFormData({ ...formData, countryOfBirth: e.target.value })}
+                      />
+                    </FloatingLabel>
 
-                        <Row className="mb-3">
-                          <FloatingLabel
-                            as={Col}
-                            controlId="floatingInput"
-                            label="City"
-                            className="mb-3"
-                          >
-                            <Form.Control type="text" placeholder="City" />
-                          </FloatingLabel>
-                          <FloatingLabel
-                            as={Col}
-                            controlId="floatingInput"
-                            label="Zip/Postal Code*"
-                            className="mb-3"
-                          >
-                            <Form.Control
-                              type="number"
-                              placeholder="Zip/Postal Code*"
-                            />
-                          </FloatingLabel>
+                    <FloatingLabel as={Col} label="Occupation" className="mb-3">
+                      <Form.Control
+                        type="text"
+                        value={formData.occupation}
+                        onChange={(e) => setFormData({ ...formData, occupation: e.target.value })}
+                      />
+                    </FloatingLabel>
+                  </Row>
 
-                          <FloatingLabel
-                            as={Col}
-                            controlId="floatingInput"
-                            label="State"
-                            className="mb-3"
-                          >
-                            <Form.Control type="text" placeholder="State" />
-                          </FloatingLabel>
-                        </Row>
+                  <Row className="mb-3 mt-3">
+                    <h3>Your Address</h3>
+                    <FloatingLabel as={Col} label="Country" className="mb-3">
+                      <Form.Control
+                        type="text"
+                        value={formData.country}
+                        onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                      />
+                    </FloatingLabel>
 
-                        <Row className="mb-3">
-                          <Col>
-                            <Button
-                              variant="success"
-                              className="nextbtn"
-                              onClick={goToNext}
-                            >
-                              NEXT STEP
-                            </Button>
-                            <Button
-                              variant="link"
-                              className="skipbtn"
-                              onClick={() => setActiveKey("step3")}
-                            >
-                              SKIP
-                            </Button>
-                          </Col>
-                        </Row>
-                      </Form>
-                    </div>
-                  </div>
-                </div>
+                    <FloatingLabel as={Col} label="Address">
+                      <Form.Control
+                        as="textarea"
+                        style={{ height: "50px" }}
+                        value={formData.address}
+                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                      />
+                    </FloatingLabel>
+                  </Row>
+
+                  <Row className="mb-3">
+                    <FloatingLabel as={Col} label="City" className="mb-3">
+                      <Form.Control
+                        type="text"
+                        value={formData.city}
+                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                      />
+                    </FloatingLabel>
+
+                    <FloatingLabel as={Col} label="Zip/Postal Code*" className="mb-3">
+                      <Form.Control
+                        type="number"
+                        value={formData.zip}
+                        onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
+                      />
+                    </FloatingLabel>
+
+                    <FloatingLabel as={Col} label="State" className="mb-3">
+                      <Form.Control
+                        type="text"
+                        value={formData.state}
+                        onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                      />
+                    </FloatingLabel>
+                  </Row>
+
+                  <Row className="mb-3">
+                    <Col>
+                      <Button variant="success" className="nextbtn" onClick={goToNext}>
+                        NEXT STEP
+                      </Button>
+                    </Col>
+                  </Row>
+                </Form>
               </Tab.Pane>
 
               {/* Step 2 */}
@@ -285,17 +284,11 @@ const KYCForm = () => {
                 <div className="kyc-complete-wrapper">
                   <div>
                     <h2 className="mb-3">Please complete KYC</h2>
-                    <p>
-                      You are only three steps away from completing your KYC
-                    </p>
+                    <p>You are only three steps away from completing your KYC</p>
                   </div>
 
                   <div className="verify-container">
-                    <button
-                      className="verify-btn"
-                      type="button"
-                      onClick={handleClick}
-                    >
+                    <button className="verify-btn" type="button" onClick={handleClick}>
                       VERIFY YOUR ID
                     </button>
 
@@ -314,32 +307,16 @@ const KYCForm = () => {
                       </p>
                     )}
                     <p className="verify-description">
-                      <strong>Veriff</strong> is an identity verification
-                      provider that helps companies connect with customers.
+                      <strong>Veriff</strong> is an identity verification provider that helps companies connect with customers.
                     </p>
                   </div>
 
                   <div className="d-flex gap-2 justify-content-start">
-                    <Button
-                      variant="secondary"
-                      className="prevbtn"
-                      onClick={goToPrevious}
-                    >
+                    <Button variant="secondary" className="prevbtn" onClick={goToPrevious}>
                       Previous
                     </Button>
-                    <Button
-                      variant="success"
-                      className="nextbtn"
-                      onClick={goToNext}
-                    >
+                    <Button variant="success" className="nextbtn" onClick={goToNext}>
                       NEXT STEP
-                    </Button>
-                    <Button
-                      variant="link"
-                      className="skipbtn"
-                      onClick={() => setActiveKey("step3")}
-                    >
-                      SKIP
                     </Button>
                   </div>
                 </div>
@@ -352,17 +329,11 @@ const KYCForm = () => {
                     <h2>KYC Completed!</h2>
                     <p>Request has been submitted. It may take some time.</p>
                   </div>
-
                   <div>
-                    <img
-                      src={KYCImage}
-                      alt="KYC success"
-                      className="kyc-image"
-                    />
+                    <img src={KYCImage} alt="KYC success" className="kyc-image" />
                   </div>
-
                   <div className="kyc-complete-footer">
-                    <Button variant="success" className="nextbtn">
+                    <Button variant="success" className="nextbtn" onClick={()=>navigate("/dashboard")}>
                       Go to Dashboard
                     </Button>
                     <p className="redirect-msg">

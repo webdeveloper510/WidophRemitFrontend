@@ -147,7 +147,6 @@ li.rounded {
   padding-right: 0 !important;
   position: relative;
   padding-left: 0px !important;
-  height: 100vh;
 }
 ul.nav.flex-column li a span,
 ul.nav.flex-column li button span {
@@ -348,22 +347,21 @@ div#basic-navbar-nav a {
   font-size: 16px;
 }
 .stats-row h4 {
-  font-size: 28px;
+  font-size: 40px;
   color: #434800;
 }
 .stats-box {
-  display: flex;
+  display: grid;
+  grid-auto-flow: column;
   align-items: center;
-  justify-content: start;
+  grid-template-columns: 100px auto;
 }
 .receiver-card .h5 {
   color: #434800;
   font-size: 30px;
   font-weight: 600;
 }
-img.dashboard-info-img {
-  margin-right: 11px;
-}
+
 span.status-badge.pending {
   color: #da982f;
 }
@@ -560,15 +558,8 @@ form.profile-form textarea {
 }
 span.password-eye {
   position: absolute;
-  top: 5px;
+  top: 14px;
   right: 37px;
-}
-.login-form-wrapper label.form-label {
-  color: #434800;
-  font-size: 14px;
-}
-.login-form-wrapper label.form-label span {
-  color: red;
 }
 .updateform {
   background: #2499db;
@@ -628,16 +619,14 @@ img.clipped-img {
   float: right;
 }
 /************************** resend otp popup css **********************/
-.optTagLine {
-  margin-left: 20px;
-}
+
 a.resendOTP {
   color: #9cb417;
   margin: 30px 0px 5px !important;
   float: left;
   width: 100%;
 }
-.inputBoxStyle input {
+input.inputBoxStyle {
   width: 3rem !important;
   height: 3rem;
   margin: 0 12px;
@@ -647,9 +636,7 @@ a.resendOTP {
   font-size: 17px;
   color: #434800;
 }
-.inputBoxStyle input:first-child {
-  margin-left: 0;
-}
+
 img.processing-vector {
   position: absolute;
   bottom: 0;
@@ -1000,11 +987,9 @@ li.nav-item.mb-2.bg-light.text-dark.rounded {
   background: #fff;
 }
 /************ signup ************************/
-.custom-password {
-  position: relative;
-}
+
 .login-form-wrapper {
-  /* background-color: #fefdf7; */
+  background-color: #fefdf7;
   padding-right: 50px;
 }
 
@@ -1059,24 +1044,25 @@ li.nav-item.mb-2.bg-light.text-dark.rounded {
 }
 
 .mobile_numbero input.form-control {
-  padding: 1rem 0.75rem;
+    padding: 1rem .75rem;
 }
 .mb-3.mobile_numbero.row {
-  position: relative;
-  margin-top: 40px;
+    position: relative;
+    margin-top: 15px;
 }
 .mobile_numbero.row label {
-  position: absolute;
-  top: -27px;
+    position: absolute;
+    top: -27px;
 }
-
+.mobile_numbero input.form-control {
+    padding: 1rem .75rem;
+    background: transparent !important;
+}
+.mobile_numbero select.form-select {
+    background: transparent !important;
+}
 .exchange-form label {
-  background: transparent !important;
-}
-.form-control,
-.form-select {
-  padding: 1rem 0.75rem;
-  border: 1px solid #e0e3b7;
+    background: transparent !important;
 }
 /*************** responsive css ****************/
 
