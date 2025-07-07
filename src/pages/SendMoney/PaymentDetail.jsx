@@ -67,14 +67,13 @@ const PaymentDetail = () => {
     const receiver = JSON.parse(sessionStorage.getItem("selected_receiver"));
 
     if (transferData?.amount) {
-      console.log(transferData.amount.send_amt);
       setAmount(transferData.amount.send_amt || "0.00");
       setCurrency(transferData.amount.from || "AUD");
     }
 
     if (receiver?.account_name) {
       setReceiverName(receiver.account_name);
-    }    
+    }
   }, []);
 
   const handlePayToFormChange = (field, value) => {
@@ -111,8 +110,6 @@ const PaymentDetail = () => {
   };
 
   const handlePayToLimitContinue = () => {
-    console.log("coming");
-    
     if (!payToLimitForm.amountLimit) {
       toast.error("Please select an amount limit.");
       return;
@@ -122,7 +119,6 @@ const PaymentDetail = () => {
   };
 
   const handleMonovaContinue = () => {
-    // console.log("coming");
     const errors = {};
     if (!monovaForm.paymentMethod) errors.paymentMethod = "Please select payment method.";
     if (!monovaForm.bsb) errors.bsb = "BSB is required.";
@@ -462,7 +458,7 @@ const PaymentDetail = () => {
 
               {/* PayID */}
               <Row className="mb-3">
-                <FloatingLabel controlId="payid" as={Col} label="PayID" className="mb-3">
+                <FloatingLabel controlId="payid" as={Col} label="PayID">
                   <Form.Control
                     type="text"
                     placeholder="PayID"
@@ -596,10 +592,9 @@ const PaymentDetail = () => {
                 </FloatingLabel>
               </Row>
               <Row className="mb-3">
-                <FloatingLabel as={Col} controlId="monova-bsb" label="BSB Number"  className="mb-3">
+                <FloatingLabel as={Col} controlId="monova-bsb" label="BSB Number">
                   <Form.Control
                     type="text"
-                    placeholder="BSB Number"
                     value={monovaForm.bsb}
                     onChange={(e) => handleMonovaFormChange('bsb', e.target.value)}
                     isInvalid={!!monovaFormErrors.bsb}
@@ -612,7 +607,7 @@ const PaymentDetail = () => {
                 </FloatingLabel>
               </Row>
               <Row className="mb-3">
-                <FloatingLabel as={Col} controlId="monova-account" label="Account Number" className="mb-3">
+                <FloatingLabel as={Col} controlId="monova-account" label="Account Number">
                   <Form.Control
                     type="text"
                     value={monovaForm.accountNumber}
@@ -627,10 +622,9 @@ const PaymentDetail = () => {
                 </FloatingLabel>
               </Row>
               <Row className="mb-3">
-                <FloatingLabel as={Col} controlId="monova-name" label="Account Name" className="mb-3">
+                <FloatingLabel as={Col} controlId="monova-name" label="Account Name">
                   <Form.Control
                     type="text"
-                    placeholder="Account Name"
                     value={monovaForm.accountName}
                     onChange={(e) => handleMonovaFormChange('accountName', e.target.value)}
                     isInvalid={!!monovaFormErrors.accountName}
@@ -669,7 +663,7 @@ const PaymentDetail = () => {
             <Form className="profile-form">
               {payToLimitForm.payId && (
                 <Row className="mb-3">
-                  <FloatingLabel as={Col} controlId="payto-limit-payid" label="PayID" className="mb-3">
+                  <FloatingLabel as={Col} controlId="payto-limit-payid" label="PayID">
                     <Form.Control
                       type="text"
                       value={payToLimitForm.payId}
@@ -682,7 +676,7 @@ const PaymentDetail = () => {
               {(payToLimitForm.bsb || payToLimitForm.accountNumber) && (
                 <>
                   <Row className="mb-3">
-                    <FloatingLabel as={Col} controlId="payto-limit-bsb" label="BSB Number" className="mb-3">
+                    <FloatingLabel as={Col} controlId="payto-limit-bsb" label="BSB Number">
                       <Form.Control
                         type="text"
                         value={payToLimitForm.bsb}
@@ -691,7 +685,7 @@ const PaymentDetail = () => {
                     </FloatingLabel>
                   </Row>
                   <Row className="mb-3">
-                    <FloatingLabel as={Col} controlId="payto-limit-account" label="Account Number" className="mb-3">
+                    <FloatingLabel as={Col} controlId="payto-limit-account" label="Account Number">
                       <Form.Control
                         type="text"
                         value={payToLimitForm.accountNumber}
@@ -703,7 +697,7 @@ const PaymentDetail = () => {
               )}
 
               <Row className="mb-3">
-                <FloatingLabel as={Col} controlId="amount-limit" label="Amount Per Transaction Limit" className="mb-3">
+                <FloatingLabel as={Col} controlId="amount-limit" label="Amount Per Transaction Limit">
                   <Form.Select
                     value={payToLimitForm.amountLimit}
                     onChange={(e) => setPayToLimitForm({ ...payToLimitForm, amountLimit: e.target.value })}
@@ -718,7 +712,7 @@ const PaymentDetail = () => {
               </Row>
 
               <Row className="mb-3">
-                <FloatingLabel as={Col} controlId="start-date" label="Start Date" className="mb-3">
+                <FloatingLabel as={Col} controlId="start-date" label="Start Date">
                   <Form.Control
                     type="date"
                     value={payToLimitForm.startDate}
