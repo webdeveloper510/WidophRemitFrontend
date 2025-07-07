@@ -77,7 +77,6 @@ const PaymentDetail = () => {
     const receiver = JSON.parse(sessionStorage.getItem("selected_receiver"));
 
     if (transferData?.amount) {
-      console.log(transferData.amount.send_amt);
       setAmount(transferData.amount.send_amt || "0.00");
       setCurrency(transferData.amount.from || "AUD");
     }
@@ -123,8 +122,6 @@ const PaymentDetail = () => {
   };
 
   const handlePayToLimitContinue = () => {
-    console.log("coming");
-
     if (!payToLimitForm.amountLimit) {
       toast.error("Please select an amount limit.");
       return;
@@ -134,7 +131,6 @@ const PaymentDetail = () => {
   };
 
   const handleMonovaContinue = () => {
-    // console.log("coming");
     const errors = {};
     if (!monovaForm.paymentMethod)
       errors.paymentMethod = "Please select payment method.";
@@ -426,6 +422,7 @@ const PaymentDetail = () => {
                       controlId="floatingSelect"
                       as={Col}
                       label="Transfer Reason"
+                      className="mb-3"
                     >
                       <Form.Select
                         value={transferReason}
@@ -556,10 +553,14 @@ const PaymentDetail = () => {
 
               {/* BSB */}
               <Row className="mb-3">
-                <FloatingLabel controlId="bsb" as={Col} label="BSB Number">
+                <FloatingLabel
+                  controlId="bsb"
+                  as={Col}
+                  label="BSB Number"
+                  className="mb-3"
+                >
                   <Form.Control
                     type="text"
-                    className="mb-3"
                     value={payToForm.bsb}
                     onChange={(e) =>
                       handlePayToFormChange("bsb", e.target.value)
@@ -639,7 +640,7 @@ const PaymentDetail = () => {
                   as={Col}
                   controlId="payid-field"
                   label="PayID"
-                  className="position-relative"
+                  className="position-relative mb-3"
                 >
                   <Form.Control type="text" value={payIdData.payId} readOnly />
                   <span
@@ -718,6 +719,7 @@ const PaymentDetail = () => {
                   as={Col}
                   controlId="monova-payment-method"
                   label="Payment Method"
+                  className="mb-3"
                 >
                   <Form.Select
                     value={monovaForm.paymentMethod}

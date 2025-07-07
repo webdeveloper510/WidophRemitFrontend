@@ -223,7 +223,6 @@ const ReceiverDetail = () => {
                     >
                       <Form.Control
                         type="text"
-                        placeholder="Account Number"
                         name="account_number"
                         value={values.account_number}
                         onChange={handleChange}
