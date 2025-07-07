@@ -92,7 +92,7 @@ const Signup = () => {
       const response = await userRegisterCheck(payload);
       if (response?.code === "200") {
         sessionStorage.setItem("signupData", JSON.stringify(payload));
-         navigate("/otp-verification", { state: { from: "signup" } });
+        navigate("/otp-verification", { state: { from: "signup" } });
       } else {
         toast.error(response?.message || "Registration failed");
       }
@@ -107,7 +107,7 @@ const Signup = () => {
 
   return (
     <Container className="login-form-wrapper">
-      <Row className="">
+      <Row>
         {/* Left Form Column */}
         <Col md={7} className="d-flex align-items-center justify-content-start">
           <div className="login-form-wrapper w-100">
@@ -218,7 +218,7 @@ const Signup = () => {
                         </div>
                       )}
                     </Row>
-                    
+
                     <Row className="mb-3">
                       <label className="form-label">
                         Email Address<span>*</span>

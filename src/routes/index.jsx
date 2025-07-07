@@ -28,7 +28,6 @@ import TransactionSuccess from "../pages/SendMoney/TranscationSuccess";
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/otp-verification" element={<OtpVerification />} />
       <Route
         element={
           <PublicRoute>
@@ -38,6 +37,8 @@ const AppRoutes = () => {
       >
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/otp-verification" element={<OtpVerification />} />
+        <Route path="/kyc" element={<KYCForm />} />
       </Route>
 
       <Route
@@ -48,7 +49,6 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       >
-        <Route path="/kyc" element={<KYCForm />} />
         <Route path="/transaction-success" element={<TransactionSuccess />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="send-money" element={<SendMoney />} />

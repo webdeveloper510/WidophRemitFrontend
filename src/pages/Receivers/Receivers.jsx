@@ -7,6 +7,7 @@ import RecentReceiver from "../../assets/images/icons1.png";
 import { deleteRecipient, recipientList } from "../../services/Api";
 import { Button, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import AddReceiver from "../../assets/images/add-receiver.png";
 
 const customStyles = {
   headCells: {
@@ -145,7 +146,7 @@ const Receivers = () => {
                 type="button"
                 class="float-end download-button btn btn-success"
               >
-               <img src={AddReceiver} alt="img" /> Add Receiver
+                <img src={AddReceiver} alt="img" /> Add Receiver
               </button>
             </Link>
           </div>
