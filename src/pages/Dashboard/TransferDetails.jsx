@@ -23,7 +23,6 @@ const TransferDetails = () => {
       try {
         const result = await paymentSummary(id);
         if (result?.code === "200") {
-          console.log(result.data);
           setTransactionData(result.data);
           setError(null);
         } else {

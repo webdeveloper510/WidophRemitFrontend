@@ -500,8 +500,7 @@ export const verifyPayTo = async (data) => {
 }
 
 export const createPayId = async (data) => {
-  console.log(data);
-  
+
   const response = await private_instance.post(`payment/zai-payid-register/`, data, {
     headers: {
       'Content-Type': 'application/json',
@@ -533,8 +532,8 @@ export const createAgreement = async (data) => {
   return response
 }
 
-export const getAgreementList = async () => {
-  const response = await private_instance.post(`payment/zai-agreement-list/`, {}, {
+export const getAgreementList = async (amount) => {
+  const response = await private_instance.post(`payment/zai-agreement-list/`, { send_amount: amount }, {
     headers: {
       'Content-Type': 'application/json',
       "Authorization": `Bearer ${sessionStorage.getItem("token")}`,

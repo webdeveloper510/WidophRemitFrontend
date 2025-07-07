@@ -48,7 +48,7 @@ const PaymentDetail = () => {
     paymentMethod: ""
   });
   const [monovaFormErrors, setMonovaFormErrors] = useState({});
-
+const[bsb,setbsb]=useState(0);
   const navigate = useNavigate();
 
   const reasonOptions = [
@@ -67,14 +67,13 @@ const PaymentDetail = () => {
     const receiver = JSON.parse(sessionStorage.getItem("selected_receiver"));
 
     if (transferData?.amount) {
-      console.log(transferData.amount.send_amt);
       setAmount(transferData.amount.send_amt || "0.00");
       setCurrency(transferData.amount.from || "AUD");
     }
 
     if (receiver?.account_name) {
       setReceiverName(receiver.account_name);
-    }    
+    }
   }, []);
 
   const handlePayToFormChange = (field, value) => {
@@ -120,7 +119,6 @@ const PaymentDetail = () => {
   };
 
   const handleMonovaContinue = () => {
-    // console.log("coming");
     const errors = {};
     if (!monovaForm.paymentMethod) errors.paymentMethod = "Please select payment method.";
     if (!monovaForm.bsb) errors.bsb = "BSB is required.";
@@ -164,7 +162,10 @@ const PaymentDetail = () => {
     if (paymentType === "payto") {
       try {
         setIsLoadingAgreement(true);
-        const agreementList = await getAgreementList();
+        const temp = sessionStorage.getItem("transfer_data");
+        const agreementList = await getAgreementList(temp.send_amt);
+        setbsb(agreementList.data.bsb_code);
+        
         if (agreementList?.code === "200" && agreementList?.data) {
           const agreementData = Array.isArray(agreementList.data) ? agreementList.data[0] : agreementList.data;
           if (agreementData && (agreementData.payid || (agreementData.bsb && agreementData.account_number))) {
@@ -217,14 +218,13 @@ const PaymentDetail = () => {
         return;
       }
       const response = await createPayId({ transaction_id: transactionId });
-      if (response?.code === "200") {        
+      if (response?.code === "200") {
         setPayIdData({
           payId: response.data.payid || "",
           transferId: response.data.transaction_id || ""
         });
         setModalShowPayId(true);
       } else {
-        console.log(response);
         toast.error(response.message || "PayID generation failed.");
       }
     } catch (err) {
@@ -254,6 +254,11 @@ const PaymentDetail = () => {
         };
       }
 
+      let temp=sessionStorage.getItem("transfer_data");
+      temp=JSON.parse(temp);
+      payload.agreement_amount=temp.exchange_amt;
+      payload.account_number=payToLimitForm.accountNumber;
+      payload.bsb=bsb;
       const response = await createAgreement(payload);
       if (response?.code === "200" || response?.success) {
         sessionStorage.setItem("payto_limit_data", JSON.stringify(payToLimitForm));
@@ -595,7 +600,7 @@ const PaymentDetail = () => {
                 </FloatingLabel>
               </Row>
               <Row className="mb-3">
-                <FloatingLabel as={Col} controlId="monova-bsb" label="BSB Number"  className="mb-3">
+                <FloatingLabel as={Col} controlId="monova-bsb" label="BSB Number" className="mb-3">
                   <Form.Control
                     type="text"
                     placeholder="BSB Number"

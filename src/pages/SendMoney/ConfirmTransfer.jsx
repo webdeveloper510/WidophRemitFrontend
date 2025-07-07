@@ -53,8 +53,6 @@ const ConfirmTransfer = () => {
     try {
       const res = await userProfile();
       if (res && res?.code === "200") {
-        console.log(res?.data);
-        
         setSender(res?.data || {});
       } else {
         console.error("Failed to fetch user profile:", res?.message);
