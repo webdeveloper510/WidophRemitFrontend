@@ -243,7 +243,6 @@ form.profile-form h3 {
 p.selected-file-name {
   color: #434800;
 }
-
 .page-content-section {
   max-height: calc(100vh - 100px);
   overflow-y: auto;

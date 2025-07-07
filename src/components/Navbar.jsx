@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom"; // ⬅️ import useLocation
 import { Navbar, Nav, NavDropdown, Container } from "react-bootstrap";
 import { RxHamburgerMenu } from "react-icons/rx";
 import openToggle from "../assets/images/Left.png";
@@ -8,14 +8,17 @@ import LoggedUser from "../assets/images/loggeduser.png";
 
 const TopNavbar = ({ onToggleSidebar }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const location = useLocation(); // ⬅️ get current route
 
   const handleToggle = () => {
     setCollapsed((prev) => !prev);
     onToggleSidebar();
   };
 
-  // const user = JSON.parse(sessionStorage.getItem("user_name")) || {};
-  // const fullName = `${user.firstName || ""} ${user.lastName || ""}`.trim();
+  // ❌ Do not render on /kyc
+  if (location.pathname === "/kyc") {
+    return null;
+  }
 
   return (
     <div className="d-flex align-items-center">
@@ -67,7 +70,6 @@ const TopNavbar = ({ onToggleSidebar }) => {
                   className="d-none d-sm-block"
                   style={{ fontFamily: "Lufga-regular" }}
                 >
-                  {/* <h5>{fullName || "User"}</h5> */}
                   <span>View Profile</span>
                 </div>
               </Nav.Link>

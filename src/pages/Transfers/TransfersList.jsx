@@ -80,6 +80,11 @@ const TransfersList = () => {
     const response = await transactionHistory();
     const pend_res = await pendingTransactions();
 
+    console.log(response);
+    console.log(pend_res);
+    
+    
+
     if (response.code === "200") {
       data = response.data.data;
     }

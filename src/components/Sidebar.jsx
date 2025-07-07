@@ -20,14 +20,18 @@ const menuItems = [
 
 const Sidebar = ({ collapsed }) => {
   const location = useLocation();
- const handleLogout = () => {
-  sessionStorage.clear(); 
-  window.location.href = "/login"; 
-};
+  if (location.pathname === "/kyc") {
+    return null;
+  }
+  const handleLogout = () => {
+    sessionStorage.clear();
+    window.location.href = "/login";
+  };
   return (
     <div
-      className={`p-3 ${collapsed ? "d-none d-md-block collapse-sidebar" : "col-2 col-md-3"
-        } sidebar mr-3`}
+      className={`p-3 ${
+        collapsed ? "d-none d-md-block collapse-sidebar" : "col-2 col-md-3"
+      } sidebar mr-3`}
       style={{ minHeight: "100%" }}
     >
       <h4 className="text-center mb-4 logo">
@@ -43,10 +47,11 @@ const Sidebar = ({ collapsed }) => {
         {menuItems.map((item) => (
           <li
             key={item.path}
-            className={`nav-item mb-2 ${location.pathname === item.path
-              ? "bg-light text-dark rounded"
-              : ""
-              }`}
+            className={`nav-item mb-2 ${
+              location.pathname === item.path
+                ? "bg-light text-dark rounded"
+                : ""
+            }`}
           >
             <Link
               to={item.path}
@@ -59,12 +64,16 @@ const Sidebar = ({ collapsed }) => {
         <li className="mt-auto logout-row">
           <a
             className="nav-link  d-flex align-items-center gap-2"
-            onClick={handleLogout} 
+            onClick={handleLogout}
           >
-            <button type="button" className="logout-btn nav-link  d-flex align-items-center" onClick={() => {
-              sessionStorage.clear();
-              navigate("/login")
-            }}>
+            <button
+              type="button"
+              className="logout-btn nav-link  d-flex align-items-center"
+              onClick={() => {
+                sessionStorage.clear();
+                navigate("/login");
+              }}
+            >
               <HiOutlineLogout /> <span>Logout</span>
             </button>
           </a>

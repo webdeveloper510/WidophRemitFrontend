@@ -6,8 +6,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import RecentReceiver from "../../assets/images/icons1.png";
 import { deleteRecipient, recipientList } from "../../services/Api";
 import { Button, Modal } from "react-bootstrap";
-
-
+import { Link } from "react-router-dom";
 
 const customStyles = {
   headCells: {
@@ -32,12 +31,10 @@ const customStyles = {
   },
 };
 
-
 const Receivers = () => {
-
-  const [list, setList] = useState([])
+  const [list, setList] = useState([]);
   const [filterText, setFilterText] = useState("");
-  const [show, setShow] = useState(false)
+  const [show, setShow] = useState(false);
 
   const columns = [
     {
@@ -48,9 +45,13 @@ const Receivers = () => {
     },
     {
       name: "Receivers Name",
-      selector: (row) => { `${row.first_name} ${row.middle_name} ${row.last_name}` },
+      selector: (row) => {
+        `${row.first_name} ${row.middle_name} ${row.last_name}`;
+      },
       sortable: true,
-      cell: (row) => <strong>{`${row.first_name} ${row.middle_name} ${row.last_name}`}</strong>,
+      cell: (row) => (
+        <strong>{`${row.first_name} ${row.middle_name} ${row.last_name}`}</strong>
+      ),
     },
     {
       name: "Sender Email",
@@ -104,31 +105,31 @@ const Receivers = () => {
 
   useEffect(() => {
     fetchList();
-  }, [])
+  }, []);
 
   const fetchList = async () => {
     try {
       const response = await recipientList();
 
       if (response.code === "200") {
-        setList(response.data)
+        setList(response.data);
+        console.log(response.data);
       }
-
     } catch (err) {
       console.error("Error fetching list:", err);
     }
-  }
+  };
 
   const handleClose = () => {
-    setShow(false)
-  }
+    setShow(false);
+  };
 
   const handleDelete = async () => {
     const response = await deleteRecipient(show);
     if (response.code === "200") {
       fetchList();
     }
-  }
+  };
 
   return (
     <>
@@ -139,14 +140,14 @@ const Receivers = () => {
               <img src={RecentReceiver} alt="img" /> <h1>Receivers List</h1>
             </div>
             {subHeaderComponent}
-            {/* <a href="add-receiver">
-          <button
-            type="button"
-            class="float-end download-button btn btn-success"
-          >
-            <img src={AddReceiver} alt="img" /> Add Receiver
-          </button>
-        </a> */}
+            <Link to={"/add-receiver"}>
+              <button
+                type="button"
+                class="float-end download-button btn btn-success"
+              >
+               <img src={AddReceiver} alt="img" /> Add Receiver
+              </button>
+            </Link>
           </div>
         </div>
 
@@ -164,15 +165,20 @@ const Receivers = () => {
           />
         </div>
       </AnimatedPage>
-      <Modal show={show} onHide={handleClose} backdrop="static" >
-        <Modal.Header>
-        </Modal.Header>
+      <Modal show={show} onHide={handleClose} backdrop="static">
+        <Modal.Header></Modal.Header>
         <Modal.Body>Are you sure you want to delete ?</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => handleClose()}>
             Close
           </Button>
-          <Button className="delete_recipient" variant="danger" onClick={() => { handleDelete() }} >
+          <Button
+            className="delete_recipient"
+            variant="danger"
+            onClick={() => {
+              handleDelete();
+            }}
+          >
             Delete
           </Button>
         </Modal.Footer>
