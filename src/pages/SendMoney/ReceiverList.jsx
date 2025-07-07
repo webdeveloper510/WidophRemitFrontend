@@ -15,10 +15,10 @@ const ReceiverList = () => {
   const [loading, setLoading] = useState(true); // loading state
   const navigate = useNavigate();
 
-const handleSendAgain = (row) => {
-  sessionStorage.setItem("selected_receiver", JSON.stringify(row));
-  navigate("/review-transfer"); 
-};
+  const handleSendAgain = (row) => {
+    sessionStorage.setItem("selected_receiver", JSON.stringify(row));
+    navigate("/review-transfer");
+  };
 
   const columns = [
     {
@@ -77,7 +77,7 @@ const handleSendAgain = (row) => {
   useEffect(() => {
     const fetchRecipients = async () => {
       setLoading(true);
-      const res = await recipientList({}); 
+      const res = await recipientList({});
       if (res?.code === "200" && res?.data) {
         setData(res.data);
       } else {
@@ -100,17 +100,15 @@ const handleSendAgain = (row) => {
             <a href="send-money">
               <img src={Back} alt="Back" />
             </a>
-            <h1>Select a recipient to send money
-</h1>
+            <h1>Select a Recipient to Send money</h1>
           </div>
-        <Button
-  type="button"
-  className="float-end download-button btn btn-success"
-  onClick={() => navigate("/receiver-add")}
->
-  <img src={AddReceiver} alt="Add" /> Add Recipient
-</Button>
-
+          <Button
+            type="button"
+            className="float-end download-button btn btn-success"
+            onClick={() => navigate("/receiver-add")}
+          >
+            <img src={AddReceiver} alt="Add" /> Add Recipient
+          </Button>
         </div>
       </div>
 
@@ -127,7 +125,7 @@ const handleSendAgain = (row) => {
             customStyles={customStyles}
             noHeader
             striped
-            onRowClicked={handleSendAgain} 
+            onRowClicked={handleSendAgain}
             highlightOnHover
           />
         )}

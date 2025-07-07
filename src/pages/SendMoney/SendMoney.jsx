@@ -134,29 +134,32 @@ const SendMoney = () => {
     };
   };
 
-  const getExchangeRate = useCallback(async (from, to, amount = "1") => {
-    if (isConverting) return;
-    
-    setIsConverting(true);
-    try {
-      const response = await exchangeRate({
-        amount: amount,
-        from: from,
-        to: to,
-        direction: "from",
-      });
-      
-      if (response) {
-        setExchRate(response?.rate);
-        setDefaultExchange(response.default_exchange);
-        return response;
+  const getExchangeRate = useCallback(
+    async (from, to, amount = "1") => {
+      if (isConverting) return;
+
+      setIsConverting(true);
+      try {
+        const response = await exchangeRate({
+          amount: amount,
+          from: from,
+          to: to,
+          direction: "from",
+        });
+
+        if (response) {
+          setExchRate(response?.rate);
+          setDefaultExchange(response.default_exchange);
+          return response;
+        }
+      } catch (error) {
+        console.error("Exchange rate error:", error);
+      } finally {
+        setIsConverting(false);
       }
-    } catch (error) {
-      console.error("Exchange rate error:", error);
-    } finally {
-      setIsConverting(false);
-    }
-  }, [isConverting]);
+    },
+    [isConverting]
+  );
 
   const debouncedConversion = useCallback(
     debounce(async (key, value, dir) => {
@@ -192,7 +195,14 @@ const SendMoney = () => {
         setIsConverting(false);
       }
     }, 500),
-    [values.from, values.to, values.send_amt, values.exchange_amt, setFieldValue, isConverting]
+    [
+      values.from,
+      values.to,
+      values.send_amt,
+      values.exchange_amt,
+      setFieldValue,
+      isConverting,
+    ]
   );
 
   useEffect(() => {
@@ -200,8 +210,12 @@ const SendMoney = () => {
       try {
         const currencyRes = await getCurrencies();
         if (currencyRes?.code === "200") {
-          setCurrOut(currencyRes?.data?.payout_currencies?.map((cr) => cr.currency));
-          setCurrIn(currencyRes?.data?.payin_currencies?.map((cr) => cr.currency));
+          setCurrOut(
+            currencyRes?.data?.payout_currencies?.map((cr) => cr.currency)
+          );
+          setCurrIn(
+            currencyRes?.data?.payin_currencies?.map((cr) => cr.currency)
+          );
         }
         await getExchangeRate(initialValues.from, initialValues.to);
       } catch (error) {
@@ -215,7 +229,7 @@ const SendMoney = () => {
   const handleTypeChange = (e) => {
     const { name, value } = e.target;
     handleChange(e);
-    
+
     if (name === "from" || name === "to") {
       debouncedConversion(name, value, "from");
     }
@@ -266,7 +280,12 @@ const SendMoney = () => {
                   noValidate
                 >
                   <Row className="mb-4">
-                    <FloatingLabel as={Col} controlId="from" label="Source">
+                    <FloatingLabel
+                      as={Col}
+                      controlId="from"
+                      label="Source"
+                      className="mb-3"
+                    >
                       <Form.Select
                         name="from"
                         value={values.from}
@@ -281,7 +300,12 @@ const SendMoney = () => {
                       </Form.Select>
                     </FloatingLabel>
 
-                    <FloatingLabel as={Col} controlId="to" label="Destination">
+                    <FloatingLabel
+                      as={Col}
+                      controlId="to"
+                      label="Destination"
+                      className="mb-3"
+                    >
                       <Form.Select
                         name="to"
                         value={values.to}
@@ -302,11 +326,11 @@ const SendMoney = () => {
                       as={Col}
                       controlId="send_amt"
                       label="Amount Send"
+                      className="mb-3"
                     >
                       <Form.Control
                         type="text"
                         name="send_amt"
-                        placeholder="Amount Send"
                         value={values.send_amt}
                         onChange={handleChange}
                         onBlur={handleAmountBlur}
@@ -322,11 +346,11 @@ const SendMoney = () => {
                       as={Col}
                       controlId="exchange_amt"
                       label="Exchange Amount"
+                      className="mb-3"
                     >
                       <Form.Control
                         type="text"
                         name="exchange_amt"
-                        placeholder="Exchange Amount"
                         value={values.exchange_amt}
                         onChange={handleChange}
                         onBlur={handleAmountBlur}

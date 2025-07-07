@@ -242,6 +242,13 @@ div#basic-navbar-nav a {
 }
 .right-side-content {
   position: relative;
+  height: 100vh;
+}
+.page-content-section {
+  //max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  padding-right: 10px;
+  overflow-x: hidden;
 }
 .logged_user {
   border: 1px solid rgb(67 72 0 / 23%);
@@ -492,7 +499,7 @@ span.status-badge.review {
 }
 .bg-white .card-title.h5 {
   font-size: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 form.profile-form input,
 form.profile-form textarea {

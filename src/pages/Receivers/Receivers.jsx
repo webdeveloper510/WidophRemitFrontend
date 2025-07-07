@@ -101,6 +101,11 @@ const Receivers = () => {
         value={filterText}
         onChange={(e) => setFilterText(e.target.value)}
       />
+      <Link to={"/add-receiver"}>
+        <button type="button" class="float-end download-button btn btn-success">
+          <img src={AddReceiver} alt="img" /> Add Receiver
+        </button>
+      </Link>
     </div>
   );
 
@@ -141,14 +146,6 @@ const Receivers = () => {
               <img src={RecentReceiver} alt="img" /> <h1>Receivers List</h1>
             </div>
             {subHeaderComponent}
-            <Link to={"/add-receiver"}>
-              <button
-                type="button"
-                class="float-end download-button btn btn-success"
-              >
-                <img src={AddReceiver} alt="img" /> Add Receiver
-              </button>
-            </Link>
           </div>
         </div>
 

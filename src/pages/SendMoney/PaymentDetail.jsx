@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import AnimatedPage from "../../components/AnimatedPage";
 import {
@@ -9,7 +8,7 @@ import {
   Modal,
   Row,
   Card,
-  Button
+  Button,
 } from "react-bootstrap";
 import Back from "../../assets/images/back.png";
 import { RiFileCopyLine } from "react-icons/ri";
@@ -18,7 +17,7 @@ import {
   createPayId,
   createMonovaPayment,
   createAgreement,
-  getAgreementList
+  getAgreementList,
 } from "../../services/Api";
 import { toast } from "react-toastify";
 
@@ -35,9 +34,20 @@ const PaymentDetail = () => {
   const [receiverName, setReceiverName] = useState("Receiver");
   const [isLoadingPayId, setIsLoadingPayId] = useState(false);
   const [payIdData, setPayIdData] = useState({ payId: "", transferId: "" });
-  const [payToForm, setPayToForm] = useState({ payIdType: "", payId: "", bsb: "", accountNumber: "" });
+  const [payToForm, setPayToForm] = useState({
+    payIdType: "",
+    payId: "",
+    bsb: "",
+    accountNumber: "",
+  });
   const [payToFormErrors, setPayToFormErrors] = useState({});
-  const [payToLimitForm, setPayToLimitForm] = useState({ payId: "", bsb: "", accountNumber: "", amountLimit: "", startDate: "" });
+  const [payToLimitForm, setPayToLimitForm] = useState({
+    payId: "",
+    bsb: "",
+    accountNumber: "",
+    amountLimit: "",
+    startDate: "",
+  });
   const [isCreatingAgreement, setIsCreatingAgreement] = useState(false);
   const [transferReason, setTransferReason] = useState("");
   const [reasonError, setReasonError] = useState("");
@@ -45,7 +55,7 @@ const PaymentDetail = () => {
     bsb: "",
     accountNumber: "",
     accountName: "",
-    paymentMethod: ""
+    paymentMethod: "",
   });
   const [monovaFormErrors, setMonovaFormErrors] = useState({});
 
@@ -59,7 +69,7 @@ const PaymentDetail = () => {
     "Travel Payment",
     "Utility Payment",
     "Personal Use",
-    "Other"
+    "Other",
   ];
 
   useEffect(() => {
@@ -74,23 +84,25 @@ const PaymentDetail = () => {
 
     if (receiver?.account_name) {
       setReceiverName(receiver.account_name);
-    }    
+    }
   }, []);
 
   const handlePayToFormChange = (field, value) => {
-    setPayToForm(prev => ({ ...prev, [field]: value }));
+    setPayToForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleMonovaFormChange = (field, value) => {
-    setMonovaForm(prev => ({ ...prev, [field]: value }));
+    setMonovaForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const validatePayToForm = () => {
     const errors = {};
     if (!payToForm.payIdType) errors.payIdType = "Please select PayID type.";
-    if (payToForm.payIdType && !payToForm.payId) errors.payId = "Please enter PayID.";
+    if (payToForm.payIdType && !payToForm.payId)
+      errors.payId = "Please enter PayID.";
     if (!payToForm.payId && !payToForm.bsb) errors.bsb = "BSB is required.";
-    if (!payToForm.payId && !payToForm.accountNumber) errors.accountNumber = "Account number is required.";
+    if (!payToForm.payId && !payToForm.accountNumber)
+      errors.accountNumber = "Account number is required.";
     setPayToFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -105,14 +117,14 @@ const PaymentDetail = () => {
         bsb: payToForm.bsb,
         accountNumber: payToForm.accountNumber,
         amountLimit: "",
-        startDate: new Date().toISOString().split("T")[0]
+        startDate: new Date().toISOString().split("T")[0],
       });
     }
   };
 
   const handlePayToLimitContinue = () => {
     console.log("coming");
-    
+
     if (!payToLimitForm.amountLimit) {
       toast.error("Please select an amount limit.");
       return;
@@ -124,15 +136,17 @@ const PaymentDetail = () => {
   const handleMonovaContinue = () => {
     // console.log("coming");
     const errors = {};
-    if (!monovaForm.paymentMethod) errors.paymentMethod = "Please select payment method.";
+    if (!monovaForm.paymentMethod)
+      errors.paymentMethod = "Please select payment method.";
     if (!monovaForm.bsb) errors.bsb = "BSB is required.";
-    if (!monovaForm.accountNumber) errors.accountNumber = "Account number is required.";
-    if (!monovaForm.accountName) errors.accountName = "Account name is required.";
+    if (!monovaForm.accountNumber)
+      errors.accountNumber = "Account number is required.";
+    if (!monovaForm.accountName)
+      errors.accountName = "Account name is required.";
 
     setMonovaFormErrors(errors);
 
     if (Object.keys(errors).length === 0) {
-
       sessionStorage.setItem("monova_payment_data", JSON.stringify(monovaForm));
 
       sessionStorage.setItem("selected_payment_method", "monova");
@@ -147,15 +161,18 @@ const PaymentDetail = () => {
 
   const formatDate = (dateString) => {
     if (!dateString) return "Not specified";
-    return new Date(dateString).toLocaleDateString('en-AU');
+    return new Date(dateString).toLocaleDateString("en-AU");
   };
 
   const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text).then(() => {
-      toast.success("Copied to clipboard!");
-    }).catch(() => {
-      toast.error("Failed to copy to clipboard.");
-    });
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        toast.success("Copied to clipboard!");
+      })
+      .catch(() => {
+        toast.error("Failed to copy to clipboard.");
+      });
   };
   const handleContinue = async () => {
     if (!transferReason) {
@@ -168,14 +185,22 @@ const PaymentDetail = () => {
         setIsLoadingAgreement(true);
         const agreementList = await getAgreementList();
         if (agreementList?.code === "200" && agreementList?.data) {
-          const agreementData = Array.isArray(agreementList.data) ? agreementList.data[0] : agreementList.data;
-          if (agreementData && (agreementData.payid || (agreementData.bsb && agreementData.account_number))) {
+          const agreementData = Array.isArray(agreementList.data)
+            ? agreementList.data[0]
+            : agreementList.data;
+          if (
+            agreementData &&
+            (agreementData.payid ||
+              (agreementData.bsb && agreementData.account_number))
+          ) {
             setPayToLimitForm({
               payId: agreementData.payid || "",
               bsb: agreementData.bsb || "",
               accountNumber: agreementData.account_number || "",
               amountLimit: agreementData.max_amount || "",
-              startDate: agreementData.agreement_start_date || new Date().toISOString().split("T")[0]
+              startDate:
+                agreementData.agreement_start_date ||
+                new Date().toISOString().split("T")[0],
             });
 
             if (agreementData.payid && agreementData.payid_type) {
@@ -183,7 +208,7 @@ const PaymentDetail = () => {
                 payIdType: agreementData.payid_type,
                 payId: agreementData.payid,
                 bsb: agreementData.bsb || "",
-                accountNumber: agreementData.account_number || ""
+                accountNumber: agreementData.account_number || "",
               });
             }
             setModalShowPayToAgreement(true);
@@ -191,7 +216,6 @@ const PaymentDetail = () => {
             setModalShowPayTo(true);
           }
         } else {
-
           setModalShowPayTo(true);
         }
       } catch (err) {
@@ -222,7 +246,7 @@ const PaymentDetail = () => {
       if (response?.code === "200") {
         setPayIdData({
           payId: response.data.payid || "",
-          transferId: response.data.transaction_id || ""
+          transferId: response.data.transaction_id || "",
         });
         setModalShowPayId(true);
       } else {
@@ -244,21 +268,27 @@ const PaymentDetail = () => {
           pay_id: payToLimitForm.payId,
           agreement_amount: payToLimitForm.amountLimit,
           start_date: payToLimitForm.startDate,
-          payid_type: payToForm.payIdType || "EMAL"
+          payid_type: payToForm.payIdType || "EMAL",
         };
       } else {
         payload = {
           bsb: payToLimitForm.bsb,
           account_number: payToLimitForm.accountNumber,
           max_amount: payToLimitForm.amountLimit,
-          agreement_start_date: payToLimitForm.startDate
+          agreement_start_date: payToLimitForm.startDate,
         };
       }
 
       const response = await createAgreement(payload);
       if (response?.code === "200" || response?.success) {
-        sessionStorage.setItem("payto_limit_data", JSON.stringify(payToLimitForm));
-        sessionStorage.setItem("payto_agreement_response", JSON.stringify(response));
+        sessionStorage.setItem(
+          "payto_limit_data",
+          JSON.stringify(payToLimitForm)
+        );
+        sessionStorage.setItem(
+          "payto_agreement_response",
+          JSON.stringify(response)
+        );
         toast.success("PayTo agreement created successfully!");
         setModalShowPayToAgreement(false);
         navigate("/confirm-transfer");
@@ -294,12 +324,16 @@ const PaymentDetail = () => {
               <div className="d-flex justify-content-center align-items-center">
                 <div>
                   <p>Amount</p>
-                  <h4><b>{`${amount} ${currency}`}</b></h4>
+                  <h4>
+                    <b>{`${amount} ${currency}`}</b>
+                  </h4>
                 </div>
                 <span className="divider"></span>
                 <div>
                   <p>Sending To</p>
-                  <h4><b>{receiverName}</b></h4>
+                  <h4>
+                    <b>{receiverName}</b>
+                  </h4>
                 </div>
               </div>
             </div>
@@ -323,10 +357,14 @@ const PaymentDetail = () => {
                         checked={paymentType === "payto"}
                         onChange={() => {
                           setPaymentType("payto");
-                          sessionStorage.setItem("selected_payment_method", "zai");
+                          sessionStorage.setItem(
+                            "selected_payment_method",
+                            "zai"
+                          );
                           sessionStorage.removeItem("monova_payment_data");
                           sessionStorage.removeItem("payid_data");
-                        }} />
+                        }}
+                      />
                       <Form.Check
                         inline
                         label="Pay ID"
@@ -335,11 +373,15 @@ const PaymentDetail = () => {
                         checked={paymentType === "payid"}
                         onChange={() => {
                           setPaymentType("payid");
-                          sessionStorage.setItem("selected_payment_method", "payid");
+                          sessionStorage.setItem(
+                            "selected_payment_method",
+                            "payid"
+                          );
                           sessionStorage.removeItem("monova_payment_data");
                           sessionStorage.removeItem("payto_limit_data");
                           sessionStorage.removeItem("payto_agreement_response");
-                        }} />
+                        }}
+                      />
                       <Form.Check
                         inline
                         label="Bank Transfer"
@@ -363,7 +405,10 @@ const PaymentDetail = () => {
                           onChange={(e) => {
                             const selectedGateway = e.target.value;
                             if (selectedGateway === "monova") {
-                              sessionStorage.setItem("selected_payment_method", "monova");
+                              sessionStorage.setItem(
+                                "selected_payment_method",
+                                "monova"
+                              );
                               setModalShowMonova(true);
                             }
                           }}
@@ -373,12 +418,15 @@ const PaymentDetail = () => {
                           {/* Future: add more gateways here */}
                         </Form.Select>
                       )}
-
                     </div>
                   </Row>
 
                   <Row className="mt-5">
-                    <FloatingLabel controlId="floatingSelect" as={Col} label="Transfer Reason">
+                    <FloatingLabel
+                      controlId="floatingSelect"
+                      as={Col}
+                      label="Transfer Reason"
+                    >
                       <Form.Select
                         value={transferReason}
                         onChange={(e) => {
@@ -389,7 +437,9 @@ const PaymentDetail = () => {
                       >
                         <option value="">Select a Reason</option>
                         {reasonOptions.map((reason, i) => (
-                          <option key={i} value={reason}>{reason}</option>
+                          <option key={i} value={reason}>
+                            {reason}
+                          </option>
                         ))}
                       </Form.Select>
                       {reasonError && (
@@ -402,7 +452,11 @@ const PaymentDetail = () => {
 
                   <Row className="mt-4">
                     <Col>
-                      <Button variant="light" className="cancel-btn float-start" onClick={() => navigate("/review-transfer")}>
+                      <Button
+                        variant="light"
+                        className="cancel-btn float-start"
+                        onClick={() => navigate("/review-transfer")}
+                      >
                         Back
                       </Button>
                     </Col>
@@ -415,7 +469,11 @@ const PaymentDetail = () => {
                       >
                         {isLoadingPayId ? (
                           <>
-                            <Spinner animation="border" size="sm" className="me-2" />
+                            <Spinner
+                              animation="border"
+                              size="sm"
+                              className="me-2"
+                            />
                             Creating PayID...
                           </>
                         ) : (
@@ -437,15 +495,24 @@ const PaymentDetail = () => {
           onHide={() => setModalShowPayTo(false)}
           className="profileupdate"
         >
-          <Modal.Header closeButton className="payment-popup">PayTo</Modal.Header>
+          <Modal.Header closeButton className="payment-popup">
+            PayTo
+          </Modal.Header>
           <Modal.Body>
             <Form className="profile-form">
               {/* PayID Type */}
               <Row className="mb-3">
-                <FloatingLabel controlId="payid-type" as={Col} label="PayID Type">
+                <FloatingLabel
+                  controlId="payid-type"
+                  as={Col}
+                  label="PayID Type"
+                  className="mb-3"
+                >
                   <Form.Select
                     value={payToForm.payIdType}
-                    onChange={(e) => handlePayToFormChange('payIdType', e.target.value)}
+                    onChange={(e) =>
+                      handlePayToFormChange("payIdType", e.target.value)
+                    }
                     isInvalid={!!payToFormErrors.payIdType}
                   >
                     <option value="">Select PayID Type</option>
@@ -462,12 +529,18 @@ const PaymentDetail = () => {
 
               {/* PayID */}
               <Row className="mb-3">
-                <FloatingLabel controlId="payid" as={Col} label="PayID" className="mb-3">
+                <FloatingLabel
+                  controlId="payid"
+                  as={Col}
+                  label="PayID"
+                  className="mb-3"
+                >
                   <Form.Control
                     type="text"
-                    placeholder="PayID"
                     value={payToForm.payId}
-                    onChange={(e) => handlePayToFormChange('payId', e.target.value)}
+                    onChange={(e) =>
+                      handlePayToFormChange("payId", e.target.value)
+                    }
                     isInvalid={!!payToFormErrors.payId}
                   />
                   <Form.Control.Feedback type="invalid">
@@ -486,9 +559,11 @@ const PaymentDetail = () => {
                 <FloatingLabel controlId="bsb" as={Col} label="BSB Number">
                   <Form.Control
                     type="text"
-                    placeholder="BSB Number"
+                    className="mb-3"
                     value={payToForm.bsb}
-                    onChange={(e) => handlePayToFormChange('bsb', e.target.value)}
+                    onChange={(e) =>
+                      handlePayToFormChange("bsb", e.target.value)
+                    }
                     isInvalid={!!payToFormErrors.bsb}
                     disabled={!!payToForm.payId}
                   />
@@ -500,12 +575,18 @@ const PaymentDetail = () => {
 
               {/* Account Number */}
               <Row className="mb-3">
-                <FloatingLabel controlId="account-no" as={Col} label="Account Number">
+                <FloatingLabel
+                  controlId="account-no"
+                  as={Col}
+                  label="Account Number"
+                  className="mb-3"
+                >
                   <Form.Control
                     type="text"
-                    placeholder="Account Number"
                     value={payToForm.accountNumber}
-                    onChange={(e) => handlePayToFormChange('accountNumber', e.target.value)}
+                    onChange={(e) =>
+                      handlePayToFormChange("accountNumber", e.target.value)
+                    }
                     isInvalid={!!payToFormErrors.accountNumber}
                     disabled={!!payToForm.payId}
                   />
@@ -518,12 +599,20 @@ const PaymentDetail = () => {
               {/* Buttons */}
               <Row className="mb-3">
                 <Col>
-                  <Button variant="light" className="cancel-btn float-start" onClick={() => setModalShowPayTo(false)}>
+                  <Button
+                    variant="light"
+                    className="cancel-btn float-start"
+                    onClick={() => setModalShowPayTo(false)}
+                  >
                     Cancel
                   </Button>
                 </Col>
                 <Col>
-                  <Button variant="primary" className="submit-btn float-end" onClick={handlePayToContinue}>
+                  <Button
+                    variant="primary"
+                    className="submit-btn float-end"
+                    onClick={handlePayToContinue}
+                  >
                     Continue
                   </Button>
                 </Col>
@@ -532,38 +621,77 @@ const PaymentDetail = () => {
           </Modal.Body>
         </Modal>
 
-
-
         {/* PayID Modal */}
-        <Modal size="lg" centered show={modalShowPayId} onHide={() => setModalShowPayId(false)} className="profileupdate">
-          <Modal.Header closeButton className="payment-popup">PayID</Modal.Header>
+        <Modal
+          size="lg"
+          centered
+          show={modalShowPayId}
+          onHide={() => setModalShowPayId(false)}
+          className="profileupdate"
+        >
+          <Modal.Header closeButton className="payment-popup">
+            PayID
+          </Modal.Header>
           <Modal.Body>
             <Form className="profile-form">
               <Row className="mb-3">
-                <FloatingLabel as={Col} controlId="payid-field" label="PayID" className="position-relative">
+                <FloatingLabel
+                  as={Col}
+                  controlId="payid-field"
+                  label="PayID"
+                  className="position-relative"
+                >
                   <Form.Control type="text" value={payIdData.payId} readOnly />
-                  <span className="copyText" onClick={() => copyToClipboard(payIdData.payId)} style={{ cursor: 'pointer' }}>
+                  <span
+                    className="copyText"
+                    onClick={() => copyToClipboard(payIdData.payId)}
+                    style={{ cursor: "pointer" }}
+                  >
                     <RiFileCopyLine />
                   </span>
                 </FloatingLabel>
               </Row>
               <Row className="mb-3">
-                <FloatingLabel as={Col} controlId="transfer-id" label="Transfer ID" className="position-relative">
-                  <Form.Control type="text" value={payIdData.transferId} readOnly />
-                  <span className="copyText" onClick={() => copyToClipboard(payIdData.transferId)} style={{ cursor: 'pointer' }}>
+                <FloatingLabel
+                  as={Col}
+                  controlId="transfer-id"
+                  label="Transfer ID"
+                  className="position-relative"
+                >
+                  <Form.Control
+                    type="text"
+                    value={payIdData.transferId}
+                    readOnly
+                  />
+                  <span
+                    className="copyText"
+                    onClick={() => copyToClipboard(payIdData.transferId)}
+                    style={{ cursor: "pointer" }}
+                  >
                     <RiFileCopyLine />
                   </span>
                 </FloatingLabel>
               </Row>
-              <p className="m-4">Use your PayID to transfer funds from your online banking platform. Include the transaction ID in the reference field.</p>
+              <p className="m-4">
+                Use your PayID to transfer funds from your online banking
+                platform. Include the transaction ID in the reference field.
+              </p>
               <Row className="mb-3">
                 <Col>
-                  <Button variant="light" className="cancel-btn float-start" onClick={() => setModalShowPayId(false)}>
+                  <Button
+                    variant="light"
+                    className="cancel-btn float-start"
+                    onClick={() => setModalShowPayId(false)}
+                  >
                     Cancel
                   </Button>
                 </Col>
                 <Col>
-                  <Button variant="primary" className="submit-btn float-end" onClick={() => navigate("/confirm-transfer")}>
+                  <Button
+                    variant="primary"
+                    className="submit-btn float-end"
+                    onClick={() => navigate("/confirm-transfer")}
+                  >
                     Continue
                   </Button>
                 </Col>
@@ -573,20 +701,36 @@ const PaymentDetail = () => {
         </Modal>
 
         {/* Monova Modal */}
-        <Modal size="lg" centered show={modalShowMonova} onHide={() => setModalShowMonova(false)} className="profileupdate">
-          <Modal.Header closeButton className="payment-popup">Monova</Modal.Header>
+        <Modal
+          size="lg"
+          centered
+          show={modalShowMonova}
+          onHide={() => setModalShowMonova(false)}
+          className="profileupdate"
+        >
+          <Modal.Header closeButton className="payment-popup">
+            Monova
+          </Modal.Header>
           <Modal.Body>
             <Form className="profile-form">
               <Row className="mb-3">
-                <FloatingLabel as={Col} controlId="monova-payment-method" label="Payment Method">
+                <FloatingLabel
+                  as={Col}
+                  controlId="monova-payment-method"
+                  label="Payment Method"
+                >
                   <Form.Select
                     value={monovaForm.paymentMethod}
-                    onChange={(e) => handleMonovaFormChange('paymentMethod', e.target.value)}
+                    onChange={(e) =>
+                      handleMonovaFormChange("paymentMethod", e.target.value)
+                    }
                     isInvalid={!!monovaFormErrors.paymentMethod}
                   >
                     <option value="">Select Payment Method</option>
                     <option value="directDebit">Direct Debit</option>
-                    <option value="NppCreditBankAccount">NPP Credit Bank Account</option>
+                    <option value="NppCreditBankAccount">
+                      NPP Credit Bank Account
+                    </option>
                   </Form.Select>
                   {monovaFormErrors.paymentMethod && (
                     <Form.Control.Feedback type="invalid">
@@ -596,12 +740,18 @@ const PaymentDetail = () => {
                 </FloatingLabel>
               </Row>
               <Row className="mb-3">
-                <FloatingLabel as={Col} controlId="monova-bsb" label="BSB Number"  className="mb-3">
+                <FloatingLabel
+                  as={Col}
+                  controlId="monova-bsb"
+                  label="BSB Number"
+                  className="mb-3"
+                >
                   <Form.Control
                     type="text"
-                    placeholder="BSB Number"
                     value={monovaForm.bsb}
-                    onChange={(e) => handleMonovaFormChange('bsb', e.target.value)}
+                    onChange={(e) =>
+                      handleMonovaFormChange("bsb", e.target.value)
+                    }
                     isInvalid={!!monovaFormErrors.bsb}
                   />
                   {monovaFormErrors.bsb && (
@@ -612,11 +762,18 @@ const PaymentDetail = () => {
                 </FloatingLabel>
               </Row>
               <Row className="mb-3">
-                <FloatingLabel as={Col} controlId="monova-account" label="Account Number" className="mb-3">
+                <FloatingLabel
+                  as={Col}
+                  controlId="monova-account"
+                  label="Account Number"
+                  className="mb-3"
+                >
                   <Form.Control
                     type="text"
                     value={monovaForm.accountNumber}
-                    onChange={(e) => handleMonovaFormChange('accountNumber', e.target.value)}
+                    onChange={(e) =>
+                      handleMonovaFormChange("accountNumber", e.target.value)
+                    }
                     isInvalid={!!monovaFormErrors.accountNumber}
                   />
                   {monovaFormErrors.accountNumber && (
@@ -627,12 +784,18 @@ const PaymentDetail = () => {
                 </FloatingLabel>
               </Row>
               <Row className="mb-3">
-                <FloatingLabel as={Col} controlId="monova-name" label="Account Name" className="mb-3">
+                <FloatingLabel
+                  as={Col}
+                  controlId="monova-name"
+                  label="Account Name"
+                  className="mb-3"
+                >
                   <Form.Control
                     type="text"
-                    placeholder="Account Name"
                     value={monovaForm.accountName}
-                    onChange={(e) => handleMonovaFormChange('accountName', e.target.value)}
+                    onChange={(e) =>
+                      handleMonovaFormChange("accountName", e.target.value)
+                    }
                     isInvalid={!!monovaFormErrors.accountName}
                   />
                   {monovaFormErrors.accountName && (
@@ -644,7 +807,11 @@ const PaymentDetail = () => {
               </Row>
               <Row className="mb-3">
                 <Col>
-                  <Button variant="light" className="cancel-btn float-start" onClick={() => setModalShowMonova(false)}>
+                  <Button
+                    variant="light"
+                    className="cancel-btn float-start"
+                    onClick={() => setModalShowMonova(false)}
+                  >
                     Cancel
                   </Button>
                 </Col>
@@ -663,13 +830,26 @@ const PaymentDetail = () => {
         </Modal>
 
         {/* PayTo Limit Modal */}
-        <Modal size="lg" centered show={modalShowPayToLimit} onHide={() => setModalShowPayToLimit(false)} className="profileupdate">
-          <Modal.Header closeButton className="payment-popup">PayTo Limit Setup</Modal.Header>
+        <Modal
+          size="lg"
+          centered
+          show={modalShowPayToLimit}
+          onHide={() => setModalShowPayToLimit(false)}
+          className="profileupdate"
+        >
+          <Modal.Header closeButton className="payment-popup">
+            PayTo Limit Setup
+          </Modal.Header>
           <Modal.Body>
             <Form className="profile-form">
               {payToLimitForm.payId && (
                 <Row className="mb-3">
-                  <FloatingLabel as={Col} controlId="payto-limit-payid" label="PayID" className="mb-3">
+                  <FloatingLabel
+                    as={Col}
+                    controlId="payto-limit-payid"
+                    label="PayID"
+                    className="mb-3"
+                  >
                     <Form.Control
                       type="text"
                       value={payToLimitForm.payId}
@@ -682,7 +862,12 @@ const PaymentDetail = () => {
               {(payToLimitForm.bsb || payToLimitForm.accountNumber) && (
                 <>
                   <Row className="mb-3">
-                    <FloatingLabel as={Col} controlId="payto-limit-bsb" label="BSB Number" className="mb-3">
+                    <FloatingLabel
+                      as={Col}
+                      controlId="payto-limit-bsb"
+                      label="BSB Number"
+                      className="mb-3"
+                    >
                       <Form.Control
                         type="text"
                         value={payToLimitForm.bsb}
@@ -691,7 +876,12 @@ const PaymentDetail = () => {
                     </FloatingLabel>
                   </Row>
                   <Row className="mb-3">
-                    <FloatingLabel as={Col} controlId="payto-limit-account" label="Account Number" className="mb-3">
+                    <FloatingLabel
+                      as={Col}
+                      controlId="payto-limit-account"
+                      label="Account Number"
+                      className="mb-3"
+                    >
                       <Form.Control
                         type="text"
                         value={payToLimitForm.accountNumber}
@@ -703,10 +893,20 @@ const PaymentDetail = () => {
               )}
 
               <Row className="mb-3">
-                <FloatingLabel as={Col} controlId="amount-limit" label="Amount Per Transaction Limit" className="mb-3">
+                <FloatingLabel
+                  as={Col}
+                  controlId="amount-limit"
+                  label="Amount Per Transaction Limit"
+                  className="mb-3"
+                >
                   <Form.Select
                     value={payToLimitForm.amountLimit}
-                    onChange={(e) => setPayToLimitForm({ ...payToLimitForm, amountLimit: e.target.value })}
+                    onChange={(e) =>
+                      setPayToLimitForm({
+                        ...payToLimitForm,
+                        amountLimit: e.target.value,
+                      })
+                    }
                   >
                     <option value="">Select Limit</option>
                     <option value="1000">Up to AUD 1k</option>
@@ -718,24 +918,37 @@ const PaymentDetail = () => {
               </Row>
 
               <Row className="mb-3">
-                <FloatingLabel as={Col} controlId="start-date" label="Start Date" className="mb-3">
+                <FloatingLabel
+                  as={Col}
+                  controlId="start-date"
+                  label="Start Date"
+                  className="mb-3"
+                >
                   <Form.Control
                     type="date"
                     value={payToLimitForm.startDate}
                     readOnly
-                    style={{ backgroundColor: '#f8f9fa', color: '#6c757d' }}
+                    style={{ backgroundColor: "#f8f9fa", color: "#6c757d" }}
                   />
                 </FloatingLabel>
               </Row>
 
               <Row className="mb-3">
                 <Col>
-                  <Button variant="light" className="cancel-btn float-start" onClick={() => setModalShowPayToLimit(false)}>
+                  <Button
+                    variant="light"
+                    className="cancel-btn float-start"
+                    onClick={() => setModalShowPayToLimit(false)}
+                  >
                     Cancel
                   </Button>
                 </Col>
                 <Col>
-                  <Button variant="primary" className="submit-btn float-end" onClick={handlePayToLimitContinue}>
+                  <Button
+                    variant="primary"
+                    className="submit-btn float-end"
+                    onClick={handlePayToLimitContinue}
+                  >
                     Continue
                   </Button>
                 </Col>
@@ -745,11 +958,21 @@ const PaymentDetail = () => {
         </Modal>
 
         {/* PayTo Agreement Modal */}
-        <Modal size="lg" centered show={modalShowPayToAgreement} onHide={() => setModalShowPayToAgreement(false)} className="profileupdate">
-          <Modal.Header closeButton className="payment-popup">PayTo Agreement Details</Modal.Header>
+        <Modal
+          size="lg"
+          centered
+          show={modalShowPayToAgreement}
+          onHide={() => setModalShowPayToAgreement(false)}
+          className="profileupdate"
+        >
+          <Modal.Header closeButton className="payment-popup">
+            PayTo Agreement Details
+          </Modal.Header>
           <Modal.Body>
             <div className="agreement-details p-3">
-              <h5 className="mb-4">Please review your PayTo agreement details:</h5>
+              <h5 className="mb-4">
+                Please review your PayTo agreement details:
+              </h5>
 
               <div className="agreement-section mb-4">
                 <h6 className="text-primary">Payment Details</h6>
@@ -763,46 +986,59 @@ const PaymentDetail = () => {
 
                 {payToForm.payIdType && (
                   <div className="mb-2">
-                    <strong>PayID Type:</strong> {payToForm.payIdType === 'EMAL' ? 'Email' : payToForm.payIdType}
+                    <strong>PayID Type:</strong>{" "}
+                    {payToForm.payIdType === "EMAL"
+                      ? "Email"
+                      : payToForm.payIdType}
                   </div>
                 )}
 
-                {(payToLimitForm.bsb && payToLimitForm.accountNumber) && (
+                {payToLimitForm.bsb && payToLimitForm.accountNumber && (
                   <>
                     <div className="mb-2">
                       <strong>BSB Number:</strong> {payToLimitForm.bsb}
                     </div>
                     <div className="mb-2">
-                      <strong>Account Number:</strong> {payToLimitForm.accountNumber}
+                      <strong>Account Number:</strong>{" "}
+                      {payToLimitForm.accountNumber}
                     </div>
                   </>
                 )}
 
                 <div className="mb-2">
-                  <strong>Maximum Amount:</strong> {formatAmountLimit(payToLimitForm.amountLimit)} per transaction
+                  <strong>Maximum Amount:</strong>{" "}
+                  {formatAmountLimit(payToLimitForm.amountLimit)} per
+                  transaction
                 </div>
 
                 <div className="mb-2">
-                  <strong>Agreement Start Date:</strong> {formatDate(payToLimitForm.startDate)}
+                  <strong>Agreement Start Date:</strong>{" "}
+                  {formatDate(payToLimitForm.startDate)}
                 </div>
 
                 <div className="mb-2">
-                  <strong>Status:</strong> <span className="text-success">Active</span>
+                  <strong>Status:</strong>{" "}
+                  <span className="text-success">Active</span>
                 </div>
               </div>
-
-
-
             </div>
 
             <Row className="mb-3">
               <Col>
-                <Button variant="light" className="cancel-btn float-start" onClick={() => setModalShowPayToAgreement(false)}>
+                <Button
+                  variant="light"
+                  className="cancel-btn float-start"
+                  onClick={() => setModalShowPayToAgreement(false)}
+                >
                   Back
                 </Button>
               </Col>
               <Col>
-                <Button variant="primary" className="submit-btn float-end" onClick={handlePayToAgreementContinue}>
+                <Button
+                  variant="primary"
+                  className="submit-btn float-end"
+                  onClick={handlePayToAgreementContinue}
+                >
                   Confirm & Continue
                 </Button>
               </Col>
