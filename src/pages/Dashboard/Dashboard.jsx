@@ -27,7 +27,6 @@ const Dashboard = () => {
       const response = await transactionHistory();
 
       if (response.code === "200") {
-        console.log(response.data.data.length);
         setTransactionsCount(response.data.data.length);
       }
     })();

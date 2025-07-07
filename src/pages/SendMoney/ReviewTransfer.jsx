@@ -60,6 +60,8 @@ const ReviewTransfer = () => {
       const storedReceiver = sessionStorage.getItem("selected_receiver");
       if (storedReceiver) {
         try {
+          console.log("stored user :-", JSON.parse(storedReceiver));
+
           setReceiver(JSON.parse(storedReceiver));
         } catch (error) {
           console.error("Failed to parse selected_receiver:", error);
@@ -83,12 +85,10 @@ const ReviewTransfer = () => {
 
     fetchUserProfile();
   }, [navigate, location.state]);
-  const fullName = `${list?.First_name || list?.first_name || ""} ${
-    list?.Last_name || list?.last_name || ""
-  }`.trim();
+  const fullName = `${list?.First_name || list?.first_name || ""} ${list?.Last_name || list?.last_name || ""
+    }`.trim();
   const receiverFullName = receiver
-    ? `${receiver.first_name || ""} ${receiver.middle_name || ""} ${
-        receiver.last_name || ""
+    ? `${receiver.first_name || ""} ${receiver.middle_name || ""} ${receiver.last_name || ""
       }`.trim()
     : "";
 
@@ -176,9 +176,8 @@ const ReviewTransfer = () => {
                             <td>Sending Amount</td>
                             <td>
                               {transferData?.send_amt
-                                ? `${transferData.send_amt} ${
-                                    transferData.from || "AUD"
-                                  }`
+                                ? `${transferData.send_amt} ${transferData.from || "AUD"
+                                }`
                                 : "N/A"}
                             </td>
                           </tr>
@@ -186,9 +185,8 @@ const ReviewTransfer = () => {
                             <td>Amount Exchanged</td>
                             <td>
                               {transferData?.exchange_amt
-                                ? `${transferData.exchange_amt} ${
-                                    transferData.to || "NGN"
-                                  }`
+                                ? `${transferData.exchange_amt} ${transferData.to || "NGN"
+                                }`
                                 : "N/A"}
                             </td>
                           </tr>
@@ -196,9 +194,8 @@ const ReviewTransfer = () => {
                             <td>Total To Receiver</td>
                             <td>
                               {transferData?.exchange_amt
-                                ? `${transferData.exchange_amt} ${
-                                    transferData.to || "NGN"
-                                  }`
+                                ? `${transferData.exchange_amt} ${transferData.to || "NGN"
+                                }`
                                 : "N/A"}
                             </td>
                           </tr>
@@ -206,9 +203,8 @@ const ReviewTransfer = () => {
                             <td>Exchange Rate</td>
                             <td>
                               {transferData?.exchange_rate
-                                ? `1 ${transferData.from || "AUD"} = ${
-                                    transferData.exchange_rate
-                                  } ${transferData.to || "NGN"}`
+                                ? `1 ${transferData.from || "AUD"} = ${transferData.exchange_rate
+                                } ${transferData.to || "NGN"}`
                                 : "N/A"}
                             </td>
                           </tr>

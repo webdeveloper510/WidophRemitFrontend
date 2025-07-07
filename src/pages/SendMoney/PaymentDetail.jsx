@@ -111,8 +111,6 @@ const PaymentDetail = () => {
   };
 
   const handlePayToLimitContinue = () => {
-    console.log("coming");
-    
     if (!payToLimitForm.amountLimit) {
       toast.error("Please select an amount limit.");
       return;
@@ -219,13 +217,14 @@ const PaymentDetail = () => {
         return;
       }
       const response = await createPayId({ transaction_id: transactionId });
-      if (response?.code === "200") {
+      if (response?.code === "200") {        
         setPayIdData({
           payId: response.data.payid || "",
           transferId: response.data.transaction_id || ""
         });
         setModalShowPayId(true);
       } else {
+        console.log(response);
         toast.error(response.message || "PayID generation failed.");
       }
     } catch (err) {

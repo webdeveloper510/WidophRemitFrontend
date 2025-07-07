@@ -63,8 +63,7 @@ const SendMoney = () => {
           position: "bottom-right",
         });
         return;
-      }
-
+      }      
       let local = {};
       let transaction_id = sessionStorage.getItem("transaction_id") || null;
       const exch_data = await exchangeRate({
@@ -136,7 +135,7 @@ const SendMoney = () => {
 
   const getExchangeRate = useCallback(async (from, to, amount = "1") => {
     if (isConverting) return;
-    
+
     setIsConverting(true);
     try {
       const response = await exchangeRate({
@@ -145,7 +144,7 @@ const SendMoney = () => {
         to: to,
         direction: "from",
       });
-      
+
       if (response) {
         setExchRate(response?.rate);
         setDefaultExchange(response.default_exchange);
@@ -215,7 +214,7 @@ const SendMoney = () => {
   const handleTypeChange = (e) => {
     const { name, value } = e.target;
     handleChange(e);
-    
+
     if (name === "from" || name === "to") {
       debouncedConversion(name, value, "from");
     }

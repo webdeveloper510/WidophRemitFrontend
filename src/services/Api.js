@@ -500,6 +500,8 @@ export const verifyPayTo = async (data) => {
 }
 
 export const createPayId = async (data) => {
+  console.log(data);
+  
   const response = await private_instance.post(`payment/zai-payid-register/`, data, {
     headers: {
       'Content-Type': 'application/json',

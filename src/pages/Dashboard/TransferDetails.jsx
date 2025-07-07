@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import AnimatedPage from "../../components/AnimatedPage";
 import Back from "../../assets/images/back.png";
 import Card from "react-bootstrap/Card";
@@ -8,15 +9,45 @@ import Col from "react-bootstrap/Col";
 import Table from "react-bootstrap/Table";
 import DownloadIcon from "../../assets/images/download.png";
 import Button from "react-bootstrap/Button";
+import { paymentSummary } from "../../services/Api";
 
 const TransferDetails = () => {
+  const { id } = useParams();
+  const [transactionData, setTransactionData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function GetTransactionDetails() {
+      setLoading(true);
+      try {
+        const result = await paymentSummary(id);
+        if (result?.code === "200") {
+          console.log(result.data);
+          setTransactionData(result.data);
+          setError(null);
+        } else {
+          setError("Transaction not found.");
+        }
+      } catch (err) {
+        setError("Failed to fetch transaction details.");
+      } finally {
+        setLoading(false);
+      }
+    }
+    GetTransactionDetails();
+  }, [id]);
+
+  if (loading) return <div className="text-center mt-5">Loading...</div>;
+  if (error) return <div className="text-center mt-5 text-danger">{error}</div>;
+
   return (
     <AnimatedPage>
       <div className="page-title">
         <div className="d-flex align-items-center">
-          <a href="dashboard">
-            <img src={Back} />
-          </a>
+          <Link to="/dashboard">
+            <img src={Back} alt="Back" />
+          </Link>
           <h1>Transfer Details</h1>
         </div>
       </div>
@@ -26,30 +57,38 @@ const TransferDetails = () => {
           <Card.Body>
             <div className="row">
               <div className="col-md-6">
-                <div className="col-md-12">
-                  <Container>
-                    <Row>
-                      <Col className="p-4 stripe1 mb-4">
-                        <h2>
-                          Exchange <br></br>Rate
-                          <span>
-                            <b>1</b> AUD = <b>1,000.99</b> NGN
-                          </span>
-                        </h2>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col className="p-4 stripe2 text-white">
-                        <span>Amount Paid</span>
-                        <h2>104.00 AUD</h2>
-                      </Col>
-                      <Col className="p-4 stripe3 text-white">
-                        <span>Amount Received</span>
-                        <h2>108,106.92 NGN</h2>
-                      </Col>
-                    </Row>
-                  </Container>
-                </div>
+                <Container>
+                  <Row>
+                    <Col className="p-4 stripe1 mb-4">
+                      <h2>
+                        Exchange <br />
+                        Rate
+                        <span>
+                          <b>1</b> {transactionData?.send_currency} ={" "}
+                          <b>{transactionData?.exchange_rate}</b>{" "}
+                          {transactionData?.receive_currency}
+                        </span>
+                      </h2>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col className="p-4 stripe2 text-white">
+                      <span>Amount Paid</span>
+                      <h2>
+                        {transactionData?.send_amount}{" "}
+                        {transactionData?.send_currency}
+                      </h2>
+                    </Col>
+                    <Col className="p-4 stripe3 text-white">
+                      <span>Amount Received</span>
+                      <h2>
+                        {transactionData?.receive_amount}{" "}
+                        {transactionData?.receive_currency}
+                      </h2>
+                    </Col>
+                  </Row>
+                </Container>
+
                 <div className="col-md-12 mt-4">
                   <Card className="receiver-card">
                     <Card.Body>
@@ -57,17 +96,17 @@ const TransferDetails = () => {
                         <Row>
                           <Col className="p-3 box">
                             <span>Date Created</span>
-                            <h3>24-Mar-2025</h3>
+                            <h3>{transactionData?.date}</h3>
                           </Col>
                           <Col className="p-3 box">
                             <span>Status</span>
-                            <h3>Pending</h3>
+                            <h3>{transactionData?.payment_status}</h3>
                           </Col>
                         </Row>
                         <Row>
                           <Col className="p-3 box">
                             <span>Transfer Id</span>
-                            <h3>ADPFT20250</h3>
+                            <h3>{transactionData?.transaction_id}</h3>
                           </Col>
                         </Row>
                         <Row>
@@ -76,7 +115,8 @@ const TransferDetails = () => {
                               variant="success"
                               className="float-end download-button"
                             >
-                              <img src={DownloadIcon} /> Download Receipt
+                              <img src={DownloadIcon} alt="Download Receipt" />{" "}
+                              Download Receipt
                             </Button>
                           </Col>
                         </Row>
@@ -85,6 +125,7 @@ const TransferDetails = () => {
                   </Card>
                 </div>
               </div>
+
               <div className="col-md-6">
                 <div className="col-md-12">
                   <div className="table-column">
@@ -93,48 +134,44 @@ const TransferDetails = () => {
                       <tbody>
                         <tr>
                           <th>Receiver Name</th>
-                          <td>Albert Joseph</td>
+                          <td>{transactionData?.recipient_name}</td>
                         </tr>
                         <tr>
                           <th>Bank Name</th>
-                          <td>Advans La Fayette Microfinance Bank</td>
-                        </tr>
-                        <tr>
-                          <th>Email ID</th>
-                          <td>au612794@gmail.com</td>
-                        </tr>
-                        <tr>
-                          <th>Phone No.</th>
-                          <td>+6145285747</td>
+                          <td>{transactionData?.bank_name}</td>
                         </tr>
                         <tr>
                           <th>Account No.</th>
-                          <td>000000000000000000000000000000</td>
+                          <td>{transactionData?.account_number}</td>
                         </tr>
                       </tbody>
                     </Table>
                   </div>
                 </div>
+
                 <div className="col-md-12 mt-4">
                   <div className="table-column">
                     <h2>More Details</h2>
                     <Table striped bordered>
                       <tbody>
                         <tr>
-                          <th>Payment mode:</th>
-                          <td>PayID</td>
+                          <th>Payment Mode</th>
+                          <td>{transactionData?.send_method}</td>
                         </tr>
                         <tr>
-                          <th>Customer ID:</th>
-                          <td>ADPFT20250</td>
+                          <th>Customer ID</th>
+                          <td>{transactionData?.customer_id}</td>
                         </tr>
                         <tr>
-                          <th>Transfer Reason:</th>
-                          <td>Lorem Ipsum</td>
+                          <th>Transfer Reason</th>
+                          <td>{transactionData?.reason}</td>
                         </tr>
                         <tr>
-                          <th>PayID:</th>
-                          <td>loremipsum@mydomain.com</td>
+                          <th>PayID</th>
+                          <td>
+                            {transactionData?.send_method_details?.pay_id ||
+                              "N/A"}
+                          </td>
                         </tr>
                       </tbody>
                     </Table>

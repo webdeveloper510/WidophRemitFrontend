@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Card from "react-bootstrap/Card";
 import DataTable from "react-data-table-component";
 import { FaArrowRotateRight } from "react-icons/fa6";
@@ -31,6 +32,13 @@ const customStyles = {
 };
 
 const LatestTransfer = () => {
+  const [list, setList] = useState([]);
+  const navigate = useNavigate();
+
+  const handleViewDetails = (row) => {
+    navigate(`/transfer-details/${row.transaction_id}`);
+  };
+
   const columns = [
     {
       name: "S. No.",
@@ -69,14 +77,16 @@ const LatestTransfer = () => {
     {
       name: "Action",
       cell: (row) => (
-        <div className="send-again-btn" onClick={() => handleSendAgain(row)}>
+        <div className="send-again-btn">
           <Dropdown>
             <Dropdown.Toggle variant="success" id="dropdown-basic">
               <BsThreeDots />
             </Dropdown.Toggle>
 
             <Dropdown.Menu>
-              <Dropdown.Item href="transfer-details">View</Dropdown.Item>
+              <Dropdown.Item onClick={() => handleViewDetails(row)}>
+                View
+              </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
         </div>
@@ -89,29 +99,27 @@ const LatestTransfer = () => {
     },
   ];
 
-
-  const [list, setList] = useState([]);
-
   useEffect(() => {
-    (
-      async () => {
-        let data = []
-        const response = await transactionHistory();
-        const pend_res = await pendingTransactions();
+    (async () => {
+      let data = [];
+      const response = await transactionHistory();
+      const pend_res = await pendingTransactions();
 
-        if (response.code === "200") {
-          data = response.data.data;
-        }
-
-        if (pend_res.code === "200") {
-          data = [...data, ...pend_res.data];
-        }
-
-        data.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
-        setList(data.length >= 5 ? data.slice(0, 5) : data)
+      if (response.code === "200") {
+        data = response.data.data;
       }
-    )()
-  }, [])
+
+      if (pend_res.code === "200") {
+        data = [...data, ...pend_res.data];
+      }
+
+      data.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+      setList(data.length >= 5 ? data.slice(0, 5) : data);
+    })();
+  }, []);
+
+  console.log(list);
+  
 
   return (
     <Card className="receiver-card">

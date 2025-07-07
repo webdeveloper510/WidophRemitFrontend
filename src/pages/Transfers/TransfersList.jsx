@@ -6,7 +6,7 @@ import { BsThreeDots } from "react-icons/bs";
 import Dropdown from "react-bootstrap/Dropdown";
 import TransferList from "../../assets/images/transfer-list-icon.png";
 import { pendingTransactions, transactionHistory } from "../../services/Api";
-
+import { Link } from "react-router-dom";
 
 const customStyles = {
   headCells: {
@@ -36,8 +36,26 @@ const TransfersList = () => {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [list, setList] = useState([]);
 
+  const fetchList = async () => {
+    let data = [];
+    const response = await transactionHistory();
+    const pend_res = await pendingTransactions();
+
+    if (response.code === "200") {
+      data = response.data.data;
+    }
+
+    if (pend_res.code === "200") {
+      setList([...data, ...pend_res.data]);
+    }
+  };
+
+  useEffect(() => {
+    fetchList();
+  }, []);
+
   const filteredData = list.filter((item) => {
-    const matchesText = (item.name + item.payment_status + item.date + item.amount)
+    const matchesText = (item.recipient_name + item.payment_status + item.date + item.amount)
       .toLowerCase()
       .includes(filterText.toLowerCase());
 
@@ -75,31 +93,6 @@ const TransfersList = () => {
     </div>
   );
 
-  const fetchList = async () => {
-    let data = []
-    const response = await transactionHistory();
-    const pend_res = await pendingTransactions();
-
-    console.log(response);
-    console.log(pend_res);
-    
-    
-
-    if (response.code === "200") {
-      data = response.data.data;
-    }
-
-    if (pend_res.code === "200") {
-      setList([...data, ...pend_res.data])
-    }
-  }
-
-  useEffect(() => {
-    fetchList();
-  }, [])
-
-
-
   const columns = [
     {
       name: "S. No.",
@@ -131,7 +124,6 @@ const TransfersList = () => {
       sortable: true,
       cell: (row) => <strong>{row.date}</strong>,
     },
-
     {
       name: "Transfer Reason",
       selector: (row) => row.reason,
@@ -158,8 +150,12 @@ const TransfersList = () => {
             </Dropdown.Toggle>
 
             <Dropdown.Menu>
-              <Dropdown.Item href={`${import.meta.env.VITE_APP_API_URI}/payment/receipt/${row.id}`}>Download Receipt</Dropdown.Item>
-              <Dropdown.Item href="transfer-details">View Details</Dropdown.Item>
+              <Dropdown.Item href={`${import.meta.env.VITE_APP_API_URI}/payment/receipt/${row.id}`}>
+                Download Receipt
+              </Dropdown.Item>
+              <Dropdown.Item as={Link} to={`/transfer-details/${row.transaction_id}`}>
+                View Details
+              </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
         </div>
@@ -173,37 +169,36 @@ const TransfersList = () => {
   ];
 
   return (
-    <>
-      <AnimatedPage>
-        <div className="page-title">
-          <div className="d-flex gap-3 mb-3 align-items-center justify-content-between">
-            <div className="d-flex align-items-center">
-              <img src={TransferList} alt="img" />
-              <h1>Transfers list</h1>
-            </div>
-            {subHeaderComponent}
+    <AnimatedPage>
+      <div className="page-title">
+        <div className="d-flex gap-3 mb-3 align-items-center justify-content-between">
+          <div className="d-flex align-items-center">
+            <img src={TransferList} alt="img" />
+            <h1>Transfers list</h1>
+          </div>
+          {subHeaderComponent}
+        </div>
+      </div>
+
+      <div className="row mt-3">
+        <div className="col-md-12">
+          <div className="scroll-table-body">
+            <DataTable
+              className="TranferList"
+              columns={columns}
+              data={displayData}
+              customStyles={customStyles}
+              noHeader
+              striped
+              highlightOnHover
+              pagination
+              paginationPerPage={15}
+              paginationRowsPerPageOptions={[5, 10, 15, 20]}
+            />
           </div>
         </div>
-        <div className="row mt-3">
-          <div className="col-md-12">
-            <div className="scroll-table-body">
-              <DataTable
-                className="TranferList"
-                columns={columns}
-                data={displayData}
-                customStyles={customStyles}
-                noHeader
-                striped
-                highlightOnHover
-                pagination
-                paginationPerPage={15}
-                paginationRowsPerPageOptions={[5, 10, 15, 20]}
-              />
-            </div>
-          </div>
-        </div>
-      </AnimatedPage>
-    </>
+      </div>
+    </AnimatedPage>
   );
 };
 

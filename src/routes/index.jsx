@@ -55,7 +55,7 @@ const AppRoutes = () => {
         <Route path="payment-info" element={<PaymentInfo />} />
         <Route path="transfers-list" element={<TransfersList />} />
         <Route path="receivers" element={<Receivers />} />
-        <Route path="transfer-details" element={<TransferDetails />} />
+        <Route path="transfer-details/:id" element={<TransferDetails />} />
         <Route path="profile-information" element={<ProfileInformation />} />
         <Route path="/receivers-list" element={<ReceiverList />} />
         <Route path="receiver-add" element={<ReceiverDetail />} />
