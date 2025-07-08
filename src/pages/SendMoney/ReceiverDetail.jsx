@@ -135,12 +135,15 @@ const ReceiverDetail = () => {
             state: values.state,
             postcode: values.post_code,
             // Add any other fields that might be needed
-            ...response.data // Include any additional data from the API response
+            ...response.data, // Include any additional data from the API response
           };
 
           // Store the newly created recipient in session storage
-          sessionStorage.setItem("selected_receiver", JSON.stringify(newRecipient));
-          
+          sessionStorage.setItem(
+            "selected_receiver",
+            JSON.stringify(newRecipient)
+          );
+
           navigate("/review-transfer");
         } else {
           setApiError(
@@ -220,7 +223,6 @@ const ReceiverDetail = () => {
                     >
                       <Form.Control
                         type="text"
-                        placeholder="Account Number"
                         name="account_number"
                         value={values.account_number}
                         onChange={handleChange}
@@ -250,8 +252,6 @@ const ReceiverDetail = () => {
                     >
                       <Form.Control
                         type="text"
-                        placeholder="First Name"
-                        name="first_name"
                         value={values.first_name}
                         onChange={handleChange}
                         onBlur={handleBlur}
@@ -270,7 +270,6 @@ const ReceiverDetail = () => {
                     >
                       <Form.Control
                         type="text"
-                        placeholder="Middle Name"
                         name="middle_name"
                         value={values.middle_name}
                         onChange={handleChange}
@@ -286,7 +285,6 @@ const ReceiverDetail = () => {
                     >
                       <Form.Control
                         type="text"
-                        placeholder="Last Name"
                         name="last_name"
                         value={values.last_name}
                         onChange={handleChange}
@@ -308,7 +306,6 @@ const ReceiverDetail = () => {
                     >
                       <Form.Control
                         type="email"
-                        placeholder="Email"
                         name="email"
                         value={values.email}
                         onChange={handleChange}
@@ -360,7 +357,6 @@ const ReceiverDetail = () => {
                     >
                       <Form.Control
                         type="text"
-                        placeholder="Building Number"
                         name="building_no"
                         value={values.building_no}
                         onChange={handleChange}
@@ -382,7 +378,6 @@ const ReceiverDetail = () => {
                     >
                       <Form.Control
                         type="text"
-                        placeholder="Street Name"
                         name="street_name"
                         value={values.street_name}
                         onChange={handleChange}
@@ -404,7 +399,6 @@ const ReceiverDetail = () => {
                     >
                       <Form.Control
                         type="text"
-                        placeholder="City"
                         name="city"
                         value={values.city}
                         onChange={handleChange}
@@ -424,7 +418,6 @@ const ReceiverDetail = () => {
                     >
                       <Form.Control
                         type="text"
-                        placeholder="Zip/Postal Code*"
                         name="post_code"
                         value={values.post_code}
                         onChange={handleChange}
@@ -444,7 +437,6 @@ const ReceiverDetail = () => {
                     >
                       <Form.Control
                         type="text"
-                        placeholder="State"
                         name="state"
                         value={values.state}
                         onChange={handleChange}
@@ -467,7 +459,6 @@ const ReceiverDetail = () => {
                       <Form.Control
                         as="textarea"
                         rows={3}
-                        placeholder="Address"
                         name="address"
                         value={values.address}
                         onChange={handleChange}

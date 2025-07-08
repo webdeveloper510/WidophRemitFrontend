@@ -53,7 +53,11 @@ const Dashboard = () => {
                   style={{ paddingRight: 0 }}
                 >
                   <div className="bg-white p-3 border-r stats-box">
-                    <img src={stats1} alt="stats" className="dashboard-info-img"/>
+                    <img
+                      src={stats1}
+                      alt="stats"
+                      className="dashboard-info-img"
+                    />
                     <div className="d-flex flex-column stats-row">
                       <span>Receivers</span>
                       <h4>{ReceiversCount}</h4>
@@ -65,13 +69,16 @@ const Dashboard = () => {
                   style={{ paddingleft: 0 }}
                 >
                   <div className="bg-white p-3 border-r stats-box">
-                    <img src={stats2} alt="stats" className="dashboard-info-img"/>
+                    <img
+                      src={stats2}
+                      alt="stats"
+                      className="dashboard-info-img"
+                    />
                     <div className="d-flex flex-column stats-row">
                       <span>Send Money</span>
                       <a href="#">
-                      <img src={SendMoney} alt="send-money" />
-                    </a>
-                      <h4 onClick={() => navigate("/send-money")}>{">"}</h4>
+                        <img src={SendMoney} alt="send-money" />
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -82,7 +89,11 @@ const Dashboard = () => {
                   style={{ paddingRight: 0 }}
                 >
                   <div className="bg-white p-3 border-r stats-box">
-                    <img src={stats3} alt="stats" className="dashboard-info-img" />
+                    <img
+                      src={stats3}
+                      alt="stats"
+                      className="dashboard-info-img"
+                    />
                     <div className="d-flex flex-column stats-row">
                       <span>Transfers</span>
                       <h4>{TransactionsCount}</h4>
@@ -94,12 +105,16 @@ const Dashboard = () => {
                   style={{ paddingleft: 0 }}
                 >
                   <div className="bg-white p-3 border-r stats-box">
-                    <img src={stats4} alt="stats" className="dashboard-info-img" />
+                    <img
+                      src={stats4}
+                      alt="stats"
+                      className="dashboard-info-img"
+                    />
                     <div className="d-flex flex-column stats-row">
                       <span>Profile</span>
-                     <Link to="/profile-information">
+                      <Link to="/profile-information">
                         <img src={Profile} alt="profile" />
-                    </Link>
+                      </Link>
                     </div>
                   </div>
                 </div>

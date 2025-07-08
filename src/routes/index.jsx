@@ -28,6 +28,7 @@ import TransactionSuccess from "../pages/SendMoney/TranscationSuccess";
 const AppRoutes = () => {
   return (
     <Routes>
+      {/* Public Routes */}
       <Route
         element={
           <PublicRoute>
@@ -37,8 +38,11 @@ const AppRoutes = () => {
       >
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+
+        {/* OTP route accessible by both protected and public */}
         <Route path="/otp-verification" element={<OtpVerification />} />
         <Route path="/kyc" element={<KYCForm />} />
+        {/* Protected Routes */}
       </Route>
 
       <Route
@@ -65,6 +69,7 @@ const AppRoutes = () => {
         <Route path="payment-processed" element={<PaymentProcessed />} />
         <Route path="/add-receiver" element={<AddReceiver />} />
         <Route path="monoova" element={<MonoovaPaymentGateway />} />
+
         {/* Redirect / to /dashboard */}
         <Route index element={<Navigate to="dashboard" replace />} />
       </Route>

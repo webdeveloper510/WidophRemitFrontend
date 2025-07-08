@@ -27,7 +27,6 @@ const OtpVerification = () => {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
-  const [sendamount, setsendamount] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [transferData, setTransferData] = useState(null);
   const navigate = useNavigate();
@@ -63,10 +62,8 @@ const OtpVerification = () => {
         navigate("/profile");
       }
     } else if (from === "transfer") {
-      // Fix: Check for transferOtpData instead of signupData
       const transferOtpData = sessionStorage.getItem("transferOtpData");
       const storedTransferData = sessionStorage.getItem("transfer_data");
-      setsendamount(JSON.parse(storedTransferData).send_amt);
 
       if (transferOtpData) {
         try {
@@ -162,7 +159,7 @@ const OtpVerification = () => {
       };
 
       const payload = {
-        amount: parseFloat(sendamount || 10000),
+        amount: parseFloat(transferData?.send_amt || 0),
         bsbNumber: monovaForm.bsb,
         accountNumber: monovaForm.accountNumber,
         accountName: monovaForm.accountName,
@@ -256,7 +253,7 @@ const OtpVerification = () => {
 
       if (from === "login") {
         response = await verifyEmail(payload);
-      } else if (from === "profile" || from === "transfer") {
+      } else if (from === "profile") {
         response = await resendOtp(payload);
       } else if (from === "transfer") {
         response = await verifyEmail(payload);
@@ -301,18 +298,7 @@ const OtpVerification = () => {
           }
           navigate("/kyc");
           return;
-          // return navigate("/dashboard");
         }
-        if (from === "transfer") {
-          response = await verifyEmail(payload); // ✅ OTP submit: verifyEmail
-          if (response?.code === "200") {
-            toast.success("OTP Verified Successfully!");
-            return navigate("/transaction-success");
-          } else {
-            toast.error(response?.message || "Invalid OTP");
-          }
-        }
-
 
         if (from === "profile") {
           const updateData = JSON.parse(
@@ -334,7 +320,8 @@ const OtpVerification = () => {
           }
 
           sessionStorage.removeItem("pendingProfileUpdate");
-          return navigate("/profile-information");
+          navigate("/profile-information");
+          return;
         }
 
         if (response?.access_token) {
@@ -394,8 +381,8 @@ const OtpVerification = () => {
   };
 
   return (
-    <Container className="login-form-wrapper">
-      <Row className="">
+    <Container className="login-form-wrappe">
+      <Row>
         <Col md={7} className="d-flex align-items-center justify-content-start">
           <div className="login-form-wrapper w-100">
             <div className="exchange-title mb-4">
@@ -437,15 +424,14 @@ const OtpVerification = () => {
                     numInputs={6}
                     separator={<span style={{ margin: "0 6px" }}>-</span>}
                     renderInput={(props) => <input {...props} />}
-                    // inputStyle={{
-                    //   width: "3rem",
-                    //   height: "3rem",
-                    //   fontSize: "1.5rem",
-                    //   borderRadius: "8px",
-                    //   border: "1px solid #ced4da",
-                    //   textAlign: "center",
-                    //   margin: "0 12px",
-                    // }}
+                    inputStyle={{
+                      width: "3rem",
+                      height: "3rem",
+                      fontSize: "1.5rem",
+                      borderRadius: "8px",
+                      border: "1px solid #ced4da",
+                      textAlign: "center",
+                    }}
                     disabled={isProcessing}
                   />
                 </Col>

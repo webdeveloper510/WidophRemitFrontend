@@ -49,7 +49,12 @@ const AddReceiver = () => {
       onSubmit: async (values) => {
         setIsSubmitting(true);
         try {
-          let payload = { ...values, building: "test", street: "test",country_code:"152123"};
+          let payload = {
+            ...values,
+            building: "test",
+            street: "test",
+            country_code: "152123",
+          };
           payload.account_type = "individual";
           const response = await createRecipient(payload);
           if (response.code === "200") {
@@ -117,7 +122,6 @@ const AddReceiver = () => {
                     >
                       <Form.Control
                         type="text"
-                        placeholder="Account Number"
                         name="account_number"
                         value={values.account_number}
                         onChange={handleChange}
@@ -140,7 +144,6 @@ const AddReceiver = () => {
                     >
                       <Form.Control
                         type="text"
-                        placeholder="First Name"
                         name="first_name"
                         value={values.first_name}
                         onChange={handleChange}
@@ -154,7 +157,6 @@ const AddReceiver = () => {
                     >
                       <Form.Control
                         type="text"
-                        placeholder="Middle Name"
                         name="middle_name"
                         value={values.middle_name}
                         onChange={handleChange}
@@ -168,8 +170,6 @@ const AddReceiver = () => {
                     >
                       <Form.Control
                         type="text"
-                        placeholder="Last Name"
-                        name="last_name"
                         value={values.last_name}
                         onChange={handleChange}
                       />
@@ -207,6 +207,7 @@ const AddReceiver = () => {
                       controlId="floatingSelect"
                       as={Col}
                       label="Country"
+                      className="mb-3"
                     >
                       <Form.Select
                         aria-label="Floating label select example"
@@ -227,10 +228,10 @@ const AddReceiver = () => {
                       as={Col}
                       controlId="floatingTextarea2"
                       label="Address"
+                      className="mb-3"
                     >
                       <Form.Control
                         as="textarea"
-                        placeholder="Street Address"
                         style={{ height: "50px" }}
                         name="street_address"
                         value={values.street_address}
@@ -247,7 +248,6 @@ const AddReceiver = () => {
                     >
                       <Form.Control
                         type="text"
-                        placeholder="City"
                         name="city"
                         value={values.city}
                         onChange={handleChange}
@@ -261,7 +261,6 @@ const AddReceiver = () => {
                     >
                       <Form.Control
                         type="number"
-                        placeholder="Zip/Postal Code*"
                         name="post_code"
                         value={values.post_code}
                         onChange={handleChange}
@@ -276,7 +275,6 @@ const AddReceiver = () => {
                     >
                       <Form.Control
                         type="text"
-                        placeholder="State"
                         name="state"
                         value={values.state}
                         onChange={handleChange}
