@@ -7,7 +7,7 @@ import ReceiverTable from "./ReceiverTable";
 import LatestTransfer from "./LatestTransfer";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { recipientList, transactionHistory } from "../../services/Api";
+import { recipientList, transactionHistory, userProfile } from "../../services/Api";
 import SendMoney from "../../assets/images/send-money.png";
 import Profile from "../../assets/images/profile.png";
 
@@ -30,14 +30,28 @@ const Dashboard = () => {
         setTransactionsCount(response.data.data.length);
       }
     })();
+
+    (async () => {
+      const response = await userProfile();
+      if (response?.code === "200") {
+        const data = response?.data;
+        const name = data?.First_name?.trim();
+        setFirstName(name || "User");
+      }
+    })();
+
+
   }, []);
 
   const navigate = useNavigate();
+  const [firstName, setFirstName] = useState("");
+
   return (
     <AnimatedPage>
       <div className="page-title">
-        <h1>Welcome , Louie</h1>
+        <h1>Welcome, {firstName}</h1>
       </div>
+
 
       <div className="page-content-section mt-3">
         <div className="row">
@@ -45,7 +59,6 @@ const Dashboard = () => {
             <div className="dashbaord-bg-image p-4">
               <h2>
                 Dashboard<br></br>
-                <span>info</span>
               </h2>
               <div className="row mt-5">
                 <div
@@ -76,9 +89,9 @@ const Dashboard = () => {
                     />
                     <div className="d-flex flex-column stats-row">
                       <span>Send Money</span>
-                      <a href="#">
+                      <Link to="/send-money">
                         <img src={SendMoney} alt="send-money" />
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -132,7 +145,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-    </AnimatedPage>
+    </AnimatedPage >
   );
 };
 

@@ -200,6 +200,7 @@ export const updateProfile = async (data) => {
   })
   return response
 }
+
 export const userProfile = async () => {
   try {
     const response = await private_instance.post(
