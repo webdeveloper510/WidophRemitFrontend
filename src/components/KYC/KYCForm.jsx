@@ -140,11 +140,13 @@ const KYCForm = () => {
         city: formData.city,
         state: formData.state,
         country: formData.country,
+        is_digital_Id_verified:'verified'
       };
 
       const response = await updateProfile(APIDATA);
       if (response && response.code === "200") {
         setApiSuccess("Profile updated successfully!");
+        getVeriffStatus();
         setTimeout(() => setActiveKey("step2"), 1000);
       } else if (response && response.code === "400") {
         setApiError(

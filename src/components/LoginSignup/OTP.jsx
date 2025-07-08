@@ -286,7 +286,7 @@ const OtpVerification = () => {
 
         if (from == "signup") {
           if (response?.access_token) {
-          sessionStorage.setItem("token", response.access_token);
+            sessionStorage.setItem("token", response.access_token);
           }
           navigate("/kyc");
           return;
@@ -434,10 +434,10 @@ const OtpVerification = () => {
                 {loading
                   ? "Verifying..."
                   : isProcessing
-                  ? from === "transfer"
-                    ? "Processing Payment..."
-                    : "Processing..."
-                  : "Verify OTP"}
+                    ? from === "transfer"
+                      ? "Processing Payment..."
+                      : "Processing..."
+                    : "Verify OTP"}
               </Button>
 
               <div className="small text-muted mt-3">
