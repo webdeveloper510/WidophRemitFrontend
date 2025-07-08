@@ -475,7 +475,7 @@ const OtpVerification = () => {
 
         <Col
           md={5}
-          className="d-none d-md-flex align-items-center justify-content-end bg-light"
+          className="d-none d-md-flex align-items-center justify-content-end"
         >
           <div className="image-wrapper">
             <img src={LoginImage} alt="Login Art" className="clipped-img" />
