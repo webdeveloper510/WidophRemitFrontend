@@ -326,19 +326,8 @@ const OtpVerification = () => {
 
         if (response?.access_token) {
           sessionStorage.setItem("token", response.access_token);
-
-          const emailLoadingToast = toast.loading(
-            "Sending verification email..."
-          );
           try {
             const emailRes = await sendEmail();
-            toast.dismiss(emailLoadingToast);
-
-            if (emailRes?.code === "200") {
-              toast.success("Verification email sent!");
-            } else {
-              toast.warning("Email failed to send.");
-            }
           } catch {
             toast.error("Email send error.");
           }
@@ -389,13 +378,13 @@ const OtpVerification = () => {
               OTP <br />
               Verification
               <span className="exchange_rate optTagLine">
-                Please enter the code sent to your phone/email.
+                Please enter the code sent to your phone
               </span>
             </div>
 
             {userData && (
               <div className="mb-3 text-muted small">
-                Code sent to: {userData.email} and {userData.mobile}
+                Code sent to: {userData.mobile}
               </div>
             )}
 

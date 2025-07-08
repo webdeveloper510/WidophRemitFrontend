@@ -13,10 +13,9 @@ import {
 } from "react-bootstrap";
 import Select from "react-select";
 import { getNames } from "country-list";
-//import KYCImage from "../../assets/images/kyc-image.png";
 import "./KYCForm.css";
 import { useNavigate } from "react-router-dom";
-import { updateProfile } from "../../services/Api";
+import { getVeriffStatus, updateProfile } from "../../services/Api";
 
 const KYCForm = () => {
   const navigate = useNavigate();
@@ -115,12 +114,12 @@ const KYCForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const runUpdateProfileApi = async () => {
+   const runUpdateProfileApi = async () => {
     setIsLoading(true);
     setApiError("");
     setApiSuccess("");
     try {
-      const apiData = {
+      const APIDATA = {
         First_name: formData.firstName,
         Middle_name: formData.middleName,
         Last_name: formData.lastName,
@@ -129,7 +128,7 @@ const KYCForm = () => {
         mobile: `+${formData.countryCode}${formData.phone}`,
         country_code: formData.countryCode,
         Date_of_birth: formData.dob,
-        Gender: "",
+        Gender: "Male",
         location: formData.address,
         occupation: formData.occupation,
         payment_per_annum: "Tier-1 Less than 5 times",
@@ -143,7 +142,7 @@ const KYCForm = () => {
         country: formData.country,
       };
 
-      const response = await updateProfile(apiData);
+      const response = await updateProfile(APIDATA);
       if (response && response.code === "200") {
         setApiSuccess("Profile updated successfully!");
         setTimeout(() => setActiveKey("step2"), 1000);
@@ -191,7 +190,8 @@ const KYCForm = () => {
         );
         return;
       }
-      navigate("/dashboard");
+      console.log("coming");
+
     }
   };
 
@@ -219,9 +219,8 @@ const KYCForm = () => {
                   <Nav.Item key={num} className="step-wrapper">
                     <div className="step-connector">
                       <div
-                        className={`step-dot ${
-                          isCompleted ? "completed" : ""
-                        } ${isActive ? "active" : ""}`}
+                        className={`step-dot ${isCompleted ? "completed" : ""
+                          } ${isActive ? "active" : ""}`}
                       >
                         {isCompleted ? "●" : ""}
                       </div>
@@ -410,9 +409,8 @@ const KYCForm = () => {
                     <Col className="mb-3">
                       <div className="floating-label-wrapper">
                         <label
-                          className={`floating-label ${
-                            formData.countryOfBirth ? "filled" : ""
-                          }`}
+                          className={`floating-label ${formData.countryOfBirth ? "filled" : ""
+                            }`}
                         >
                           Country of Birth{" "}
                           <span style={{ color: "red" }}>*</span>
@@ -695,8 +693,7 @@ const KYCForm = () => {
                     <Button
                       variant="success"
                       className="nextbtn"
-                      onClick={goToNext}
-                      disabled={!idVerified}
+                      onClick={()=>navigate("/dashboard")}
                     >
                       GO TO DASHBOARD
                     </Button>

@@ -200,20 +200,27 @@ export const updateProfile = async (data) => {
   })
   return response
 }
+export const userProfile = async () => {
+  try {
+    const response = await private_instance.post(
+      "/user-profile/",
+      {},
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionStorage.getItem("token")}`,
+        }
+      }
+    );
 
-export const userProfile = async (data) => {
-  const response = await private_instance.post("/user-profile/", data, {
-    headers: {
-      'Content-Type': 'application/json',
-      "Authorization": `Bearer ${sessionStorage.getItem("token")}`
-    }
-  }).then(res => {
-    return res?.data
-  }).catch(error => {
-    return error.response.data
-  })
-  return response
-}
+    return response.data;
+
+  } catch (error) {
+    return error?.response?.data || { error: "Unknown error" };
+  }
+};
+
+
 
 export const exchangeRate = async (data) => {
   const response = await public_instance.post("/exchange-rate/", data).then(res => {

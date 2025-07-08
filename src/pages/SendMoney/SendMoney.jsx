@@ -156,32 +156,7 @@ const SendMoney = () => {
       setIsConverting(false);
     }
   }, [isConverting]);
-  const getExchangeRate = useCallback(
-    async (from, to, amount = "1") => {
-      if (isConverting) return;
 
-      setIsConverting(true);
-      try {
-        const response = await exchangeRate({
-          amount: amount,
-          from: from,
-          to: to,
-          direction: "from",
-        });
-
-        if (response) {
-          setExchRate(response?.rate);
-          setDefaultExchange(response.default_exchange);
-          return response;
-        }
-      } catch (error) {
-        console.error("Exchange rate error:", error);
-      } finally {
-        setIsConverting(false);
-      }
-    },
-    [isConverting]
-  );
 
   const debouncedConversion = useCallback(
     debounce(async (key, value, dir) => {

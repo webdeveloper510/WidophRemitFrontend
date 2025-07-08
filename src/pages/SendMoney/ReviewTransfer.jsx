@@ -43,17 +43,24 @@ const ReviewTransfer = () => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const res = await userProfile({});
-        if (res?.code === "200" && res?.data) {
+        const res = await userProfile();
+        console.log("User Profile Response:", res);
+
+        // Handle both string and numeric codes
+        const statusCode = res?.code?.toString();
+
+        if (statusCode === "200" && res?.data) {
           setSender(res.data);
         } else {
           toast.error(res?.message || "Failed to fetch user profile");
         }
+
       } catch (error) {
         console.error("Error fetching user profile:", error);
         toast.error("Failed to fetch user profile");
       }
     };
+
     if (location.state && location.state.receiverData) {
       setReceiver(location.state.receiverData);
     } else {
@@ -93,6 +100,8 @@ const ReviewTransfer = () => {
     : "";
 
   const handleSaveAndContinue = async () => {
+    console.log("coming");
+    
     if (!receiver) {
       toast.error("No receiver selected");
       return;

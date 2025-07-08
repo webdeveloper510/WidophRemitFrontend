@@ -58,13 +58,7 @@ const AddReceiver = () => {
           payload.account_type = "individual";
           const response = await createRecipient(payload);
           if (response.code === "200") {
-            navigate("/review-transfer", {
-              state: {
-                receiverData: response.data || payload,
-                senderName:
-                  `${values.first_name} ${values.middle_name} ${values.last_name}`.trim(),
-              },
-            });
+            navigate("/receivers");
           }
         } catch (error) {
           console.error("Error creating receiver:", error);

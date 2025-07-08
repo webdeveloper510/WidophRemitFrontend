@@ -85,7 +85,7 @@ const PaymentDetail = () => {
       setReceiverName(receiver.account_name);
     }
     }
-  }, []);
+  , []);
 
   const handlePayToFormChange = (field, value) => {
     setPayToForm((prev) => ({ ...prev, [field]: value }));
