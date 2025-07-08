@@ -18,9 +18,10 @@ import {
   resendOtp,
   createMonovaPayment,
   getAgreementList,
-  ZaiPayTo
+  ZaiPayTo,
 } from "../../services/Api";
 import { useNavigate, useLocation } from "react-router-dom";
+import LoginImage from "../../assets/images/login-image.png";
 
 const OtpVerification = () => {
   const [otp, setOtp] = useState("");
@@ -63,7 +64,7 @@ const OtpVerification = () => {
     } else if (from === "transfer") {
       const transferOtpData = sessionStorage.getItem("transferOtpData");
       const storedTransferData = sessionStorage.getItem("transfer_data");
-      
+
       if (transferOtpData) {
         try {
           setUserData(JSON.parse(transferOtpData));
@@ -93,62 +94,68 @@ const OtpVerification = () => {
     }
   }, [from, location.state, navigate]);
 
-const handleZaiPayment = async () => {
-  try {
-    const agreementResponse = await getAgreementList();
+  const handleZaiPayment = async () => {
+    try {
+      const agreementResponse = await getAgreementList();
 
-    if (!agreementResponse || agreementResponse.code !== "200") {
-      toast.error("Failed to fetch agreement list");
-      console.error("Agreement list fetch failed:", agreementResponse);
+      if (!agreementResponse || agreementResponse.code !== "200") {
+        toast.error("Failed to fetch agreement list");
+        console.error("Agreement list fetch failed:", agreementResponse);
+        return false;
+      }
+
+      const agreementUuid = agreementResponse?.data?.agreement_uuid;
+
+      if (!agreementUuid) {
+        toast.error("No valid agreement UUID found");
+        console.error(
+          "Agreement UUID not found in response:",
+          agreementResponse
+        );
+        return false;
+      }
+      let transactionId =
+        sessionStorage.getItem("monova_transaction_id") ||
+        sessionStorage.getItem("transaction_id");
+      const zaiPayload = {
+        agreement_uuid: agreementUuid,
+        transaction_id: transactionId,
+      };
+      s;
+      const zaiResponse = await ZaiPayTo(zaiPayload);
+      if (zaiResponse && zaiResponse.code === "200") {
+        sessionStorage.setItem(
+          "zai_payment_response",
+          JSON.stringify(zaiResponse)
+        );
+        sessionStorage.setItem("final_transaction_id", transactionId);
+        return true;
+      } else {
+        toast.error(zaiResponse?.message || "Zai payment processing failed");
+        console.error("Zai payment failed:", zaiResponse);
+        return false;
+      }
+    } catch (error) {
+      console.error("Zai payment error:", error);
+      toast.error("Error processing Zai payment");
       return false;
     }
-
-    const agreementUuid = agreementResponse?.data?.agreement_uuid;
-
-    if (!agreementUuid) {
-      toast.error("No valid agreement UUID found");
-      console.error("Agreement UUID not found in response:", agreementResponse);
-      return false;
-    }
-    let transactionId =
-      sessionStorage.getItem("monova_transaction_id") ||
-      sessionStorage.getItem("transaction_id");
-    const zaiPayload = {
-      agreement_uuid: agreementUuid,
-      transaction_id: transactionId,
-    };s
-    const zaiResponse = await ZaiPayTo(zaiPayload);
-    if (zaiResponse && zaiResponse.code === "200") {
-      sessionStorage.setItem("zai_payment_response", JSON.stringify(zaiResponse));
-      sessionStorage.setItem("final_transaction_id", transactionId);
-      return true;
-    } else {
-      toast.error(zaiResponse?.message || "Zai payment processing failed");
-      console.error("Zai payment failed:", zaiResponse);
-      return false;
-    }
-  } catch (error) {
-    console.error("Zai payment error:", error);
-    toast.error("Error processing Zai payment");
-    return false;
-  }
-};
-
+  };
 
   const handleMonovaPayment = async () => {
     const monovaFormData = sessionStorage.getItem("monova_payment_data");
-    
+
     if (!monovaFormData) {
       toast.error("Monova payment data not found.");
       return false;
     }
-    
+
     try {
       const monovaForm = JSON.parse(monovaFormData);
-      
+
       const paymentModeMap = {
-        "directDebit": "debit",
-        "NppCreditBankAccount": "npp"
+        directDebit: "debit",
+        NppCreditBankAccount: "npp",
       };
 
       const payload = {
@@ -156,7 +163,8 @@ const handleZaiPayment = async () => {
         bsbNumber: monovaForm.bsb,
         accountNumber: monovaForm.accountNumber,
         accountName: monovaForm.accountName,
-        payment_mode: paymentModeMap[monovaForm.paymentMethod] || monovaForm.paymentMethod
+        payment_mode:
+          paymentModeMap[monovaForm.paymentMethod] || monovaForm.paymentMethod,
       };
 
       const response = await createMonovaPayment(payload);
@@ -178,46 +186,52 @@ const handleZaiPayment = async () => {
     }
   };
 
-const processTransferPayments = async () => {
-  const monovaFormData = sessionStorage.getItem("monova_payment_data");
-  const payToLimitData = sessionStorage.getItem("payto_limit_data");
-  const payToAgreementData = sessionStorage.getItem("payto_agreement_response");
-  const selectedPaymentMethod = sessionStorage.getItem("selected_payment_method");
-  const receiverData = sessionStorage.getItem("selected_receiver");
-  
-  let receiverPaymentMethod = null;
-  if (receiverData) {
-    try {
-      const receiver = JSON.parse(receiverData);
-      receiverPaymentMethod = receiver?.payment_method || receiver?.account_type;
-    } catch (error) {
-      console.error("Error parsing receiver data:", error);
-    }
-  }
+  const processTransferPayments = async () => {
+    const monovaFormData = sessionStorage.getItem("monova_payment_data");
+    const payToLimitData = sessionStorage.getItem("payto_limit_data");
+    const payToAgreementData = sessionStorage.getItem(
+      "payto_agreement_response"
+    );
+    const selectedPaymentMethod = sessionStorage.getItem(
+      "selected_payment_method"
+    );
+    const receiverData = sessionStorage.getItem("selected_receiver");
 
-  if (selectedPaymentMethod === "monova" && monovaFormData) {
-    const monovaSuccess = await handleMonovaPayment();
-    if (monovaSuccess) {
-      sessionStorage.removeItem("monova_payment_data");
+    let receiverPaymentMethod = null;
+    if (receiverData) {
+      try {
+        const receiver = JSON.parse(receiverData);
+        receiverPaymentMethod =
+          receiver?.payment_method || receiver?.account_type;
+      } catch (error) {
+        console.error("Error parsing receiver data:", error);
+      }
+    }
+
+    if (selectedPaymentMethod === "monova" && monovaFormData) {
+      const monovaSuccess = await handleMonovaPayment();
+      if (monovaSuccess) {
+        sessionStorage.removeItem("monova_payment_data");
+        return true;
+      }
+      return false;
+    } else if (
+      selectedPaymentMethod === "zai" ||
+      (payToLimitData && payToAgreementData)
+    ) {
+      const zaiSuccess = await handleZaiPayment();
+
+      if (zaiSuccess) {
+        sessionStorage.removeItem("payto_limit_data");
+        sessionStorage.removeItem("payto_agreement_response");
+        return true;
+      }
+      return false;
+    } else if (selectedPaymentMethod === "payid") {
       return true;
     }
-    return false;
-  }
-  else if (selectedPaymentMethod === "zai" || (payToLimitData && payToAgreementData)) {
-    const zaiSuccess = await handleZaiPayment();
-    
-    if (zaiSuccess) {
-      sessionStorage.removeItem("payto_limit_data");
-      sessionStorage.removeItem("payto_agreement_response");
-      return true;
-    }
-    return false;
-  } 
-  else if (selectedPaymentMethod === "payid") 
-    {    return true;
-  }
-  return true;
-};
+    return true;
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -236,25 +250,24 @@ const processTransferPayments = async () => {
       };
 
       let response;
-      
+
       if (from === "login") {
         response = await verifyEmail(payload);
       } else if (from === "profile") {
         response = await resendOtp(payload);
       } else if (from === "transfer") {
-  
         response = await verifyEmail(payload);
-        
+
         if (response?.code === "200") {
           toast.success("OTP Verified Successfully!");
-        
+
           const paymentSuccess = await processTransferPayments();
-          
+
           if (paymentSuccess) {
             sessionStorage.removeItem("transferOtpData");
             sessionStorage.removeItem("transfer_data");
             sessionStorage.removeItem("selected_receiver");
-            
+
             navigate("/transaction-success");
             return;
           } else {
@@ -280,14 +293,18 @@ const processTransferPayments = async () => {
         }
 
         if (from === "profile") {
-          const updateData = JSON.parse(sessionStorage.getItem("pendingProfileUpdate"));
+          const updateData = JSON.parse(
+            sessionStorage.getItem("pendingProfileUpdate")
+          );
 
           try {
             const updateResponse = await updateProfile(updateData);
             if (updateResponse?.code === "200") {
               toast.success("Profile updated successfully!");
             } else {
-              toast.warning(updateResponse?.message || "Failed to update profile.");
+              toast.warning(
+                updateResponse?.message || "Failed to update profile."
+              );
             }
           } catch (err) {
             console.error("Profile update failed:", err);
@@ -301,7 +318,9 @@ const processTransferPayments = async () => {
         if (response?.access_token) {
           sessionStorage.setItem("token", response.access_token);
 
-          const emailLoadingToast = toast.loading("Sending verification email...");
+          const emailLoadingToast = toast.loading(
+            "Sending verification email..."
+          );
           try {
             const emailRes = await sendEmail();
             toast.dismiss(emailLoadingToast);
@@ -353,14 +372,14 @@ const processTransferPayments = async () => {
   };
 
   return (
-    <Container className="login-form-wrapper min-vh-100">
-      <Row className="vh-100">
+    <Container className="login-form-wrappe">
+      <Row>
         <Col md={7} className="d-flex align-items-center justify-content-start">
           <div className="login-form-wrapper w-100">
             <div className="exchange-title mb-4">
               OTP <br />
               Verification
-              <span className="exchange_rate">
+              <span className="exchange_rate optTagLine">
                 Please enter the code sent to your phone/email.
               </span>
             </div>
@@ -380,14 +399,16 @@ const processTransferPayments = async () => {
                   >
                     <span className="visually-hidden">Loading...</span>
                   </div>
-                  {from === "transfer" ? "Processing payment..." : "Processing your verification..."}
+                  {from === "transfer"
+                    ? "Processing payment..."
+                    : "Processing your verification..."}
                 </div>
               </div>
             )}
 
             <Form className="exchange-form" onSubmit={handleSubmit}>
               <Row className="mb-4">
-                <Col>
+                <Col className="inputBoxStyle">
                   <OtpInput
                     value={otp}
                     onChange={setOtp}
@@ -415,7 +436,9 @@ const processTransferPayments = async () => {
                 {loading
                   ? "Verifying..."
                   : isProcessing
-                  ? from === "transfer" ? "Processing Payment..." : "Processing..."
+                  ? from === "transfer"
+                    ? "Processing Payment..."
+                    : "Processing..."
                   : "Verify OTP"}
               </Button>
 
@@ -423,18 +446,18 @@ const processTransferPayments = async () => {
                 Didn't receive the code?{" "}
                 <button
                   type="button"
-                  className="btn btn-link text-success fw-semibold p-0"
+                  className="btn btn-link text-success fw-semibold p-0 forgotpassword-text"
                   onClick={handleResendOtp}
                   disabled={loading || isProcessing}
                 >
                   Resend
                 </button>
               </div>
-              
+
               <div className="mt-3">
                 <a
                   href={from === "transfer" ? "/payment-detail" : "/signup"}
-                  className="text-success fw-bold"
+                  className="text-success fw-bold forgotpassword-text"
                   onClick={() => {
                     if (from === "signup") {
                       sessionStorage.removeItem("signupData");
@@ -455,7 +478,7 @@ const processTransferPayments = async () => {
           className="d-none d-md-flex align-items-center justify-content-end bg-light"
         >
           <div className="image-wrapper">
-            {/* You can place an image here */}
+            <img src={LoginImage} alt="Login Art" className="clipped-img" />
           </div>
         </Col>
       </Row>

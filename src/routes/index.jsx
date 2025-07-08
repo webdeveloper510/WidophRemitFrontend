@@ -38,12 +38,13 @@ const AppRoutes = () => {
       >
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+
+        {/* OTP route accessible by both protected and public */}
+        <Route path="/otp-verification" element={<OtpVerification />} />
+        <Route path="/kyc" element={<KYCForm />} />
+        {/* Protected Routes */}
       </Route>
 
-      {/* OTP route accessible by both protected and public */}
-      <Route path="/otp-verification" element={<OtpVerification />} />
-
-      {/* Protected Routes */}
       <Route
         path="/"
         element={
@@ -52,7 +53,6 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       >
-        <Route path="/kyc" element={<KYCForm />} />
         <Route path="/transaction-success" element={<TransactionSuccess />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="send-money" element={<SendMoney />} />
