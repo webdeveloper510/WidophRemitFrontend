@@ -245,7 +245,7 @@ div#basic-navbar-nav a {
   height: 100vh;
 }
 .page-content-section {
-  //max-height: calc(100vh - 100px);
+  max-height: calc(100vh - 100px);
   overflow-y: auto;
   padding-right: 10px;
   overflow-x: hidden;
