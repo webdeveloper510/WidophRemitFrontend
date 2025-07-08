@@ -288,7 +288,9 @@ const OtpVerification = () => {
         toast.success("OTP Verified Successfully!");
 
         if (from == "signup") {
+          if (response?.access_token) {
           sessionStorage.setItem("token", response.access_token);
+          }
           navigate("/kyc");
           return;
         }
@@ -334,9 +336,9 @@ const OtpVerification = () => {
           sessionStorage.removeItem("pendingProfileUpdate");
           return navigate("/profile-information");
         }
+
         if (response?.access_token) {
           sessionStorage.setItem("token", response.access_token);
-          console.log(response.access_token);
 
           const emailLoadingToast = toast.loading(
             "Sending verification email..."

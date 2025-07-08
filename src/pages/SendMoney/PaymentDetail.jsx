@@ -48,7 +48,7 @@ const PaymentDetail = () => {
     paymentMethod: ""
   });
   const [monovaFormErrors, setMonovaFormErrors] = useState({});
-const[bsb,setbsb]=useState(0);
+  const [bsb, setbsb] = useState(0);
   const navigate = useNavigate();
 
   const reasonOptions = [
@@ -118,7 +118,7 @@ const[bsb,setbsb]=useState(0);
     setModalShowPayToAgreement(true);
   };
 
-  const handleMonovaContinue = () => {
+  const handleMonovaContinue = async () => {
     const errors = {};
     if (!monovaForm.paymentMethod) errors.paymentMethod = "Please select payment method.";
     if (!monovaForm.bsb) errors.bsb = "BSB is required.";
@@ -128,14 +128,43 @@ const[bsb,setbsb]=useState(0);
     setMonovaFormErrors(errors);
 
     if (Object.keys(errors).length === 0) {
+      try {
+        sessionStorage.setItem("monova_payment_data", JSON.stringify(monovaForm));
+        sessionStorage.setItem("selected_payment_method", "monova");
 
-      sessionStorage.setItem("monova_payment_data", JSON.stringify(monovaForm));
+        const temp = {
+          amount: amount,
+          bsbNumber: monovaForm.bsb,
+          accountNumber: monovaForm.accountNumber,
+          accountName: monovaForm.accountName,
+          payment_mode: monovaForm.paymentMethod
+        };
 
-      sessionStorage.setItem("selected_payment_method", "monova");
-      setModalShowMonova(false);
-      navigate("/confirm-transfer");
+        const result = await createMonovaPayment(temp);
+        sessionStorage.setItem("monova_form_data",result)
+
+        if (result?.error) {
+          console.error("Payment creation failed:", result);
+          // Optionally show an error to the user here
+          return;
+        }
+
+        if (result?.transactionId) {
+          const txnId = result.transactionId;
+          sessionStorage.setItem("monova_transaction_id", txnId);
+
+          navigate("/confirm-transfer");
+        }
+
+
+        setModalShowMonova(false);
+      } catch (err) {
+        console.error("Unexpected error during payment creation:", err);
+        // Optionally show an error to the user here
+      }
     }
   };
+
   const formatAmountLimit = (limit) => {
     if (!limit) return "Not specified";
     return `AUD ${parseInt(limit).toLocaleString()}`;
@@ -165,7 +194,7 @@ const[bsb,setbsb]=useState(0);
         const temp = sessionStorage.getItem("transfer_data");
         const agreementList = await getAgreementList(temp.send_amt);
         setbsb(agreementList.data.bsb_code);
-        
+
         if (agreementList?.code === "200" && agreementList?.data) {
           const agreementData = Array.isArray(agreementList.data) ? agreementList.data[0] : agreementList.data;
           if (agreementData && (agreementData.payid || (agreementData.bsb && agreementData.account_number))) {
@@ -254,11 +283,12 @@ const[bsb,setbsb]=useState(0);
         };
       }
 
-      let temp=sessionStorage.getItem("transfer_data");
-      temp=JSON.parse(temp);
-      payload.agreement_amount=temp.exchange_amt;
-      payload.account_number=payToLimitForm.accountNumber;
-      payload.bsb=bsb;
+      let temp = sessionStorage.getItem("transfer_data");
+      temp = JSON.parse(temp);
+      payload.account_number = payToLimitForm.accountNumber;
+      payload.bsb = bsb;
+      payload.agreement_amount=temp.amount.send_amt;
+      console.log(payload);
       const response = await createAgreement(payload);
       if (response?.code === "200" || response?.success) {
         sessionStorage.setItem("payto_limit_data", JSON.stringify(payToLimitForm));
@@ -567,7 +597,7 @@ const[bsb,setbsb]=useState(0);
                   </Button>
                 </Col>
                 <Col>
-                  <Button variant="primary" className="submit-btn float-end" onClick={() => navigate("/confirm-transfer")}>
+                  <Button variant="primary" className="submit-btn float-end" onClick={() => { navigate("/confirm-transfer") }}>
                     Continue
                   </Button>
                 </Col>
@@ -589,8 +619,8 @@ const[bsb,setbsb]=useState(0);
                     isInvalid={!!monovaFormErrors.paymentMethod}
                   >
                     <option value="">Select Payment Method</option>
-                    <option value="directDebit">Direct Debit</option>
-                    <option value="NppCreditBankAccount">NPP Credit Bank Account</option>
+                    <option value="debit">Direct Debit</option>
+                    <option value="npp">NPP Credit Bank Account</option>
                   </Form.Select>
                   {monovaFormErrors.paymentMethod && (
                     <Form.Control.Feedback type="invalid">
