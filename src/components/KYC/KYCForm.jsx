@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Container,
   Row,
@@ -15,7 +15,7 @@ import Select from "react-select";
 import { getNames } from "country-list";
 import "./KYCForm.css";
 import { useNavigate } from "react-router-dom";
-import { getVeriffStatus, updateProfile } from "../../services/Api";
+import { getVeriffStatus, updateProfile, userProfile } from "../../services/Api";
 
 const KYCForm = () => {
   const navigate = useNavigate();
@@ -114,7 +114,7 @@ const KYCForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-   const runUpdateProfileApi = async () => {
+  const runUpdateProfileApi = async () => {
     setIsLoading(true);
     setApiError("");
     setApiSuccess("");
@@ -140,13 +140,14 @@ const KYCForm = () => {
         city: formData.city,
         state: formData.state,
         country: formData.country,
-        is_digital_Id_verified:'verified'
       };
+
+
 
       const response = await updateProfile(APIDATA);
       if (response && response.code === "200") {
         setApiSuccess("Profile updated successfully!");
-        getVeriffStatus();
+        await getVeriffStatus();
         setTimeout(() => setActiveKey("step2"), 1000);
       } else if (response && response.code === "400") {
         setApiError(
@@ -201,6 +202,17 @@ const KYCForm = () => {
     if (activeKey === "step2") setActiveKey("step1");
     if (activeKey === "step3") setActiveKey("step2");
   };
+
+useEffect(() => {
+  (async () => {
+    const response = await userProfile();
+    if (response?.code === "200") {
+      if ((response.data.is_digital_Id_verified || "").toLowerCase() === "approved") {
+        navigate("/dashboard");
+      }
+    }
+  })();
+}, []);
 
   return (
     <Container fluid className="py-5 pt-2">
@@ -695,7 +707,7 @@ const KYCForm = () => {
                     <Button
                       variant="success"
                       className="nextbtn"
-                      onClick={()=>navigate("/dashboard")}
+                      onClick={() => navigate("/dashboard")}
                     >
                       GO TO DASHBOARD
                     </Button>
