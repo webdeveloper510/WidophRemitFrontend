@@ -252,6 +252,7 @@ const ReceiverDetail = () => {
                     >
                       <Form.Control
                         type="text"
+                        name="first_name" 
                         value={values.first_name}
                         onChange={handleChange}
                         onBlur={handleBlur}
