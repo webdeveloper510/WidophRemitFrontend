@@ -344,6 +344,7 @@ const SendMoney = () => {
                         onBlur={handleAmountBlur}
                         disabled={isConverting}
                         isInvalid={touched.send_amt && !!errors.send_amt}
+                        autoComplete="off"
                       />
 
                       <Form.Control.Feedback type="invalid">

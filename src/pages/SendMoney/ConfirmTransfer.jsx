@@ -65,15 +65,13 @@ const ConfirmTransfer = () => {
     setIsLoadingZai(true);
 
     try {
-      const agreementResponse = await getAgreementList();
+      const agreementResponse = await getAgreementList(transferData.send_amt);
 
       if (!agreementResponse || agreementResponse.code !== "200") {
         toast.error("Failed to fetch agreement list");
         console.error("Agreement list fetch failed:", agreementResponse);
         return false;
       }
-      // const agreementUuid = agreementResponse?.data?.agreement_uuid;
-      // console.log(agreementResponse)
 
       const agreementUuid = JSON.parse(sessionStorage.getItem("payto_agreement_response")).data.agreement_uuid
 
@@ -113,51 +111,45 @@ const ConfirmTransfer = () => {
   };
 
   const handleMonovaPayment = async () => {
-    // const monovaFormData = sessionStorage.getItem("monova_form_data");
+    const monovaFormData = sessionStorage.getItem("monova_form_data");
 
-    // if (!monovaFormData) {
-    //   toast.error("Monova payment data not found.");
-    //   return false;
-    // }
+    if (!monovaFormData) {
+      toast.error("Monova payment data not found.");
+      return false;
+    }
 
-    // setIsLoadingMonova(true);
+    setIsLoadingMonova(true);
 
-    // try {
-    //   const monovaForm = JSON.parse(monovaFormData);
+    try {
+      const monovaForm = JSON.parse(monovaFormData);
+      const payload = {
+        amount: parseFloat(transferData?.send_amt || 0),
+        bsbNumber: monovaForm.bsbNumber,
+        accountNumber: monovaForm.accountNumber,
+        accountName: monovaForm.accountName,
+        payment_mode: monovaForm.payment_mode
+      };
+      const response = await createMonovaPayment(payload);
 
-    //   const paymentModeMap = {
-    //     "directDebit": "debit",
-    //     "NppCreditBankAccount": "npp"
-    //   };
+      if (response?.transactionId && response.transactionId !== 0) {
 
-    //   const payload = {
-    //     amount: parseFloat(transferData?.send_amt || 0),
-    //     bsbNumber: monovaForm.bsb,
-    //     accountNumber: monovaForm.accountNumber,
-    //     accountName: monovaForm.accountName,
-    //     payment_mode: paymentModeMap[monovaForm.paymentMethod] || monovaForm.paymentMethod
-    //   };
-    //   const response = await createMonovaPayment(payload);
+        sessionStorage.setItem("monova_transaction_id", response.transactionId);
 
-    //   if (response?.transactionId && response.transactionId !== 0) {
+        toast.success("Monova payment created successfully!");
+        sessionStorage.removeItem("monova_form_data");
 
-    //     sessionStorage.setItem("monova_transaction_id", response.transactionId);
-
-    //     toast.success("Monova payment created successfully!");
-    //     sessionStorage.removeItem("monova_form_data");
-
-    //     return true;
-    //   } else {
-    //     toast.error(response?.message || "Monova payment creation failed.");
-    //     return false;
-    //   }
-    // } catch (err) {
-    //   toast.error("Error while creating Monova payment.");
-    //   console.error("Monova payment error:", err);
-    //   return false;
-    // } finally {
-    //   setIsLoadingMonova(false);
-    // }
+        return true;
+      } else {
+        toast.error(response?.message || "Monova payment creation failed.");
+        return false;
+      }
+    } catch (err) {
+      toast.error("Error while creating Monova payment.");
+      console.error("Monova payment error:", err);
+      return false;
+    } finally {
+      setIsLoadingMonova(false);
+    }
   };
 
   const handlePayIDPayment = async () => {
@@ -195,9 +187,6 @@ const ConfirmTransfer = () => {
     const payToLimitData = sessionStorage.getItem("payto_limit_data");
     const payToAgreementData = sessionStorage.getItem("payto_agreement_response");
     const currentPaymentMethod = sessionStorage.getItem("selected_payment_method");
-    
-
-
     const receiverData = sessionStorage.getItem("selected_receiver");
 
     let receiverPaymentMethod = null;
@@ -221,12 +210,13 @@ const ConfirmTransfer = () => {
       sessionStorage.removeItem("payto_limit_data");
       sessionStorage.removeItem("payto_agreement_response");
 
-      paymentSuccess = await ZaiPayId({ transaction_id: sessionStorage.getItem("transaction_id") })
+      paymentSuccess = await ZaiPayId({ transaction_id: sessionStorage.getItem("transaction_id") });
+      console.log(paymentSuccess);
     }
 
     else if (currentPaymentMethod === "monova") {
-      // paymentSuccess = await handleMonovaPayment();      
-      paymentSuccess=true
+      paymentSuccess = await handleMonovaPayment();
+      paymentSuccess = true
       sessionStorage.removeItem("monova_form_data");
     }
     else if (

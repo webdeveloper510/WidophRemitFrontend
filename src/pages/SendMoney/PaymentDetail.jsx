@@ -84,8 +84,8 @@ const PaymentDetail = () => {
     if (receiver?.account_name) {
       setReceiverName(receiver.account_name);
     }
-    }
-  , []);
+  }
+    , []);
 
   const handlePayToFormChange = (field, value) => {
     setPayToForm((prev) => ({ ...prev, [field]: value }));
@@ -131,55 +131,40 @@ const PaymentDetail = () => {
     setModalShowPayToAgreement(true);
   };
 
-  const handleMonovaContinue = async () => {
-    const errors = {};
-    if (!monovaForm.paymentMethod)
-      errors.paymentMethod = "Please select payment method.";
-    if (!monovaForm.bsb) errors.bsb = "BSB is required.";
-    if (!monovaForm.accountNumber)
-      errors.accountNumber = "Account number is required.";
-    if (!monovaForm.accountName)
-      errors.accountName = "Account name is required.";
+ const handleMonovaContinue = async () => {
+  const errors = {};
+  if (!monovaForm.paymentMethod)
+    errors.paymentMethod = "Please select payment method.";
+  if (!monovaForm.bsb) errors.bsb = "BSB is required.";
+  if (!monovaForm.accountNumber)
+    errors.accountNumber = "Account number is required.";
+  if (!monovaForm.accountName)
+    errors.accountName = "Account name is required.";
 
-    setMonovaFormErrors(errors);
+  setMonovaFormErrors(errors);
 
-    if (Object.keys(errors).length === 0) {
-      try {
-        sessionStorage.setItem("monova_payment_data", JSON.stringify(monovaForm));
-        sessionStorage.setItem("selected_payment_method", "monova");
+  if (Object.keys(errors).length === 0) {
+    try {
+      sessionStorage.setItem("monova_payment_data", JSON.stringify(monovaForm));
+      sessionStorage.setItem("selected_payment_method", "monova");
 
-        const temp = {
-          amount: amount,
-          bsbNumber: monovaForm.bsb,
-          accountNumber: monovaForm.accountNumber,
-          accountName: monovaForm.accountName,
-          payment_mode: monovaForm.paymentMethod
-        };
+      const temp = {
+        amount: amount,
+        bsbNumber: monovaForm.bsb,
+        accountNumber: monovaForm.accountNumber,
+        accountName: monovaForm.accountName,
+        payment_mode: monovaForm.paymentMethod,
+      };
 
-        const result = await createMonovaPayment(temp);
-        sessionStorage.setItem("monova_form_data",result)
+      sessionStorage.setItem("monova_form_data", JSON.stringify(temp));
+      navigate("/confirm-transfer");
 
-        if (result?.error) {
-          console.error("Payment creation failed:", result);
-          // Optionally show an error to the user here
-          return;
-        }
-
-        if (result?.transactionId) {
-          const txnId = result.transactionId;
-          sessionStorage.setItem("monova_transaction_id", txnId);
-
-          navigate("/confirm-transfer");
-        }
-
-
-        setModalShowMonova(false);
-      } catch (err) {
-        console.error("Unexpected error during payment creation:", err);
-        // Optionally show an error to the user here
-      }
+      setModalShowMonova(false);
+    } catch (err) {
+      console.error("Unexpected error during payment creation:", err);
     }
-  };
+  }
+};
 
   const formatAmountLimit = (limit) => {
     if (!limit) return "Not specified";
@@ -201,6 +186,7 @@ const PaymentDetail = () => {
         toast.error("Failed to copy to clipboard.");
       });
   };
+
   const handleContinue = async () => {
     if (!transferReason) {
       setReasonError("Please select a transfer reason.");
@@ -208,11 +194,12 @@ const PaymentDetail = () => {
     }
 
     if (paymentType === "payto") {
+
       try {
         setIsLoadingAgreement(true);
-        const temp = sessionStorage.getItem("transfer_data");
-        const agreementList = await getAgreementList(temp.send_amt);
+        const agreementList = await getAgreementList(JSON.parse(sessionStorage.getItem("transfer_data")).amount.send_amt);
         setbsb(agreementList.data.bsb_code);
+        console.log(agreementList);
 
         if (agreementList?.code === "200" && agreementList?.data) {
           const agreementData = Array.isArray(agreementList.data)
@@ -225,7 +212,7 @@ const PaymentDetail = () => {
           ) {
             setPayToLimitForm({
               payId: agreementData.payid || "",
-              bsb: agreementData.bsb || "",
+              bsb: agreementData.bsb_code || "",
               accountNumber: agreementData.account_number || "",
               amountLimit: agreementData.max_amount || "",
               startDate:
@@ -233,14 +220,16 @@ const PaymentDetail = () => {
                 new Date().toISOString().split("T")[0],
             });
 
+
             if (agreementData.payid && agreementData.payid_type) {
               setPayToForm({
                 payIdType: agreementData.payid_type,
                 payId: agreementData.payid,
-                bsb: agreementData.bsb || "",
+                bsb: agreementData.bsb_code || "",
                 accountNumber: agreementData.account_number || "",
               });
             }
+
             setModalShowPayToAgreement(true);
           } else {
             setModalShowPayTo(true);
@@ -293,10 +282,12 @@ const PaymentDetail = () => {
     setIsCreatingAgreement(true);
     try {
       let payload;
+      const temp = JSON.parse(sessionStorage.getItem("transfer_data") || "{}");
+
       if (payToLimitForm.payId) {
         payload = {
           pay_id: payToLimitForm.payId,
-          agreement_amount: payToLimitForm.amountLimit,
+          agreement_amount: temp.amount?.send_amt || payToLimitForm.amountLimit,
           start_date: payToLimitForm.startDate,
           payid_type: payToForm.payIdType || "EMAL",
         };
@@ -304,27 +295,15 @@ const PaymentDetail = () => {
         payload = {
           bsb: payToLimitForm.bsb,
           account_number: payToLimitForm.accountNumber,
-          max_amount: payToLimitForm.amountLimit,
+          max_amount: temp.amount?.send_amt || payToLimitForm.amountLimit,
           agreement_start_date: payToLimitForm.startDate,
         };
       }
 
-      let temp = sessionStorage.getItem("transfer_data");
-      temp = JSON.parse(temp);
-      payload.account_number = payToLimitForm.accountNumber;
-      payload.bsb = bsb;
-      payload.agreement_amount=temp.amount.send_amt;
-      console.log(payload);
       const response = await createAgreement(payload);
       if (response?.code === "200" || response?.success) {
-        sessionStorage.setItem(
-          "payto_limit_data",
-          JSON.stringify(payToLimitForm)
-        );
-        sessionStorage.setItem(
-          "payto_agreement_response",
-          JSON.stringify(response)
-        );
+        sessionStorage.setItem("payto_limit_data", JSON.stringify(payToLimitForm));
+        sessionStorage.setItem("payto_agreement_response", JSON.stringify(response));
         toast.success("PayTo agreement created successfully!");
         setModalShowPayToAgreement(false);
         navigate("/confirm-transfer");

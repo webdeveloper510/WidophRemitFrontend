@@ -13,7 +13,6 @@ const TransactionSuccess = () => {
 
   useEffect(() => {
     const fetchTransactionStatus = async () => {
-      // Check for Monova transaction ID first
       const monovaTransactionId = sessionStorage.getItem("monova_transaction_id");
       const regularTransactionId = sessionStorage.getItem("transaction_id");
 
@@ -54,6 +53,7 @@ const TransactionSuccess = () => {
           if (response?.code === "200") {
             setTransaction(response.data);
             setStatus(response.message || "Pending");
+            console.log(response.data);
           } else {
             console.error("Error fetching transaction:", response?.message);
           }

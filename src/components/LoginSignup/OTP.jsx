@@ -84,7 +84,7 @@ const OtpVerification = () => {
         try {
           const parsedTransferData = JSON.parse(storedTransferData);
           setTransferData(parsedTransferData?.amount || {});
-        } catch (error) {
+        } catch (error) {// todo what payload needed on zai agreement
           console.error("Failed to parse transfer_data:", error);
         }
       }
@@ -96,7 +96,7 @@ const OtpVerification = () => {
 
   const handleZaiPayment = async () => {
     try {
-      const agreementResponse = await getAgreementList();
+      const agreementResponse = await getAgreementList(transferData.amount.send_amt);
 
       if (!agreementResponse || agreementResponse.code !== "200") {
         toast.error("Failed to fetch agreement list");
@@ -232,6 +232,7 @@ const OtpVerification = () => {
     }
     return true;
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 

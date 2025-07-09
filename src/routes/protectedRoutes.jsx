@@ -23,7 +23,6 @@ const ProtectedRoute = ({ children }) => {
 
       try {
         const res = await userProfile();
-        console.log(res);
 
         if (res?.code === '200') {
           const idStatus = res.data?.is_digital_Id_verified;

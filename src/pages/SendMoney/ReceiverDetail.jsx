@@ -256,27 +256,12 @@ const ReceiverDetail = () => {
                         value={values.first_name}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                      />
-                    </FloatingLabel>
-
-                    {/* <FloatingLabel
-                      as={Col}
-                      controlId="floatingInput"
-                      label="First Name"
-                      className="mb-3"
-                    >
-                      <Form.Control
-                        type="text"
-                        name="first_name" 
-                        value={values.first_name}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
                         isInvalid={touched.first_name && errors.first_name}
                       />
                       <Form.Control.Feedback type="invalid">
                         {errors.first_name}
                       </Form.Control.Feedback>
-                    </FloatingLabel> */}
+                    </FloatingLabel>
 
                     <FloatingLabel
                       as={Col}
