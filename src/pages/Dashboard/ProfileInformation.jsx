@@ -238,7 +238,8 @@ const ProfileInformation = () => {
                   <Form.Control
                     name="customerId"
                     value={formData.customerId}
-                    onChange={handleChange}
+                    readOnly
+                    plaintext
                   />
                 </FloatingLabel>
                 <FloatingLabel as={Col} label="Email">
@@ -248,6 +249,7 @@ const ProfileInformation = () => {
                     readOnly
                     plaintext
                   />
+
                 </FloatingLabel>
               </Row>
               <Row className="mb-3 mobile_numbero">
