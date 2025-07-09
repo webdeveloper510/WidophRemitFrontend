@@ -239,6 +239,8 @@ const ProfileInformation = () => {
                     name="customerId"
                     value={formData.customerId}
                     onChange={handleChange}
+                    disabled
+                    readOnly
                   />
                 </FloatingLabel>
                 <FloatingLabel as={Col} label="Email">
@@ -246,6 +248,7 @@ const ProfileInformation = () => {
                     type="email"
                     value={formData.email}
                     readOnly
+                    disabled
                     plaintext
                   />
                 </FloatingLabel>
@@ -257,7 +260,11 @@ const ProfileInformation = () => {
                       <Form.Select
                         value={countryCode}
                         disabled
-                        style={{ maxWidth: "110px", borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+                        style={{
+                          maxWidth: "110px",
+                          borderTopRightRadius: 0,
+                          borderBottomRightRadius: 0,
+                        }}
                       >
                         <option value="61">+61 (AU)</option>
                         <option value="64">+64 (NZ)</option>
@@ -266,7 +273,10 @@ const ProfileInformation = () => {
                         type="text"
                         value={rawMobile}
                         disabled
-                        style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+                        style={{
+                          borderTopLeftRadius: 0,
+                          borderBottomLeftRadius: 0,
+                        }}
                       />
                     </div>
                   </FloatingLabel>
