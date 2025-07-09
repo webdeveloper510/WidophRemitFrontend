@@ -121,7 +121,7 @@ const OtpVerification = () => {
         agreement_uuid: agreementUuid,
         transaction_id: transactionId,
       };
-      s;
+
       const zaiResponse = await ZaiPayTo(zaiPayload);
       if (zaiResponse && zaiResponse.code === "200") {
         sessionStorage.setItem(

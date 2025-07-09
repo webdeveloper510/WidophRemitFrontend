@@ -75,26 +75,31 @@ const ReceiverList = () => {
   };
 
   useEffect(() => {
-    const fetchRecipients = async () => {
-      setLoading(true);
-      const res = await recipientList({});
+  const fetchRecipients = async () => {
+    setLoading(true);
+    const res = await recipientList({});
 
-      if (res?.code === "200" && Array.isArray(res.data)) {
+    if (res?.code === "200") {
+      if (Array.isArray(res.data)) {
         setData(res.data);
-      } else if (res?.code === "400" && res?.message === "Recipients not found") {
-        setData([]);
       } else {
-        toast.error("Failed to fetch receiver list", {
-          autoClose: 3000,
-          position: "bottom-right",
-        });
+        setData([]);
       }
+    } else if (res?.code === "400" && res?.message === "Recipients not found") {
+      setData([]);
+    } else {
+      toast.error("Failed to fetch receiver list", {
+        autoClose: 3000,
+        position: "bottom-right",
+      });
+    }
 
-      setLoading(false);
-    };
+    setLoading(false);
+  };
 
-    fetchRecipients();
-  }, []);
+  fetchRecipients();
+}, []);
+
 
 
 
