@@ -164,6 +164,7 @@ const AddReceiver = () => {
                     >
                       <Form.Control
                         type="text"
+                        name="last_name"
                         value={values.last_name}
                         onChange={handleChange}
                       />
