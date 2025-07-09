@@ -36,19 +36,22 @@ const TransfersList = () => {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [list, setList] = useState([]);
 
-  const fetchList = async () => {
-    let data = [];
-    const response = await transactionHistory();
-    const pend_res = await pendingTransactions();
+ const fetchList = async () => {
+  let data = [];
+  const response = await transactionHistory();
+  const pend_res = await pendingTransactions();
 
-    if (response.code === "200") {
-      data = response.data.data;
-    }
+  if (response.code === "200" && response.data?.data) {
+    data = response.data.data;
+  }
 
-    if (pend_res.code === "200") {
-      setList([...data, ...pend_res.data]);
-    }
-  };
+  if (pend_res.code === "200" && pend_res.data) {
+    setList([...data, ...pend_res.data]);
+  } else {
+    setList(data);
+  }
+};
+
 
   useEffect(() => {
     fetchList();

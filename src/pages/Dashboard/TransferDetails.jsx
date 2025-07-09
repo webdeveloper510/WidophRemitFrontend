@@ -168,7 +168,7 @@ const TransferDetails = () => {
                         <tr>
                           <th>PayID</th>
                           <td>
-                            {transactionData?.send_method_details?.pay_id ||
+                            {transactionData?.send_method_details?.payid ||
                               "N/A"}
                           </td>
                         </tr>
