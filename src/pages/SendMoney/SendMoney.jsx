@@ -63,7 +63,7 @@ const SendMoney = () => {
           position: "bottom-right",
         });
         return;
-      }      
+      }
       let local = {};
       let transaction_id = sessionStorage.getItem("transaction_id") || null;
       const exch_data = await exchangeRate({
@@ -233,6 +233,16 @@ const SendMoney = () => {
     }
   };
 
+  const handleAmountChange = (e) => {
+    const { name, value } = e.target;
+    handleChange(e);
+
+    if (name === "send_amt") {
+      debouncedConversion(name, value, "from");
+    }
+  };
+
+
   const handleAmountBlur = (e) => {
     const { name, value } = e.target;
     if (value && !isConverting) {
@@ -330,11 +340,12 @@ const SendMoney = () => {
                         type="text"
                         name="send_amt"
                         value={values.send_amt}
-                        onChange={handleChange}
+                        onChange={handleAmountChange}
                         onBlur={handleAmountBlur}
                         disabled={isConverting}
                         isInvalid={touched.send_amt && !!errors.send_amt}
                       />
+
                       <Form.Control.Feedback type="invalid">
                         {errors.send_amt}
                       </Form.Control.Feedback>

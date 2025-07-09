@@ -63,32 +63,34 @@ const Receivers = () => {
     {
       name: "Action",
       cell: (row) => (
-        <div className="send-again-btn" onClick={() => setShow(row.id)}>
-          <Dropdown>
-            <Dropdown.Toggle variant="success" id="dropdown-basic">
-              <BsThreeDots />
-            </Dropdown.Toggle>
+        <Dropdown>
+          <Dropdown.Toggle variant="success" id="dropdown-basic">
+            <BsThreeDots />
+          </Dropdown.Toggle>
 
-            <Dropdown.Menu>
-              <Dropdown.Item href="#">Delete</Dropdown.Item>
-              {/* <Dropdown.Item href="transfer-details">View</Dropdown.Item> */}
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
+          <Dropdown.Menu>
+            <Dropdown.Item onClick={() => setShow(row.id)}>Delete</Dropdown.Item>
+            {/* <Dropdown.Item href="transfer-details">View</Dropdown.Item> */}
+          </Dropdown.Menu>
+        </Dropdown>
       ),
       ignoreRowClick: true,
       allowOverflow: true,
       button: true,
       center: true,
       width: "120px",
-    },
+    }
+
   ];
 
-  const filteredData = list.filter((item) =>
-    (item.first_name + item.middle_name + item.last_name + item.email)
-      .toLowerCase()
-      .includes(filterText.toLowerCase())
-  );
+  const filteredData = Array.isArray(list)
+    ? list.filter((item) =>
+      (item.first_name + item.middle_name + item.last_name + item.email)
+        .toLowerCase()
+        .includes(filterText.toLowerCase())
+    )
+    : [];
+
 
   const displayData = filteredData;
 
