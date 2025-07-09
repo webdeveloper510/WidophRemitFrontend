@@ -69,7 +69,9 @@ const Receivers = () => {
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
-            <Dropdown.Item onClick={() => setShow(row.id)}>Delete</Dropdown.Item>
+            <Dropdown.Item onClick={() => setShow(row.id)}>
+              Delete
+            </Dropdown.Item>
             {/* <Dropdown.Item href="transfer-details">View</Dropdown.Item> */}
           </Dropdown.Menu>
         </Dropdown>
@@ -79,30 +81,28 @@ const Receivers = () => {
       button: true,
       center: true,
       width: "120px",
-    }
-
+    },
   ];
 
   const filteredData = Array.isArray(list)
     ? list.filter((item) =>
-      (item.first_name + item.middle_name + item.last_name + item.email)
-        .toLowerCase()
-        .includes(filterText.toLowerCase())
-    )
+        (item.first_name + item.middle_name + item.last_name + item.email)
+          .toLowerCase()
+          .includes(filterText.toLowerCase())
+      )
     : [];
-
 
   const displayData = filteredData;
 
   const subHeaderComponent = (
     <div className="d-flex gap-3 mb-3 align-items-center">
-      <input
+      {/* <input
         type="text"
         className="form-control form-control-md filter-input"
         placeholder="Search . . . "
         value={filterText}
         onChange={(e) => setFilterText(e.target.value)}
-      />
+      /> */}
       <Link to={"/add-receiver"}>
         <button type="button" class="float-end download-button btn btn-success">
           <img src={AddReceiver} alt="img" /> Add Receiver

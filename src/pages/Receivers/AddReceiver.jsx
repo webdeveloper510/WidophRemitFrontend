@@ -90,7 +90,11 @@ const AddReceiver = () => {
                     <FloatingLabel
                       controlId="floatingSelect"
                       as={Col}
-                      label="Bank Name"
+                      label={
+                        <span>
+                          Bank Name <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
                     >
                       <Form.Select
                         aria-label="Floating label select example"
@@ -111,7 +115,11 @@ const AddReceiver = () => {
                     <FloatingLabel
                       as={Col}
                       controlId="floatingInput"
-                      label="Account Number"
+                      label={
+                        <span>
+                          Account Number <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
                       className="mb-3"
                     >
                       <Form.Control
@@ -133,7 +141,11 @@ const AddReceiver = () => {
                     <FloatingLabel
                       as={Col}
                       controlId="floatingInput"
-                      label="First Name"
+                      label={
+                        <span>
+                          First Name <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
                       className="mb-3"
                     >
                       <Form.Control
@@ -146,7 +158,11 @@ const AddReceiver = () => {
                     <FloatingLabel
                       as={Col}
                       controlId="floatingInput"
-                      label="Middle Name"
+                      label={
+                        <span>
+                          Middle Name <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
                       className="mb-3"
                     >
                       <Form.Control
@@ -159,7 +175,11 @@ const AddReceiver = () => {
                     <FloatingLabel
                       as={Col}
                       controlId="floatingInput"
-                      label="Last Name"
+                      label={
+                        <span>
+                          Last Name <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
                       className="mb-3"
                     >
                       <Form.Control
@@ -201,7 +221,11 @@ const AddReceiver = () => {
                     <FloatingLabel
                       controlId="floatingSelect"
                       as={Col}
-                      label="Country"
+                      label={
+                        <span>
+                          Country <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
                       className="mb-3"
                     >
                       <Form.Select
@@ -238,7 +262,11 @@ const AddReceiver = () => {
                     <FloatingLabel
                       as={Col}
                       controlId="floatingInput"
-                      label="City"
+                      label={
+                        <span>
+                          City <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
                       className="mb-3"
                     >
                       <Form.Control
@@ -251,7 +279,7 @@ const AddReceiver = () => {
                     <FloatingLabel
                       as={Col}
                       controlId="floatingInput"
-                      label="Zip/Postal Code*"
+                      label="Zip/Postal Code"
                       className="mb-3"
                     >
                       <Form.Control
@@ -265,7 +293,11 @@ const AddReceiver = () => {
                     <FloatingLabel
                       as={Col}
                       controlId="floatingInput"
-                      label="State"
+                      label={
+                        <span>
+                          State <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
                       className="mb-3"
                     >
                       <Form.Control
