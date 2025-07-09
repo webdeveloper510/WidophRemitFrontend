@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 const ReceiverList = () => {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true); // loading state
+  const [loading, setLoading] = useState(true); 
   const navigate = useNavigate();
 
   const handleSendAgain = (row) => {

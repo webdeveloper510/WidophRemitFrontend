@@ -100,7 +100,6 @@ const ReviewTransfer = () => {
     : "";
 
   const handleSaveAndContinue = async () => {
-    console.log("coming");
     
     if (!receiver) {
       toast.error("No receiver selected");

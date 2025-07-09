@@ -54,11 +54,21 @@ const KYCForm = () => {
     label: country,
   }));
 
-  const handleClick = () => {
-    // Static verification - just mark as verified
-    setIdVerified(true);
-    setSelectedFileName("ID_Document_Verified.pdf");
-  };
+  const handleClick = async () => {
+  try {
+    const response = await getVeriffStatus();
+
+    if (response?.code === "200" && response?.data?.status === "submitted") {
+      setIdVerified(true);
+      setSelectedFileName("ID_Document_Verified.pdf");
+      navigate("/dashboard");
+    } else {
+      console.warn("Verification not successful:", response);
+    }
+  } catch (error) {
+    console.error("Error during verification:", error);
+  }
+};
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -147,7 +157,7 @@ const KYCForm = () => {
       const response = await updateProfile(APIDATA);
       if (response && response.code === "200") {
         setApiSuccess("Profile updated successfully!");
-        await getVeriffStatus();
+        // await getVeriffStatus();
         setTimeout(() => setActiveKey("step2"), 1000);
       } else if (response && response.code === "400") {
         setApiError(
@@ -203,16 +213,16 @@ const KYCForm = () => {
     if (activeKey === "step3") setActiveKey("step2");
   };
 
-useEffect(() => {
-  (async () => {
-    const response = await userProfile();
-    if (response?.code === "200") {
-      if ((response.data.is_digital_Id_verified || "").toLowerCase() === "approved") {
-        navigate("/dashboard");
+  useEffect(() => {
+    (async () => {
+      const response = await userProfile();
+      if (response?.code === "200") {
+        if ((response.data.is_digital_Id_verified || "").toLowerCase() === "approved") {
+          navigate("/dashboard");
+        }
       }
-    }
-  })();
-}, []);
+    })();
+  }, []);
 
   return (
     <Container fluid className="py-5 pt-2">
@@ -703,13 +713,6 @@ useEffect(() => {
                       onClick={goToPrevious}
                     >
                       Previous
-                    </Button>
-                    <Button
-                      variant="success"
-                      className="nextbtn"
-                      onClick={() => navigate("/dashboard")}
-                    >
-                      GO TO DASHBOARD
                     </Button>
                   </div>
                 </div>
