@@ -15,10 +15,7 @@ const TopNavbar = ({ onToggleSidebar }) => {
     onToggleSidebar();
   };
 
-  // ❌ Do not render on /kyc
-  if (location.pathname === "/kyc") {
-    return null;
-  }
+
 
   return (
     <div className="d-flex align-items-center">

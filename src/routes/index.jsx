@@ -42,10 +42,10 @@ const AppRoutes = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         {/* OTP route accessible by both protected and public */}
         <Route path="/otp-verification" element={<OtpVerification />} />
-
         {/* Protected Routes */}
       </Route>
-      <Route path="/kyc" element={<KYCForm />} />
+        <Route path="/kyc" element={<KYCForm />} />
+
       <Route
         path="/"
         element={
