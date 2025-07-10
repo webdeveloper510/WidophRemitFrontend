@@ -235,7 +235,7 @@ const KYCForm = () => {
   return (
     <>
       <TopNavbar />
-      <Container className="py-5 pt-2 mt-5 mb-5">
+      <Container className="py-5 pt-2 mt-5 mb-5 d-flex justify-content-between">
         <Tab.Container
           activeKey={activeKey}
           onSelect={(k) => {
@@ -244,7 +244,7 @@ const KYCForm = () => {
             else if (k === "step1") setActiveKey("step1");
           }}
         >
-          <Row>
+          <Row className="w-100">
             <Col
               md={3}
               className="sidebar-steps d-flex justify-content-center align-items-center flex-column"
