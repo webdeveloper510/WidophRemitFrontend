@@ -22,6 +22,7 @@ import {
 } from "../../services/Api";
 import { useNavigate, useLocation } from "react-router-dom";
 import LoginImage from "../../assets/images/login-image.png";
+import loaderlogo from "../../assets/images/logo.png";
 
 const OtpVerification = () => {
   const [otp, setOtp] = useState("");
@@ -29,6 +30,7 @@ const OtpVerification = () => {
   const [userData, setUserData] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [transferData, setTransferData] = useState(null);
+
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || "signup";
@@ -84,7 +86,8 @@ const OtpVerification = () => {
         try {
           const parsedTransferData = JSON.parse(storedTransferData);
           setTransferData(parsedTransferData?.amount || {});
-        } catch (error) {// todo what payload needed on zai agreement
+        } catch (error) {
+          // todo what payload needed on zai agreement
           console.error("Failed to parse transfer_data:", error);
         }
       }
@@ -96,7 +99,9 @@ const OtpVerification = () => {
 
   const handleZaiPayment = async () => {
     try {
-      const agreementResponse = await getAgreementList(transferData.amount.send_amt);
+      const agreementResponse = await getAgreementList(
+        transferData.amount.send_amt
+      );
 
       if (!agreementResponse || agreementResponse.code !== "200") {
         toast.error("Failed to fetch agreement list");
@@ -371,117 +376,128 @@ const OtpVerification = () => {
   };
 
   return (
-    <Container className="login-form-wrappe">
-      <Row>
-        <Col md={7} className="d-flex align-items-center justify-content-start">
-          <div className="login-form-wrapper w-100">
-            <div className="exchange-title mb-4">
-              OTP <br />
-              Verification
-              <span className="exchange_rate optTagLine">
-                Please enter the code sent to your phone
-              </span>
-            </div>
+    <>
+      <div className="loader-wrapper">
+        <img src={loaderlogo} alt="Logo" className="loader-logo" />
+        <div className="spinner"></div>
+      </div>
 
-            {userData && (
-              <div className="mb-3 text-muted small">
-                Code sent to: {userData.mobile}
+      <Container className="login-form-wrappe">
+        <Row>
+          <Col
+            md={7}
+            className="d-flex align-items-center justify-content-start"
+          >
+            <div className="login-form-wrapper w-100">
+              <div className="exchange-title mb-4">
+                OTP <br />
+                Verification
+                <span className="exchange_rate optTagLine">
+                  Please enter the code sent to your phone
+                </span>
               </div>
-            )}
 
-            {isProcessing && (
-              <div className="mb-3 text-info small">
-                <div className="d-flex align-items-center">
-                  <div
-                    className="spinner-border spinner-border-sm me-2"
-                    role="status"
-                  >
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
-                  {from === "transfer"
-                    ? "Processing payment..."
-                    : "Processing your verification..."}
+              {userData && (
+                <div className="mb-3 text-muted small">
+                  Code sent to: {userData.mobile}
                 </div>
-              </div>
-            )}
+              )}
 
-            <Form className="exchange-form" onSubmit={handleSubmit}>
-              <Row className="mb-4">
-                <Col className="inputBoxStyle">
-                  <OtpInput
-                    value={otp}
-                    onChange={setOtp}
-                    numInputs={6}
-                    separator={<span style={{ margin: "0 6px" }}>-</span>}
-                    renderInput={(props) => <input {...props} />}
-                    inputStyle={{
-                      width: "3rem",
-                      height: "3rem",
-                      fontSize: "1.5rem",
-                      borderRadius: "8px",
-                      border: "1px solid #ced4da",
-                      textAlign: "center",
-                    }}
-                    disabled={isProcessing}
-                  />
-                </Col>
-              </Row>
+              {isProcessing && (
+                <div className="mb-3 text-info small">
+                  <div className="d-flex align-items-center">
+                    <div
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                    >
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
+                    {from === "transfer"
+                      ? "Processing payment..."
+                      : "Processing your verification..."}
+                  </div>
+                </div>
+              )}
 
-              <Button
-                type="submit"
-                className="custom-signin-btn mb-3 btn btn-success"
-                disabled={loading || !userData || isProcessing}
-              >
-                {loading
-                  ? "Verifying..."
-                  : isProcessing
+              <Form className="exchange-form" onSubmit={handleSubmit}>
+                <Row className="mb-4">
+                  <Col className="inputBoxStyle">
+                    <OtpInput
+                      value={otp}
+                      onChange={setOtp}
+                      numInputs={6}
+                      separator={<span style={{ margin: "0 6px" }}>-</span>}
+                      renderInput={(props) => <input {...props} />}
+                      inputStyle={{
+                        width: "3rem",
+                        height: "3rem",
+                        fontSize: "1.5rem",
+                        borderRadius: "8px",
+                        border: "1px solid #ced4da",
+                        textAlign: "center",
+                      }}
+                      disabled={isProcessing}
+                    />
+                  </Col>
+                </Row>
+
+                <Button
+                  type="submit"
+                  className="custom-signin-btn mb-3 btn btn-success"
+                  disabled={loading || !userData || isProcessing}
+                >
+                  {loading
+                    ? "Verifying..."
+                    : isProcessing
                     ? from === "transfer"
                       ? "Processing Payment..."
                       : "Processing..."
                     : "Verify OTP"}
-              </Button>
+                </Button>
 
-              <div className="small text-muted mt-3">
-                Didn't receive the code?{" "}
-                <button
-                  type="button"
-                  className="btn btn-link text-success fw-semibold p-0 forgotpassword-text"
-                  onClick={handleResendOtp}
-                  disabled={loading || isProcessing}
-                >
-                  Resend
-                </button>
-              </div>
+                <div className="small text-muted mt-3">
+                  Didn't receive the code?{" "}
+                  <button
+                    type="button"
+                    className="btn btn-link text-success fw-semibold p-0 forgotpassword-text"
+                    onClick={handleResendOtp}
+                    disabled={loading || isProcessing}
+                  >
+                    Resend
+                  </button>
+                </div>
 
-              <div className="mt-3">
-                <a
-                  href={from === "transfer" ? "/payment-detail" : "/signup"}
-                  className="text-success fw-bold forgotpassword-text"
-                  onClick={() => {
-                    if (from === "signup") {
-                      sessionStorage.removeItem("signupData");
-                    } else if (from === "transfer") {
-                      sessionStorage.removeItem("transferOtpData");
-                    }
-                  }}
-                >
-                  ← Back to {from === "transfer" ? "Payment Details" : "Signup"}
-                </a>
-              </div>
-            </Form>
-          </div>
-        </Col>
+                <div className="mt-3">
+                  <a
+                    href={from === "transfer" ? "/payment-detail" : "/signup"}
+                    className="text-success fw-bold forgotpassword-text"
+                    onClick={() => {
+                      if (from === "signup") {
+                        sessionStorage.removeItem("signupData");
+                      } else if (from === "transfer") {
+                        sessionStorage.removeItem("transferOtpData");
+                      }
+                    }}
+                  >
+                    ← Back to{" "}
+                    {from === "transfer" ? "Payment Details" : "Signup"}
+                  </a>
+                </div>
+              </Form>
+            </div>
+          </Col>
 
-        <Col
-          md={5}
-          className="d-none d-md-flex align-items-center justify-content-end"
-        >
-          <div className="image-wrapper">
-            <img src={LoginImage} alt="Login Art" className="clipped-img" />
-          </div>
-        </Col>
-      </Row>
-    </Container>
+          <Col
+            md={5}
+            className="d-none d-md-flex align-items-center justify-content-end"
+          >
+            <div className="image-wrapper">
+              <img src={LoginImage} alt="Login Art" className="clipped-img" />
+            </div>
+          </Col>
+        </Row>
+      </Container>
+    </>
   );
 };
 
