@@ -1,3 +1,4 @@
+// ... imports remain unchanged
 import React, { useState } from "react";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
@@ -7,8 +8,11 @@ import "react-phone-input-2/lib/style.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Formik, Form as FormikForm, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import LoginImage from "../../assets/images/login-image.png";
+import { resetPassword } from "../../services/Api";
 
 const ResetPassword = () => {
   const [loading, setLoading] = useState(false);
@@ -16,6 +20,9 @@ const ResetPassword = () => {
     password: false,
     confirmPassword: false,
   });
+
+  const { customer_id } = useLocation().state || {};
+  const navigate = useNavigate();
 
   const toggleVisibility = (field) => {
     setVisibility((prev) => ({
@@ -25,21 +32,50 @@ const ResetPassword = () => {
   };
 
   const validationSchema = Yup.object().shape({
+    reset_password_otp: Yup.string()
+      .length(6, "O.T.P must be of 6 digits")
+      .required("O.T.P is required"),
     password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
+      .min(8, "Password must be at least 8 characters")
       .required("Password is required"),
     confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password"), null], "Passwords must match")
+      .oneOf([Yup.ref("password")], "Passwords did not match")
       .required("Confirm Password is required"),
   });
 
-  const handleSubmit = async (values, { setSubmitting }) => {
+  const handleSubmit = async (values, { resetForm, setSubmitting }) => {
     setLoading(true);
     try {
-      console.log("Form Submitted:", values);
-      // API call here
+      const res = await resetPassword({
+        customer_id,
+        password: values.password,
+        reset_password_otp: values.reset_password_otp,
+      });
+      if (res.code === "200") {
+        toast.success("Password Reset Successfully, please login to continue", {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+        });
+        resetForm();
+        navigate("/login");
+      } else if (res.code === "400") {
+        toast.error(res.message, {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+        });
+      }
     } catch (error) {
-      console.error("Submission error:", error);
+      const errRes = error?.response;
+      toast.error(
+        errRes?.message || errRes?.data?.message || errRes?.non_field_errors || "Error occurred",
+        {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+        }
+      );
     } finally {
       setLoading(false);
       setSubmitting(false);
@@ -53,20 +89,48 @@ const ResetPassword = () => {
           <div className="login-form-wrapper w-100">
             <div className="exchange-title">
               Reset <br /> Password
-              <span className="exchange_rate optTagLine">
-                {" "}
-                To send money securely.
-              </span>
+              <span className="exchange_rate optTagLine">To send money securely.</span>
             </div>
 
             <Formik
-              initialValues={{ password: "", confirmPassword: "" }}
+              initialValues={{ reset_password_otp: "", password: "", confirmPassword: "" }}
               validationSchema={validationSchema}
               onSubmit={handleSubmit}
             >
-              {({ errors, touched, isSubmitting }) => (
+              {({ errors, touched, isSubmitting, values, setFieldValue }) => (
                 <FormikForm className="exchange-form">
-                  {/* Password */}
+                  {/* OTP Field */}
+                  <Row className="mb-3">
+                    <label className="form-label">
+                      Reset Password OTP <span>*</span>
+                    </label>
+                    <Field name="reset_password_otp">
+                      {({ field }) => (
+                        <Form.Control
+                          {...field}
+                          type="text"
+                          maxLength={6}
+                          placeholder="Enter OTP"
+                          value={values.reset_password_otp}
+                          onChange={(e) => {
+                            const filtered = e.target.value.replace(/[^0-9]/g, "");
+                            setFieldValue("reset_password_otp", filtered);
+                          }}
+                          className={`${errors.reset_password_otp && touched.reset_password_otp
+                              ? "is-invalid"
+                              : ""
+                            }`}
+                        />
+                      )}
+                    </Field>
+                    <ErrorMessage
+                      name="reset_password_otp"
+                      component="div"
+                      className="invalid-feedback"
+                    />
+                  </Row>
+
+                  {/* Password Field */}
                   <Row className="mb-3">
                     <label className="form-label">
                       Password <span>*</span>
@@ -78,11 +142,8 @@ const ResetPassword = () => {
                             {...field}
                             type={visibility.password ? "text" : "password"}
                             placeholder="Password"
-                            className={`passowrdinput ${
-                              errors.password && touched.password
-                                ? "is-invalid"
-                                : ""
-                            }`}
+                            className={`passowrdinput ${errors.password && touched.password ? "is-invalid" : ""
+                              }`}
                           />
                         )}
                       </Field>
@@ -113,11 +174,10 @@ const ResetPassword = () => {
                             {...field}
                             type={visibility.confirmPassword ? "text" : "password"}
                             placeholder="Confirm Password"
-                            className={`passowrdinput ${
-                              errors.confirmPassword && touched.confirmPassword
+                            className={`passowrdinput ${errors.confirmPassword && touched.confirmPassword
                                 ? "is-invalid"
                                 : ""
-                            }`}
+                              }`}
                           />
                         )}
                       </Field>
@@ -147,10 +207,7 @@ const ResetPassword = () => {
 
                   <div>
                     Back to Login{" "}
-                    <a
-                      href="/login"
-                      className="text-success fw-bold forgotpassword-text"
-                    >
+                    <a href="/login" className="text-success fw-bold forgotpassword-text">
                       Go Back
                     </a>
                   </div>
