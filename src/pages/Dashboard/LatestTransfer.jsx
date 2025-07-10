@@ -78,12 +78,12 @@ const LatestTransfer = () => {
       name: "Action",
       cell: (row) => (
         <div className="send-again-btn">
-          <Dropdown>
+          <Dropdown renderMenuOnMount>
             <Dropdown.Toggle variant="success" id="dropdown-basic">
               <BsThreeDots />
             </Dropdown.Toggle>
 
-            <Dropdown.Menu>
+            <Dropdown.Menu align="end" className="recievers-list">
               <Dropdown.Item onClick={() => handleViewDetails(row)}>
                 View
               </Dropdown.Item>
@@ -119,7 +119,6 @@ const LatestTransfer = () => {
   }, []);
 
   console.log(list);
-  
 
   return (
     <Card className="receiver-card">

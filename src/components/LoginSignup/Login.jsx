@@ -131,10 +131,11 @@ const Login = () => {
                               {...field}
                               type="text"
                               placeholder="Email / Mobile Number"
-                              className={`form-control ${errors.value && touched.value
-                                ? "is-invalid"
-                                : ""
-                                }`}
+                              className={`form-control ${
+                                errors.value && touched.value
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
                               onChange={(e) =>
                                 handleInputChange(e.target.value, setFieldValue)
                               }
@@ -193,10 +194,11 @@ const Login = () => {
                           <Form.Control
                             {...field}
                             placeholder="Password"
-                            className={`passowrdinput ${errors.password && touched.password
-                              ? "is-invalid"
-                              : ""
-                              }`}
+                            className={`passowrdinput ${
+                              errors.password && touched.password
+                                ? "is-invalid"
+                                : ""
+                            }`}
                             type={visibility.current ? "text" : "password"}
                           />
                         )}

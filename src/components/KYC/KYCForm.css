@@ -15,9 +15,9 @@
   height: 90vh;
   padding-right: 0 !important;
 }
-.kyc-content-form {
+/* .kyc-content-form {
   height: 90vh;
-}
+} */
 .stepper {
   display: flex;
   flex-direction: column;
@@ -246,4 +246,40 @@ p.selected-file-name {
 
 form.profile-form h3 {
   margin-bottom: 35px;
+}
+.mobileinput {
+  position: relative;
+}
+.mobileinput label {
+  position: absolute;
+  top: -23px;
+  background: #fff;
+  height: 43px;
+  padding: 0;
+  line-height: 43px;
+  left: 34px;
+  font-size: 14px;
+}
+.react-select__control.css-13cymwt-control,
+.css-b62m3t-container,
+.css-t3ipsp-control,
+.css-t3ipsp-control:hover {
+  height: calc(3.5rem + calc(var(--bs-border-width) * 2)) !important;
+  min-height: calc(3.5rem + calc(var(--bs-border-width) * 2)) !important;
+  line-height: 1.25;
+  border: 1px solid #e0e3b7 !important;
+  resize: none;
+  border-radius: 10px;
+}
+.kyc-country {
+  position: relative;
+}
+.kyc-country label {
+  position: absolute;
+  z-index: 9;
+  color: #9cb417;
+  font-weight: 400;
+  top: -12px;
+  background: #fff;
+  left: 10px;
 }
