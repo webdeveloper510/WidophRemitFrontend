@@ -36,29 +36,33 @@ const TransfersList = () => {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [list, setList] = useState([]);
 
- const fetchList = async () => {
-  let data = [];
-  const response = await transactionHistory();
-  const pend_res = await pendingTransactions();
+  const fetchList = async () => {
+    let data = [];
+    const response = await transactionHistory();
+    const pend_res = await pendingTransactions();
 
-  if (response.code === "200" && response.data?.data) {
-    data = response.data.data;
-  }
+    if (response.code === "200" && response.data?.data) {
+      data = response.data.data;
+    }
 
-  if (pend_res.code === "200" && pend_res.data) {
-    setList([...data, ...pend_res.data]);
-  } else {
-    setList(data);
-  }
-};
-
+    if (pend_res.code === "200" && pend_res.data) {
+      setList([...data, ...pend_res.data]);
+    } else {
+      setList(data);
+    }
+  };
 
   useEffect(() => {
     fetchList();
   }, []);
 
   const filteredData = list.filter((item) => {
-    const matchesText = (item.recipient_name + item.payment_status + item.date + item.amount)
+    const matchesText = (
+      item.recipient_name +
+      item.payment_status +
+      item.date +
+      item.amount
+    )
       .toLowerCase()
       .includes(filterText.toLowerCase());
 
@@ -75,13 +79,13 @@ const TransfersList = () => {
 
   const subHeaderComponent = (
     <div className="d-flex gap-3 mb-3 align-items-center">
-      <input
+      {/* <input
         type="text"
         className="form-control form-control-md filter-input"
         placeholder="Search . . . "
         value={filterText}
         onChange={(e) => setFilterText(e.target.value)}
-      />
+      /> */}
       <select
         className="form-select form-select-md filter-select"
         value={selectedStatus}
@@ -153,10 +157,17 @@ const TransfersList = () => {
             </Dropdown.Toggle>
 
             <Dropdown.Menu>
-              <Dropdown.Item href={`${import.meta.env.VITE_APP_API_URI}/payment/receipt/${row.id}`}>
+              <Dropdown.Item
+                href={`${import.meta.env.VITE_APP_API_URI}/payment/receipt/${
+                  row.id
+                }`}
+              >
                 Download Receipt
               </Dropdown.Item>
-              <Dropdown.Item as={Link} to={`/transfer-details/${row.transaction_id}`}>
+              <Dropdown.Item
+                as={Link}
+                to={`/transfer-details/${row.transaction_id}`}
+              >
                 View Details
               </Dropdown.Item>
             </Dropdown.Menu>

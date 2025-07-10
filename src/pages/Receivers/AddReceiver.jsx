@@ -11,10 +11,12 @@ import PhoneInput from "react-phone-number-input";
 import { useFormik } from "formik";
 import Bank_list from "../../utils/Bank_list";
 import { createRecipient } from "../../services/Api";
+import CountrySelect from "react-bootstrap-country-select";
 
 const AddReceiver = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [value, setValue] = useState(null);
 
   const initialValues = {
     bank_name: "",
@@ -96,7 +98,13 @@ const AddReceiver = () => {
                         </span>
                       }
                     >
-                      <Form.Select
+                      <Form.Control
+                        type="text"
+                        name="bank_name"
+                        value={values.bank_name}
+                        onChange={handleChange}
+                      />
+                      {/* <Form.Select
                         aria-label="Floating label select example"
                         name="bank_name"
                         onChange={handleChange}
@@ -110,7 +118,7 @@ const AddReceiver = () => {
                             </option>
                           );
                         })}
-                      </Form.Select>
+                      </Form.Select> */}
                     </FloatingLabel>
                     <FloatingLabel
                       as={Col}
@@ -226,9 +234,17 @@ const AddReceiver = () => {
                           Country <span style={{ color: "red" }}>*</span>
                         </span>
                       }
-                      className="mb-3"
+                      className="mb-3 selectcountry"
                     >
-                      <Form.Select
+                      <CountrySelect
+                        name="country"
+                        value={value}
+                        onChange={setValue}
+                        flags
+                        //placeholder="Select country..."
+                      />
+                    </FloatingLabel>
+                    {/* <Form.Select
                         aria-label="Floating label select example"
                         name="country"
                         value={values.country}
@@ -240,8 +256,7 @@ const AddReceiver = () => {
                             {coun.name}
                           </option>
                         ))}
-                      </Form.Select>
-                    </FloatingLabel>
+                      </Form.Select> */}
 
                     <FloatingLabel
                       as={Col}

@@ -275,6 +275,23 @@ div#basic-navbar-nav a {
   margin: 0;
 }
 /*********** dashbaord css ********/
+.selectcountry label {
+  position: absolute;
+  top: 0px;
+  transform: scale(0.85) translateY(-1.5rem) translateX(2.15rem) !important;
+  background: #fff;
+  height: 43px;
+  padding: 0;
+  line-height: 43px;
+  z-index: 9;
+}
+.customHeight {
+  height: 100%;
+}
+.form-floating > :disabled ~ label {
+  color: #9cb417;
+  font-weight: 400;
+}
 .scroll-table-body .rdt_TableBody {
   /* max-height: 600px; */
   overflow-y: auto;
@@ -521,6 +538,7 @@ form.profile-form textarea {
   height: 43px;
   padding: 0;
   line-height: 43px;
+  z-index: 0 !important;
 }
 .form-floating > .form-control-plaintext:-webkit-autofill,
 .form-floating > .form-control:-webkit-autofill {
@@ -834,7 +852,7 @@ span.divider {
 .filter-select {
   border: 1px solid rgb(67 72 0 / 23%);
   border-radius: 22px;
-  width: 35%;
+  width: 160px;
 }
 
 nav.sc-dTUlgT.jWqsSS.rdt_Pagination {

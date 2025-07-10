@@ -5,11 +5,7 @@ import { FaArrowRotateRight } from "react-icons/fa6";
 import RecentReceiver from "../../assets/images/icons1.png";
 import { recipientList } from "../../services/Api";
 
-const handleSendAgain = (row) => {
-};
-
-
-
+const handleSendAgain = (row) => {};
 
 const customStyles = {
   headCells: {
@@ -35,20 +31,17 @@ const customStyles = {
 };
 
 const ReceiverTable = () => {
-
   const [data, setData] = useState([]);
 
   useEffect(() => {
     (async () => {
       const response = await recipientList();
       if (response.code === "200") {
-        if (response.data.length >= 5)
-          setData(response.data.slice(0, 5))
-        else
-          setData(response.data)
+        if (response.data.length >= 5) setData(response.data.slice(0, 5));
+        else setData(response.data);
       }
     })();
-  }, [])
+  }, []);
 
   const columns = [
     {
@@ -65,7 +58,9 @@ const ReceiverTable = () => {
     },
     {
       name: "Name",
-      selector: (row) => { `${row.first_name} ${row.last_name}` },
+      selector: (row) => {
+        `${row.first_name} ${row.last_name}`;
+      },
       sortable: true,
       cell: (row) => <strong>{`${row.first_name} ${row.last_name}`}</strong>,
     },
@@ -85,7 +80,7 @@ const ReceiverTable = () => {
   ];
 
   return (
-    <Card className="receiver-card">
+    <Card className="receiver-card customHeight">
       <Card.Body>
         <div className="table-header">
           <span className="icon">

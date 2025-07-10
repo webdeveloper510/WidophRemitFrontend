@@ -21,6 +21,7 @@ import MonoovaPaymentGateway from "../pages/PaymentGateway/MonoovaPaymentGateway
 import LoginLayout from "../components/LoginSignup/LoginLayout";
 import Login from "../components/LoginSignup/Login";
 import SignUp from "../components/LoginSignup/Signup";
+import ForgotPassword from "../components/LoginSignup/ForgotPassword";
 import KYCForm from "../components/KYC/KYCForm";
 import OtpVerification from "../components/LoginSignup/OTP";
 import TransactionSuccess from "../pages/SendMoney/TranscationSuccess";
@@ -38,13 +39,13 @@ const AppRoutes = () => {
       >
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
-
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         {/* OTP route accessible by both protected and public */}
         <Route path="/otp-verification" element={<OtpVerification />} />
-        <Route path="/kyc" element={<KYCForm />} />
+
         {/* Protected Routes */}
       </Route>
-
+      <Route path="/kyc" element={<KYCForm />} />
       <Route
         path="/"
         element={

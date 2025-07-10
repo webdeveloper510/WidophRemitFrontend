@@ -201,7 +201,7 @@ const ProfileInformation = () => {
             <Card.Body>
               <Card.Title>Personal Details</Card.Title>
               <Row className="mb-3">
-                <FloatingLabel as={Col} label="First Name">
+                <FloatingLabel as={Col} label="First Name" className="mb-3">
                   <Form.Control
                     name="firstName"
                     value={formData.firstName}
@@ -213,14 +213,14 @@ const ProfileInformation = () => {
                     First Name is required
                   </Form.Control.Feedback>
                 </FloatingLabel>
-                <FloatingLabel as={Col} label="Middle Name">
+                <FloatingLabel as={Col} label="Middle Name" className="mb-3">
                   <Form.Control
                     name="middleName"
                     value={formData.middleName}
                     onChange={handleChange}
                   />
                 </FloatingLabel>
-                <FloatingLabel as={Col} label="Last Name">
+                <FloatingLabel as={Col} label="Last Name" className="mb-3">
                   <Form.Control
                     name="lastName"
                     value={formData.lastName}
@@ -234,7 +234,7 @@ const ProfileInformation = () => {
                 </FloatingLabel>
               </Row>
               <Row className="mb-3">
-                <FloatingLabel as={Col} label="Customer ID">
+                <FloatingLabel as={Col} label="Customer ID" className="mb-3">
                   <Form.Control
                     name="customerId"
                     value={formData.customerId}
@@ -242,7 +242,7 @@ const ProfileInformation = () => {
                     plaintext
                   />
                 </FloatingLabel>
-                <FloatingLabel as={Col} label="Email">
+                <FloatingLabel as={Col} label="Email" className="mb-3">
                   <Form.Control
                     type="email"
                     value={formData.email}
@@ -250,12 +250,11 @@ const ProfileInformation = () => {
                     disabled
                     plaintext
                   />
-
                 </FloatingLabel>
               </Row>
               <Row className="mb-3 mobile_numbero">
                 <Col>
-                  <FloatingLabel label="Mobile Number">
+                  <FloatingLabel label="Mobile Number" className="mb-3">
                     <div className="d-flex align-items-stretch">
                       <Form.Select
                         value={countryCode}
@@ -283,7 +282,7 @@ const ProfileInformation = () => {
                 </Col>
               </Row>
               <Row className="mb-3">
-                <FloatingLabel as={Col} label="Date of Birth">
+                <FloatingLabel as={Col} label="Date of Birth" className="mb-3">
                   <Form.Control
                     name="dateOfBirth"
                     type="date"
@@ -322,7 +321,7 @@ const ProfileInformation = () => {
                 </FloatingLabel>
               </Row>
               <Row className="mb-3">
-                <FloatingLabel as={Col} label="Country">
+                <FloatingLabel as={Col} label="Country" className="mb-3">
                   <Form.Control
                     name="country"
                     value={formData.country}
@@ -334,7 +333,7 @@ const ProfileInformation = () => {
                     Country is required
                   </Form.Control.Feedback>
                 </FloatingLabel>
-                <FloatingLabel as={Col} label="Address">
+                <FloatingLabel as={Col} label="Address" className="mb-3">
                   <Form.Control
                     name="address"
                     as="textarea"
