@@ -84,8 +84,7 @@ const PaymentDetail = () => {
     if (receiver?.account_name) {
       setReceiverName(receiver.account_name);
     }
-  }
-    , []);
+  }, []);
 
   const handlePayToFormChange = (field, value) => {
     setPayToForm((prev) => ({ ...prev, [field]: value }));
@@ -131,40 +130,43 @@ const PaymentDetail = () => {
     setModalShowPayToAgreement(true);
   };
 
- const handleMonovaContinue = async () => {
-  const errors = {};
-  if (!monovaForm.paymentMethod)
-    errors.paymentMethod = "Please select payment method.";
-  if (!monovaForm.bsb) errors.bsb = "BSB is required.";
-  if (!monovaForm.accountNumber)
-    errors.accountNumber = "Account number is required.";
-  if (!monovaForm.accountName)
-    errors.accountName = "Account name is required.";
+  const handleMonovaContinue = async () => {
+    const errors = {};
+    if (!monovaForm.paymentMethod)
+      errors.paymentMethod = "Please select payment method.";
+    if (!monovaForm.bsb) errors.bsb = "BSB is required.";
+    if (!monovaForm.accountNumber)
+      errors.accountNumber = "Account number is required.";
+    if (!monovaForm.accountName)
+      errors.accountName = "Account name is required.";
 
-  setMonovaFormErrors(errors);
+    setMonovaFormErrors(errors);
 
-  if (Object.keys(errors).length === 0) {
-    try {
-      sessionStorage.setItem("monova_payment_data", JSON.stringify(monovaForm));
-      sessionStorage.setItem("selected_payment_method", "monova");
+    if (Object.keys(errors).length === 0) {
+      try {
+        sessionStorage.setItem(
+          "monova_payment_data",
+          JSON.stringify(monovaForm)
+        );
+        sessionStorage.setItem("selected_payment_method", "monova");
 
-      const temp = {
-        amount: amount,
-        bsbNumber: monovaForm.bsb,
-        accountNumber: monovaForm.accountNumber,
-        accountName: monovaForm.accountName,
-        payment_mode: monovaForm.paymentMethod,
-      };
+        const temp = {
+          amount: amount,
+          bsbNumber: monovaForm.bsb,
+          accountNumber: monovaForm.accountNumber,
+          accountName: monovaForm.accountName,
+          payment_mode: monovaForm.paymentMethod,
+        };
 
-      sessionStorage.setItem("monova_form_data", JSON.stringify(temp));
-      navigate("/confirm-transfer");
+        sessionStorage.setItem("monova_form_data", JSON.stringify(temp));
+        navigate("/confirm-transfer");
 
-      setModalShowMonova(false);
-    } catch (err) {
-      console.error("Unexpected error during payment creation:", err);
+        setModalShowMonova(false);
+      } catch (err) {
+        console.error("Unexpected error during payment creation:", err);
+      }
     }
-  }
-};
+  };
 
   const formatAmountLimit = (limit) => {
     if (!limit) return "Not specified";
@@ -194,10 +196,11 @@ const PaymentDetail = () => {
     }
 
     if (paymentType === "payto") {
-
       try {
         setIsLoadingAgreement(true);
-        const agreementList = await getAgreementList(JSON.parse(sessionStorage.getItem("transfer_data")).amount.send_amt);
+        const agreementList = await getAgreementList(
+          JSON.parse(sessionStorage.getItem("transfer_data")).amount.send_amt
+        );
         setbsb(agreementList.data.bsb_code);
         console.log(agreementList);
 
@@ -219,7 +222,6 @@ const PaymentDetail = () => {
                 agreementData.agreement_start_date ||
                 new Date().toISOString().split("T")[0],
             });
-
 
             if (agreementData.payid && agreementData.payid_type) {
               setPayToForm({
@@ -302,8 +304,14 @@ const PaymentDetail = () => {
 
       const response = await createAgreement(payload);
       if (response?.code === "200" || response?.success) {
-        sessionStorage.setItem("payto_limit_data", JSON.stringify(payToLimitForm));
-        sessionStorage.setItem("payto_agreement_response", JSON.stringify(response));
+        sessionStorage.setItem(
+          "payto_limit_data",
+          JSON.stringify(payToLimitForm)
+        );
+        sessionStorage.setItem(
+          "payto_agreement_response",
+          JSON.stringify(response)
+        );
         toast.success("PayTo agreement created successfully!");
         setModalShowPayToAgreement(false);
         navigate("/confirm-transfer");
@@ -363,9 +371,10 @@ const PaymentDetail = () => {
                 <Form>
                   <Row>
                     <label>Payment type</label>
-                    <div className="d-flex mb-3 mt-3">
+                    <div className="d-flex mb-3 mt-3 align-items-center">
                       <Form.Check
                         inline
+                        className="paymentoptions"
                         label="Pay TO"
                         name="paymentType"
                         type="radio"
@@ -383,6 +392,7 @@ const PaymentDetail = () => {
                       <Form.Check
                         inline
                         label="Pay ID"
+                        className="paymentoptions"
                         name="paymentType"
                         type="radio"
                         checked={paymentType === "payid"}
@@ -401,6 +411,7 @@ const PaymentDetail = () => {
                         inline
                         label="Bank Transfer"
                         name="paymentType"
+                        className="paymentoptions m-0"
                         type="radio"
                         checked={paymentType === "bank_transfer"}
                         onChange={() => {
@@ -415,7 +426,7 @@ const PaymentDetail = () => {
 
                       {paymentType === "bank_transfer" && (
                         <Form.Select
-                          className="ms-3"
+                          className="ms-3 payment-select"
                           style={{ width: "200px" }}
                           onChange={(e) => {
                             const selectedGateway = e.target.value;
@@ -707,7 +718,13 @@ const PaymentDetail = () => {
                   </Button>
                 </Col>
                 <Col>
-                  <Button variant="primary" className="submit-btn float-end" onClick={() => { navigate("/confirm-transfer") }}>
+                  <Button
+                    variant="primary"
+                    className="submit-btn float-end"
+                    onClick={() => {
+                      navigate("/confirm-transfer");
+                    }}
+                  >
                     Continue
                   </Button>
                 </Col>
@@ -755,7 +772,12 @@ const PaymentDetail = () => {
                 </FloatingLabel>
               </Row>
               <Row className="mb-3">
-                <FloatingLabel as={Col} controlId="monova-bsb" label="BSB Number" className="mb-3">
+                <FloatingLabel
+                  as={Col}
+                  controlId="monova-bsb"
+                  label="BSB Number"
+                  className="mb-3"
+                >
                   <Form.Control
                     type="text"
                     value={monovaForm.bsb}

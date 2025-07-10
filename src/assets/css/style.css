@@ -281,6 +281,14 @@ div#basic-navbar-nav a {
   margin: 0 0 0 5px;
 }
 /*********** dashbaord css ********/
+.recievers-list {
+  text-align: center;
+}
+.payment-select,
+.paymentoptions {
+  padding: 5px 8px !important;
+  margin-right: 30px;
+}
 .selectcountry label {
   position: absolute;
   top: 0px;
@@ -362,8 +370,15 @@ div#basic-navbar-nav a {
   color: #3b82f6;
   cursor: pointer;
   transition: all 0.2s ease;
+  position: relative;
 }
-
+.send-again-btn .dropdown-menu {
+  position: absolute !important;
+  z-index: 1050; /* above table rows */
+  top: 100%; /* position below the button */
+  right: 0; /* align end */
+  will-change: transform;
+}
 /* .send-again-btn:hover {
   background-color: #dbeeff;
 } */
@@ -559,6 +574,7 @@ form.profile-form textarea {
 .form-control:focus {
   box-shadow: none;
   border: 1px solid #e0e3b7;
+  background: transparent !important;
 }
 .PhoneInput {
   border: 1px solid #e0e3b7;

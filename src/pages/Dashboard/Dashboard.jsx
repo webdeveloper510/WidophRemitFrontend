@@ -7,13 +7,26 @@ import ReceiverTable from "./ReceiverTable";
 import LatestTransfer from "./LatestTransfer";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { recipientList, transactionHistory, userProfile } from "../../services/Api";
+import {
+  recipientList,
+  transactionHistory,
+  userProfile,
+} from "../../services/Api";
 import SendMoney from "../../assets/images/send-money.png";
 import Profile from "../../assets/images/profile.png";
+import loaderlogo from "../../assets/images/mobile-logo.png";
 
 const Dashboard = () => {
   const [ReceiversCount, setReceiversCount] = useState(0);
   const [TransactionsCount, setTransactionsCount] = useState(0);
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading
+    const timer = setTimeout(() => setLoading(false), 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -39,19 +52,25 @@ const Dashboard = () => {
         setFirstName(name || "User");
       }
     })();
-
-
   }, []);
 
   const navigate = useNavigate();
   const [firstName, setFirstName] = useState("");
+
+  if (loading) {
+    return (
+      <div className="loader-wrapper">
+        <img src={loaderlogo} alt="Logo" className="loader-logo" />
+        <div className="spinner"></div>
+      </div>
+    );
+  }
 
   return (
     <AnimatedPage>
       <div className="page-title">
         <h1>Welcome, {firstName}</h1>
       </div>
-
 
       <div className="page-content-section mt-3">
         <div className="row">
@@ -145,7 +164,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-    </AnimatedPage >
+    </AnimatedPage>
   );
 };
 

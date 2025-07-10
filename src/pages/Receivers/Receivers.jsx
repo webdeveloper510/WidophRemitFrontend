@@ -74,7 +74,7 @@ const Receivers = () => {
             <BsThreeDots />
           </Dropdown.Toggle>
 
-          <Dropdown.Menu>
+          <Dropdown.Menu className="recievers-list">
             <Dropdown.Item onClick={() => setShow(row.id)}>
               Delete
             </Dropdown.Item>
@@ -178,7 +178,9 @@ const Receivers = () => {
       </AnimatedPage>
       <Modal show={show} onHide={handleClose} backdrop="static">
         <Modal.Header></Modal.Header>
-        <Modal.Body>Are you sure you want to delete ?</Modal.Body>
+        <Modal.Body className="text-center">
+          <h5>Are you sure you want to delete ?</h5>
+        </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => handleClose()}>
             Close

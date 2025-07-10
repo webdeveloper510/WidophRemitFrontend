@@ -21,6 +21,7 @@ import {
   userProfile,
 } from "../../services/Api";
 import TopNavbar from "../LoginSignup/TopNavbar";
+import Footer from "../Footer";
 import KYCimage from "../../assets/images/kyc-image.png";
 import Footer from "../Footer";
 
@@ -83,7 +84,6 @@ const KYCForm = () => {
     setVerifyingID(false);
   }
 };
-
 
 
   const handleFileChange = (event) => {
@@ -262,7 +262,7 @@ const KYCForm = () => {
   return (
     <>
       <TopNavbar />
-      <Container className="py-5 pt-2">
+      <Container className="py-5 pt-2 mt-5 mb-5 d-flex justify-content-between">
         <Tab.Container
           activeKey={activeKey}
           onSelect={(k) => {
@@ -271,7 +271,7 @@ const KYCForm = () => {
             else if (k === "step1") setActiveKey("step1");
           }}
         >
-          <Row>
+          <Row className="w-100">
             <Col
               md={3}
               className="sidebar-steps d-flex justify-content-center align-items-center flex-column"
@@ -287,13 +287,13 @@ const KYCForm = () => {
                     <Nav.Item key={num} className="step-wrapper">
                       <div className="step-connector">
                         <div
-                          className={`step-dot ${isCompleted ? "completed" : ""
-                            } ${isActive ? "active" : ""}`}
+                          className={`step-dot ${
+                            isCompleted ? "completed" : ""
+                          } ${isActive ? "active" : ""}`}
                         >
                           {isCompleted ? "●" : ""}
                         </div>
                         {num !== 3 && <div className="step-line" />}
-
                       </div>
                       <Nav.Link
                         eventKey={stepKey}
@@ -306,10 +306,9 @@ const KYCForm = () => {
                           {num === 1
                             ? "Personal Details"
                             : num === 2
-                              ? "Verify Your ID"
-                              : "KYC Completed"}
+                            ? "Verify Your ID"
+                            : "KYC Completed"}
                         </div>
-
                       </Nav.Link>
                     </Nav.Item>
                   );
@@ -343,7 +342,11 @@ const KYCForm = () => {
                     <Row className="mb-3">
                       <FloatingLabel
                         as={Col}
-                        label="First Name *"
+                        label={
+                          <span>
+                            First Name <span style={{ color: "red" }}>*</span>
+                          </span>
+                        }
                         className="mb-3"
                       >
                         <Form.Control
@@ -363,7 +366,11 @@ const KYCForm = () => {
                       </FloatingLabel>
                       <FloatingLabel
                         as={Col}
-                        label="Middle Name"
+                        label={
+                          <span>
+                            Middle Name <span style={{ color: "red" }}>*</span>
+                          </span>
+                        }
                         className="mb-3"
                       >
                         <Form.Control
@@ -377,7 +384,11 @@ const KYCForm = () => {
                       </FloatingLabel>
                       <FloatingLabel
                         as={Col}
-                        label="Last Name *"
+                        label={
+                          <span>
+                            Last Name <span style={{ color: "red" }}>*</span>
+                          </span>
+                        }
                         className="mb-3"
                       >
                         <Form.Control
@@ -398,7 +409,15 @@ const KYCForm = () => {
                     </Row>
 
                     <Row className="mb-3">
-                      <FloatingLabel as={Col} label="Email *" className="mb-3">
+                      <FloatingLabel
+                        as={Col}
+                        label={
+                          <span>
+                            Email<span style={{ color: "red" }}>*</span>
+                          </span>
+                        }
+                        className="mb-3"
+                      >
                         <Form.Control
                           type="email"
                           value={formData.email}
@@ -416,9 +435,13 @@ const KYCForm = () => {
                       </FloatingLabel>
                       <FloatingLabel
                         as={Col}
-                        label="Mobile Number *"
-                        className="mb-3"
-                        style={{ paddingTop: "1.8rem" }}
+                        label={
+                          <span>
+                            Mobile Number
+                            <span style={{ color: "red" }}>*</span>
+                          </span>
+                        }
+                        className="mb-3 mobileinput"
                       >
                         <div className="d-flex align-items-stretch p-0">
                           <Form.Select
@@ -461,7 +484,12 @@ const KYCForm = () => {
                     <Row className="mb-3">
                       <FloatingLabel
                         as={Col}
-                        label="Date of Birth *"
+                        label={
+                          <span>
+                            Date of Birth
+                            <span style={{ color: "red" }}>*</span>
+                          </span>
+                        }
                         className="mb-3"
                       >
                         <Form.Control
@@ -481,18 +509,20 @@ const KYCForm = () => {
                       </FloatingLabel>
 
                       <Col className="mb-3">
-                        <div className="floating-label-wrapper">
+                        <div className="floating-label-wrapper kyc-country">
                           <label
-                            className={`floating-label ${formData.countryOfBirth ? "filled" : ""
-                              }`}
+                            className={`floating-label ${
+                              formData.countryOfBirth ? "filled" : ""
+                            }`}
                           >
-                            Country of Birth{" "}
+                            Country of Birth
                             <span style={{ color: "red" }}>*</span>
                           </label>
                           <Select
                             options={countryOptions}
                             value={countryOptions.find(
-                              (option) => option.value === formData.countryOfBirth
+                              (option) =>
+                                option.value === formData.countryOfBirth
                             )}
                             onChange={(selectedOption) =>
                               handleInputChange(
@@ -520,12 +550,17 @@ const KYCForm = () => {
 
                       <FloatingLabel
                         as={Col}
-                        label="Occupation *"
+                        label={
+                          <span>
+                            Occupation
+                            <span style={{ color: "red" }}>*</span>
+                          </span>
+                        }
                         className="mb-3"
                       >
                         <Form.Control
                           type="text"
-                          placeholder="Occupation"
+                          //placeholder="Occupation"
                           value={formData.occupation}
                           onChange={(e) =>
                             handleInputChange("occupation", e.target.value)
@@ -543,7 +578,16 @@ const KYCForm = () => {
 
                     <Row className="mb-3 mt-3">
                       <h3>Your Address</h3>
-                      <FloatingLabel as={Col} label="Country *" className="mb-3">
+                      <FloatingLabel
+                        as={Col}
+                        label={
+                          <span>
+                            Country
+                            <span style={{ color: "red" }}>*</span>
+                          </span>
+                        }
+                        className="mb-3"
+                      >
                         <Form.Select
                           value={formData.country}
                           onChange={(e) =>
@@ -563,7 +607,16 @@ const KYCForm = () => {
                         )}
                       </FloatingLabel>
 
-                      <FloatingLabel as={Col} label="Address *" className="mb-3">
+                      <FloatingLabel
+                        as={Col}
+                        label={
+                          <span>
+                            Address
+                            <span style={{ color: "red" }}>*</span>
+                          </span>
+                        }
+                        className="mb-3"
+                      >
                         <Form.Control
                           as="textarea"
                           style={{ height: "50px" }}
@@ -585,7 +638,12 @@ const KYCForm = () => {
                     <Row className="mb-3">
                       <FloatingLabel
                         as={Col}
-                        label="Building No. *"
+                        label={
+                          <span>
+                            Building No.
+                            <span style={{ color: "red" }}>*</span>
+                          </span>
+                        }
                         className="mb-3"
                       >
                         <Form.Control
@@ -606,7 +664,12 @@ const KYCForm = () => {
 
                       <FloatingLabel
                         as={Col}
-                        label="Street Name *"
+                        label={
+                          <span>
+                            Street Name
+                            <span style={{ color: "red" }}>*</span>
+                          </span>
+                        }
                         className="mb-3"
                       >
                         <Form.Control
@@ -627,7 +690,16 @@ const KYCForm = () => {
                     </Row>
 
                     <Row className="mb-3">
-                      <FloatingLabel as={Col} label="City *" className="mb-3">
+                      <FloatingLabel
+                        as={Col}
+                        label={
+                          <span>
+                            City
+                            <span style={{ color: "red" }}>*</span>
+                          </span>
+                        }
+                        className="mb-3"
+                      >
                         <Form.Control
                           type="text"
                           value={formData.city}
@@ -646,7 +718,12 @@ const KYCForm = () => {
 
                       <FloatingLabel
                         as={Col}
-                        label="Zip/Postal Code *"
+                        label={
+                          <span>
+                            Zip/Postal Code
+                            <span style={{ color: "red" }}>*</span>
+                          </span>
+                        }
                         className="mb-3"
                       >
                         <Form.Control
@@ -665,7 +742,16 @@ const KYCForm = () => {
                         )}
                       </FloatingLabel>
 
-                      <FloatingLabel as={Col} label="State *" className="mb-3">
+                      <FloatingLabel
+                        as={Col}
+                        label={
+                          <span>
+                            State
+                            <span style={{ color: "red" }}>*</span>
+                          </span>
+                        }
+                        className="mb-3"
+                      >
                         <Form.Control
                           type="text"
                           value={formData.state}
@@ -797,7 +883,7 @@ const KYCForm = () => {
           </Row>
         </Tab.Container>
       </Container>
-      {/* <Footer /> */}
+      <Footer />
     </>
   );
 };
