@@ -12,10 +12,12 @@ import * as Yup from "yup";
 import Bank_list from "../../utils/Bank_list";
 import { createRecipient } from "../../services/Api";
 import { useNavigate } from "react-router-dom";
+import CountrySelect from "react-bootstrap-country-select";
 
 const ReceiverDetail = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [value, setValue] = useState(null);
   const [apiError, setApiError] = useState("");
 
   const initialValues = {
@@ -193,9 +195,19 @@ const ReceiverDetail = () => {
                     <FloatingLabel
                       controlId="floatingSelect"
                       as={Col}
-                      label="Bank Name"
+                      label={
+                        <span>
+                          Bank Name <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
                     >
-                      <Form.Select
+                      <Form.Control
+                        type="text"
+                        name="bank_name"
+                        value={values.bank_name}
+                        onChange={handleChange}
+                      />
+                      {/* <Form.Select
                         aria-label="Floating label select example"
                         name="bank_name"
                         onChange={handleChange}
@@ -209,7 +221,7 @@ const ReceiverDetail = () => {
                             {bank.label}
                           </option>
                         ))}
-                      </Form.Select>
+                      </Form.Select> */}
                       <Form.Control.Feedback type="invalid">
                         {errors.bank_name}
                       </Form.Control.Feedback>
@@ -218,7 +230,11 @@ const ReceiverDetail = () => {
                     <FloatingLabel
                       as={Col}
                       controlId="floatingInput"
-                      label="Account Number"
+                      label={
+                        <span>
+                          Account Number <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
                       className="mb-3"
                     >
                       <Form.Control
@@ -247,7 +263,11 @@ const ReceiverDetail = () => {
                     <FloatingLabel
                       as={Col}
                       controlId="floatingInput"
-                      label="First Name"
+                      label={
+                        <span>
+                          First Name <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
                       className="mb-3"
                     >
                       <Form.Control
@@ -281,7 +301,11 @@ const ReceiverDetail = () => {
                     <FloatingLabel
                       as={Col}
                       controlId="floatingInput"
-                      label="Last Name"
+                      label={
+                        <span>
+                          Last Name <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
                       className="mb-3"
                     >
                       <Form.Control
@@ -302,7 +326,11 @@ const ReceiverDetail = () => {
                     <FloatingLabel
                       as={Col}
                       controlId="floatingInput"
-                      label="Email"
+                      label={
+                        <span>
+                          Email <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
                       className="mb-3"
                     >
                       <Form.Control
@@ -317,6 +345,28 @@ const ReceiverDetail = () => {
                         {errors.email}
                       </Form.Control.Feedback>
                     </FloatingLabel>
+                    <FloatingLabel
+                      as={Col}
+                      controlId="floatingInput"
+                      label={
+                        <span>
+                          Mobile <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
+                      className="mb-3 mobileinput"
+                    >
+                      <PhoneInput
+                        international
+                        countryCallingCodeEditable={false}
+                        defaultCountry="AU"
+                        value={values.mobile}
+                        onChange={(val) => {
+                          handleChange({
+                            target: { name: "mobile", value: val },
+                          });
+                        }}
+                      />
+                    </FloatingLabel>
                   </Row>
                 </Card.Body>
               </Card>
@@ -328,9 +378,21 @@ const ReceiverDetail = () => {
                     <FloatingLabel
                       controlId="floatingSelect"
                       as={Col}
-                      label="Country"
+                      label={
+                        <span>
+                          Country <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
+                      className="mb-3 selectcountry"
                     >
-                      <Form.Select
+                      <CountrySelect
+                        name="country"
+                        value={value}
+                        onChange={setValue}
+                        flags
+                        //placeholder="Select country..."
+                      />
+                      {/* <Form.Select
                         aria-label="Floating label select example"
                         name="country"
                         value={values.country}
@@ -344,7 +406,7 @@ const ReceiverDetail = () => {
                             {country.name}
                           </option>
                         ))}
-                      </Form.Select>
+                      </Form.Select> */}
                       <Form.Control.Feedback type="invalid">
                         {errors.country}
                       </Form.Control.Feedback>
@@ -352,8 +414,39 @@ const ReceiverDetail = () => {
 
                     <FloatingLabel
                       as={Col}
+                      controlId="floatingTextarea2"
+                      label={
+                        <span>
+                          Address <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
+                      className="mb-3"
+                    >
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        name="address"
+                        value={values.address}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={touched.address && errors.address}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.address}
+                      </Form.Control.Feedback>
+                    </FloatingLabel>
+                  </Row>
+
+                  <Row className="mb-3">
+                    <FloatingLabel
+                      as={Col}
                       controlId="floatingInput"
-                      label="Building Number"
+                      label={
+                        <span>
+                          Building Number{" "}
+                          <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
                       className="mb-3"
                     >
                       <Form.Control
@@ -368,13 +461,14 @@ const ReceiverDetail = () => {
                         {errors.building_no}
                       </Form.Control.Feedback>
                     </FloatingLabel>
-                  </Row>
-
-                  <Row className="mb-3">
                     <FloatingLabel
                       as={Col}
                       controlId="floatingInput"
-                      label="Street Name"
+                      label={
+                        <span>
+                          Street Name <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
                       className="mb-3"
                     >
                       <Form.Control
@@ -395,7 +489,11 @@ const ReceiverDetail = () => {
                     <FloatingLabel
                       as={Col}
                       controlId="floatingInput"
-                      label="City"
+                      label={
+                        <span>
+                          City <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
                       className="mb-3"
                     >
                       <Form.Control
@@ -414,7 +512,12 @@ const ReceiverDetail = () => {
                     <FloatingLabel
                       as={Col}
                       controlId="floatingInput"
-                      label="Zip/Postal Code*"
+                      label={
+                        <span>
+                          Zip/Postal Code
+                          <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
                       className="mb-3"
                     >
                       <Form.Control
@@ -433,7 +536,11 @@ const ReceiverDetail = () => {
                     <FloatingLabel
                       as={Col}
                       controlId="floatingInput"
-                      label="State"
+                      label={
+                        <span>
+                          State <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
                       className="mb-3"
                     >
                       <Form.Control
@@ -446,28 +553,6 @@ const ReceiverDetail = () => {
                       />
                       <Form.Control.Feedback type="invalid">
                         {errors.state}
-                      </Form.Control.Feedback>
-                    </FloatingLabel>
-                  </Row>
-
-                  <Row className="mb-3">
-                    <FloatingLabel
-                      as={Col}
-                      controlId="floatingInput"
-                      label="Address"
-                      className="mb-3"
-                    >
-                      <Form.Control
-                        as="textarea"
-                        rows={3}
-                        name="address"
-                        value={values.address}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        isInvalid={touched.address && errors.address}
-                      />
-                      <Form.Control.Feedback type="invalid">
-                        {errors.address}
                       </Form.Control.Feedback>
                     </FloatingLabel>
                   </Row>

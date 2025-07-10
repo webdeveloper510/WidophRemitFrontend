@@ -77,7 +77,7 @@ const AddReceiver = () => {
           <a href="receivers">
             <img src={Back} />
           </a>
-          <h1>Add Receivers</h1>
+          <h1>Add Receiver</h1>
         </div>
       </div>
 
@@ -143,7 +143,7 @@ const AddReceiver = () => {
 
               <Card className="receiver-card mt-4 bg-white">
                 <Card.Body>
-                  <Card.Title>Receiver Details</Card.Title>
+                  <Card.Title>Recipient Details</Card.Title>
 
                   <Row className="mb-3">
                     <FloatingLabel
@@ -166,11 +166,7 @@ const AddReceiver = () => {
                     <FloatingLabel
                       as={Col}
                       controlId="floatingInput"
-                      label={
-                        <span>
-                          Middle Name <span style={{ color: "red" }}>*</span>
-                        </span>
-                      }
+                      label="Middle Name"
                       className="mb-3"
                     >
                       <Form.Control
@@ -203,7 +199,33 @@ const AddReceiver = () => {
                     <FloatingLabel
                       as={Col}
                       controlId="floatingInput"
-                      label="Mobile"
+                      label={
+                        <span>
+                          Email <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
+                      className="mb-3"
+                    >
+                      <Form.Control
+                        type="email"
+                        name="email"
+                        value={values.email}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={touched.email && errors.email}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.email}
+                      </Form.Control.Feedback>
+                    </FloatingLabel>
+                    <FloatingLabel
+                      as={Col}
+                      controlId="floatingInput"
+                      label={
+                        <span>
+                          Mobile <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
                       className="mb-3 mobileinput"
                     >
                       <PhoneInput
@@ -261,7 +283,11 @@ const AddReceiver = () => {
                     <FloatingLabel
                       as={Col}
                       controlId="floatingTextarea2"
-                      label="Address"
+                      label={
+                        <span>
+                          Address <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
                       className="mb-3"
                     >
                       <Form.Control
@@ -271,6 +297,54 @@ const AddReceiver = () => {
                         value={values.street_address}
                         onChange={handleChange}
                       />
+                    </FloatingLabel>
+                  </Row>
+
+                  <Row className="mb-3">
+                    <FloatingLabel
+                      as={Col}
+                      controlId="floatingInput"
+                      label={
+                        <span>
+                          Building Number{" "}
+                          <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
+                      className="mb-3"
+                    >
+                      <Form.Control
+                        type="text"
+                        name="building_no"
+                        value={values.building_no}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={touched.building_no && errors.building_no}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.building_no}
+                      </Form.Control.Feedback>
+                    </FloatingLabel>
+                    <FloatingLabel
+                      as={Col}
+                      controlId="floatingInput"
+                      label={
+                        <span>
+                          Street Name <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
+                      className="mb-3"
+                    >
+                      <Form.Control
+                        type="text"
+                        name="street_name"
+                        value={values.street_name}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={touched.street_name && errors.street_name}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.street_name}
+                      </Form.Control.Feedback>
                     </FloatingLabel>
                   </Row>
                   <Row className="mb-3">
@@ -294,7 +368,12 @@ const AddReceiver = () => {
                     <FloatingLabel
                       as={Col}
                       controlId="floatingInput"
-                      label="Zip/Postal Code"
+                      label={
+                        <span>
+                          Zip/Postal Code
+                          <span style={{ color: "red" }}>*</span>
+                        </span>
+                      }
                       className="mb-3"
                     >
                       <Form.Control
