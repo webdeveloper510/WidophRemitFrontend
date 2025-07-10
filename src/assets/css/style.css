@@ -1135,6 +1135,40 @@ li.nav-item.mb-2.bg-light.text-dark.rounded {
   padding: 1rem 0.75rem;
   border: 1px solid #e0e3b7;
 }
+
+.loader-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000000e3;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.loader-logo {
+  width: auto;
+  margin-bottom: 20px;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 6px solid #cadb00;
+  border-top: 6px solid #2499db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /*************** responsive css ****************/
 
 @media screen and (max-width: 1500px) {
