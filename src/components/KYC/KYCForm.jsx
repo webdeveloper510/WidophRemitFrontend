@@ -23,7 +23,6 @@ import {
 import TopNavbar from "../LoginSignup/TopNavbar";
 import Footer from "../Footer";
 import KYCimage from "../../assets/images/kyc-image.png";
-import Footer from "../Footer";
 
 const KYCForm = () => {
   const navigate = useNavigate();
