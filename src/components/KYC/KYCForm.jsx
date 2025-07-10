@@ -20,6 +20,8 @@ import {
   updateProfile,
   userProfile,
 } from "../../services/Api";
+import TopNavbar from "../LoginSignup/TopNavbar";
+import KYCimage from "../../assets/images/kyc-image.png";
 
 const KYCForm = () => {
   const navigate = useNavigate();
@@ -743,6 +745,7 @@ const KYCForm = () => {
                   <div className="text-center">
                     <h2 className="text-success">✅ KYC Completed!</h2>
                     <p>Your KYC data is under review.</p>
+                    <img src={KYCimage} alt="KYC Completed" />
                     <Button
                       variant="primary"
                       className="mt-3"
