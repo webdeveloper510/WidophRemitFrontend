@@ -8,7 +8,7 @@ import "react-phone-input-2/lib/style.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { parsePhoneNumber, isValidPhoneNumber } from "libphonenumber-js";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Formik, Form as FormikForm, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
@@ -131,11 +131,10 @@ const Login = () => {
                               {...field}
                               type="text"
                               placeholder="Email / Mobile Number"
-                              className={`form-control ${
-                                errors.value && touched.value
-                                  ? "is-invalid"
-                                  : ""
-                              }`}
+                              className={`form-control ${errors.value && touched.value
+                                ? "is-invalid"
+                                : ""
+                                }`}
                               onChange={(e) =>
                                 handleInputChange(e.target.value, setFieldValue)
                               }
@@ -194,11 +193,10 @@ const Login = () => {
                           <Form.Control
                             {...field}
                             placeholder="Password"
-                            className={`passowrdinput ${
-                              errors.password && touched.password
-                                ? "is-invalid"
-                                : ""
-                            }`}
+                            className={`passowrdinput ${errors.password && touched.password
+                              ? "is-invalid"
+                              : ""
+                              }`}
                             type={visibility.current ? "text" : "password"}
                           />
                         )}
@@ -229,12 +227,12 @@ const Login = () => {
                         />
                       )}
                     </Field>
-                    <a
-                      href="/forgot-password"
+                    <Link
+                      to={"/forgot-password"}
                       className="text-success fw-semibold small forgotpassword-text"
                     >
                       Forgot password?
-                    </a>
+                    </Link>
                   </div>
 
                   <Button

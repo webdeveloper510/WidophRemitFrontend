@@ -22,6 +22,7 @@ import LoginLayout from "../components/LoginSignup/LoginLayout";
 import Login from "../components/LoginSignup/Login";
 import SignUp from "../components/LoginSignup/Signup";
 import ForgotPassword from "../components/LoginSignup/ForgotPassword";
+import ResetPassword from "../components/LoginSignup/ResetPassword";
 import KYCForm from "../components/KYC/KYCForm";
 import OtpVerification from "../components/LoginSignup/OTP";
 import TransactionSuccess from "../pages/SendMoney/TranscationSuccess";
@@ -40,11 +41,13 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         {/* OTP route accessible by both protected and public */}
         <Route path="/otp-verification" element={<OtpVerification />} />
+
         {/* Protected Routes */}
       </Route>
-        <Route path="/kyc" element={<KYCForm />} />
+      <Route path="/kyc" element={<KYCForm />} />
 
       <Route
         path="/"

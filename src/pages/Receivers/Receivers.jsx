@@ -51,8 +51,14 @@ const Receivers = () => {
       },
       sortable: true,
       cell: (row) => (
-        <strong>{`${row.first_name} ${row.middle_name} ${row.last_name}`}</strong>
+        <strong>{`${row.first_name}${row.last_name}`}</strong>
       ),
+    },
+    {
+      name: "Mobile",
+      selector: (row) => row.mobile,
+      sortable: true,
+      cell: (row) => <strong>{row.mobile}</strong>,
     },
     {
       name: "Sender Email",
@@ -86,10 +92,10 @@ const Receivers = () => {
 
   const filteredData = Array.isArray(list)
     ? list.filter((item) =>
-        (item.first_name + item.middle_name + item.last_name + item.email)
-          .toLowerCase()
-          .includes(filterText.toLowerCase())
-      )
+      (item.first_name + item.middle_name + item.last_name + item.email)
+        .toLowerCase()
+        .includes(filterText.toLowerCase())
+    )
     : [];
 
   const displayData = filteredData;
@@ -103,11 +109,6 @@ const Receivers = () => {
         value={filterText}
         onChange={(e) => setFilterText(e.target.value)}
       /> */}
-      <Link to={"/add-receiver"}>
-        <button type="button" class="float-end download-button btn btn-success">
-          <img src={AddReceiver} alt="img" /> Add Receiver
-        </button>
-      </Link>
     </div>
   );
 
@@ -147,7 +148,17 @@ const Receivers = () => {
             <div className="d-flex align-items-center">
               <img src={RecentReceiver} alt="img" /> <h1>Receivers List</h1>
             </div>
-            {subHeaderComponent}
+            {/* {subHeaderComponent} */}
+            <div className="add_receipent_row">
+              <Link to={"/add-receiver"}>
+                <button
+                  type="button"
+                  class="float-end download-button btn btn-success"
+                >
+                  <img src={AddReceiver} alt="img" /> Add Receiver
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
 

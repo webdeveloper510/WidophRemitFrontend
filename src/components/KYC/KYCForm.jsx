@@ -10,15 +10,16 @@ import {
   FloatingLabel,
   Alert,
   Spinner,
-  Navbar,
 } from "react-bootstrap";
 import Select from "react-select";
 import { getNames } from "country-list";
 import "./KYCForm.css";
 import { useNavigate } from "react-router-dom";
-import { getVeriffStatus, updateProfile, userProfile } from "../../services/Api";
-import TopNavbar from "../LoginSignup/TopNavbar";
-import Footer from "../Footer";
+import {
+  getVeriffStatus,
+  updateProfile,
+  userProfile,
+} from "../../services/Api";
 
 const KYCForm = () => {
   const navigate = useNavigate();
@@ -64,7 +65,8 @@ const KYCForm = () => {
       if (response?.code === "200" && response?.data?.status === "submitted") {
         setIdVerified(true);
         setSelectedFileName("ID_Document_Verified.pdf");
-        navigate("/dashboard");
+
+        setTimeout(() => setActiveKey("step3"), 500);
       } else {
         console.warn("Verification not successful:", response);
       }
@@ -72,6 +74,7 @@ const KYCForm = () => {
       console.error("Error during verification:", error);
     }
   };
+
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -155,8 +158,6 @@ const KYCForm = () => {
         country: formData.country,
       };
 
-
-
       const response = await updateProfile(APIDATA);
       if (response && response.code === "200") {
         setApiSuccess("Profile updated successfully!");
@@ -207,7 +208,6 @@ const KYCForm = () => {
         return;
       }
       console.log("coming");
-
     }
   };
 
@@ -220,7 +220,10 @@ const KYCForm = () => {
     (async () => {
       const response = await userProfile();
       if (response?.code === "200") {
-        if ((response.data.is_digital_Id_verified || "").toLowerCase() === "approved") {
+        if (
+          (response.data.is_digital_Id_verified || "").toLowerCase() ===
+          "approved"
+        ) {
           navigate("/dashboard");
         }
       }
@@ -230,15 +233,22 @@ const KYCForm = () => {
   return (
     <>
       <TopNavbar />
-      <Container  className="py-5 pt-2">
-        <Tab.Container activeKey={activeKey} onSelect={setActiveKey}>
+      <Container className="py-5 pt-2">
+        <Tab.Container
+          activeKey={activeKey}
+          onSelect={(k) => {
+            if (k === "step2" && activeKey !== "step1") setActiveKey(k);
+            else if (k === "step3" && idVerified) setActiveKey(k);
+            else if (k === "step1") setActiveKey("step1");
+          }}
+        >
           <Row>
             <Col
               md={3}
               className="sidebar-steps d-flex justify-content-center align-items-center flex-column"
             >
               <Nav variant="pills" className="flex-column gap-4 w-100">
-                {[1, 2].map((num) => {
+                {[1, 2, 3].map((num) => {
                   const stepKey = `step${num}`;
                   const currentStep = parseInt(activeKey.replace("step", ""));
                   const isActive = activeKey === stepKey;
@@ -253,7 +263,8 @@ const KYCForm = () => {
                         >
                           {isCompleted ? "●" : ""}
                         </div>
-                        {num !== 2 && <div className="step-line" />}
+                        {num !== 3 && <div className="step-line" />}
+
                       </div>
                       <Nav.Link
                         eventKey={stepKey}
@@ -263,8 +274,13 @@ const KYCForm = () => {
                           <strong className="steps-number">Step {num}</strong>
                         </div>
                         <div className="steps-name">
-                          {num === 1 ? "Personal Details" : "Verify Your Id"}
+                          {num === 1
+                            ? "Personal Details"
+                            : num === 2
+                              ? "Verify Your ID"
+                              : "KYC Completed"}
                         </div>
+
                       </Nav.Link>
                     </Nav.Item>
                   );
@@ -720,14 +736,29 @@ const KYCForm = () => {
                         Previous
                       </Button>
                     </div>
+                    </div>
+                </Tab.Pane>
+
+                <Tab.Pane eventKey="step3">
+                  <div className="text-center">
+                    <h2 className="text-success">✅ KYC Completed!</h2>
+                    <p>Your KYC data is under review.</p>
+                    <Button
+                      variant="primary"
+                      className="mt-3"
+                      onClick={() => navigate("/dashboard")}
+                    >
+                      Go to Dashboard
+                    </Button>
                   </div>
                 </Tab.Pane>
+
               </Tab.Content>
             </Col>
           </Row>
         </Tab.Container>
       </Container>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

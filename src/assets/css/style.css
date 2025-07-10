@@ -149,6 +149,12 @@ li.rounded {
   padding-left: 0px !important;
   height: 100vh;
 }
+
+.customdashboardheight {
+  height: 100%;
+  margin-top: 0;
+  min-height: 600px;
+}
 ul.nav.flex-column li a span,
 ul.nav.flex-column li button span {
   display: block;
@@ -272,7 +278,7 @@ div#basic-navbar-nav a {
   color: #434800;
   font-weight: 900;
   font-size: 32px;
-  margin: 0;
+  margin: 0 0 0 5px;
 }
 /*********** dashbaord css ********/
 .selectcountry label {
@@ -397,7 +403,9 @@ span.status-badge.processing {
 span.status-badge.review {
   color: #434800;
 }
-
+.add_receipent_row {
+  width: 50%;
+}
 /*************** trsnafer details css ****************/
 .banktransfer-select {
   padding: 5px 8px;

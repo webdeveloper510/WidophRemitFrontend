@@ -201,7 +201,15 @@ const ProfileInformation = () => {
             <Card.Body>
               <Card.Title>Personal Details</Card.Title>
               <Row className="mb-3">
-                <FloatingLabel as={Col} label="First Name" className="mb-3">
+                <FloatingLabel
+                  as={Col}
+                  label={
+                    <span>
+                      First Name <span style={{ color: "red" }}>*</span>
+                    </span>
+                  }
+                  className="mb-3"
+                >
                   <Form.Control
                     name="firstName"
                     value={formData.firstName}
@@ -220,7 +228,15 @@ const ProfileInformation = () => {
                     onChange={handleChange}
                   />
                 </FloatingLabel>
-                <FloatingLabel as={Col} label="Last Name" className="mb-3">
+                <FloatingLabel
+                  as={Col}
+                  label={
+                    <span>
+                      Last Name <span style={{ color: "red" }}>*</span>
+                    </span>
+                  }
+                  className="mb-3"
+                >
                   <Form.Control
                     name="lastName"
                     value={formData.lastName}
@@ -234,7 +250,15 @@ const ProfileInformation = () => {
                 </FloatingLabel>
               </Row>
               <Row className="mb-3">
-                <FloatingLabel as={Col} label="Customer ID" className="mb-3">
+                <FloatingLabel
+                  as={Col}
+                  label={
+                    <span>
+                      Customer ID <span style={{ color: "red" }}>*</span>
+                    </span>
+                  }
+                  className="mb-3"
+                >
                   <Form.Control
                     name="customerId"
                     value={formData.customerId}
@@ -242,7 +266,15 @@ const ProfileInformation = () => {
                     plaintext
                   />
                 </FloatingLabel>
-                <FloatingLabel as={Col} label="Email" className="mb-3">
+                <FloatingLabel
+                  as={Col}
+                  label={
+                    <span>
+                      Email <span style={{ color: "red" }}>*</span>
+                    </span>
+                  }
+                  className="mb-3"
+                >
                   <Form.Control
                     type="email"
                     value={formData.email}
@@ -254,7 +286,14 @@ const ProfileInformation = () => {
               </Row>
               <Row className="mb-3 mobile_numbero">
                 <Col>
-                  <FloatingLabel label="Mobile Number" className="mb-3">
+                  <FloatingLabel
+                    label={
+                      <span>
+                        Mobile Number <span style={{ color: "red" }}>*</span>
+                      </span>
+                    }
+                    className="mb-3"
+                  >
                     <div className="d-flex align-items-stretch">
                       <Form.Select
                         value={countryCode}
@@ -282,7 +321,15 @@ const ProfileInformation = () => {
                 </Col>
               </Row>
               <Row className="mb-3">
-                <FloatingLabel as={Col} label="Date of Birth" className="mb-3">
+                <FloatingLabel
+                  as={Col}
+                  label={
+                    <span>
+                      Date of Birth<span style={{ color: "red" }}>*</span>
+                    </span>
+                  }
+                  className="mb-3"
+                >
                   <Form.Control
                     name="dateOfBirth"
                     type="date"
@@ -295,7 +342,14 @@ const ProfileInformation = () => {
                     Date of Birth is required
                   </Form.Control.Feedback>
                 </FloatingLabel>
-                <FloatingLabel as={Col} label="Country of Birth">
+                <FloatingLabel
+                  as={Col}
+                  label={
+                    <span>
+                      Country of Birth<span style={{ color: "red" }}>*</span>
+                    </span>
+                  }
+                >
                   <Form.Control
                     name="countryOfBirth"
                     value={formData.countryOfBirth}
@@ -307,7 +361,14 @@ const ProfileInformation = () => {
                     Country of Birth is required
                   </Form.Control.Feedback>
                 </FloatingLabel>
-                <FloatingLabel as={Col} label="Occupation">
+                <FloatingLabel
+                  as={Col}
+                  label={
+                    <span>
+                      Occupation<span style={{ color: "red" }}>*</span>
+                    </span>
+                  }
+                >
                   <Form.Control
                     name="occupation"
                     value={formData.occupation}
@@ -321,7 +382,15 @@ const ProfileInformation = () => {
                 </FloatingLabel>
               </Row>
               <Row className="mb-3">
-                <FloatingLabel as={Col} label="Country" className="mb-3">
+                <FloatingLabel
+                  as={Col}
+                  label={
+                    <span>
+                      Country<span style={{ color: "red" }}>*</span>
+                    </span>
+                  }
+                  className="mb-3"
+                >
                   <Form.Control
                     name="country"
                     value={formData.country}
@@ -333,7 +402,15 @@ const ProfileInformation = () => {
                     Country is required
                   </Form.Control.Feedback>
                 </FloatingLabel>
-                <FloatingLabel as={Col} label="Address" className="mb-3">
+                <FloatingLabel
+                  as={Col}
+                  label={
+                    <span>
+                      Address<span style={{ color: "red" }}>*</span>
+                    </span>
+                  }
+                  className="mb-3"
+                >
                   <Form.Control
                     name="address"
                     as="textarea"
@@ -349,7 +426,14 @@ const ProfileInformation = () => {
                 </FloatingLabel>
               </Row>
               <Row className="mb-3">
-                <FloatingLabel as={Col} label="City">
+                <FloatingLabel
+                  as={Col}
+                  label={
+                    <span>
+                      City<span style={{ color: "red" }}>*</span>
+                    </span>
+                  }
+                >
                   <Form.Control
                     name="city"
                     value={formData.city}
@@ -361,7 +445,14 @@ const ProfileInformation = () => {
                     City is required
                   </Form.Control.Feedback>
                 </FloatingLabel>
-                <FloatingLabel as={Col} label="Zip/Postal Code">
+                <FloatingLabel
+                  as={Col}
+                  label={
+                    <span>
+                      Zip/Postal Code<span style={{ color: "red" }}>*</span>
+                    </span>
+                  }
+                >
                   <Form.Control
                     name="zip"
                     type="number"
@@ -374,7 +465,14 @@ const ProfileInformation = () => {
                     Zip is required
                   </Form.Control.Feedback>
                 </FloatingLabel>
-                <FloatingLabel as={Col} label="State">
+                <FloatingLabel
+                  as={Col}
+                  label={
+                    <span>
+                      State<span style={{ color: "red" }}>*</span>
+                    </span>
+                  }
+                >
                   <Form.Control
                     name="state"
                     value={formData.state}

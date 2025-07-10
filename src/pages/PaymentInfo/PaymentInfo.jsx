@@ -9,14 +9,13 @@ import { useState, useEffect } from "react";
 import { getAgreementList, getPayID } from "../../services/Api";
 
 const PaymentInfo = () => {
-
   const [payIdDetail, setPayIdDetail] = useState({ payid: null });
   const [payToDetail, setPayToDetail] = useState({
     agreement_uuid: null,
     account_number: "",
     agreement_start_date: "",
     bsb_code: "",
-    max_amount: ""
+    max_amount: "",
   });
 
   useEffect(() => {
@@ -24,7 +23,7 @@ const PaymentInfo = () => {
       try {
         const [payIdRes, agreementRes] = await Promise.all([
           getPayID(),
-          getAgreementList()
+          getAgreementList(),
         ]);
 
         if (payIdRes.code === "200") {
@@ -34,7 +33,6 @@ const PaymentInfo = () => {
         if (agreementRes.code === "200") {
           setPayToDetail(agreementRes.data);
         }
-
       } catch (err) {
         console.error("Error fetching payId or agreement:", err);
       }
@@ -110,9 +108,17 @@ const PaymentInfo = () => {
             </Card>
           </div>
         </div>
+
+        <div className="row">
+          <div className="col-md-12">
+            <Card className="receiver-card mt-4 bg-white p-2 payment-types">
+              <Card.Body className="text-center">No records found.</Card.Body>
+            </Card>
+          </div>
+        </div>
       </div>
     </AnimatedPage>
-  )
-}
+  );
+};
 
 export default PaymentInfo;

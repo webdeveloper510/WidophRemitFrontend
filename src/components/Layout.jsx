@@ -12,16 +12,18 @@ const Layout = () => {
 
   return (
     <>
-      <div className="p-3 d-flex flex-row">
-        <Sidebar collapsed={collapsed} />
+      <div className="p-3 d-flex flex-row customdashboardheight">
+        <div className="d-flex w-100">
+          <Sidebar collapsed={collapsed} />
 
-        <div className="flex-grow-1 d-flex flex-column right-side-content">
-          <TopNavbar onToggleSidebar={() => setCollapsed(!collapsed)} />
-          <main className="flex-grow-1 p-3 mt-3 overflow-auto">
-            <AnimatePresence mode="wait">
-              <Outlet key={location.pathname} />
-            </AnimatePresence>
-          </main>
+          <div className="flex-grow-1 d-flex flex-column right-side-content">
+            <TopNavbar onToggleSidebar={() => setCollapsed(!collapsed)} />
+            <main className="flex-grow-1 p-3 mt-3 overflow-auto">
+              <AnimatePresence mode="wait">
+                <Outlet key={location.pathname} />
+              </AnimatePresence>
+            </main>
+          </div>
         </div>
       </div>
       <Footer />
