@@ -281,6 +281,14 @@ div#basic-navbar-nav a {
   margin: 0 0 0 5px;
 }
 /*********** dashbaord css ********/
+.recievers-list {
+  text-align: center;
+}
+.payment-select,
+.paymentoptions {
+  padding: 5px 8px !important;
+  margin-right: 30px;
+}
 .selectcountry label {
   position: absolute;
   top: 0px;
@@ -559,6 +567,7 @@ form.profile-form textarea {
 .form-control:focus {
   box-shadow: none;
   border: 1px solid #e0e3b7;
+  background: transparent !important;
 }
 .PhoneInput {
   border: 1px solid #e0e3b7;

@@ -133,30 +133,32 @@ const SendMoney = () => {
     };
   };
 
-  const getExchangeRate = useCallback(async (from, to, amount = "1") => {
-    if (isConverting) return;
+  const getExchangeRate = useCallback(
+    async (from, to, amount = "1") => {
+      if (isConverting) return;
 
-    setIsConverting(true);
-    try {
-      const response = await exchangeRate({
-        amount: amount,
-        from: from,
-        to: to,
-        direction: "from",
-      });
+      setIsConverting(true);
+      try {
+        const response = await exchangeRate({
+          amount: amount,
+          from: from,
+          to: to,
+          direction: "from",
+        });
 
-      if (response) {
-        setExchRate(response?.rate);
-        setDefaultExchange(response.default_exchange);
-        return response;
+        if (response) {
+          setExchRate(response?.rate);
+          setDefaultExchange(response.default_exchange);
+          return response;
+        }
+      } catch (error) {
+        console.error("Exchange rate error:", error);
+      } finally {
+        setIsConverting(false);
       }
-    } catch (error) {
-      console.error("Exchange rate error:", error);
-    } finally {
-      setIsConverting(false);
-    }
-  }, [isConverting]);
-
+    },
+    [isConverting]
+  );
 
   const debouncedConversion = useCallback(
     debounce(async (key, value, dir) => {
@@ -227,7 +229,6 @@ const SendMoney = () => {
     const { name, value } = e.target;
     handleChange(e);
 
-
     if (name === "from" || name === "to") {
       debouncedConversion(name, value, "from");
     }
@@ -241,7 +242,6 @@ const SendMoney = () => {
       debouncedConversion(name, value, "from");
     }
   };
-
 
   const handleAmountBlur = (e) => {
     const { name, value } = e.target;
@@ -298,7 +298,7 @@ const SendMoney = () => {
                         name="from"
                         value={values.from}
                         onChange={handleTypeChange}
-                        disabled={isConverting}
+                        //disabled={isConverting}
                       >
                         {curr_in.map((curr) => (
                           <option key={curr} value={curr}>
@@ -318,7 +318,7 @@ const SendMoney = () => {
                         name="to"
                         value={values.to}
                         onChange={handleTypeChange}
-                        disabled={isConverting}
+                        //disabled={isConverting}
                       >
                         {curr_out.map((curr) => (
                           <option key={curr} value={curr}>
@@ -342,7 +342,7 @@ const SendMoney = () => {
                         value={values.send_amt}
                         onChange={handleAmountChange}
                         onBlur={handleAmountBlur}
-                        disabled={isConverting}
+                        //disabled={isConverting}
                         isInvalid={touched.send_amt && !!errors.send_amt}
                         autoComplete="off"
                       />
@@ -364,7 +364,7 @@ const SendMoney = () => {
                         value={values.exchange_amt}
                         onChange={handleChange}
                         onBlur={handleAmountBlur}
-                        disabled={isConverting}
+                        //disabled={isConverting}
                         isInvalid={
                           touched.exchange_amt && !!errors.exchange_amt
                         }
