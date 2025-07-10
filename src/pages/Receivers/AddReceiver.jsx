@@ -127,7 +127,7 @@ const AddReceiver = () => {
             "selected_receiver",
             JSON.stringify(newRecipient)
           );
-          navigate("/review-transfer");
+          navigate("/receivers");
         } else {
           setApiError(response.message || "Failed to create receiver.");
         }

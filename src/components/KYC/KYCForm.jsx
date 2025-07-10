@@ -17,13 +17,12 @@ import "./KYCForm.css";
 import { useNavigate } from "react-router-dom";
 import {
   getVeriffStatus,
-  updateProfile,
+  updateProfile,  
   userProfile,
 } from "../../services/Api";
 import TopNavbar from "../LoginSignup/TopNavbar";
 import Footer from "../Footer";
 import KYCimage from "../../assets/images/kyc-image.png";
-import Footer from "../Footer";
 
 const KYCForm = () => {
   const navigate = useNavigate();
