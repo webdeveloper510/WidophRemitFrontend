@@ -111,7 +111,7 @@ const ReceiverList = () => {
             <a href="send-money">
               <img src={Back} alt="Back" />
             </a>
-            <h1>Select a Recipient to Send money</h1>
+            <h1>Select a Receiver to Send money</h1>
           </div>
           <Button
             type="button"

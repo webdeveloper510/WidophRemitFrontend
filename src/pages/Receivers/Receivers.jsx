@@ -51,8 +51,14 @@ const Receivers = () => {
       },
       sortable: true,
       cell: (row) => (
-        <strong>{`${row.first_name} ${row.middle_name} ${row.last_name}`}</strong>
+        <strong>{`${row.first_name}${row.last_name}`}</strong>
       ),
+    },
+    {
+      name: "Mobile",
+      selector: (row) => row.mobile,
+      sortable: true,
+      cell: (row) => <strong>{row.mobile}</strong>,
     },
     {
       name: "Sender Email",
@@ -86,10 +92,10 @@ const Receivers = () => {
 
   const filteredData = Array.isArray(list)
     ? list.filter((item) =>
-        (item.first_name + item.middle_name + item.last_name + item.email)
-          .toLowerCase()
-          .includes(filterText.toLowerCase())
-      )
+      (item.first_name + item.middle_name + item.last_name + item.email)
+        .toLowerCase()
+        .includes(filterText.toLowerCase())
+    )
     : [];
 
   const displayData = filteredData;
