@@ -17,7 +17,7 @@ import "./KYCForm.css";
 import { useNavigate } from "react-router-dom";
 import {
   getVeriffStatus,
-  updateProfile,  
+  updateProfile,
   userProfile,
 } from "../../services/Api";
 import TopNavbar from "../LoginSignup/TopNavbar";
@@ -65,24 +65,24 @@ const KYCForm = () => {
     label: country,
   }));
 
- const handleClick = async () => {
-  setVerifyingID(true);
-  try {
-    const response = await getVeriffStatus();
+  const handleClick = async () => {
+    setVerifyingID(true);
+    try {
+      const response = await getVeriffStatus();
 
-    if (response?.code === "200" && response?.data?.status === "submitted") {
-      setIdVerified(true);
-      setSelectedFileName("ID_Document_Verified.pdf");
-      setTimeout(() => setActiveKey("step3"), 500);
-    } else {
-      console.warn("Verification not successful:", response);
+      if (response?.code === "200" && response?.data?.status === "submitted") {
+        setIdVerified(true);
+        setSelectedFileName("ID_Document_Verified.pdf");
+        setTimeout(() => setActiveKey("step3"), 500);
+      } else {
+        console.warn("Verification not successful:", response);
+      }
+    } catch (error) {
+      console.error("Error during verification:", error);
+    } finally {
+      setVerifyingID(false);
     }
-  } catch (error) {
-    console.error("Error during verification:", error);
-  } finally {
-    setVerifyingID(false);
-  }
-};
+  };
 
 
   const handleFileChange = (event) => {
@@ -106,20 +106,42 @@ const KYCForm = () => {
 
   const validatePersonalDetails = () => {
     const newErrors = {};
+
     if (!formData.firstName.trim())
       newErrors.firstName = "First name is required";
-    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
-    if (!formData.email.trim()) newErrors.email = "Email is required";
+
+    if (!formData.lastName.trim())
+      newErrors.lastName = "Last name is required";
+
+    if (!formData.email.trim())
+      newErrors.email = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(formData.email))
       newErrors.email = "Email format is invalid";
-    if (!formData.phone.trim()) newErrors.phone = "Mobile number is required";
+
+    if (!formData.phone.trim())
+      newErrors.phone = "Mobile number is required";
     else if (formData.phone.length < 9)
       newErrors.phone = "Mobile number must be at least 9 digits";
-    if (!formData.dob) newErrors.dob = "Date of birth is required";
+
+    if (!formData.dob) {
+      newErrors.dob = "Date of birth is required";
+    } else {
+      const dobDate = new Date(formData.dob);
+      const today = new Date();
+      const eighteenYearsAgo = new Date();
+      eighteenYearsAgo.setFullYear(today.getFullYear() - 18);
+
+      if (dobDate > eighteenYearsAgo) {
+        newErrors.dob = "You must be at least 18 years old";
+      }
+    }
+
     if (!formData.countryOfBirth)
       newErrors.countryOfBirth = "Country of birth is required";
+
     if (!formData.occupation.trim())
       newErrors.occupation = "Occupation is required";
+
     setErrors((prev) => ({ ...prev, ...newErrors }));
     return Object.keys(newErrors).length === 0;
   };
@@ -286,9 +308,8 @@ const KYCForm = () => {
                     <Nav.Item key={num} className="step-wrapper">
                       <div className="step-connector">
                         <div
-                          className={`step-dot ${
-                            isCompleted ? "completed" : ""
-                          } ${isActive ? "active" : ""}`}
+                          className={`step-dot ${isCompleted ? "completed" : ""
+                            } ${isActive ? "active" : ""}`}
                         >
                           {isCompleted ? "●" : ""}
                         </div>
@@ -305,8 +326,8 @@ const KYCForm = () => {
                           {num === 1
                             ? "Personal Details"
                             : num === 2
-                            ? "Verify Your ID"
-                            : "KYC Completed"}
+                              ? "Verify Your ID"
+                              : "KYC Completed"}
                         </div>
                       </Nav.Link>
                     </Nav.Item>
@@ -493,26 +514,27 @@ const KYCForm = () => {
                       >
                         <Form.Control
                           type="date"
+                          max={new Date(
+                            new Date().setFullYear(new Date().getFullYear() - 18)
+                          )
+                            .toISOString()
+                            .split("T")[0]}
                           value={formData.dob}
-                          onChange={(e) =>
-                            handleInputChange("dob", e.target.value)
-                          }
+                          onChange={(e) => handleInputChange("dob", e.target.value)}
                           isInvalid={touched.dob && errors.dob}
                           disabled={isLoading}
                         />
                         {touched.dob && errors.dob && (
-                          <div className="text-danger mt-1 small">
-                            {errors.dob}
-                          </div>
+                          <div className="text-danger mt-1 small">{errors.dob}</div>
                         )}
                       </FloatingLabel>
+
 
                       <Col className="mb-3">
                         <div className="floating-label-wrapper kyc-country">
                           <label
-                            className={`floating-label ${
-                              formData.countryOfBirth ? "filled" : ""
-                            }`}
+                            className={`floating-label ${formData.countryOfBirth ? "filled" : ""
+                              }`}
                           >
                             Country of Birth
                             <span style={{ color: "red" }}>*</span>

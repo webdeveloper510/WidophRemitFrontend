@@ -297,7 +297,7 @@ const OtpVerification = () => {
           if (response?.access_token) {
             sessionStorage.setItem("token", response.access_token);
           }
-          navigate("/kyc");
+          navigate("/dashboard");
           return;
         }
 

@@ -64,19 +64,6 @@ const ReceiverTable = () => {
       sortable: true,
       cell: (row) => <strong>{`${row.first_name} ${row.last_name}`}</strong>,
     },
-    {
-      name: "Send Again",
-      cell: (row) => (
-        <div className="send-again-btn" onClick={() => handleSendAgain(row)}>
-          <FaArrowRotateRight />
-        </div>
-      ),
-      ignoreRowClick: true,
-      allowOverflow: true,
-      button: true,
-      center: true,
-      width: "120px",
-    },
   ];
 
   return (
