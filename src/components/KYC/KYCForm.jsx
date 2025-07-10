@@ -22,6 +22,7 @@ import {
 } from "../../services/Api";
 import TopNavbar from "../LoginSignup/TopNavbar";
 import KYCimage from "../../assets/images/kyc-image.png";
+import Footer from "../Footer";
 
 const KYCForm = () => {
   const navigate = useNavigate();
@@ -32,6 +33,10 @@ const KYCForm = () => {
   const [apiSuccess, setApiSuccess] = useState("");
   const [idVerified, setIdVerified] = useState(false);
   const fileInputRef = useRef(null);
+  const [countdown, setCountdown] = useState(10);
+  const [verifyingID, setVerifyingID] = useState(false);
+
+
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -60,22 +65,25 @@ const KYCForm = () => {
     label: country,
   }));
 
-  const handleClick = async () => {
-    try {
-      const response = await getVeriffStatus();
+ const handleClick = async () => {
+  setVerifyingID(true);
+  try {
+    const response = await getVeriffStatus();
 
-      if (response?.code === "200" && response?.data?.status === "submitted") {
-        setIdVerified(true);
-        setSelectedFileName("ID_Document_Verified.pdf");
-
-        setTimeout(() => setActiveKey("step3"), 500);
-      } else {
-        console.warn("Verification not successful:", response);
-      }
-    } catch (error) {
-      console.error("Error during verification:", error);
+    if (response?.code === "200" && response?.data?.status === "submitted") {
+      setIdVerified(true);
+      setSelectedFileName("ID_Document_Verified.pdf");
+      setTimeout(() => setActiveKey("step3"), 500);
+    } else {
+      console.warn("Verification not successful:", response);
     }
-  };
+  } catch (error) {
+    console.error("Error during verification:", error);
+  } finally {
+    setVerifyingID(false);
+  }
+};
+
 
 
   const handleFileChange = (event) => {
@@ -231,6 +239,25 @@ const KYCForm = () => {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    if (activeKey === "step3") {
+      setCountdown(10);
+      const interval = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            navigate("/dashboard");
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [activeKey, navigate]);
+
 
   return (
     <>
@@ -677,6 +704,12 @@ const KYCForm = () => {
                             "SUBMIT & NEXT STEP"
                           )}
                         </Button>
+                        {isLoading && (
+                          <p className="text-info mb-3">
+                            <Spinner animation="border" size="sm" className="me-2" />
+                            Verifying your details...
+                          </p>
+                        )}
                       </Col>
                     </Row>
                   </Form>
@@ -738,13 +771,17 @@ const KYCForm = () => {
                         Previous
                       </Button>
                     </div>
-                    </div>
+                  </div>
                 </Tab.Pane>
 
                 <Tab.Pane eventKey="step3">
                   <div className="text-center">
                     <h2 className="text-success">✅ KYC Completed!</h2>
                     <p>Your KYC data is under review.</p>
+                    <p className="text-muted">
+                      Redirecting to dashboard in {countdown} second{countdown !== 1 && "s"}...
+                    </p>
+
                     <img src={KYCimage} alt="KYC Completed" />
                     <Button
                       variant="primary"
@@ -755,7 +792,6 @@ const KYCForm = () => {
                     </Button>
                   </div>
                 </Tab.Pane>
-
               </Tab.Content>
             </Col>
           </Row>

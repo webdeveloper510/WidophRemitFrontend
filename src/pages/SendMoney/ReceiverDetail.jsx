@@ -3,8 +3,7 @@ import AnimatedPage from "../../components/AnimatedPage";
 import Back from "../../assets/images/back.png";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
-import { Form, FloatingLabel, Col, InputGroup, Alert } from "react-bootstrap";
-import Row from "react-bootstrap/Row";
+import { Form, FloatingLabel, Col, Alert, Row } from "react-bootstrap";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import { useFormik } from "formik";
@@ -17,24 +16,7 @@ import CountrySelect from "react-bootstrap-country-select";
 const ReceiverDetail = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [value, setValue] = useState(null);
   const [apiError, setApiError] = useState("");
-
-  const initialValues = {
-    bank_name: "",
-    account_number: "",
-    first_name: "",
-    middle_name: "",
-    last_name: "",
-    email: "",
-    country: "",
-    building_no: "",
-    street_name: "",
-    state: "",
-    city: "",
-    post_code: "",
-    address: "",
-  };
 
   const countryList = [
     { name: "Australia", code: "AU", dialCode: "61" },
@@ -49,7 +31,23 @@ const ReceiverDetail = () => {
     { name: "Vietnam", code: "VN", dialCode: "84" },
   ];
 
-  // Validation schema
+  const initialValues = {
+    bank_name: "",
+    account_number: "",
+    first_name: "",
+    middle_name: "",
+    last_name: "",
+    email: "",
+    mobile: "",
+    country: "",
+    building_no: "",
+    street_name: "",
+    state: "",
+    city: "",
+    post_code: "",
+    address: "",
+  };
+
   const validationSchema = Yup.object({
     bank_name: Yup.string().required("Bank name is required"),
     account_number: Yup.string()
@@ -65,6 +63,7 @@ const ReceiverDetail = () => {
       .min(2, "Last name must be at least 2 characters")
       .matches(/^[A-Za-z\s]+$/, "Last name must contain only letters"),
     email: Yup.string().email("Please enter a valid email address"),
+    mobile: Yup.string().required("Mobile number is required"),
     country: Yup.string().required("Country is required"),
     building_no: Yup.string().required("Building number is required"),
     street_name: Yup.string().required("Street name is required"),
@@ -92,13 +91,12 @@ const ReceiverDetail = () => {
       setApiError("");
 
       try {
-        // Find the selected country to get country code
         const selectedCountry = countryList.find(
           (country) => country.name === values.country
         );
         const countryCode = selectedCountry ? selectedCountry.code : "";
 
-        let payload = {
+        const payload = {
           account_type: "individual",
           bank_name: values.bank_name,
           account_number: values.account_number,
@@ -106,6 +104,7 @@ const ReceiverDetail = () => {
           first_name: values.first_name,
           last_name: values.last_name,
           email: values.email,
+          mobile: values.mobile,
           building: values.building_no,
           street: values.street_name,
           city: values.city,
@@ -118,14 +117,14 @@ const ReceiverDetail = () => {
 
         const response = await createRecipient(payload);
 
-        if (response.code === "200") {
-          // Create a recipient object that matches the expected format in ReviewTransfer
+        if (Number(response.code) === 200) {
           const newRecipient = {
-            id: response.data?.id || response.data?.recipient_id, // Use the ID from API response
+            id: response.data?.id || response.data?.recipient_id,
             account_name: `${values.first_name} ${values.last_name}`.trim(),
             bank_name: values.bank_name,
             account_number: values.account_number,
             email: values.email,
+            mobile: values.mobile,
             country: values.country,
             country_code: countryCode,
             first_name: values.first_name,
@@ -136,27 +135,20 @@ const ReceiverDetail = () => {
             city: values.city,
             state: values.state,
             postcode: values.post_code,
-            // Add any other fields that might be needed
-            ...response.data, // Include any additional data from the API response
+            ...response.data,
           };
 
-          // Store the newly created recipient in session storage
           sessionStorage.setItem(
             "selected_receiver",
             JSON.stringify(newRecipient)
           );
-
           navigate("/review-transfer");
         } else {
-          setApiError(
-            response.message || "Failed to create receiver. Please try again."
-          );
+          setApiError(response.message || "Failed to create receiver.");
         }
       } catch (error) {
-        setApiError(
-          "An error occurred while creating the receiver. Please try again."
-        );
         console.error("Error creating receiver:", error);
+        setApiError("An error occurred while creating the receiver.");
       } finally {
         setIsLoading(false);
       }
@@ -174,54 +166,34 @@ const ReceiverDetail = () => {
           >
             <img src={Back} alt="Back" />
           </Button>
-          <h1>Add Recipient </h1>
+          <h1>Add Recipient</h1>
         </div>
       </div>
 
       <div className="page-content-section mt-3">
         <div className="row">
           <div className="col-md-12">
-            {apiError && (
-              <Alert variant="danger" className="mb-3">
-                {apiError}
-              </Alert>
-            )}
+            {apiError && <Alert variant="danger">{apiError}</Alert>}
 
-            <Form className="profile-form" onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit} className="profile-form">
+              {/* Bank Info */}
               <Card className="receiver-card bg-white">
                 <Card.Body>
                   <Card.Title>Bank Information</Card.Title>
                   <Row className="mb-3">
                     <FloatingLabel
-                      controlId="floatingSelect"
                       as={Col}
-                      label={
-                        <span>
-                          Bank Name <span style={{ color: "red" }}>*</span>
-                        </span>
-                      }
+                      controlId="floatingBankName"
+                      label="Bank Name *"
                     >
                       <Form.Control
                         type="text"
                         name="bank_name"
                         value={values.bank_name}
                         onChange={handleChange}
-                      />
-                      {/* <Form.Select
-                        aria-label="Floating label select example"
-                        name="bank_name"
-                        onChange={handleChange}
                         onBlur={handleBlur}
-                        value={values.bank_name}
                         isInvalid={touched.bank_name && errors.bank_name}
-                      >
-                        <option value="">Select Bank</option>
-                        {Bank_list.map((bank, index) => (
-                          <option key={index} value={bank.value}>
-                            {bank.label}
-                          </option>
-                        ))}
-                      </Form.Select> */}
+                      />
                       <Form.Control.Feedback type="invalid">
                         {errors.bank_name}
                       </Form.Control.Feedback>
@@ -229,13 +201,8 @@ const ReceiverDetail = () => {
 
                     <FloatingLabel
                       as={Col}
-                      controlId="floatingInput"
-                      label={
-                        <span>
-                          Account Number <span style={{ color: "red" }}>*</span>
-                        </span>
-                      }
-                      className="mb-3"
+                      controlId="floatingAccountNumber"
+                      label="Account Number *"
                     >
                       <Form.Control
                         type="text"
@@ -255,20 +222,15 @@ const ReceiverDetail = () => {
                 </Card.Body>
               </Card>
 
+              {/* Recipient Info */}
               <Card className="receiver-card mt-4 bg-white">
                 <Card.Body>
                   <Card.Title>Recipient Details</Card.Title>
-
                   <Row className="mb-3">
                     <FloatingLabel
                       as={Col}
-                      controlId="floatingInput"
-                      label={
-                        <span>
-                          First Name <span style={{ color: "red" }}>*</span>
-                        </span>
-                      }
-                      className="mb-3"
+                      controlId="floatingFirstName"
+                      label="First Name *"
                     >
                       <Form.Control
                         type="text"
@@ -283,30 +245,19 @@ const ReceiverDetail = () => {
                       </Form.Control.Feedback>
                     </FloatingLabel>
 
-                    <FloatingLabel
-                      as={Col}
-                      controlId="floatingInput"
-                      label="Middle Name"
-                      className="mb-3"
-                    >
+                    <FloatingLabel as={Col} controlId="floatingMiddleName" label="Middle Name">
                       <Form.Control
                         type="text"
                         name="middle_name"
                         value={values.middle_name}
                         onChange={handleChange}
-                        onBlur={handleBlur}
                       />
                     </FloatingLabel>
 
                     <FloatingLabel
                       as={Col}
-                      controlId="floatingInput"
-                      label={
-                        <span>
-                          Last Name <span style={{ color: "red" }}>*</span>
-                        </span>
-                      }
-                      className="mb-3"
+                      controlId="floatingLastName"
+                      label="Last Name *"
                     >
                       <Form.Control
                         type="text"
@@ -325,13 +276,8 @@ const ReceiverDetail = () => {
                   <Row className="mb-3">
                     <FloatingLabel
                       as={Col}
-                      controlId="floatingInput"
-                      label={
-                        <span>
-                          Email <span style={{ color: "red" }}>*</span>
-                        </span>
-                      }
-                      className="mb-3"
+                      controlId="floatingEmail"
+                      label="Email"
                     >
                       <Form.Control
                         type="email"
@@ -345,82 +291,61 @@ const ReceiverDetail = () => {
                         {errors.email}
                       </Form.Control.Feedback>
                     </FloatingLabel>
+
                     <FloatingLabel
                       as={Col}
-                      controlId="floatingInput"
-                      label={
-                        <span>
-                          Mobile <span style={{ color: "red" }}>*</span>
-                        </span>
-                      }
-                      className="mb-3 mobileinput"
+                      controlId="floatingMobile"
+                      label="Mobile *"
+                      className="mobileinput"
                     >
                       <PhoneInput
                         international
-                        countryCallingCodeEditable={false}
                         defaultCountry="AU"
+                        countryCallingCodeEditable={false}
                         value={values.mobile}
-                        onChange={(val) => {
-                          handleChange({
-                            target: { name: "mobile", value: val },
-                          });
-                        }}
+                        onChange={(val) => setFieldValue("mobile", val)}
                       />
+                      {touched.mobile && errors.mobile && (
+                        <div className="text-danger small mt-1">
+                          {errors.mobile}
+                        </div>
+                      )}
                     </FloatingLabel>
                   </Row>
                 </Card.Body>
               </Card>
 
+              {/* Address */}
               <Card className="receiver-card mt-4 bg-white">
                 <Card.Body>
                   <Card.Title>Address</Card.Title>
+
                   <Row className="mb-3">
                     <FloatingLabel
-                      controlId="floatingSelect"
                       as={Col}
-                      label={
-                        <span>
-                          Country <span style={{ color: "red" }}>*</span>
-                        </span>
-                      }
-                      className="mb-3 selectcountry"
+                      controlId="floatingCountry"
+                      label="Country *"
+                      className="selectcountry"
                     >
                       <CountrySelect
                         name="country"
-                        value={value}
-                        onChange={setValue}
+                        value={countryList.find(c => c.name === values.country)}
+                        onChange={(val) =>
+                          setFieldValue("country", val?.name || "")
+                        }
                         flags
-                        //placeholder="Select country..."
                       />
-                      {/* <Form.Select
-                        aria-label="Floating label select example"
-                        name="country"
-                        value={values.country}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        isInvalid={touched.country && errors.country}
-                      >
-                        <option value="">Select Country</option>
-                        {countryList.map((country, index) => (
-                          <option key={index} value={country.name}>
-                            {country.name}
-                          </option>
-                        ))}
-                      </Form.Select> */}
-                      <Form.Control.Feedback type="invalid">
-                        {errors.country}
-                      </Form.Control.Feedback>
+                      {touched.country && errors.country && (
+                        <div className="text-danger small mt-1">
+                          {errors.country}
+                        </div>
+                      )}
                     </FloatingLabel>
 
                     <FloatingLabel
                       as={Col}
-                      controlId="floatingTextarea2"
-                      label={
-                        <span>
-                          Address <span style={{ color: "red" }}>*</span>
-                        </span>
-                      }
-                      className="mb-3"
+                      controlId="floatingAddress"
+                      label="Address *"
                     >
                       <Form.Control
                         as="textarea"
@@ -440,14 +365,8 @@ const ReceiverDetail = () => {
                   <Row className="mb-3">
                     <FloatingLabel
                       as={Col}
-                      controlId="floatingInput"
-                      label={
-                        <span>
-                          Building Number{" "}
-                          <span style={{ color: "red" }}>*</span>
-                        </span>
-                      }
-                      className="mb-3"
+                      controlId="floatingBuilding"
+                      label="Building Number *"
                     >
                       <Form.Control
                         type="text"
@@ -461,15 +380,11 @@ const ReceiverDetail = () => {
                         {errors.building_no}
                       </Form.Control.Feedback>
                     </FloatingLabel>
+
                     <FloatingLabel
                       as={Col}
-                      controlId="floatingInput"
-                      label={
-                        <span>
-                          Street Name <span style={{ color: "red" }}>*</span>
-                        </span>
-                      }
-                      className="mb-3"
+                      controlId="floatingStreet"
+                      label="Street Name *"
                     >
                       <Form.Control
                         type="text"
@@ -486,16 +401,7 @@ const ReceiverDetail = () => {
                   </Row>
 
                   <Row className="mb-3">
-                    <FloatingLabel
-                      as={Col}
-                      controlId="floatingInput"
-                      label={
-                        <span>
-                          City <span style={{ color: "red" }}>*</span>
-                        </span>
-                      }
-                      className="mb-3"
-                    >
+                    <FloatingLabel as={Col} controlId="floatingCity" label="City *">
                       <Form.Control
                         type="text"
                         name="city"
@@ -509,17 +415,7 @@ const ReceiverDetail = () => {
                       </Form.Control.Feedback>
                     </FloatingLabel>
 
-                    <FloatingLabel
-                      as={Col}
-                      controlId="floatingInput"
-                      label={
-                        <span>
-                          Zip/Postal Code
-                          <span style={{ color: "red" }}>*</span>
-                        </span>
-                      }
-                      className="mb-3"
-                    >
+                    <FloatingLabel as={Col} controlId="floatingPostCode" label="Postal Code *">
                       <Form.Control
                         type="text"
                         name="post_code"
@@ -533,16 +429,7 @@ const ReceiverDetail = () => {
                       </Form.Control.Feedback>
                     </FloatingLabel>
 
-                    <FloatingLabel
-                      as={Col}
-                      controlId="floatingInput"
-                      label={
-                        <span>
-                          State <span style={{ color: "red" }}>*</span>
-                        </span>
-                      }
-                      className="mb-3"
-                    >
+                    <FloatingLabel as={Col} controlId="floatingState" label="State *">
                       <Form.Control
                         type="text"
                         name="state"

@@ -55,13 +55,13 @@ const Receivers = () => {
       ),
     },
     {
-      name: "Mobile",
+      name: "Receivers Mobile",
       selector: (row) => row.mobile,
       sortable: true,
       cell: (row) => <strong>{row.mobile}</strong>,
     },
     {
-      name: "Sender Email",
+      name: "Receivers Email",
       selector: (row) => row.email,
       sortable: true,
       cell: (row) => <strong>{row.email}</strong>,
