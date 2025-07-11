@@ -263,7 +263,7 @@ const KYCForm = () => {
 
   useEffect(() => {
     if (activeKey === "step3") {
-      setCountdown(10);
+      setCountdown(5);
       const interval = setInterval(() => {
         setCountdown((prev) => {
           if (prev <= 1) {

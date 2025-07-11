@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AnimatedPage from "../../components/AnimatedPage";
 import Back from "../../assets/images/back.png";
@@ -70,8 +70,6 @@ const AddReceiver = () => {
     email: Yup.string().email("Invalid email"),
     mobile: Yup.string().required("Mobile number is required"),
     country: Yup.string().required("Country is required"),
-    building_no: Yup.string().required("Building number is required"),
-    street_name: Yup.string().required("Street name is required"),
     state: Yup.string().required("State is required"),
     city: Yup.string().required("City is required"),
     post_code: Yup.string()
@@ -344,7 +342,14 @@ const AddReceiver = () => {
                       Country <span style={{ color: "red" }}>*</span>
                     </label>
 
-                    <Select options={countryOptions} name="country" />
+                    <Select
+                      options={countryOptions}
+                      name="country"
+                      value={countryOptions.find(opt => opt.value === values.country)}
+                      onChange={(option) => setFieldValue("country", option.value)}
+                      onBlur={() => setFieldValue("country", values.country)}
+                    />
+
 
                     {/* <CountrySelect
                         name="country"
@@ -529,6 +534,7 @@ const AddReceiver = () => {
             </Card.Body>
           </Card>
         </Form>
+
       </div>
     </AnimatedPage>
   );
