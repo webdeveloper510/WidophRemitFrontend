@@ -274,7 +274,19 @@ div#basic-navbar-nav a {
   font-size: 32px;
   margin: 0 0 0 5px;
 }
+
 /*********** dashbaord css ********/
+
+/* .receiverslist-table
+  .sc-dKKIkQ.kqXKaa.rdt_TableBody
+  .rdt_TableRow:nth-child(1)
+  .recievers-list {
+  transform: translate(-150px, 20px) !important;
+} */
+
+.gQArdZ {
+  overflow: inherit !important;
+}
 .recievers-list {
   text-align: center;
 }
