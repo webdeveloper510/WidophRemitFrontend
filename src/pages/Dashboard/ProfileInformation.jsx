@@ -5,6 +5,8 @@ import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import { Form, FloatingLabel, Col } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
+import Select from "react-select";
+import { getNames } from "country-list";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +17,10 @@ const ProfileInformation = () => {
   const [rawMobile, setRawMobile] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const navigate = useNavigate();
-
+  const countryOptions = getNames().map((country) => ({
+    value: country,
+    label: country,
+  }));
   const [visibility, setVisibility] = useState({
     current: false,
     new: false,
@@ -380,50 +385,55 @@ const ProfileInformation = () => {
                   </Form.Control.Feedback>
                 </FloatingLabel>
               </Row>
+
               <Row className="mb-3">
-                <FloatingLabel
-                  as={Col}
-                  label={
-                    <span>
-                      Country<span style={{ color: "red" }}>*</span>
-                    </span>
-                  }
-                  className="mb-3"
-                >
-                  <Form.Control
+                <Col>
+                  <div className="floating-label-wrapper kyc-country">
+                    <label>
+                      Country <span style={{ color: "red" }}>*</span>
+                    </label>
+
+                    <Select options={countryOptions} name="country" />
+
+                    {/* <Form.Control
                     name="country"
                     value={formData.country}
                     onChange={handleChange}
                     required
                     isInvalid={getInvalid("country")}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    Country is required
-                  </Form.Control.Feedback>
-                </FloatingLabel>
-                <FloatingLabel
-                  as={Col}
-                  label={
-                    <span>
-                      Address<span style={{ color: "red" }}>*</span>
-                    </span>
-                  }
-                  className="mb-3"
-                >
-                  <Form.Control
-                    name="address"
-                    as="textarea"
-                    style={{ height: "50px" }}
-                    value={formData.address}
-                    onChange={handleChange}
-                    required
-                    isInvalid={getInvalid("address")}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    Address is required
-                  </Form.Control.Feedback>
-                </FloatingLabel>
+                  /> */}
+                    <Form.Control.Feedback type="invalid">
+                      Country is required
+                    </Form.Control.Feedback>
+                  </div>
+                </Col>
+
+                <Col>
+                  <FloatingLabel
+                    as={Col}
+                    label={
+                      <span>
+                        Address<span style={{ color: "red" }}>*</span>
+                      </span>
+                    }
+                    className="mb-3"
+                  >
+                    <Form.Control
+                      name="address"
+                      as="textarea"
+                      style={{ height: "50px" }}
+                      value={formData.address}
+                      onChange={handleChange}
+                      required
+                      isInvalid={getInvalid("address")}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      Address is required
+                    </Form.Control.Feedback>
+                  </FloatingLabel>
+                </Col>
               </Row>
+
               <Row className="mb-3">
                 <FloatingLabel
                   as={Col}
