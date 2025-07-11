@@ -1168,7 +1168,10 @@ li.nav-item.mb-2.bg-light.text-dark.rounded {
     transform: rotate(360deg);
   }
 }
-
+span.status-badge.in.progress {
+  font-size: 14px;
+  background: transparent;
+}
 /*************** responsive css ****************/
 
 @media screen and (max-width: 1500px) {

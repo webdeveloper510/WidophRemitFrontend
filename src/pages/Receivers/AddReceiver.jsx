@@ -164,7 +164,16 @@ const AddReceiver = () => {
             <Card.Body>
               <Card.Title>Bank Information</Card.Title>
               <Row className="mb-3">
-                <FloatingLabel as={Col} controlId="bankName" label="Bank Name *">
+                <FloatingLabel
+                  as={Col}
+                  controlId="bankName"
+                  label={
+                    <span>
+                      Bank Name
+                      <span style={{ color: "red" }}> *</span>
+                    </span>
+                  }
+                >
                   <Form.Control
                     type="text"
                     name="bank_name"
@@ -178,7 +187,16 @@ const AddReceiver = () => {
                   </Form.Control.Feedback>
                 </FloatingLabel>
 
-                <FloatingLabel as={Col} controlId="accountNumber" label="Account Number *">
+                <FloatingLabel
+                  as={Col}
+                  controlId="accountNumber"
+                  label={
+                    <span>
+                      Account Number
+                      <span style={{ color: "red" }}> *</span>
+                    </span>
+                  }
+                >
                   <Form.Control
                     type="text"
                     name="account_number"
@@ -200,7 +218,17 @@ const AddReceiver = () => {
             <Card.Body>
               <Card.Title>Recipient Details</Card.Title>
               <Row className="mb-3">
-                <FloatingLabel as={Col} controlId="firstName" label="First Name *">
+                <FloatingLabel
+                  as={Col}
+                  controlId="firstName"
+                  label={
+                    <span>
+                      First Name
+                      <span style={{ color: "red" }}> *</span>
+                    </span>
+                  }
+                  className="mb-3"
+                >
                   <Form.Control
                     type="text"
                     name="first_name"
@@ -214,7 +242,12 @@ const AddReceiver = () => {
                   </Form.Control.Feedback>
                 </FloatingLabel>
 
-                <FloatingLabel as={Col} controlId="middleName" label="Middle Name">
+                <FloatingLabel
+                  as={Col}
+                  controlId="middleName"
+                  label="Middle Name"
+                  className="mb-3"
+                >
                   <Form.Control
                     type="text"
                     name="middle_name"
@@ -223,7 +256,17 @@ const AddReceiver = () => {
                   />
                 </FloatingLabel>
 
-                <FloatingLabel as={Col} controlId="lastName" label="Last Name *">
+                <FloatingLabel
+                  as={Col}
+                  controlId="lastName"
+                  label={
+                    <span>
+                      Last Name
+                      <span style={{ color: "red" }}> *</span>
+                    </span>
+                  }
+                  className="mb-3"
+                >
                   <Form.Control
                     type="text"
                     name="last_name"
@@ -239,7 +282,7 @@ const AddReceiver = () => {
               </Row>
 
               <Row className="mb-3">
-                <FloatingLabel as={Col} controlId="email" label="Email">
+                {/* <FloatingLabel as={Col} controlId="email" label="Email">
                   <Form.Control
                     type="email"
                     name="email"
@@ -251,20 +294,34 @@ const AddReceiver = () => {
                   <Form.Control.Feedback type="invalid">
                     {errors.email}
                   </Form.Control.Feedback>
-                </FloatingLabel>
+                </FloatingLabel> */}
 
-                <FloatingLabel as={Col} controlId="mobile" label="Mobile *" className="mobileinput">
-                  <PhoneInput
-                    international
-                    defaultCountry="AU"
-                    countryCallingCodeEditable={false}
-                    value={values.mobile}
-                    onChange={(val) => setFieldValue("mobile", val)}
-                  />
-                  {touched.mobile && errors.mobile && (
-                    <div className="text-danger small mt-1">{errors.mobile}</div>
-                  )}
-                </FloatingLabel>
+                <Col className="col-4">
+                  <FloatingLabel
+                    as={Col}
+                    controlId="floatingMobile"
+                    label={
+                      <span>
+                        Mobile
+                        <span style={{ color: "red" }}> *</span>
+                      </span>
+                    }
+                    className="mobileinput mb-3"
+                  >
+                    <PhoneInput
+                      international
+                      defaultCountry="AU"
+                      countryCallingCodeEditable={false}
+                      value={values.mobile}
+                      onChange={(val) => setFieldValue("mobile", val)}
+                    />
+                    {touched.mobile && errors.mobile && (
+                      <div className="text-danger small mt-1">
+                        {errors.mobile}
+                      </div>
+                    )}
+                  </FloatingLabel>
+                </Col>
               </Row>
             </Card.Body>
           </Card>
@@ -274,18 +331,42 @@ const AddReceiver = () => {
             <Card.Body>
               <Card.Title>Address</Card.Title>
               <Row className="mb-3">
-                <FloatingLabel as={Col} controlId="country" label="Country *" className="selectcountry">
+                <FloatingLabel
+                  as={Col}
+                  controlId="country"
+                  label={
+                    <span>
+                      Country
+                      <span style={{ color: "red" }}> *</span>
+                    </span>
+                  }
+                  className="selectcountry mb-3"
+                >
                   <CountrySelect
                     value={countryList.find((c) => c.name === values.country)}
-                    onChange={(val) => setFieldValue("country", val?.name || "")}
+                    onChange={(val) =>
+                      setFieldValue("country", val?.name || "")
+                    }
                     flags
                   />
                   {touched.country && errors.country && (
-                    <div className="text-danger small mt-1">{errors.country}</div>
+                    <div className="text-danger small mt-1">
+                      {errors.country}
+                    </div>
                   )}
                 </FloatingLabel>
 
-                <FloatingLabel as={Col} controlId="address" label="Address *">
+                <FloatingLabel
+                  as={Col}
+                  controlId="address"
+                  label={
+                    <span>
+                      Address
+                      <span style={{ color: "red" }}> *</span>
+                    </span>
+                  }
+                  className="mb-3"
+                >
                   <Form.Control
                     as="textarea"
                     rows={2}
@@ -301,8 +382,12 @@ const AddReceiver = () => {
                 </FloatingLabel>
               </Row>
 
-              <Row className="mb-3">
-                <FloatingLabel as={Col} controlId="building_no" label="Building Number *">
+              {/* <Row className="mb-3">
+                <FloatingLabel
+                  as={Col}
+                  controlId="building_no"
+                  label="Building Number *"
+                >
                   <Form.Control
                     type="text"
                     name="building_no"
@@ -316,7 +401,11 @@ const AddReceiver = () => {
                   </Form.Control.Feedback>
                 </FloatingLabel>
 
-                <FloatingLabel as={Col} controlId="street_name" label="Street Name *">
+                <FloatingLabel
+                  as={Col}
+                  controlId="street_name"
+                  label="Street Name *"
+                >
                   <Form.Control
                     type="text"
                     name="street_name"
@@ -329,10 +418,20 @@ const AddReceiver = () => {
                     {errors.street_name}
                   </Form.Control.Feedback>
                 </FloatingLabel>
-              </Row>
+              </Row> */}
 
               <Row className="mb-3">
-                <FloatingLabel as={Col} controlId="city" label="City *">
+                <FloatingLabel
+                  as={Col}
+                  controlId="city"
+                  label={
+                    <span>
+                      City
+                      <span style={{ color: "red" }}> *</span>
+                    </span>
+                  }
+                  className="mb-3"
+                >
                   <Form.Control
                     type="text"
                     name="city"
@@ -346,7 +445,17 @@ const AddReceiver = () => {
                   </Form.Control.Feedback>
                 </FloatingLabel>
 
-                <FloatingLabel as={Col} controlId="post_code" label="Postal Code *">
+                <FloatingLabel
+                  as={Col}
+                  controlId="post_code"
+                  label={
+                    <span>
+                      Zip/Postal Code
+                      <span style={{ color: "red" }}> *</span>
+                    </span>
+                  }
+                  className="mb-3"
+                >
                   <Form.Control
                     type="text"
                     name="post_code"
@@ -360,7 +469,17 @@ const AddReceiver = () => {
                   </Form.Control.Feedback>
                 </FloatingLabel>
 
-                <FloatingLabel as={Col} controlId="state" label="State *">
+                <FloatingLabel
+                  as={Col}
+                  controlId="state"
+                  label={
+                    <span>
+                      State
+                      <span style={{ color: "red" }}> *</span>
+                    </span>
+                  }
+                  className="mb-3"
+                >
                   <Form.Control
                     type="text"
                     name="state"
