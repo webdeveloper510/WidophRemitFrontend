@@ -50,8 +50,14 @@ const ReviewTransfer = () => {
         const statusCode = res?.code?.toString();
 
         if (statusCode === "200" && res?.data) {
-          setSender(res.data);
-        } else {
+          const user = res.data;
+          setSender({
+            fullName: `${user.First_name || ""} ${user.Middle_name || ""} ${user.Last_name || ""}`.trim(),
+            email: user.email || "N/A",
+            phone: user.mobile || "N/A",
+          });
+        }
+        else {
           toast.error(res?.message || "Failed to fetch user profile");
         }
 
@@ -100,7 +106,7 @@ const ReviewTransfer = () => {
     : "";
 
   const handleSaveAndContinue = async () => {
-    
+
     if (!receiver) {
       toast.error("No receiver selected");
       return;
@@ -230,20 +236,16 @@ const ReviewTransfer = () => {
                         <tbody>
                           <tr>
                             <td>Sender Name</td>
-                            <td>{fullName || "N/A"}</td>
+                            <td>{sender?.fullName || "N/A"}</td>
                           </tr>
-                          {sender?.email && (
-                            <tr>
-                              <td>Email</td>
-                              <td>{sender.email}</td>
-                            </tr>
-                          )}
-                          {sender?.phone && (
-                            <tr>
-                              <td>Phone</td>
-                              <td>{sender.phone}</td>
-                            </tr>
-                          )}
+                          <tr>
+                            <td>Email</td>
+                            <td>{sender?.email || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td>Phone</td>
+                            <td>{sender?.phone || "N/A"}</td>
+                          </tr>
                         </tbody>
                       </Table>
                     </div>
