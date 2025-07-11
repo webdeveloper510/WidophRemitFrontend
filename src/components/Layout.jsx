@@ -18,7 +18,7 @@ const Layout = () => {
 
           <div className="flex-grow-1 d-flex flex-column right-side-content">
             <TopNavbar onToggleSidebar={() => setCollapsed(!collapsed)} />
-            <main className="flex-grow-1 p-3 mt-3 overflow-auto">
+            <main className="flex-grow-1 p-3 mt-3">
               <AnimatePresence mode="wait">
                 <Outlet key={location.pathname} />
               </AnimatePresence>
