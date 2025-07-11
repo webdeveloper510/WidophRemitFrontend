@@ -15,7 +15,7 @@ import Bank_list from "../../utils/Bank_list";
 import { createRecipient } from "../../services/Api";
 import CountrySelect from "react-bootstrap-country-select";
 
-const AddReceiver = () => {
+const UpdateReceiver = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
@@ -156,7 +156,7 @@ const AddReceiver = () => {
           >
             <img src={Back} alt="Back" />
           </Button>
-          <h1>Add Receiver</h1>
+          <h1>Update Receiver</h1>
         </div>
       </div>
 
@@ -345,11 +345,14 @@ const AddReceiver = () => {
                     <Select
                       options={countryOptions}
                       name="country"
-                      value={countryOptions.find(opt => opt.value === values.country)}
-                      onChange={(option) => setFieldValue("country", option.value)}
+                      value={countryOptions.find(
+                        (opt) => opt.value === values.country
+                      )}
+                      onChange={(option) =>
+                        setFieldValue("country", option.value)
+                      }
                       onBlur={() => setFieldValue("country", values.country)}
                     />
-
 
                     {/* <CountrySelect
                         name="country"
@@ -527,17 +530,16 @@ const AddReceiver = () => {
                     variant="primary"
                     disabled={isLoading}
                   >
-                    {isLoading ? "Creating..." : "Save & Continue"}
+                    {isLoading ? "Creating..." : "Update"}
                   </Button>
                 </Col>
               </Row>
             </Card.Body>
           </Card>
         </Form>
-
       </div>
     </AnimatedPage>
   );
 };
 
-export default AddReceiver;
+export default UpdateReceiver;

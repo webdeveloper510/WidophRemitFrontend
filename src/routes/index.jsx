@@ -17,6 +17,7 @@ import ConfirmTransfer from "../pages/SendMoney/ConfirmTransfer";
 import PaymentProcessed from "../pages/SendMoney/PaymentProcessed";
 import Receivers from "../pages/Receivers/Receivers";
 import AddReceiver from "../pages/Receivers/AddReceiver";
+import UpdateReceiver from "../pages/Receivers/UpdateReceiver";
 import MonoovaPaymentGateway from "../pages/PaymentGateway/MonoovaPaymentGateway";
 import LoginLayout from "../components/LoginSignup/LoginLayout";
 import Login from "../components/LoginSignup/Login";
@@ -45,7 +46,6 @@ const AppRoutes = () => {
         {/* OTP route accessible by both protected and public */}
         <Route path="/otp-verification" element={<OtpVerification />} />
 
-
         {/* Protected Routes */}
       </Route>
       <Route path="/kyc" element={<KYCForm />} />
@@ -73,6 +73,7 @@ const AppRoutes = () => {
         <Route path="confirm-transfer" element={<ConfirmTransfer />} />
         <Route path="payment-processed" element={<PaymentProcessed />} />
         <Route path="/add-receiver" element={<AddReceiver />} />
+        <Route path="/update-receiver" element={<UpdateReceiver />} />
         <Route path="monoova" element={<MonoovaPaymentGateway />} />
 
         {/* Redirect / to /dashboard */}

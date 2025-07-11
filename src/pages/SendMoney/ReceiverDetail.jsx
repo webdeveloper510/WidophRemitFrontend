@@ -71,8 +71,6 @@ const ReceiverDetail = () => {
     email: Yup.string().email("Please enter a valid email address"),
     mobile: Yup.string().required("Mobile number is required"),
     country: Yup.string().required("Country is required"),
-    building_no: Yup.string().required("Building number is required"),
-    street_name: Yup.string().required("Street name is required"),
     state: Yup.string().required("State is required"),
     city: Yup.string().required("City is required"),
     post_code: Yup.string()
@@ -372,7 +370,14 @@ const ReceiverDetail = () => {
                           Country <span style={{ color: "red" }}>*</span>
                         </label>
 
-                        <Select options={countryOptions} name="country" />
+                        <Select
+                          options={countryOptions}
+                          name="country"
+                          value={countryOptions.find(opt => opt.value === values.country)}
+                          onChange={(option) => setFieldValue("country", option.value)}
+                          onBlur={() => setFieldValue("country", values.country)}
+                        />
+
 
                         {/* <CountrySelect
                         name="country"

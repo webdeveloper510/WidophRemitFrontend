@@ -61,12 +61,6 @@ const Receivers = () => {
       cell: (row) => <strong>{row.mobile}</strong>,
     },
     {
-      name: "Receivers Email",
-      selector: (row) => row.email,
-      sortable: true,
-      cell: (row) => <strong>{row.email}</strong>,
-    },
-    {
       name: "Action",
       cell: (row) => (
         <Dropdown>
