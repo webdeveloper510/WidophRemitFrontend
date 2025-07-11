@@ -267,6 +267,7 @@ const ProfileInformation = () => {
                     name="customerId"
                     value={formData.customerId}
                     readOnly
+                    disabled
                     plaintext
                   />
                 </FloatingLabel>
@@ -301,6 +302,7 @@ const ProfileInformation = () => {
                     <div className="d-flex align-items-stretch">
                       <Form.Select
                         value={countryCode}
+                        readOnly
                         disabled
                         style={{
                           maxWidth: "110px",
@@ -314,6 +316,7 @@ const ProfileInformation = () => {
                       <Form.Control
                         type="text"
                         value={rawMobile}
+                        readOnly
                         disabled
                         style={{
                           borderTopLeftRadius: 0,
