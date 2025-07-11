@@ -176,6 +176,7 @@ const ProfileInformation = () => {
       .then((res) => {
         if (res?.code === "200") {
           toast.success("Profile updated successfully");
+          navigate("/dashboard");
         } else {
           toast.error(res?.message || "Failed to update profile");
         }
@@ -342,6 +343,7 @@ const ProfileInformation = () => {
                     type="date"
                     value={formData.dateOfBirth}
                     onChange={handleChange}
+                    readOnly
                     required
                     isInvalid={getInvalid("dateOfBirth")}
                   />
@@ -396,7 +398,15 @@ const ProfileInformation = () => {
                       Country <span style={{ color: "red" }}>*</span>
                     </label>
 
-                    <Select options={countryOptions} name="country" />
+                    <Select
+                      options={countryOptions}
+                      name="country"
+                      value={countryOptions.find((option) => option.value === formData.country)}
+                      onChange={(selectedOption) =>
+                        setFormData((prev) => ({ ...prev, country: selectedOption.value }))
+                      }
+                    />
+
 
                     {/* <Form.Control
                     name="country"

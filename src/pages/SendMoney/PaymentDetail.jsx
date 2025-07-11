@@ -194,6 +194,8 @@ const PaymentDetail = () => {
       setReasonError("Please select a transfer reason.");
       return;
     }
+    
+    sessionStorage.setItem("transfer_reason", transferReason);
 
     if (paymentType === "payto") {
       try {
@@ -202,7 +204,6 @@ const PaymentDetail = () => {
           JSON.parse(sessionStorage.getItem("transfer_data")).amount.send_amt
         );
         setbsb(agreementList.data.bsb_code);
-        console.log(agreementList);
 
         if (agreementList?.code === "200" && agreementList?.data) {
           const agreementData = Array.isArray(agreementList.data)
@@ -440,7 +441,7 @@ const PaymentDetail = () => {
                           }}
                         >
                           <option value="">Select Gateway</option>
-                          <option value="monova">Monova</option>
+                          <option value="monova">Monoova</option>
                           {/* Future: add more gateways here */}
                         </Form.Select>
                       )}
@@ -460,6 +461,7 @@ const PaymentDetail = () => {
                           setTransferReason(e.target.value);
                           setReasonError("");
                         }}
+                        name="reason"
                         isInvalid={!!reasonError}
                       >
                         <option value="">Select a Reason</option>

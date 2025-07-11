@@ -84,7 +84,7 @@ const Receivers = () => {
           </Dropdown.Menu>
         </Dropdown>
       ),
-      ignoreRowClick: true, 
+      ignoreRowClick: true,
       allowOverflow: true,
       button: true,
       center: true,
@@ -137,11 +137,21 @@ const Receivers = () => {
   };
 
   const handleDelete = async () => {
-    const response = await deleteRecipient(show);
-    if (response.code === "200") {
-      fetchList();
+    try {
+      const response = await deleteRecipient(show);
+      if (response.code === "200") {
+        toast.success("Receiver deleted successfully");
+        fetchList(); // Refresh list
+        handleClose(); // 🔴 Close the modal after deletion
+      } else {
+        toast.error(response.message || "Failed to delete receiver");
+      }
+    } catch (error) {
+      console.error("Deletion error:", error);
+      toast.error("Unexpected error occurred");
     }
   };
+
 
   return (
     <>
