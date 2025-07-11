@@ -105,8 +105,7 @@ export const userLogin = async (data) => {
 
 export const createMonovaPayment = async (data) => {
   try {
-    const response = await private_instance.post(
-      "http://54.151.50.98:8000/monoova/direct-debit/",
+    const response = await private_instance.post('/monoova/direct-debit/',
       data,
       {
         headers: {

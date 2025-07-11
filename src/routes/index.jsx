@@ -25,8 +25,8 @@ import ForgotPassword from "../components/LoginSignup/ForgotPassword";
 import ResetPassword from "../components/LoginSignup/ResetPassword";
 import KYCForm from "../components/KYC/KYCForm";
 import OtpVerification from "../components/LoginSignup/OTP";
-import TransactionSuccess from "../pages/SendMoney/TranscationSuccess";
 import ProfileInformation from "../pages/Dashboard/ProfileInformation";
+import TransactionSuccess from "../pages/SendMoney/TranscationSuccess";
 
 const AppRoutes = () => {
   return (
@@ -49,7 +49,6 @@ const AppRoutes = () => {
         {/* Protected Routes */}
       </Route>
       <Route path="/kyc" element={<KYCForm />} />
-
       <Route
         path="/"
         element={

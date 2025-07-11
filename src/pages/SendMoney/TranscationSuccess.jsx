@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Card, Row, Col, Spinner, Button } from "react-bootstrap";
 import AnimatedPage from "../../components/AnimatedPage";
+import Back from "../../assets/images/back.png";
+import processedImg from "../../assets/images/payment-processed-image.png";
+import Card from "react-bootstrap/Card";
+import Table from "react-bootstrap/Table";
+import { Col, Row, Button, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { ZaiPayId } from "../../services/Api";
 
@@ -12,7 +16,7 @@ const TransactionSuccess = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchTransactionStatus = async () => {
+    const fetchTransaction = async () => {
       const monovaTransactionId = sessionStorage.getItem("monova_transaction_id");
       const regularTransactionId = sessionStorage.getItem("transaction_id");
 
@@ -30,7 +34,6 @@ const TransactionSuccess = () => {
       }
 
       if (!transaction_id) {
-        console.error("No transaction ID found.");
         setLoading(false);
         return;
       }
@@ -38,12 +41,10 @@ const TransactionSuccess = () => {
       try {
         if (isMonova) {
           const transferData = JSON.parse(sessionStorage.getItem("transfer_data") || "{}");
-          const monovaFormData = JSON.parse(sessionStorage.getItem("monova_form_data") || "{}");
-          
           setTransaction({
-            transaction_id: monovaTransactionId,
+            transaction_id: transaction_id,
             final_amount: transferData?.amount?.send_amt || "N/A",
-            payment_method: "Monova",
+            status: "In Process",
           });
           setStatus("Success");
         } else {
@@ -53,67 +54,116 @@ const TransactionSuccess = () => {
           if (response?.code === "200") {
             setTransaction(response.data);
             setStatus(response.message || "Pending");
-            console.log(response.data);
           } else {
-            console.error("Error fetching transaction:", response?.message);
+            console.error("Error:", response?.message);
           }
         }
       } catch (err) {
-        console.error("API error:", err);
+        console.error("Fetch error:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTransactionStatus();
+    fetchTransaction();
   }, []);
 
   const handleBackToDashboard = () => {
-    // Clean up session storage
     if (isMonovaTransaction) {
       sessionStorage.removeItem("monova_transaction_id");
       sessionStorage.removeItem("monova_form_data");
     }
     sessionStorage.removeItem("transfer_data");
     sessionStorage.removeItem("selected_receiver");
-    
+
     navigate("/dashboard");
   };
 
   return (
     <AnimatedPage>
-      <div className="page-title text-center">
-        <h1>Transaction Status</h1>
+      <div className="page-title">
+        <div className="d-flex align-items-center">
+          <button className="btn btn-link p-0 me-2" onClick={() => navigate(-1)}>
+            <img src={Back} alt="Back" />
+          </button>
+          <h1>Your transfer is being processed</h1>
+        </div>
       </div>
 
-      <div className="page-content-section mt-4">
+      <div className="page-content-section mt-3">
         {loading ? (
-          <div className="text-center">
+          <div className="text-center mt-5">
             <Spinner animation="border" />
-            <p className="mt-2">Loading transaction details...</p>
+            <p>Loading transaction details...</p>
           </div>
         ) : transaction ? (
-          <Card className="p-4 text-center shadow-sm">
-            <h3 className="text-success">✅ Payment Processed</h3>
-            <hr />
-            <Row className="mb-2">
-              <Col><strong>Transaction ID:</strong></Col>
-              <Col>{transaction.transaction_id || "N/A"}</Col>
-            </Row>
-            <Row className="mb-2">
-              <Col><strong>Amount:</strong></Col>
-              <Col>{transaction.final_amount ? `${transaction.final_amount} AUD` : "N/A"}</Col>
-            </Row>
-            <Row className="mb-2">
-              <Col><strong>Status:</strong></Col>
-              <Col className="text-primary">{status}</Col>
-            </Row>
-          
+          <div className="row">
+            <div className="col-md-12">
+              <Card className="receiver-card mt-4 bg-white">
+                <Card.Body>
+                  <div className="row">
+                    <div className="col-md-6">
+                      <div className="table-column">
+                        <h2>Details</h2>
+                        <Table striped bordered>
+                          <tbody>
+                            <tr>
+                              <td>Transfer ID</td>
+                              <td>{transaction.transaction_id || "N/A"}</td>
+                            </tr>
+                            <tr>
+                              <td>Transfer Amount</td>
+                              <td>{transaction.final_amount ? `${transaction.final_amount} AUD` : "N/A"}</td>
+                            </tr>
+                            <tr>
+                              <td>Transfer Status</td>
+                              <td className="text-primary">{status}</td>
+                            </tr>
+                          </tbody>
+                        </Table>
+                      </div>
 
-            <Button className="mt-4" onClick={handleBackToDashboard}>
-              Go to Dashboard
-            </Button>
-          </Card>
+                      <div className="mt-4 mb-4">
+                        <Button variant="success" className="download-button">
+                          VIEW RECEIPT
+                        </Button>
+                      </div>
+
+                      <div className="processing-info-text mt-5">
+                        <h4>
+                          <b>Thank you for choosing us,</b>
+                        </h4>
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                        <ul>
+                          <li>Lorem Ipsum is simply dummy. Lorem Ipsum is simply</li>
+                          <li>Lorem Ipsum is dummy text of the printing and. Lorem Ipsum is simply</li>
+                          <li>Lorem Ipsum is dummy text of the printing and typesetting industry.</li>
+                          <li>Lorem Ipsum is simply dummy text of the printing typesetting industry. Lorem Ipsum is simply.</li>
+                        </ul>
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                      </div>
+                    </div>
+                    <div className="col-md-6 text-center">
+                      <img
+                        src={processedImg}
+                        className="processing-vector"
+                        alt="Processing"
+                        width="400px"
+                      />
+                    </div>
+                  </div>
+                </Card.Body>
+              </Card>
+
+              <Row className="mt-5">
+                <Col>
+                  <Button variant="primary" className="float-end updateform" onClick={handleBackToDashboard}>
+                    Go to Dashboard
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </div>
         ) : (
           <div className="text-center text-danger">
             <p>⚠️ Unable to load transaction details.</p>
