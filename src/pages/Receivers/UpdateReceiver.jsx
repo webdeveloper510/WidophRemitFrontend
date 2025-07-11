@@ -92,6 +92,7 @@ const UpdateReceiver = () => {
           account_number: values.account_number,
           bank_identifier: "",
           first_name: values.first_name,
+          middle_name: values.middle_name,
           last_name: values.last_name,
           email: values.email,
           mobile: values.mobile,
@@ -102,6 +103,7 @@ const UpdateReceiver = () => {
           country_code: countryCode,
           address: values.address,
         };
+
 
         const response = await updateUserRecipient(id, payload);
 
@@ -133,9 +135,7 @@ const UpdateReceiver = () => {
   useEffect(() => {
     const fetchRecipient = async () => {
       try {
-        console.log("Fetching recipient with ID:", id);
         const response = await getUserRecipient(id);
-        console.log("API Response:", response);
         if (Number(response.code) === 200) {
           const recipient = response.data;
 
@@ -157,7 +157,6 @@ const UpdateReceiver = () => {
             address: recipient.address || "",
           };
 
-          console.log("Initial Values:", initialValues);
           setValues(initialValues);
         } else {
           console.warn("Non-200 response code:", response.code);
