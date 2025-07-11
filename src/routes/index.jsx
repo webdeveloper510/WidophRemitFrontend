@@ -8,7 +8,6 @@ import SendMoney from "../pages/SendMoney/SendMoney";
 import PaymentInfo from "../pages/PaymentInfo/PaymentInfo";
 import TransfersList from "../pages/Transfers/TransfersList";
 import TransferDetails from "../pages/Dashboard/TransferDetails";
-import ProfileInformation from "../pages/Dashboard/ProfileInformation";
 import ReceiverList from "../pages/SendMoney/ReceiverList";
 import ReceiverDetail from "../pages/SendMoney/ReceiverDetail";
 import ReviewTransfer from "../pages/SendMoney/ReviewTransfer";
@@ -27,6 +26,7 @@ import ResetPassword from "../components/LoginSignup/ResetPassword";
 import KYCForm from "../components/KYC/KYCForm";
 import OtpVerification from "../components/LoginSignup/OTP";
 import TransactionSuccess from "../pages/SendMoney/TranscationSuccess";
+import ProfileInformation from "../pages/Dashboard/ProfileInformation";
 
 const AppRoutes = () => {
   return (

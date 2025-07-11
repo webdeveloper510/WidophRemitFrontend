@@ -108,17 +108,18 @@ const TransferDetails = () => {
                             <h3>{transactionData?.transaction_id}</h3>
                           </Col>
                         </Row>
-                        <Row>
-                          <Col>
-                            <Button
-                              variant="success"
-                              className="float-end download-button"
-                            >
-                              <img src={DownloadIcon} alt="Download Receipt" />{" "}
-                              Download Receipt
-                            </Button>
-                          </Col>
-                        </Row>
+                        {transactionData.payment_status !== "In progress" &&
+                          <Row>
+                            <Col>
+                              <Button
+                                variant="success"
+                                className="float-end download-button"
+                              >
+                                <img src={DownloadIcon} alt="Download Receipt" />{" "}
+                                Download Receipt
+                              </Button>
+                            </Col>
+                          </Row>}
                       </Container>
                     </Card.Body>
                   </Card>

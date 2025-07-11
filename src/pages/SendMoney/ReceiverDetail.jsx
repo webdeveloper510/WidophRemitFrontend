@@ -165,7 +165,7 @@ const ReceiverDetail = () => {
         <div className="d-flex align-items-center">
           <Button
             variant="link"
-            onClick={() => navigate("/review-transfer")}
+            onClick={() => navigate("/receivers-list")}
             className="p-0 border-0 bg-transparent"
           >
             <img src={Back} alt="Back" />

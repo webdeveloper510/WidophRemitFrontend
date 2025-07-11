@@ -83,7 +83,7 @@ const ConfirmTransfer = () => {
       let transactionId = sessionStorage.getItem("monova_transaction_id") ||
         sessionStorage.getItem("transaction_id");
       const zaiPayload = {
-        // agreement_uuid: agreementUuid,
+        agreement_uuid: agreementUuid,
         transaction_id: transactionId
       };
 
