@@ -74,14 +74,23 @@ const Receivers = () => {
             </Dropdown.Item>
             {/* <Dropdown.Item href="transfer-details">View</Dropdown.Item> */}
           </Dropdown.Menu>
+          <Dropdown.Menu className="recievers-list">
+            <Dropdown.Item as={Link} to={`/update-receiver/${row.id}`}>
+              Update
+            </Dropdown.Item>
+            <Dropdown.Item onClick={() => setShow(row.id)}>
+              Delete
+            </Dropdown.Item>
+          </Dropdown.Menu>
         </Dropdown>
       ),
-      ignoreRowClick: true,
+      ignoreRowClick: true, 
       allowOverflow: true,
       button: true,
       center: true,
       width: "120px",
     },
+
   ];
 
   const filteredData = Array.isArray(list)

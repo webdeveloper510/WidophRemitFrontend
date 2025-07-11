@@ -73,7 +73,7 @@ const AppRoutes = () => {
         <Route path="confirm-transfer" element={<ConfirmTransfer />} />
         <Route path="payment-processed" element={<PaymentProcessed />} />
         <Route path="/add-receiver" element={<AddReceiver />} />
-        <Route path="/update-receiver" element={<UpdateReceiver />} />
+        <Route path="/update-receiver/:id" element={<UpdateReceiver />} />
         <Route path="monoova" element={<MonoovaPaymentGateway />} />
 
         {/* Redirect / to /dashboard */}

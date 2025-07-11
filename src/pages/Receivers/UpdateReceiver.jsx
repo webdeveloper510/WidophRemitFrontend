@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import AnimatedPage from "../../components/AnimatedPage";
 import Back from "../../assets/images/back.png";
 import Card from "react-bootstrap/Card";
@@ -11,13 +11,14 @@ import Select from "react-select";
 import { getNames } from "country-list";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import Bank_list from "../../utils/Bank_list";
-import { createRecipient } from "../../services/Api";
-import CountrySelect from "react-bootstrap-country-select";
+import { getUserRecipient, updateUserRecipient } from "../../services/Api";
 
 const UpdateReceiver = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
   const [apiError, setApiError] = useState("");
 
   const countryList = [
@@ -38,57 +39,43 @@ const UpdateReceiver = () => {
     label: country,
   }));
 
-  const initialValues = {
-    bank_name: "",
-    account_number: "",
-    first_name: "",
-    middle_name: "",
-    last_name: "",
-    email: "",
-    mobile: "",
-    country: "",
-    building_no: "",
-    street_name: "",
-    state: "",
-    city: "",
-    post_code: "",
-    address: "",
-  };
-
-  const validationSchema = Yup.object({
-    bank_name: Yup.string().required("Bank name is required"),
-    account_number: Yup.string()
-      .required("Account number is required")
-      .min(8, "Minimum 8 digits")
-      .matches(/^[0-9]+$/, "Only numbers allowed"),
-    first_name: Yup.string()
-      .required("First name is required")
-      .matches(/^[A-Za-z\s]+$/, "Only letters allowed"),
-    last_name: Yup.string()
-      .required("Last name is required")
-      .matches(/^[A-Za-z\s]+$/, "Only letters allowed"),
-    email: Yup.string().email("Invalid email"),
-    mobile: Yup.string().required("Mobile number is required"),
-    country: Yup.string().required("Country is required"),
-    state: Yup.string().required("State is required"),
-    city: Yup.string().required("City is required"),
-    post_code: Yup.string()
-      .required("Postal code is required")
-      .matches(/^[0-9]+$/, "Only numbers allowed"),
-    address: Yup.string().required("Address is required"),
-  });
-
-  const {
-    values,
-    touched,
-    errors,
-    handleChange,
-    handleBlur,
-    handleSubmit,
-    setFieldValue,
-  } = useFormik({
-    initialValues,
-    validationSchema,
+  const formik = useFormik({
+    initialValues: {
+      bank_name: "",
+      account_number: "",
+      first_name: "",
+      middle_name: "",
+      last_name: "",
+      email: "",
+      mobile: "",
+      country: "",
+      state: "",
+      city: "",
+      post_code: "",
+      address: "",
+    },
+    validationSchema: Yup.object({
+      bank_name: Yup.string().required("Bank name is required"),
+      account_number: Yup.string()
+        .required("Account number is required")
+        .min(8, "Minimum 8 digits")
+        .matches(/^[0-9]+$/, "Only numbers allowed"),
+      first_name: Yup.string()
+        .required("First name is required")
+        .matches(/^[A-Za-z\s]+$/, "Only letters allowed"),
+      last_name: Yup.string()
+        .required("Last name is required")
+        .matches(/^[A-Za-z\s]+$/, "Only letters allowed"),
+      email: Yup.string().email("Invalid email"),
+      mobile: Yup.string().required("Mobile number is required"),
+      country: Yup.string().required("Country is required"),
+      state: Yup.string().required("State is required"),
+      city: Yup.string().required("City is required"),
+      post_code: Yup.string()
+        .required("Postal code is required")
+        .matches(/^[0-9]+$/, "Only numbers allowed"),
+      address: Yup.string().required("Address is required"),
+    }),
     onSubmit: async (values) => {
       setIsLoading(true);
       setApiError("");
@@ -108,8 +95,6 @@ const UpdateReceiver = () => {
           last_name: values.last_name,
           email: values.email,
           mobile: values.mobile,
-          building: values.building_no,
-          street: values.street_name,
           city: values.city,
           postcode: values.post_code,
           state: values.state,
@@ -118,23 +103,12 @@ const UpdateReceiver = () => {
           address: values.address,
         };
 
-        const response = await createRecipient(payload);
+        const response = await updateUserRecipient(id, payload);
 
         if (Number(response.code) === 200) {
-          const newRecipient = {
-            id: response.data?.id || response.data?.recipient_id,
-            account_name: `${values.first_name} ${values.last_name}`.trim(),
-            ...payload,
-            ...response.data,
-          };
-
-          sessionStorage.setItem(
-            "selected_receiver",
-            JSON.stringify(newRecipient)
-          );
           navigate("/receivers");
         } else {
-          setApiError(response.message || "Failed to create receiver.");
+          setApiError(response.message || "Failed to update receiver.");
         }
       } catch (error) {
         console.error("Error:", error);
@@ -144,6 +118,70 @@ const UpdateReceiver = () => {
       }
     },
   });
+
+  const {
+    values,
+    touched,
+    errors,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+    setFieldValue,
+    setValues,
+  } = formik;
+
+  useEffect(() => {
+    const fetchRecipient = async () => {
+      try {
+        console.log("Fetching recipient with ID:", id);
+        const response = await getUserRecipient(id);
+        console.log("API Response:", response);
+        if (Number(response.code) === 200) {
+          const recipient = response.data;
+
+          const initialValues = {
+            bank_name: recipient.bank_name || "",
+            account_number: recipient.account_number || "",
+            first_name: recipient.first_name || "",
+            middle_name: recipient.middle_name || "",
+            last_name: recipient.last_name || "",
+            email: recipient.email || "",
+            mobile:
+              "+" +
+              recipient.mobile?.replace(/[^\d]/g, "").replace(/^(\d{10,15}).*/, "$1") ||
+              "",
+            country: recipient.country || "",
+            state: recipient.state || "",
+            city: recipient.city || "",
+            post_code: recipient.postcode || "",
+            address: recipient.address || "",
+          };
+
+          console.log("Initial Values:", initialValues);
+          setValues(initialValues);
+        } else {
+          console.warn("Non-200 response code:", response.code);
+          setApiError(response.message || "Failed to load recipient data.");
+        }
+
+      } catch (error) {
+        console.error("Error fetching recipient:", error);
+        setApiError("Failed to load recipient data.");
+      } finally {
+        setIsFetching(false);
+      }
+    };
+
+    fetchRecipient();
+  }, [id, setValues]);
+
+  if (isFetching) {
+    return (
+      <AnimatedPage>
+        <div className="text-center mt-5">Loading recipient data...</div>
+      </AnimatedPage>
+    );
+  }
 
   return (
     <AnimatedPage>
@@ -164,21 +202,11 @@ const UpdateReceiver = () => {
         <Form onSubmit={handleSubmit} className="profile-form">
           {apiError && <Alert variant="danger">{apiError}</Alert>}
 
-          {/* Bank Info */}
           <Card className="receiver-card bg-white">
             <Card.Body>
               <Card.Title>Bank Information</Card.Title>
               <Row className="mb-3">
-                <FloatingLabel
-                  as={Col}
-                  controlId="bankName"
-                  label={
-                    <span>
-                      Bank Name
-                      <span style={{ color: "red" }}> *</span>
-                    </span>
-                  }
-                >
+                <FloatingLabel as={Col} label="Bank Name *">
                   <Form.Control
                     type="text"
                     name="bank_name"
@@ -192,16 +220,7 @@ const UpdateReceiver = () => {
                   </Form.Control.Feedback>
                 </FloatingLabel>
 
-                <FloatingLabel
-                  as={Col}
-                  controlId="accountNumber"
-                  label={
-                    <span>
-                      Account Number
-                      <span style={{ color: "red" }}> *</span>
-                    </span>
-                  }
-                >
+                <FloatingLabel as={Col} label="Account Number *">
                   <Form.Control
                     type="text"
                     name="account_number"
@@ -218,22 +237,11 @@ const UpdateReceiver = () => {
             </Card.Body>
           </Card>
 
-          {/* Recipient Info */}
           <Card className="receiver-card mt-4 bg-white">
             <Card.Body>
               <Card.Title>Recipient Details</Card.Title>
               <Row className="mb-3">
-                <FloatingLabel
-                  as={Col}
-                  controlId="firstName"
-                  label={
-                    <span>
-                      First Name
-                      <span style={{ color: "red" }}> *</span>
-                    </span>
-                  }
-                  className="mb-3"
-                >
+                <FloatingLabel as={Col} label="First Name *">
                   <Form.Control
                     type="text"
                     name="first_name"
@@ -247,12 +255,7 @@ const UpdateReceiver = () => {
                   </Form.Control.Feedback>
                 </FloatingLabel>
 
-                <FloatingLabel
-                  as={Col}
-                  controlId="middleName"
-                  label="Middle Name"
-                  className="mb-3"
-                >
+                <FloatingLabel as={Col} label="Middle Name">
                   <Form.Control
                     type="text"
                     name="middle_name"
@@ -261,17 +264,7 @@ const UpdateReceiver = () => {
                   />
                 </FloatingLabel>
 
-                <FloatingLabel
-                  as={Col}
-                  controlId="lastName"
-                  label={
-                    <span>
-                      Last Name
-                      <span style={{ color: "red" }}> *</span>
-                    </span>
-                  }
-                  className="mb-3"
-                >
+                <FloatingLabel as={Col} label="Last Name *">
                   <Form.Control
                     type="text"
                     name="last_name"
@@ -286,52 +279,26 @@ const UpdateReceiver = () => {
                 </FloatingLabel>
               </Row>
 
-              <Row className="mb-3">
-                {/* <FloatingLabel as={Col} controlId="email" label="Email">
-                  <Form.Control
-                    type="email"
-                    name="email"
-                    value={values.email}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    isInvalid={touched.email && errors.email}
+              <Col className="col-4 mb-3">
+                <FloatingLabel label="Mobile *" className="mobileinput">
+                  <PhoneInput
+                    international
+                    defaultCountry="AU"
+                    countryCallingCodeEditable={false}
+                    value={values.mobile}
+                    onChange={(val) => setFieldValue("mobile", val)}
+                    onBlur={() => formik.setFieldTouched("mobile", true)}
                   />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.email}
-                  </Form.Control.Feedback>
-                </FloatingLabel> */}
-
-                <Col className="col-4">
-                  <FloatingLabel
-                    as={Col}
-                    controlId="floatingMobile"
-                    label={
-                      <span>
-                        Mobile
-                        <span style={{ color: "red" }}> *</span>
-                      </span>
-                    }
-                    className="mobileinput mb-3"
-                  >
-                    <PhoneInput
-                      international
-                      defaultCountry="AU"
-                      countryCallingCodeEditable={false}
-                      value={values.mobile}
-                      onChange={(val) => setFieldValue("mobile", val)}
-                    />
-                    {touched.mobile && errors.mobile && (
-                      <div className="text-danger small mt-1">
-                        {errors.mobile}
-                      </div>
-                    )}
-                  </FloatingLabel>
-                </Col>
-              </Row>
+                  {touched.mobile && errors.mobile && (
+                    <div className="text-danger small mt-1">
+                      {errors.mobile}
+                    </div>
+                  )}
+                </FloatingLabel>
+              </Col>
             </Card.Body>
           </Card>
 
-          {/* Address Info */}
           <Card className="receiver-card mt-4 bg-white">
             <Card.Body>
               <Card.Title>Address</Card.Title>
@@ -341,7 +308,6 @@ const UpdateReceiver = () => {
                     <label>
                       Country <span style={{ color: "red" }}>*</span>
                     </label>
-
                     <Select
                       options={countryOptions}
                       name="country"
@@ -351,19 +317,7 @@ const UpdateReceiver = () => {
                       onChange={(option) =>
                         setFieldValue("country", option.value)
                       }
-                      onBlur={() => setFieldValue("country", values.country)}
                     />
-
-                    {/* <CountrySelect
-                        name="country"
-                        value={countryList.find(
-                          (c) => c.name === values.country
-                        )}
-                        onChange={(val) =>
-                          setFieldValue("country", val?.name || "")
-                        }
-                        flags
-                      /> */}
                     {touched.country && errors.country && (
                       <div className="text-danger small mt-1">
                         {errors.country}
@@ -373,17 +327,7 @@ const UpdateReceiver = () => {
                 </Col>
 
                 <Col>
-                  <FloatingLabel
-                    as={Col}
-                    controlId="address"
-                    label={
-                      <span>
-                        Address
-                        <span style={{ color: "red" }}> *</span>
-                      </span>
-                    }
-                    className="mb-3"
-                  >
+                  <FloatingLabel label="Address *" className="mb-3">
                     <Form.Control
                       as="textarea"
                       rows={2}
@@ -400,56 +344,8 @@ const UpdateReceiver = () => {
                 </Col>
               </Row>
 
-              {/* <Row className="mb-3">
-                <FloatingLabel
-                  as={Col}
-                  controlId="building_no"
-                  label="Building Number *"
-                >
-                  <Form.Control
-                    type="text"
-                    name="building_no"
-                    value={values.building_no}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    isInvalid={touched.building_no && errors.building_no}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.building_no}
-                  </Form.Control.Feedback>
-                </FloatingLabel>
-
-                <FloatingLabel
-                  as={Col}
-                  controlId="street_name"
-                  label="Street Name *"
-                >
-                  <Form.Control
-                    type="text"
-                    name="street_name"
-                    value={values.street_name}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    isInvalid={touched.street_name && errors.street_name}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.street_name}
-                  </Form.Control.Feedback>
-                </FloatingLabel>
-              </Row> */}
-
               <Row className="mb-3">
-                <FloatingLabel
-                  as={Col}
-                  controlId="city"
-                  label={
-                    <span>
-                      City
-                      <span style={{ color: "red" }}> *</span>
-                    </span>
-                  }
-                  className="mb-3"
-                >
+                <FloatingLabel as={Col} label="City *">
                   <Form.Control
                     type="text"
                     name="city"
@@ -463,17 +359,7 @@ const UpdateReceiver = () => {
                   </Form.Control.Feedback>
                 </FloatingLabel>
 
-                <FloatingLabel
-                  as={Col}
-                  controlId="post_code"
-                  label={
-                    <span>
-                      Zip/Postal Code
-                      <span style={{ color: "red" }}> *</span>
-                    </span>
-                  }
-                  className="mb-3"
-                >
+                <FloatingLabel as={Col} label="Zip/Postal Code *">
                   <Form.Control
                     type="text"
                     name="post_code"
@@ -487,17 +373,7 @@ const UpdateReceiver = () => {
                   </Form.Control.Feedback>
                 </FloatingLabel>
 
-                <FloatingLabel
-                  as={Col}
-                  controlId="state"
-                  label={
-                    <span>
-                      State
-                      <span style={{ color: "red" }}> *</span>
-                    </span>
-                  }
-                  className="mb-3"
-                >
+                <FloatingLabel as={Col} label="State *">
                   <Form.Control
                     type="text"
                     name="state"
@@ -517,10 +393,10 @@ const UpdateReceiver = () => {
                   <Button
                     variant="light"
                     className="cancel-btn float-start"
-                    onClick={() => navigate("/review-transfer")}
+                    onClick={() => navigate("/receivers")}
                     disabled={isLoading}
                   >
-                    Back
+                    Cancel
                   </Button>
                 </Col>
                 <Col>
@@ -530,7 +406,7 @@ const UpdateReceiver = () => {
                     variant="primary"
                     disabled={isLoading}
                   >
-                    {isLoading ? "Creating..." : "Update"}
+                    {isLoading ? "Updating..." : "Update"}
                   </Button>
                 </Col>
               </Row>
