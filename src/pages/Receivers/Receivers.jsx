@@ -50,9 +50,7 @@ const Receivers = () => {
         `${row.first_name} ${row.middle_name} ${row.last_name}`;
       },
       sortable: true,
-      cell: (row) => (
-        <strong>{`${row.first_name}${row.last_name}`}</strong>
-      ),
+      cell: (row) => <strong>{`${row.first_name}${row.last_name}`}</strong>,
     },
     {
       name: "Receivers Mobile",
@@ -90,15 +88,14 @@ const Receivers = () => {
       center: true,
       width: "120px",
     },
-
   ];
 
   const filteredData = Array.isArray(list)
     ? list.filter((item) =>
-      (item.first_name + item.middle_name + item.last_name + item.email)
-        .toLowerCase()
-        .includes(filterText.toLowerCase())
-    )
+        (item.first_name + item.middle_name + item.last_name + item.email)
+          .toLowerCase()
+          .includes(filterText.toLowerCase())
+      )
     : [];
 
   const displayData = filteredData;
@@ -175,7 +172,7 @@ const Receivers = () => {
           </div>
         </div>
 
-        <div className="row mt-4">
+        <div className="row mt-4 receiverslist-table">
           <DataTable
             columns={columns}
             data={displayData}
