@@ -261,7 +261,7 @@ form.profile-form h3 {
   font-size: 14px;
 }
 .react-select__control.css-13cymwt-control,
-.css-b62m3t-container,
+.css-b62m3t-container, css-13cymwt-control
 .css-t3ipsp-control,
 .css-t3ipsp-control:hover {
   height: calc(3.5rem + calc(var(--bs-border-width) * 2)) !important;

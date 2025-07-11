@@ -7,6 +7,8 @@ import Button from "react-bootstrap/Button";
 import { Form, FloatingLabel, Col, Row, Alert } from "react-bootstrap";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
+import Select from "react-select";
+import { getNames } from "country-list";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Bank_list from "../../utils/Bank_list";
@@ -30,6 +32,11 @@ const AddReceiver = () => {
     { name: "Thailand", code: "TH", dialCode: "66" },
     { name: "Vietnam", code: "VN", dialCode: "84" },
   ];
+
+  const countryOptions = getNames().map((country) => ({
+    value: country,
+    label: country,
+  }));
 
   const initialValues = {
     bank_name: "",
@@ -331,55 +338,58 @@ const AddReceiver = () => {
             <Card.Body>
               <Card.Title>Address</Card.Title>
               <Row className="mb-3">
-                <FloatingLabel
-                  as={Col}
-                  controlId="country"
-                  label={
-                    <span>
-                      Country
-                      <span style={{ color: "red" }}> *</span>
-                    </span>
-                  }
-                  className="selectcountry mb-3"
-                >
-                  <CountrySelect
-                    value={countryList.find((c) => c.name === values.country)}
-                    onChange={(val) =>
-                      setFieldValue("country", val?.name || "")
-                    }
-                    flags
-                  />
-                  {touched.country && errors.country && (
-                    <div className="text-danger small mt-1">
-                      {errors.country}
-                    </div>
-                  )}
-                </FloatingLabel>
+                <Col>
+                  <div className="floating-label-wrapper kyc-country">
+                    <label>
+                      Country <span style={{ color: "red" }}>*</span>
+                    </label>
 
-                <FloatingLabel
-                  as={Col}
-                  controlId="address"
-                  label={
-                    <span>
-                      Address
-                      <span style={{ color: "red" }}> *</span>
-                    </span>
-                  }
-                  className="mb-3"
-                >
-                  <Form.Control
-                    as="textarea"
-                    rows={2}
-                    name="address"
-                    value={values.address}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    isInvalid={touched.address && errors.address}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.address}
-                  </Form.Control.Feedback>
-                </FloatingLabel>
+                    <Select options={countryOptions} name="country" />
+
+                    {/* <CountrySelect
+                        name="country"
+                        value={countryList.find(
+                          (c) => c.name === values.country
+                        )}
+                        onChange={(val) =>
+                          setFieldValue("country", val?.name || "")
+                        }
+                        flags
+                      /> */}
+                    {touched.country && errors.country && (
+                      <div className="text-danger small mt-1">
+                        {errors.country}
+                      </div>
+                    )}
+                  </div>
+                </Col>
+
+                <Col>
+                  <FloatingLabel
+                    as={Col}
+                    controlId="address"
+                    label={
+                      <span>
+                        Address
+                        <span style={{ color: "red" }}> *</span>
+                      </span>
+                    }
+                    className="mb-3"
+                  >
+                    <Form.Control
+                      as="textarea"
+                      rows={2}
+                      name="address"
+                      value={values.address}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      isInvalid={touched.address && errors.address}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {errors.address}
+                    </Form.Control.Feedback>
+                  </FloatingLabel>
+                </Col>
               </Row>
 
               {/* <Row className="mb-3">

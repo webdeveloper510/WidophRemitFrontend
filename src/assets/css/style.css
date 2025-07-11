@@ -248,14 +248,8 @@ div#basic-navbar-nav a {
 }
 .right-side-content {
   position: relative;
-  /* height: 100vh; */
 }
-.page-content-section {
-  /* max-height: calc(100vh - 100px); */
-  overflow-y: auto;
-  padding-right: 10px;
-  overflow-x: hidden;
-}
+
 .logged_user {
   border: 1px solid rgb(67 72 0 / 23%);
   border-radius: 30px;
@@ -1171,6 +1165,34 @@ li.nav-item.mb-2.bg-light.text-dark.rounded {
 span.status-badge.in.progress {
   font-size: 14px;
   background: transparent;
+}
+.form-control:readonly {
+  background-color: var(--bs-secondary-bg);
+  opacity: 1;
+}
+.react-select__control.css-13cymwt-control,
+.css-b62m3t-container,
+.css-13cymwt-control,
+.css-t3ipsp-control,
+.css-t3ipsp-control:hover {
+  height: calc(3.5rem + calc(var(--bs-border-width) * 2)) !important;
+  min-height: calc(3.5rem + calc(var(--bs-border-width) * 2)) !important;
+  line-height: 1.25;
+  border: 1px solid #e0e3b7 !important;
+  resize: none;
+  border-radius: 10px;
+}
+.kyc-country {
+  position: relative;
+}
+.kyc-country label {
+  position: absolute;
+  z-index: 9;
+  color: #9cb417;
+  font-weight: 400;
+  top: -12px;
+  background: #fff;
+  left: 10px;
 }
 /*************** responsive css ****************/
 

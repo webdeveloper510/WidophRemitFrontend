@@ -6,17 +6,23 @@ import Button from "react-bootstrap/Button";
 import { Form, FloatingLabel, Col, Alert, Row } from "react-bootstrap";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
+import Select from "react-select";
+import { getNames } from "country-list";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Bank_list from "../../utils/Bank_list";
 import { createRecipient } from "../../services/Api";
 import { useNavigate } from "react-router-dom";
-import CountrySelect from "react-bootstrap-country-select";
+//import CountrySelect from "react-bootstrap-country-select";
 
 const ReceiverDetail = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
+  const countryOptions = getNames().map((country) => ({
+    value: country,
+    label: country,
+  }));
 
   const countryList = [
     { name: "Australia", code: "AU", dialCode: "61" },
@@ -360,18 +366,15 @@ const ReceiverDetail = () => {
                   <Card.Title>Address</Card.Title>
 
                   <Row className="mb-3">
-                    <FloatingLabel
-                      as={Col}
-                      controlId="floatingCountry"
-                      label={
-                        <span>
-                          Country
-                          <span style={{ color: "red" }}> *</span>
-                        </span>
-                      }
-                      className="selectcountry mb-3"
-                    >
-                      <CountrySelect
+                    <Col>
+                      <div className="floating-label-wrapper kyc-country">
+                        <label>
+                          Country <span style={{ color: "red" }}>*</span>
+                        </label>
+
+                        <Select options={countryOptions} name="country" />
+
+                        {/* <CountrySelect
                         name="country"
                         value={countryList.find(
                           (c) => c.name === values.country
@@ -380,38 +383,40 @@ const ReceiverDetail = () => {
                           setFieldValue("country", val?.name || "")
                         }
                         flags
-                      />
-                      {touched.country && errors.country && (
-                        <div className="text-danger small mt-1">
-                          {errors.country}
-                        </div>
-                      )}
-                    </FloatingLabel>
-
-                    <FloatingLabel
-                      as={Col}
-                      controlId="floatingAddress"
-                      label={
-                        <span>
-                          Address
-                          <span style={{ color: "red" }}> *</span>
-                        </span>
-                      }
-                      className="mb-3"
-                    >
-                      <Form.Control
-                        as="textarea"
-                        rows={3}
-                        name="address"
-                        value={values.address}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        isInvalid={touched.address && errors.address}
-                      />
-                      <Form.Control.Feedback type="invalid">
-                        {errors.address}
-                      </Form.Control.Feedback>
-                    </FloatingLabel>
+                      /> */}
+                        {touched.country && errors.country && (
+                          <div className="text-danger small mt-1">
+                            {errors.country}
+                          </div>
+                        )}
+                      </div>
+                    </Col>
+                    <Col>
+                      <FloatingLabel
+                        as={Col}
+                        controlId="floatingAddress"
+                        label={
+                          <span>
+                            Address
+                            <span style={{ color: "red" }}> *</span>
+                          </span>
+                        }
+                        className="mb-3"
+                      >
+                        <Form.Control
+                          as="textarea"
+                          rows={3}
+                          name="address"
+                          value={values.address}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          isInvalid={touched.address && errors.address}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.address}
+                        </Form.Control.Feedback>
+                      </FloatingLabel>
+                    </Col>
                   </Row>
 
                   {/* <Row className="mb-3">
