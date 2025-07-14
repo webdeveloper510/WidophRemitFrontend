@@ -1131,6 +1131,7 @@ li.nav-item.mb-2.bg-light.text-dark.rounded {
 .mobile_numbero.row label {
   position: absolute;
   top: -27px;
+  font-size: 14px;
 }
 
 .exchange-form label {
@@ -1205,6 +1206,7 @@ span.status-badge.in.progress {
   top: -12px;
   background: #fff;
   left: 10px;
+  font-size: 14px;
 }
 /*************** responsive css ****************/
 

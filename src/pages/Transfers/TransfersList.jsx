@@ -195,22 +195,18 @@ const TransfersList = () => {
       </div>
 
       <div className="row mt-3">
-        <div className="col-md-12">
-          <div className="scroll-table-body">
-            <DataTable
-              className="TranferList"
-              columns={columns}
-              data={displayData}
-              customStyles={customStyles}
-              noHeader
-              striped
-              highlightOnHover
-              pagination
-              paginationPerPage={15}
-              paginationRowsPerPageOptions={[5, 10, 15, 20]}
-            />
-          </div>
-        </div>
+        <DataTable
+          className="TranferList"
+          columns={columns}
+          data={displayData}
+          customStyles={customStyles}
+          noHeader
+          striped
+          highlightOnHover
+          pagination
+          paginationPerPage={15}
+          paginationRowsPerPageOptions={[5, 10, 15, 20]}
+        />
       </div>
     </AnimatedPage>
   );
