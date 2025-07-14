@@ -86,7 +86,12 @@ export const userRegisterVerify = async (data) => {
 }
 
 export const registerOtpResend = async (data) => {
-  const response = await public_instance.post("/resend-register-otp/", data).then(res => {
+
+  const response = await public_instance.post("/resend-register-otp/", data, {
+    headers: {
+      "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
+    }
+  }).then(res => {
     return res?.data
   }).catch(error => {
     return error.response
@@ -119,7 +124,6 @@ export const createMonovaPayment = async (data) => {
   }
 };
 
-
 export const verifyEmail = async (data) => {
   const response = await public_instance.post("/verify-email/", data)
     .then(res => {
@@ -129,7 +133,6 @@ export const verifyEmail = async (data) => {
     })
   return response
 }
-
 
 export const resendOtp = async (data) => {
 
@@ -220,8 +223,6 @@ export const userProfile = async () => {
   }
 };
 
-
-
 export const exchangeRate = async (data) => {
   const response = await public_instance.post("/exchange-rate/", data).then(res => {
     if (res?.data.code === "200") {
@@ -235,7 +236,6 @@ export const exchangeRate = async (data) => {
   return response
 }
 
-
 export const paymentSummary = async (data) => {
   const response = await private_instance.post("/payment/summary/", { transaction_id: data }, {
     headers: {
@@ -248,7 +248,6 @@ export const paymentSummary = async (data) => {
   })
   return response
 }
-
 
 export const transactionHistory = async (data) => {
   const response = await private_instance.post("/payment/transaction-history/", data, {
@@ -275,7 +274,6 @@ export const completedPayment = async (data) => {
   })
   return response
 }
-
 
 export const createRecipient = async (data) => {
   const response = await private_instance.post("/payment/recipient-create/", data, {
@@ -317,7 +315,6 @@ export const updateCardUser = async (id, data) => {
   return response
 }
 
-
 export const getUserRecipient = async (id) => {
   const response = await private_instance.get(`/payment/recipient-update/${id}`, {
     headers: {
@@ -330,7 +327,6 @@ export const getUserRecipient = async (id) => {
   })
   return response
 }
-
 
 export const updateUserRecipient = async (id, data) => {
   const response = await private_instance.post(`/payment/recipient-update/${id}`, data, {
@@ -358,7 +354,6 @@ export const deleteRecipient = async (id) => {
   return response
 }
 
-
 export const cardList = async (data) => {
   const response = await private_instance.post("/payment/card-list/", data, {
     headers: {
@@ -371,7 +366,6 @@ export const cardList = async (data) => {
   })
   return response
 }
-
 
 export const recipientList = async (data) => {
   const response = await private_instance.post("/payment/recipient-list/", data, {
@@ -588,7 +582,6 @@ export const getVeriffStatus = async (data) => {
   return response
 }
 
-
 export const createTransaction = async (data) => {
   const response = await private_instance.post(`payment/create-transaction/`, data, {
     headers: {
@@ -677,7 +670,6 @@ export const getDiscountedPrice = async (data) => {
   return response
 }
 
-
 export const getReferral = async () => {
   const response = await private_instance.post("/referral-link/", {}, {
     headers: {
@@ -691,7 +683,6 @@ export const getReferral = async () => {
   return response
 }
 
-
 export const getReferralAmount = async () => {
   let response = private_instance.get("/payment/referrals/").then(res => {
     return res?.data
@@ -700,7 +691,6 @@ export const getReferralAmount = async () => {
   })
   return response
 }
-
 
 export const checkExistence = async () => {
   let response = await private_instance.get("/user-exist/", {
@@ -714,7 +704,6 @@ export const checkExistence = async () => {
   })
   return response
 }
-
 
 export const getCouponList = async (currency) => {
   const response = await private_instance.get(`/payment/referrals-list/${currency}/`, {
@@ -803,7 +792,6 @@ export const fetchAccountUsage = async () => {
   return response
 }
 
-
 export const fetchBlogs = async () => {
   const response = await public_instance.post(`/service/blogs/`, {}).then(res => {
     return res?.data
@@ -813,7 +801,6 @@ export const fetchBlogs = async () => {
   return response
 }
 
-
 export const getCurrencies = async () => {
   const response = await public_instance.post(`/payment/currencies/`, {}).then(res => {
     return res?.data
@@ -822,7 +809,6 @@ export const getCurrencies = async () => {
   })
   return response
 }
-
 
 export const getTestimonials = async () => {
   const response = await public_instance.post(`/service/testimonials/`, {}).then(res => {

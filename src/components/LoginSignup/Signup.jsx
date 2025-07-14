@@ -21,8 +21,7 @@ const validationSchema = Yup.object({
   location: Yup.string().required("Location is required"),
   phone: Yup.string()
     .required("Mobile number is required")
-    .min(9, "Mobile number must be at least 9 digits"),
-
+    .matches(/^\d{9}$/, "Mobile number must be exactly 9 digits"),
   email: Yup.string()
     .email("Invalid email format")
     .required("Email is required"),
@@ -33,6 +32,7 @@ const validationSchema = Yup.object({
     .required("Confirm password is required")
     .oneOf([Yup.ref("password")], "Passwords do not match"),
 });
+
 
 const Signup = () => {
   const [loading, setLoading] = useState(false);

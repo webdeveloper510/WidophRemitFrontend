@@ -118,11 +118,12 @@ const KYCForm = () => {
     else if (!/\S+@\S+\.\S+/.test(formData.email))
       newErrors.email = "Email format is invalid";
 
-    if (!formData.phone.trim())
+    if (!formData.phone.trim()) {
       newErrors.phone = "Mobile number is required";
-    else if (formData.phone.length < 9)
-      newErrors.phone = "Mobile number must be at least 9 digits";
-
+    } else if (!/^\d{9}$/.test(formData.phone)) {
+      newErrors.phone = "Mobile number must be exactly 9 digits";
+    }
+    
     if (!formData.dob) {
       newErrors.dob = "Date of birth is required";
     } else {
@@ -171,6 +172,7 @@ const KYCForm = () => {
         Middle_name: formData.middleName,
         Last_name: formData.lastName,
         email: formData.email,
+        address: formData.address,
         Country_of_birth: formData.countryOfBirth,
         mobile: `+${formData.countryCode}${formData.phone}`,
         country_code: formData.countryCode,

@@ -1,16 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import OtpInput from "react-otp-input";
 import AnimatedPage from "../../components/AnimatedPage";
 import Back from "../../assets/images/back.png";
 import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
-import { Col, Row, Button } from "react-bootstrap";
+import { Col, Row, Button, Spinner } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import OtpImage from "../../assets/images/Otp-image.png";
-import { resendOtp } from "../../services/Api";
+import { useNavigate } from "react-router-dom";
+import {
+  userProfile,
+  createMonovaPayment,
+  getAgreementList,
+  ZaiPayTo,
+  ZaiPayId,
+  verifyEmail,
+  registerOtpResend,
+  resendOtp,
+} from "../../services/Api";
+import { toast } from "react-toastify";
 
 const ConfirmTransfer = () => {
-  const [modalShow, setModalShow] = React.useState(false);
+  const [modalShow, setModalShow] = useState(false);
   const [otp, setOtp] = useState("");
   const [receiver, setReceiver] = useState(null);
   const [transferData, setTransferData] = useState({});
@@ -22,8 +33,6 @@ const ConfirmTransfer = () => {
   const navigate = useNavigate();
 
   const fullName = `${sender?.First_name || ""} ${sender?.Last_name || ""}`.trim();
-  const reason = sessionStorage.getItem("transfer_reason") || "none";
-
 
   useEffect(() => {
     const storedAmount = sessionStorage.getItem("transfer_data");
@@ -76,7 +85,6 @@ const ConfirmTransfer = () => {
         accountNumber: monovaForm.accountNumber,
         accountName: monovaForm.accountName,
         payment_mode: monovaForm.payment_mode,
-        reason: reason,
       };
 
       const response = await createMonovaPayment(payload);
@@ -115,7 +123,6 @@ const ConfirmTransfer = () => {
       const zaiPayload = {
         agreement_uuid: agreementUuid,
         transaction_id: transactionId,
-        reason: reason,
       };
 
       const zaiResponse = await ZaiPayTo(zaiPayload);
@@ -140,7 +147,7 @@ const ConfirmTransfer = () => {
   const handlePayIDPayment = async () => {
     setIsLoadingPayID(true);
     try {
-      await ZaiPayId({ transaction_id: sessionStorage.getItem("transaction_id"), reason });
+      await ZaiPayId({ transaction_id: sessionStorage.getItem("transaction_id") });
       toast.success("PayID payment processed successfully!");
       return true;
     } catch (error) {
@@ -224,9 +231,9 @@ const ConfirmTransfer = () => {
     try {
       const payload = {
         mobile: sender?.mobile,
+        type: "email"
       };
-
-      const response = await registerOtpResend(payload);
+      const response = await resendOtp(payload);
       console.log("Resend OTP Response:", response);
       if (response?.code === "200") {
         toast.success(response?.message || "OTP resent successfully!");
@@ -240,14 +247,18 @@ const ConfirmTransfer = () => {
   };
 
   const isLoading = isLoadingMonova || isLoadingZai || isLoadingPayID;
-  console.log(transferData);
+
   return (
     <AnimatedPage>
       <div className="page-title">
         <div className="d-flex align-items-center">
-          <a href="payment-detail">
-            <img src={Back} />
-          </a>
+          <Button
+            variant="link"
+            onClick={() => navigate("/payment-detail")}
+            className="p-0 border-0 bg-transparent"
+          >
+            <img src={Back} alt="Back" />
+          </Button>
           <h1>Confirm Your Transfer</h1>
         </div>
       </div>
@@ -259,146 +270,150 @@ const ConfirmTransfer = () => {
               <Card.Body>
                 <div className="row">
                   <div className="col-md-6">
-                    <div className="col-md-12">
-                      <div className="table-column">
-                        <h2>Sender Details</h2>
-                        <Table striped bordered>
-                          <tbody>
-                            <tr>
-                              <td>Sending Amount</td>
-                              <td>104.00 AUD</td>
-                            </tr>
-                            <tr>
-                              <td>Amount Exchanged</td>
-                              <td>NGN 1,000,000.00</td>
-                            </tr>
-                            <tr>
-                              <td>Total To Receiver</td>
-                              <td>NGN 1,000,000.00</td>
-                            </tr>
-                            <tr>
-                              <td>Exchange Rate</td>
-                              <td>1 AUD = 1,000.99 NGN</td>
-                            </tr>
-                          </tbody>
-                        </Table>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="col-md-12">
-                      <div className="table-column">
-                        <h2>
-                          Transfer From <small>(Sender Details)</small>
-                        </h2>
-                        <Table striped bordered>
-                          <tbody>
-                            <tr>
-                              <td>Sender Name</td>
-                              <td>Albert Joseph</td>
-                            </tr>
-                          </tbody>
-                        </Table>
-                      </div>
-                    </div>
+                    <h2>Transfer Details</h2>
+                    <Table striped bordered>
+                      <tbody>
+                        <tr>
+                          <td>Sending Amount</td>
+                          <td>
+                            {transferData?.amount?.send_amt
+                              ? `${transferData.amount.send_amt} ${transferData.amount.from}`
+                              : "N/A"}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Amount Exchanged</td>
+                          <td>
+                            {transferData?.amount?.exchange_amt
+                              ? `${transferData.amount.exchange_amt} ${transferData.amount.to}`
+                              : "N/A"}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Total To Receiver</td>
+                          <td>
+                            {transferData?.amount?.exchange_amt
+                              ? `${transferData.amount.exchange_amt} ${transferData.amount.to}`
+                              : "N/A"}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Exchange Rate</td>
+                          <td>
+                            {transferData?.amount?.exchange_rate
+                              ? `1 ${transferData.amount.from} = ${transferData.amount.exchange_rate} ${transferData.amount.to}`
+                              : "N/A"}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </Table>
 
-                    <div className="col-md-12 mt-3">
-                      <div className="table-column">
-                        <h2>
-                          Transfer To <small>(Receiver Details)</small>
-                        </h2>
-                        <Table striped bordered>
-                          <tbody>
-                            <tr>
-                              <td>Beneficiary Name</td>
-                              <td>Albert Joseph</td>
-                            </tr>
-                            <tr>
-                              <td>Bank Name</td>
-                              <td>Advans La Fayette Microfinance Bank</td>
-                            </tr>
-                          </tbody>
-                        </Table>
-                      </div>
-                    </div>
+                  </div>
+
+                  <div className="col-md-6">
+                    <h2>Sender Details</h2>
+                    <Table striped bordered>
+                      <tbody>
+                        <tr>
+                          <td>Sender Name</td>
+                          <td>{fullName || "N/A"}</td>
+                        </tr>
+                      </tbody>
+                    </Table>
+
+                    <h2 className="mt-3">Receiver Details</h2>
+                    <Table striped bordered>
+                      <tbody>
+                        <tr>
+                          <td>Beneficiary Name</td>
+                          <td>{receiver?.account_name || "N/A"}</td>
+                        </tr>
+                        <tr>
+                          <td>Bank Name</td>
+                          <td>{receiver?.bank_name || "N/A"}</td>
+                        </tr>
+                      </tbody>
+                    </Table>
                   </div>
                 </div>
               </Card.Body>
             </Card>
+
             <Row className="mt-5">
               <Col>
-                <a href="payment-detail">
-                  <Button variant="light" className="cancel-btn float-start">
-                    Back
-                  </Button>
-                </a>
+                <Button
+                  variant="light"
+                  className="cancel-btn float-start"
+                  onClick={() => navigate("/payment-detail")}
+                >
+                  Back
+                </Button>
               </Col>
               <Col>
                 <Button
                   variant="primary"
                   className="float-end updateform"
                   onClick={handleSaveAndContinue}
+                  disabled={isLoading}
                 >
-                  Save & Continue
+                  Confirm and Continue
                 </Button>
               </Col>
             </Row>
           </div>
         </div>
-        <Modal
-          size="md"
-          aria-labelledby="contained-modal-title-vcenter"
-          centered
-          show={modalShow}
-          onHide={() => setModalShow(false)}
-          className="profileupdate"
-        >
-          <Modal.Header closeButton></Modal.Header>
-          <Modal.Body>
-            <h4>Verify your account by entering the code</h4>
-            <p className="m-4">
-              <img src={OtpImage} alt="image" />
-            </p>
-            <Col className="inputBoxStyle">
-              <OtpInput
-                value={otp}
-                inputStyle="inputBoxStyle"
-                onChange={setOtp}
-                numInputs={6}
-                renderSeparator={<span>-</span>}
-                renderInput={(props) => <input {...props} />}
-              />
-            </Col>
-            <button onClick={resendOtp}>
-              Resend OTP
-            </button>
-          </Modal.Body>
-
-          <Modal.Footer className="d-flex justify-content-center align-items-center">
-            <Row className="mb-3">
-              <Col>
-                <Button
-                  variant="light"
-                  className="cancel-btn float-start"
-                  onClick={() => setModalShow(false)}
-                >
-                  Cancel
-                </Button>
-
-              </Col>
-              <Col>
-                <Button
-                  onClick={verifyOtpHandler}
-                  variant="primary"
-                  className="submit-btn float-end"
-                >
-                  Continue
-                </Button>
-              </Col>
-            </Row>
-          </Modal.Footer>
-        </Modal>
       </div>
+
+      <Modal
+        size="md"
+        centered
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        className="profileupdate"
+      >
+        <Modal.Header closeButton></Modal.Header>
+        <Modal.Body>
+          <h4>Verify your account by entering the code</h4>
+          <p className="m-4">
+            <img src={OtpImage} alt="image" />
+          </p>
+          <Col className="inputBoxStyle">
+            <OtpInput
+              value={otp}
+              onChange={setOtp}
+              numInputs={6}
+              renderSeparator={<span>-</span>}
+              renderInput={(props) => <input {...props} />}
+            />
+          </Col>
+          <Button variant="link" onClick={handleResendOtp} className="resendOTP">
+            Resend OTP
+          </Button>
+        </Modal.Body>
+
+        <Modal.Footer className="d-flex justify-content-center align-items-center">
+          <Row className="mb-3">
+            <Col>
+              <Button
+                variant="light"
+                className="cancel-btn float-start"
+                onClick={() => setModalShow(false)}
+              >
+                Cancel
+              </Button>
+            </Col>
+            <Col>
+              <Button
+                onClick={verifyOtpHandler}
+                variant="primary"
+                className="submit-btn float-end"
+              >
+                Continue
+              </Button>
+            </Col>
+          </Row>
+        </Modal.Footer>
+      </Modal>
     </AnimatedPage>
   );
 };

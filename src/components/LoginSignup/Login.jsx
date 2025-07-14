@@ -39,12 +39,31 @@ const Login = () => {
 
   // Validation schema
   const validationSchema = Yup.object({
-    value: Yup.string().required("Email or phone number is required"),
+    value: Yup.string()
+      .required("Email or phone number is required")
+      .test(
+        "email-or-phone",
+        "Enter a valid email or 9-digit phone number",
+        function (value) {
+          const { countryCode } = this.parent;
+
+          if (!value) return false;
+
+          if (value.includes("@")) {
+            return Yup.string().email().isValidSync(value);
+          } else {
+            const digitsOnly = value.replace(/\D/g, ""); 
+            return digitsOnly.length === 9;
+          }
+        }
+      ),
     password: Yup.string()
       .required("Password is required")
       .min(6, "Password must be at least 6 characters long"),
     rememberMe: Yup.boolean(),
+    countryCode: Yup.string().required(),
   });
+
 
   const initialValues = {
     value: "",
@@ -131,11 +150,10 @@ const Login = () => {
                               {...field}
                               type="text"
                               placeholder="Email / Mobile Number"
-                              className={`form-control ${
-                                errors.value && touched.value
+                              className={`form-control ${errors.value && touched.value
                                   ? "is-invalid"
                                   : ""
-                              }`}
+                                }`}
                               onChange={(e) =>
                                 handleInputChange(e.target.value, setFieldValue)
                               }
@@ -194,11 +212,10 @@ const Login = () => {
                           <Form.Control
                             {...field}
                             placeholder="Password"
-                            className={`passowrdinput ${
-                              errors.password && touched.password
+                            className={`passowrdinput ${errors.password && touched.password
                                 ? "is-invalid"
                                 : ""
-                            }`}
+                              }`}
                             type={visibility.current ? "text" : "password"}
                           />
                         )}

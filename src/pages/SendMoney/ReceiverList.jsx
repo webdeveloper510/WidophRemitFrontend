@@ -33,6 +33,11 @@ const ReceiverList = () => {
       cell: (row) => <strong>{row.account_name}</strong>,
     },
     {
+      name: "Receiver Mobile",
+      selector: (row) => row.mobile,
+      cell: (row) => <strong>{row.mobile}</strong>,
+    },
+    {
       name: "Action",
       cell: (row) => (
         <div

@@ -381,6 +381,7 @@ const SendMoney = () => {
                         variant="light"
                         type="button"
                         className="cancel-btn float-start"
+                        onClick={() => navigate("/dashboard")}
                       >
                         Cancel
                       </Button>
