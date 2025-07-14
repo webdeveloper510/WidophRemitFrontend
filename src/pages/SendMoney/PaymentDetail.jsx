@@ -96,15 +96,40 @@ const PaymentDetail = () => {
 
   const validatePayToForm = () => {
     const errors = {};
-    if (!payToForm.payIdType) errors.payIdType = "Please select PayID type.";
-    if (payToForm.payIdType && !payToForm.payId)
-      errors.payId = "Please enter PayID.";
-    if (!payToForm.payId && !payToForm.bsb) errors.bsb = "BSB is required.";
-    if (!payToForm.payId && !payToForm.accountNumber)
-      errors.accountNumber = "Account number is required.";
+
+    const hasPayId = !!payToForm.payId;
+    const hasBsb = !!payToForm.bsb;
+    const hasAccountNumber = !!payToForm.accountNumber;
+
+    if (hasPayId) {
+      if (!payToForm.payIdType) {
+        errors.payIdType = "Please select PayID type.";
+      }
+    }
+
+    if (!hasPayId) {
+      if (!hasBsb) {
+        errors.bsb = "BSB is required.";
+      }
+      if (!hasAccountNumber) {
+        errors.accountNumber = "Account number is required.";
+      }
+    }
+
+    if (!hasPayId && !hasBsb && !hasAccountNumber) {
+      errors.payId = "Please enter either PayID or BSB + Account Number.";
+    }
+
+    if (hasPayId && (hasBsb || hasAccountNumber)) {
+      errors.payId = "Please use either PayID or BSB + Account Number — not both.";
+      errors.bsb = "Clear PayID to enter BSB.";
+      errors.accountNumber = "Clear PayID to enter Account Number.";
+    }
+
     setPayToFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
+
 
   const handlePayToContinue = () => {
     const isValid = validatePayToForm();
@@ -128,6 +153,17 @@ const PaymentDetail = () => {
     }
     setModalShowPayToLimit(false);
     setModalShowPayToAgreement(true);
+  };
+  
+  const CancelMonovaContinue = () => {
+    setMonovaForm({
+      bsb: "",
+      accountNumber: "",
+      accountName: "",
+      paymentMethod: "",
+    });
+    setMonovaFormErrors({});
+    setModalShowMonova(false);
   };
 
   const handleMonovaContinue = async () => {
@@ -194,7 +230,7 @@ const PaymentDetail = () => {
       setReasonError("Please select a transfer reason.");
       return;
     }
-    
+
     sessionStorage.setItem("transfer_reason", transferReason);
 
     if (paymentType === "payto") {
@@ -287,21 +323,22 @@ const PaymentDetail = () => {
       let payload;
       const temp = JSON.parse(sessionStorage.getItem("transfer_data") || "{}");
 
+
       if (payToLimitForm.payId) {
         payload = {
           pay_id: payToLimitForm.payId,
-          agreement_amount: temp.amount?.send_amt || payToLimitForm.amountLimit,
-          start_date: payToLimitForm.startDate,
           payid_type: payToForm.payIdType || "EMAL",
         };
       } else {
         payload = {
           bsb: payToLimitForm.bsb,
           account_number: payToLimitForm.accountNumber,
-          max_amount: temp.amount?.send_amt || payToLimitForm.amountLimit,
-          agreement_start_date: payToLimitForm.startDate,
         };
       }
+
+      payload.start_date = payToLimitForm.startDate;
+      payload.agreement_amount = payToLimitForm.amountLimit;
+
 
       const response = await createAgreement(payload);
       if (response?.code === "200" || response?.success) {
@@ -543,6 +580,7 @@ const PaymentDetail = () => {
                       handlePayToFormChange("payIdType", e.target.value)
                     }
                     isInvalid={!!payToFormErrors.payIdType}
+                    disabled={payToForm.accountNumber || payToForm.bsb}
                   >
                     <option value="">Select PayID Type</option>
                     <option value="EMAL">Email</option>
@@ -571,6 +609,8 @@ const PaymentDetail = () => {
                       handlePayToFormChange("payId", e.target.value)
                     }
                     isInvalid={!!payToFormErrors.payId}
+                    disabled={payToForm.accountNumber || payToForm.bsb}
+
                   />
                   <Form.Control.Feedback type="invalid">
                     {payToFormErrors.payId}
@@ -598,7 +638,7 @@ const PaymentDetail = () => {
                       handlePayToFormChange("bsb", e.target.value)
                     }
                     isInvalid={!!payToFormErrors.bsb}
-                    disabled={!!payToForm.payId}
+                    disabled={payToForm.payIdType || payToForm.payId}
                   />
                   <Form.Control.Feedback type="invalid">
                     {payToFormErrors.bsb}
@@ -621,7 +661,8 @@ const PaymentDetail = () => {
                       handlePayToFormChange("accountNumber", e.target.value)
                     }
                     isInvalid={!!payToFormErrors.accountNumber}
-                    disabled={!!payToForm.payId}
+                    disabled={payToForm.payIdType || payToForm.payId}
+
                   />
                   <Form.Control.Feedback type="invalid">
                     {payToFormErrors.accountNumber}
@@ -740,11 +781,11 @@ const PaymentDetail = () => {
           size="lg"
           centered
           show={modalShowMonova}
-          onHide={() => setModalShowMonova(false)}
+          onHide={CancelMonovaContinue}
           className="profileupdate"
         >
           <Modal.Header closeButton className="payment-popup">
-            Monova
+            Monoova
           </Modal.Header>
           <Modal.Body>
             <Form className="profile-form">
@@ -844,7 +885,7 @@ const PaymentDetail = () => {
                   <Button
                     variant="light"
                     className="cancel-btn float-start"
-                    onClick={() => setModalShowMonova(false)}
+                    onClick={CancelMonovaContinue}
                   >
                     Cancel
                   </Button>
@@ -1050,10 +1091,6 @@ const PaymentDetail = () => {
                   {formatDate(payToLimitForm.startDate)}
                 </div>
 
-                <div className="mb-2">
-                  <strong>Status:</strong>{" "}
-                  <span className="text-success">Active</span>
-                </div>
               </div>
             </div>
 
