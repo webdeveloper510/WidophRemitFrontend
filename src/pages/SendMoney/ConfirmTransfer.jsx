@@ -32,6 +32,8 @@ const ConfirmTransfer = () => {
   const navigate = useNavigate();
 
   const fullName = `${sender?.First_name || ""} ${sender?.Last_name || ""}`.trim();
+  const reason = sessionStorage.getItem("transfer_reason") || "none";
+
 
   useEffect(() => {
     const storedAmount = sessionStorage.getItem("transfer_data");
@@ -84,6 +86,7 @@ const ConfirmTransfer = () => {
         accountNumber: monovaForm.accountNumber,
         accountName: monovaForm.accountName,
         payment_mode: monovaForm.payment_mode,
+        reason: reason,
       };
 
       const response = await createMonovaPayment(payload);
@@ -122,6 +125,7 @@ const ConfirmTransfer = () => {
       const zaiPayload = {
         agreement_uuid: agreementUuid,
         transaction_id: transactionId,
+        reason: reason,
       };
 
       const zaiResponse = await ZaiPayTo(zaiPayload);
@@ -146,7 +150,7 @@ const ConfirmTransfer = () => {
   const handlePayIDPayment = async () => {
     setIsLoadingPayID(true);
     try {
-      await ZaiPayId({ transaction_id: sessionStorage.getItem("transaction_id") });
+      await ZaiPayId({ transaction_id: sessionStorage.getItem("transaction_id"), reason });
       toast.success("PayID payment processed successfully!");
       return true;
     } catch (error) {
@@ -160,6 +164,10 @@ const ConfirmTransfer = () => {
 
   const handleSaveAndContinue = () => {
     setModalShow(true);
+    const payload = {
+      mobile: sender?.mobile,
+    };
+    registerOtpResend(payload);
   };
 
   const verifyOtpHandler = async () => {
@@ -223,7 +231,7 @@ const ConfirmTransfer = () => {
 
 
   const handleResendOtp = async () => {
-    try { 
+    try {
       const payload = {
         mobile: sender?.mobile,
       };

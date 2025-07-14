@@ -77,7 +77,7 @@ const ReceiverList = () => {
   useEffect(() => {
     const fetchRecipients = async () => {
       setLoading(true);
-      const res = await recipientList({});
+      const res = await recipientList({});      
 
       if (res?.code === "200") {
         if (Array.isArray(res.data)) {
