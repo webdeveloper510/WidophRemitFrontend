@@ -20,6 +20,7 @@ import {
   getAgreementList,
 } from "../../services/Api";
 import { toast } from "react-toastify";
+import { createTransaction } from "../../services/Api";
 
 const PaymentDetail = () => {
   const [modalShowPayTo, setModalShowPayTo] = useState(false);
@@ -60,6 +61,17 @@ const PaymentDetail = () => {
   const [monovaFormErrors, setMonovaFormErrors] = useState({});
   const [bsb, setbsb] = useState(0);
   const navigate = useNavigate();
+
+  const transferData = JSON.parse(sessionStorage.getItem("transfer_data"));
+  transferData.amount.reason = transferReason;
+  transferData.amount.receive_amount = transferData.amount.exchange_amt;
+  transferData.amount.receive_currency = transferData.amount.to;
+  transferData.amount.send_currency = transferData.amount.from;
+  transferData.amount.send_amount = transferData.amount.send_amt;
+  transferData.recipient_id = JSON.parse(sessionStorage.getItem("selected_receiver")).id;
+  transferData.transaction_id = sessionStorage.getItem("transaction_id");
+  transferData.amount.payout_partner = JSON.parse(sessionStorage.getItem("selected_receiver")).bank_name;
+
 
   const reasonOptions = [
     "Family Support",
@@ -154,7 +166,7 @@ const PaymentDetail = () => {
     setModalShowPayToLimit(false);
     setModalShowPayToAgreement(true);
   };
-  
+
   const CancelMonovaContinue = () => {
     setMonovaForm({
       bsb: "",
@@ -195,6 +207,7 @@ const PaymentDetail = () => {
         };
 
         sessionStorage.setItem("monova_form_data", JSON.stringify(temp));
+        createTransaction(transferData);
         navigate("/confirm-transfer");
 
         setModalShowMonova(false);

@@ -74,7 +74,6 @@ const SendMoney = () => {
       });
 
       let payload = {
-        transaction_id: transaction_id,
         amount: {
           send_amount: commaRemover(values.send_amt),
           receive_amount: commaRemover(exch_data.amount),
@@ -94,6 +93,7 @@ const SendMoney = () => {
         : values.send_amt + ".00";
 
       const trans_res = await createTransaction(payload);
+      sessionStorage.setItem("payload", JSON.stringify(payload));
 
       if (trans_res.code === "200") {
         sessionStorage.setItem(
@@ -298,7 +298,7 @@ const SendMoney = () => {
                         name="from"
                         value={values.from}
                         onChange={handleTypeChange}
-                        //disabled={isConverting}
+                      //disabled={isConverting}
                       >
                         {curr_in.map((curr) => (
                           <option key={curr} value={curr}>
@@ -318,7 +318,7 @@ const SendMoney = () => {
                         name="to"
                         value={values.to}
                         onChange={handleTypeChange}
-                        //disabled={isConverting}
+                      //disabled={isConverting}
                       >
                         {curr_out.map((curr) => (
                           <option key={curr} value={curr}>

@@ -170,7 +170,7 @@ const ReceiverDetail = () => {
           >
             <img src={Back} alt="Back" />
           </Button>
-          <h1>Add Recipient</h1>
+          <h1>Add Receiver</h1>
         </div>
       </div>
 
