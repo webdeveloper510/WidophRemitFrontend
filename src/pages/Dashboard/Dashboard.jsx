@@ -14,7 +14,7 @@ import {
 } from "../../services/Api";
 import SendMoney from "../../assets/images/send-money.png";
 import Profile from "../../assets/images/profile.png";
-import loaderlogo from "../../assets/images/mobile-logo.png";
+import loaderlogo from "../../assets/images/logo.png";
 
 const Dashboard = () => {
   const [ReceiversCount, setReceiversCount] = useState(0);

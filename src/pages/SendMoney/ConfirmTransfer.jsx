@@ -8,7 +8,13 @@ import { Col, Row, Button, Spinner } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import OtpImage from "../../assets/images/Otp-image.png";
 import { useNavigate } from "react-router-dom";
-import { userProfile, createMonovaPayment, getAgreementList, ZaiPayTo, ZaiPayId } from "../../services/Api";
+import {
+  userProfile,
+  createMonovaPayment,
+  getAgreementList,
+  ZaiPayTo,
+  ZaiPayId,
+} from "../../services/Api";
 import { toast } from "react-toastify";
 
 const ConfirmTransfer = () => {
@@ -23,8 +29,9 @@ const ConfirmTransfer = () => {
 
   const navigate = useNavigate();
 
-  const fullName = `${sender?.First_name || ""} ${sender?.Last_name || ""
-    }`.trim();
+  const fullName = `${sender?.First_name || ""} ${
+    sender?.Last_name || ""
+  }`.trim();
 
   useEffect(() => {
     const storedAmount = sessionStorage.getItem("transfer_data");
@@ -73,24 +80,33 @@ const ConfirmTransfer = () => {
         return false;
       }
 
-      const agreementUuid = JSON.parse(sessionStorage.getItem("payto_agreement_response")).data.agreement_uuid
+      const agreementUuid = JSON.parse(
+        sessionStorage.getItem("payto_agreement_response")
+      ).data.agreement_uuid;
 
       if (!agreementUuid) {
         toast.error("No valid agreement UUID found");
-        console.error("Agreement UUID not found in response:", agreementResponse);
+        console.error(
+          "Agreement UUID not found in response:",
+          agreementResponse
+        );
         return false;
       }
-      let transactionId = sessionStorage.getItem("monova_transaction_id") ||
+      let transactionId =
+        sessionStorage.getItem("monova_transaction_id") ||
         sessionStorage.getItem("transaction_id");
       const zaiPayload = {
         agreement_uuid: agreementUuid,
-        transaction_id: transactionId
+        transaction_id: transactionId,
       };
 
       const zaiResponse = await ZaiPayTo(zaiPayload);
 
       if (zaiResponse && zaiResponse.code === "400") {
-        sessionStorage.setItem("zai_payment_response", JSON.stringify(zaiResponse));
+        sessionStorage.setItem(
+          "zai_payment_response",
+          JSON.stringify(zaiResponse)
+        );
         sessionStorage.setItem("final_transaction_id", transactionId);
 
         toast.success("Zai payment processed successfully!");
@@ -100,7 +116,6 @@ const ConfirmTransfer = () => {
         console.error("Zai payment failed:", zaiResponse);
         return false;
       }
-
     } catch (error) {
       console.error("Zai payment error:", error);
       toast.error("Error processing Zai payment");
@@ -127,12 +142,11 @@ const ConfirmTransfer = () => {
         bsbNumber: monovaForm.bsbNumber,
         accountNumber: monovaForm.accountNumber,
         accountName: monovaForm.accountName,
-        payment_mode: monovaForm.payment_mode
+        payment_mode: monovaForm.payment_mode,
       };
       const response = await createMonovaPayment(payload);
 
       if (response?.transactionId && response.transactionId !== 0) {
-
         sessionStorage.setItem("monova_transaction_id", response.transactionId);
 
         toast.success("Monova payment created successfully!");
@@ -157,7 +171,6 @@ const ConfirmTransfer = () => {
     try {
       toast.success("PayID payment processed successfully!");
       return true;
-
     } catch (error) {
       console.error("PayID payment error:", error);
       toast.error("Error processing PayID payment");
@@ -185,15 +198,22 @@ const ConfirmTransfer = () => {
 
   const handleSaveAndContinue = async () => {
     const payToLimitData = sessionStorage.getItem("payto_limit_data");
-    const payToAgreementData = sessionStorage.getItem("payto_agreement_response");
-    const currentPaymentMethod = sessionStorage.getItem("selected_payment_method");
+    const payToAgreementData = sessionStorage.getItem(
+      "payto_agreement_response"
+    );
+    const currentPaymentMethod = sessionStorage.getItem(
+      "selected_payment_method"
+    );
     const receiverData = sessionStorage.getItem("selected_receiver");
 
     let receiverPaymentMethod = null;
     if (receiverData) {
       try {
         const receiverParsed = JSON.parse(receiverData);
-        receiverPaymentMethod = receiverParsed?.payment_method || receiverParsed?.account_type || null;
+        receiverPaymentMethod =
+          receiverParsed?.payment_method ||
+          receiverParsed?.account_type ||
+          null;
       } catch (err) {
         console.error("Error parsing receiver:", err);
       }
@@ -205,21 +225,19 @@ const ConfirmTransfer = () => {
       currentPaymentMethod === "payid" ||
       receiverPaymentMethod?.toLowerCase() === "payid"
     ) {
-
       sessionStorage.removeItem("monova_form_data");
       sessionStorage.removeItem("payto_limit_data");
       sessionStorage.removeItem("payto_agreement_response");
 
-      paymentSuccess = await ZaiPayId({ transaction_id: sessionStorage.getItem("transaction_id") });
+      paymentSuccess = await ZaiPayId({
+        transaction_id: sessionStorage.getItem("transaction_id"),
+      });
       console.log(paymentSuccess);
-    }
-
-    else if (currentPaymentMethod === "monova") {
+    } else if (currentPaymentMethod === "monova") {
       paymentSuccess = await handleMonovaPayment();
-      paymentSuccess = true
+      paymentSuccess = true;
       sessionStorage.removeItem("monova_form_data");
-    }
-    else if (
+    } else if (
       currentPaymentMethod === "zai" &&
       payToLimitData &&
       payToAgreementData
@@ -227,9 +245,7 @@ const ConfirmTransfer = () => {
       sessionStorage.removeItem("monova_form_data");
 
       paymentSuccess = await handleZaiPayment();
-    }
-
-    else {
+    } else {
       console.warn("⚠️ No valid payment method selected.");
       toast.error("No valid payment method selected.");
       return;
