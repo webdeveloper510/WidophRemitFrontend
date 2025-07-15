@@ -193,7 +193,9 @@ const PaymentDetail = () => {
 
 
     if (!transferReason) {
-      errors.reason = "Please select a transfer reason.";
+      toast.error("Please select a transfer reason");
+      setModalShowMonova(false);
+      return;
     }
 
     setMonovaFormErrors(errors);
@@ -505,6 +507,7 @@ const PaymentDetail = () => {
                           onChange={(e) => {
                             const selectedGateway = e.target.value;
                             if (selectedGateway === "monova") {
+                              setPaymentType("monova");
                               sessionStorage.setItem(
                                 "selected_payment_method",
                                 "monova"
