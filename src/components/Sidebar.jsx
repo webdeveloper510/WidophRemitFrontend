@@ -29,29 +29,27 @@ const Sidebar = ({ collapsed }) => {
   };
   return (
     <div
-      className={`p-3 ${
-        collapsed ? "d-none d-md-block collapse-sidebar" : "col-2 col-md-3"
-      } sidebar mr-3`}
+      className={`p-3 ${collapsed ? "d-none d-md-block collapse-sidebar" : "col-2 col-md-3"
+        } sidebar mr-3`}
       style={{ minHeight: "100%" }}
     >
       <h4 className="text-center mb-4 logo">
-        <a href="/">
+        <Link to="/dashboard">
           <img
             src={collapsed ? logoSmall : logoFull}
             alt="logo"
             style={{ height: collapsed ? "auto" : "auto", transition: "0.3s" }}
           />
-        </a>
+        </Link>
       </h4>
       <ul className="nav flex-column">
         {menuItems.map((item) => (
           <li
             key={item.path}
-            className={`nav-item mb-2 ${
-              location.pathname === item.path
+            className={`nav-item mb-2 ${location.pathname === item.path
                 ? "bg-light text-dark rounded"
                 : ""
-            }`}
+              }`}
           >
             <Link
               to={item.path}

@@ -72,6 +72,9 @@ const PaymentDetail = () => {
   transferData.transaction_id = sessionStorage.getItem("transaction_id");
   transferData.amount.payout_partner = JSON.parse(sessionStorage.getItem("selected_receiver")).bank_name;
 
+  console.log(transferData);
+
+
 
   const reasonOptions = [
     "Family Support",
@@ -188,6 +191,11 @@ const PaymentDetail = () => {
     if (!monovaForm.accountName)
       errors.accountName = "Account name is required.";
 
+
+    if (!transferReason) {
+      errors.reason = "Please select a transfer reason.";
+    }
+
     setMonovaFormErrors(errors);
 
     if (Object.keys(errors).length === 0) {
@@ -207,10 +215,15 @@ const PaymentDetail = () => {
         };
 
         sessionStorage.setItem("monova_form_data", JSON.stringify(temp));
-        createTransaction(transferData);
-        navigate("/confirm-transfer");
+        const txResponse = await createTransaction(transferData);
 
-        setModalShowMonova(false);
+        if (txResponse?.code === "200") {
+          toast.success("Transaction created successfully!");
+          setModalShowMonova(false);
+          navigate("/confirm-transfer");
+        } else {
+          toast.error(txResponse?.message || "Transaction creation failed.");
+        }
       } catch (err) {
         console.error("Unexpected error during payment creation:", err);
       }
@@ -313,13 +326,22 @@ const PaymentDetail = () => {
         setIsLoadingPayId(false);
         return;
       }
+
       const response = await createPayId({ transaction_id: transactionId });
+
       if (response?.code === "200") {
         setPayIdData({
           payId: response.data.payid || "",
           transferId: response.data.transaction_id || "",
         });
-        setModalShowPayId(true);
+
+        const txResponse = await createTransaction(transferData);
+
+        if (txResponse?.code === "200") {
+          setModalShowPayId(true);
+        } else {
+          toast.error(txResponse?.message || "Transaction creation failed.");
+        }
       } else {
         toast.error(response.message || "PayID generation failed.");
       }
@@ -330,12 +352,11 @@ const PaymentDetail = () => {
     }
   };
 
+
   const handlePayToAgreementContinue = async () => {
     setIsCreatingAgreement(true);
     try {
       let payload;
-      const temp = JSON.parse(sessionStorage.getItem("transfer_data") || "{}");
-
 
       if (payToLimitForm.payId) {
         payload = {
@@ -352,22 +373,23 @@ const PaymentDetail = () => {
       payload.start_date = payToLimitForm.startDate;
       payload.agreement_amount = payToLimitForm.amountLimit;
 
+      const agreementResponse = await createAgreement(payload);
 
-      const response = await createAgreement(payload);
-      if (response?.code === "200" || response?.success) {
-        sessionStorage.setItem(
-          "payto_limit_data",
-          JSON.stringify(payToLimitForm)
-        );
-        sessionStorage.setItem(
-          "payto_agreement_response",
-          JSON.stringify(response)
-        );
-        toast.success("PayTo agreement created successfully!");
-        setModalShowPayToAgreement(false);
-        navigate("/confirm-transfer");
+      if (agreementResponse?.code === "200" || agreementResponse?.success) {
+        sessionStorage.setItem("payto_limit_data", JSON.stringify(payToLimitForm));
+        sessionStorage.setItem("payto_agreement_response", JSON.stringify(agreementResponse));
+
+        const txResponse = await createTransaction(transferData);
+
+        if (txResponse?.code === "200") {
+          toast.success("PayTo agreement & transaction created successfully!");
+          setModalShowPayToAgreement(false);
+          navigate("/confirm-transfer");
+        } else {
+          toast.error(txResponse?.message || "Failed to create transaction.");
+        }
       } else {
-        toast.error(response?.message || "Failed to create agreement.");
+        toast.error(agreementResponse?.message || "Failed to create agreement.");
       }
     } catch (error) {
       toast.error("Error creating agreement.");
@@ -375,6 +397,7 @@ const PaymentDetail = () => {
       setIsCreatingAgreement(false);
     }
   };
+
 
   return (
     <AnimatedPage>
@@ -423,7 +446,7 @@ const PaymentDetail = () => {
                   <Row>
                     <label>Payment type</label>
                     <div className="d-flex mb-3 mt-3 align-items-center">
-                      <Form.Check
+                      {/* <Form.Check
                         inline
                         className="paymentoptions"
                         label="Pay TO"
@@ -439,7 +462,7 @@ const PaymentDetail = () => {
                           sessionStorage.removeItem("monova_payment_data");
                           sessionStorage.removeItem("payid_data");
                         }}
-                      />
+                      /> */}
                       <Form.Check
                         inline
                         label="Pay ID"

@@ -15,8 +15,8 @@ import {
   ZaiPayTo,
   ZaiPayId,
   verifyEmail,
-  registerOtpResend,
   resendOtp,
+  createTransaction,
 } from "../../services/Api";
 import { toast } from "react-toastify";
 
@@ -70,15 +70,20 @@ const ConfirmTransfer = () => {
 
   const handleMonovaPayment = async () => {
     const monovaFormData = sessionStorage.getItem("monova_form_data");
+    const selectedReceiver = sessionStorage.getItem("selected_receiver");
+    const storedPayload = sessionStorage.getItem("payload"); // Contains amounts
 
-    if (!monovaFormData) {
-      toast.error("Monova payment data not found.");
+    if (!monovaFormData || !selectedReceiver || !storedPayload) {
+      toast.error("Required data not found in session.");
       return false;
     }
 
     setIsLoadingMonova(true);
     try {
       const monovaForm = JSON.parse(monovaFormData);
+      const receiverData = JSON.parse(selectedReceiver);
+      const payloadData = JSON.parse(storedPayload); 
+
       const payload = {
         amount: parseFloat(monovaForm?.amount || 0),
         bsbNumber: monovaForm.bsbNumber,
@@ -88,13 +93,31 @@ const ConfirmTransfer = () => {
       };
 
       const response = await createMonovaPayment(payload);
+      console.log("Monova Payment Response:", response);
 
       if (response?.transactionId && response.transactionId !== 0) {
         sessionStorage.setItem("monova_transaction_id", response.transactionId);
+        sessionStorage.setItem("monova_payment_response", JSON.stringify(response));
+
+        await createTransaction({
+          transaction_id: response.transactionId,
+          amount: {
+            send_amount: payloadData.amount.send_amount,
+            receive_amount: payloadData.amount.receive_amount,
+            send_currency: payloadData.amount.send_currency,
+            receive_currency: payloadData.amount.receive_currency,
+            receive_method: payloadData.amount.receive_method,
+            payout_partner: JSON.parse(sessionStorage.getItem("selected_receiver")).bank_name,
+            reason: sessionStorage.getItem("transfer_reason"),
+            exchange_rate: payloadData.amount.exchange_rate
+          },
+          recipient_id: receiverData.id,
+        });
+
         toast.success("Monova payment created successfully!");
         return true;
       } else {
-        toast.error(response?.message || "Monova payment creation failed.");
+        toast.error(response?.statusDescription || "Monova payment creation failed.");
         return false;
       }
     } catch (err) {
@@ -105,6 +128,8 @@ const ConfirmTransfer = () => {
       setIsLoadingMonova(false);
     }
   };
+
+
 
   const handleZaiPayment = async () => {
     setIsLoadingZai(true);
@@ -164,7 +189,7 @@ const ConfirmTransfer = () => {
     const payload = {
       mobile: sender?.mobile,
     };
-    registerOtpResend(payload);
+    resendOtp(payload);
   };
 
   const verifyOtpHandler = async () => {

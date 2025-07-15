@@ -16,57 +16,28 @@ const TransactionSuccess = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchTransaction = async () => {
-      const monovaTransactionId = sessionStorage.getItem("monova_transaction_id");
-      const regularTransactionId = sessionStorage.getItem("transaction_id");
+    const monovaTransactionId = sessionStorage.getItem("monova_transaction_id");
+    const regularTransactionId = sessionStorage.getItem("transaction_id");
 
-      let transaction_id = null;
-      let isMonova = false;
+    const transferData = JSON.parse(sessionStorage.getItem("transfer_data") || "{}");
 
-      if (monovaTransactionId) {
-        transaction_id = monovaTransactionId;
-        isMonova = true;
-        setIsMonovaTransaction(true);
-      } else if (regularTransactionId) {
-        transaction_id = regularTransactionId;
-        isMonova = false;
-        setIsMonovaTransaction(false);
-      }
+    let transaction_id = monovaTransactionId || regularTransactionId;
+    if (!transaction_id || !transferData) {
+      setLoading(false);
+      return;
+    }
 
-      if (!transaction_id) {
-        setLoading(false);
-        return;
-      }
+    setTransaction({
+      transaction_id: transaction_id,
+      final_amount: transferData.amount.send_amt || "N/A",
+      status: "Success",
+    });
 
-      try {
-        if (isMonova) {
-          const transferData = JSON.parse(sessionStorage.getItem("transfer_data") || "{}");
-          setTransaction({
-            transaction_id: transaction_id,
-            final_amount: transferData?.amount?.send_amt || "N/A",
-            status: "In Process",
-          });
-          setStatus("Success");
-        } else {
-          const payload = { transaction_id };
-          const response = await ZaiPayId(payload);
-
-          if (response?.code === "200") {
-            setTransaction(response.data);
-            setStatus(response.message || "Pending");
-          } else {
-            console.error("Error:", response?.message);
-          }
-        }
-      } catch (err) {
-        console.error("Fetch error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTransaction();
+    setStatus("Success");
+    setIsMonovaTransaction(!!monovaTransactionId);
+    setLoading(false);
   }, []);
+
 
   const handleBackToDashboard = () => {
     if (isMonovaTransaction) {
@@ -79,7 +50,7 @@ const TransactionSuccess = () => {
     navigate("/dashboard");
   };
   console.log(transaction);
-  
+
 
   return (
     <AnimatedPage>
@@ -126,9 +97,9 @@ const TransactionSuccess = () => {
                       </div>
 
                       <div className="mt-4 mb-4">
-                        <Button variant="success" className="download-button">
+                        {/* <Button variant="success" className="download-button">
                           VIEW RECEIPT
-                        </Button>
+                        </Button> */}
                       </div>
 
                       <div className="processing-info-text mt-5">
