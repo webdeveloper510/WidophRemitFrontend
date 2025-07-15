@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import { Form, FloatingLabel, Col } from "react-bootstrap";
@@ -20,6 +20,13 @@ const Login = () => {
   const [inputType, setInputType] = useState("email");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const mobileInputRef = useRef(null);
+
+  useEffect(() => {
+    if (inputType === "phone" && mobileInputRef.current) {
+      mobileInputRef.current.focus();
+    }
+  }, [inputType]);
 
   const toggleVisibility = (field) => {
     setVisibility((prev) => ({
@@ -185,6 +192,7 @@ const Login = () => {
                             name="value"
                             placeholder="Enter mobile number"
                             value={values.value}
+                            ref={mobileInputRef} // 👈 attach ref here
                             onChange={(e) =>
                               handleInputChange(e.target.value, setFieldValue)
                             }
