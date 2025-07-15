@@ -70,7 +70,7 @@ const Footer = () => {
                 </li>
                 <li>
                   <a href="https://widophremit.com/transfer-money-online-from-australia-to-nigeria/">
-                    Transfer Money online from Australia to Nigeria
+                    Transfer Money online from Australia to overseas
                   </a>
                 </li>
                 <li>

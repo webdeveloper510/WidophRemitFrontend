@@ -30,7 +30,10 @@ const Login = () => {
 
   const handleInputChange = (inputValue, setFieldValue) => {
     setFieldValue("value", inputValue);
-    if (!inputValue || inputValue.includes("@")) {
+    const likelyEmail =
+      /[a-zA-Z]/.test(inputValue) && !/^\d+$/.test(inputValue);
+
+    if (!inputValue || likelyEmail) {
       setInputType("email");
     } else {
       setInputType("phone");
@@ -52,7 +55,7 @@ const Login = () => {
           if (value.includes("@")) {
             return Yup.string().email().isValidSync(value);
           } else {
-            const digitsOnly = value.replace(/\D/g, ""); 
+            const digitsOnly = value.replace(/\D/g, "");
             return digitsOnly.length === 9;
           }
         }
@@ -151,8 +154,8 @@ const Login = () => {
                               type="text"
                               placeholder="Email / Mobile Number"
                               className={`form-control ${errors.value && touched.value
-                                  ? "is-invalid"
-                                  : ""
+                                ? "is-invalid"
+                                : ""
                                 }`}
                               onChange={(e) =>
                                 handleInputChange(e.target.value, setFieldValue)
@@ -213,8 +216,8 @@ const Login = () => {
                             {...field}
                             placeholder="Password"
                             className={`passowrdinput ${errors.password && touched.password
-                                ? "is-invalid"
-                                : ""
+                              ? "is-invalid"
+                              : ""
                               }`}
                             type={visibility.current ? "text" : "password"}
                           />
