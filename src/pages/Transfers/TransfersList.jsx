@@ -36,6 +36,9 @@ const TransfersList = () => {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [list, setList] = useState([]);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(15);
+
   const fetchList = async () => {
     let data = [];
     const response = await transactionHistory();
@@ -73,19 +76,10 @@ const TransfersList = () => {
     return matchesText && matchesStatus;
   });
 
-  const displayData = filteredData;
-
   const statusOptions = ["", "Cancelled", "Pending", "Incomplete", "Complete"];
 
   const subHeaderComponent = (
     <div className="d-flex gap-3 mb-3 align-items-center">
-      {/* <input
-        type="text"
-        className="form-control form-control-md filter-input"
-        placeholder="Search . . . "
-        value={filterText}
-        onChange={(e) => setFilterText(e.target.value)}
-      /> */}
       <select
         className="form-select form-select-md filter-select"
         value={selectedStatus}
@@ -103,7 +97,7 @@ const TransfersList = () => {
   const columns = [
     {
       name: "S. No.",
-      selector: (row, index) => index + 1,
+      cell: (row, index) => (currentPage - 1) * perPage + index + 1,
       width: "80px",
       center: true,
     },
@@ -161,6 +155,8 @@ const TransfersList = () => {
                 href={`${import.meta.env.VITE_APP_API_URI}/payment/receipt/${
                   row.id
                 }`}
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 Download Receipt
               </Dropdown.Item>
@@ -198,14 +194,19 @@ const TransfersList = () => {
         <DataTable
           className="TranferList"
           columns={columns}
-          data={displayData}
+          data={filteredData}
           customStyles={customStyles}
           noHeader
           striped
           highlightOnHover
           pagination
-          paginationPerPage={15}
+          paginationPerPage={perPage}
           paginationRowsPerPageOptions={[5, 10, 15, 20]}
+          onChangePage={(page) => setCurrentPage(page)}
+          onChangeRowsPerPage={(newPerPage, page) => {
+            setPerPage(newPerPage);
+            setCurrentPage(page);
+          }}
         />
       </div>
     </AnimatedPage>
