@@ -82,7 +82,7 @@ const ConfirmTransfer = () => {
     try {
       const monovaForm = JSON.parse(monovaFormData);
       const receiverData = JSON.parse(selectedReceiver);
-      const payloadData = JSON.parse(storedPayload); 
+      const payloadData = JSON.parse(storedPayload);
 
       const payload = {
         amount: parseFloat(monovaForm?.amount || 0),
@@ -100,7 +100,8 @@ const ConfirmTransfer = () => {
         sessionStorage.setItem("monova_payment_response", JSON.stringify(response));
 
         await createTransaction({
-          transaction_id: response.transactionId,
+          transaction_id: sessionStorage.getItem("transaction_id"),
+          newTransaction_id: response.transactionId,
           amount: {
             send_amount: payloadData.amount.send_amount,
             receive_amount: payloadData.amount.receive_amount,
