@@ -92,37 +92,37 @@ const ProfileInformation = () => {
   }, []);
 
 
-  const handlePasswordUpdate = async () => {
-    const { currentPassword, newPassword, confirmPassword } = formData;
+  // const handlePasswordUpdate = async () => {
+  //   const { currentPassword, newPassword, confirmPassword } = formData;
 
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      return toast.error("All password fields are required");
-    }
-    if (newPassword !== confirmPassword) {
-      return toast.error("New and confirm passwords do not match");
-    }
-    try {
-      const res = await changePassword({
-        old_password: currentPassword,
-        new_password: newPassword,
-        confirm_password: confirmPassword,
-      });
-      if (res?.code === "200") {
-        toast.success("Password updated successfully");
-        setFormData((prev) => ({
-          ...prev,
-          currentPassword: "",
-          newPassword: "",
-          confirmPassword: "",
-        }));
-      } else {
-        toast.error(res?.message || "Failed to update password");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("Something went wrong");
-    }
-  };
+  //   if (!currentPassword || !newPassword || !confirmPassword) {
+  //     return toast.error("All password fields are required");
+  //   }
+  //   if (newPassword !== confirmPassword) {
+  //     return toast.error("New and confirm passwords do not match");
+  //   }
+  //   try {
+  //     const res = await changePassword({
+  //       old_password: currentPassword,
+  //       new_password: newPassword,
+  //       confirm_password: confirmPassword,
+  //     });
+  //     if (res?.code === "200") {
+  //       toast.success("Password updated successfully");
+  //       setFormData((prev) => ({
+  //         ...prev,
+  //         currentPassword: "",
+  //         newPassword: "",
+  //         confirmPassword: "",
+  //       }));
+  //     } else {
+  //       toast.error(res?.message || "Failed to update password");
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     toast.error("Something went wrong");
+  //   }
+  // };
 
   const requiredFields = [
     "firstName",
@@ -167,6 +167,7 @@ const ProfileInformation = () => {
       .then((res) => {
         if (res?.code === "200") {
           toast.success("Profile updated successfully");
+          sessionStorage.setItem("User data", JSON.stringify(res?.data))
           navigate("/dashboard");
         } else {
           toast.error(res?.message || "Failed to update profile");

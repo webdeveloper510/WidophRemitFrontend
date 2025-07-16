@@ -425,7 +425,12 @@ span.status-badge.review {
   color: #434800;
 }
 .add_receipent_row {
-  width: 50%;
+    width: 50%;
+    display: flex;
+    justify-content: end;
+}
+.add_receipent_row a {
+    text-decoration: none;
 }
 /*************** trsnafer details css ****************/
 .banktransfer-select {

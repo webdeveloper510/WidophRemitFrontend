@@ -95,7 +95,7 @@ const KYCForm = () => {
                 const interval = setInterval(async () => {
                   const res = await getVeriffStatus({ session_id: response.verification.id });
 
-                  if (res?.data?.status === "approved") {
+                  if (res?.data?.status === "submitted") {
                     clearInterval(interval);
                     intervalCleared = true;
                     setVerifyingID(false);
