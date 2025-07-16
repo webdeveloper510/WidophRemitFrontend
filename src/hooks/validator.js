@@ -2,7 +2,6 @@ export const inputValidator = (e, handleChange) => {
     let cleanedValue = '';
     let { name, value } = e.target;
     value = value.replace(/\p{Extended_Pictographic}/gu, '');
-    // console.log(value)
 
     if (name === "other_name" || name === "business_name" || name === "business_nature" || name === "bank_name" || name === "part_type" || name === "payout_part") {
         cleanedValue = value.replace(/[^a-zA-Z0-9 &-]/g, '');

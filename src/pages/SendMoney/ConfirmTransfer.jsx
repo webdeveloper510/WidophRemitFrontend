@@ -93,7 +93,6 @@ const ConfirmTransfer = () => {
       };
 
       const response = await createMonovaPayment(payload);
-      console.log("Monova Payment Response:", response);
 
       if (response?.transactionId && response.transactionId !== 0) {
         sessionStorage.setItem("monova_transaction_id", response.transactionId);
@@ -260,7 +259,6 @@ const ConfirmTransfer = () => {
         type: "email"
       };
       const response = await resendOtp(payload);
-      console.log("Resend OTP Response:", response);
       if (response?.code === "200") {
         toast.success(response?.message || "OTP resent successfully!");
       } else {

@@ -44,7 +44,6 @@ const ReviewTransfer = () => {
     const fetchUserProfile = async () => {
       try {
         const res = await userProfile();
-        console.log("User Profile Response:", res);
 
         // Handle both string and numeric codes
         const statusCode = res?.code?.toString();
@@ -73,7 +72,6 @@ const ReviewTransfer = () => {
       const storedReceiver = sessionStorage.getItem("selected_receiver");
       if (storedReceiver) {
         try {
-          console.log("stored user :-", JSON.parse(storedReceiver));
 
           setReceiver(JSON.parse(storedReceiver));
         } catch (error) {

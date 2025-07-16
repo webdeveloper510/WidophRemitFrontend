@@ -72,10 +72,6 @@ const PaymentDetail = () => {
   transferData.transaction_id = sessionStorage.getItem("transaction_id");
   transferData.amount.payout_partner = JSON.parse(sessionStorage.getItem("selected_receiver")).bank_name;
 
-  console.log(transferData);
-
-
-
   const reasonOptions = [
     "Family Support",
     "Education",

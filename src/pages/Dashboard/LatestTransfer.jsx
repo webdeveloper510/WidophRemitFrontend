@@ -118,7 +118,6 @@ const LatestTransfer = () => {
     })();
   }, []);
 
-  console.log(list);
 
   return (
     <Card className="receiver-card">

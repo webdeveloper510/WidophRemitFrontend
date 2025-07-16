@@ -8,6 +8,7 @@ import { deleteRecipient, recipientList } from "../../services/Api";
 import { Button, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import AddReceiver from "../../assets/images/add-receiver.png";
+import { toast } from "react-toastify";
 
 const customStyles = {
   headCells: {
@@ -35,25 +36,70 @@ const customStyles = {
 const Receivers = () => {
   const [list, setList] = useState([]);
   const [filterText, setFilterText] = useState("");
-  const [show, setShow] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
+
+  useEffect(() => {
+    fetchList();
+  }, []);
+
+  const fetchList = async () => {
+    try {
+      const response = await recipientList();
+      if (response.code === "200") {
+        setList(response.data);
+      }
+    } catch (err) {
+      console.error("Error fetching list:", err);
+    }
+  };
+
+  const handleClose = () => {
+    setDeleteId(null);
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await deleteRecipient(deleteId);
+      if (response.code === "200") {
+        toast.success("Receiver deleted successfully");
+        fetchList();
+        handleClose();
+      } else {
+        toast.error(response.message || "Failed to delete receiver");
+      }
+    } catch (error) {
+      console.error("Deletion error:", error);
+      toast.error("Unexpected error occurred");
+    }
+  };
+
+  const filteredData = list.filter((item) =>
+    (item.first_name + item.middle_name + item.last_name + item.email)
+      .toLowerCase()
+      .includes(filterText.toLowerCase())
+  );
 
   const columns = [
     {
       name: "S. No.",
-      selector: (row, index) => index + 1,
+      selector: (row, index) => (currentPage - 1) * perPage + index + 1,
       width: "80px",
       center: true,
     },
     {
-      name: "Receivers Name",
-      selector: (row) => {
-        `${row.first_name} ${row.middle_name} ${row.last_name}`;
-      },
+      name: "Receiver Name",
+      selector: (row) => `${row.first_name} ${row.middle_name} ${row.last_name}`,
       sortable: true,
-      cell: (row) => <strong>{`${row.first_name}${row.last_name}`}</strong>,
+      cell: (row) => (
+        <strong>
+          {row.first_name} {row.last_name}
+        </strong>
+      ),
     },
     {
-      name: "Receivers Mobile",
+      name: "Receiver Mobile",
       selector: (row) => row.mobile,
       sortable: true,
       cell: (row) => <strong>{row.mobile}</strong>,
@@ -67,16 +113,10 @@ const Receivers = () => {
           </Dropdown.Toggle>
 
           <Dropdown.Menu className="recievers-list">
-            <Dropdown.Item onClick={() => setShow(row.id)}>
-              Delete
-            </Dropdown.Item>
-            {/* <Dropdown.Item href="transfer-details">View</Dropdown.Item> */}
-          </Dropdown.Menu>
-          <Dropdown.Menu className="recievers-list">
             <Dropdown.Item as={Link} to={`/update-receiver/${row.id}`}>
               Update
             </Dropdown.Item>
-            <Dropdown.Item onClick={() => setShow(row.id)}>
+            <Dropdown.Item onClick={() => setDeleteId(row.id)}>
               Delete
             </Dropdown.Item>
           </Dropdown.Menu>
@@ -90,66 +130,6 @@ const Receivers = () => {
     },
   ];
 
-  const filteredData = Array.isArray(list)
-    ? list.filter((item) =>
-        (item.first_name + item.middle_name + item.last_name + item.email)
-          .toLowerCase()
-          .includes(filterText.toLowerCase())
-      )
-    : [];
-
-  const displayData = filteredData;
-
-  const subHeaderComponent = (
-    <div className="d-flex gap-3 mb-3 align-items-center">
-      {/* <input
-        type="text"
-        className="form-control form-control-md filter-input"
-        placeholder="Search . . . "
-        value={filterText}
-        onChange={(e) => setFilterText(e.target.value)}
-      /> */}
-    </div>
-  );
-
-  useEffect(() => {
-    fetchList();
-  }, []);
-
-  const fetchList = async () => {
-    try {
-      const response = await recipientList();
-
-      if (response.code === "200") {
-        setList(response.data);
-        console.log(response.data);
-      }
-    } catch (err) {
-      console.error("Error fetching list:", err);
-    }
-  };
-
-  const handleClose = () => {
-    setShow(false);
-  };
-
-  const handleDelete = async () => {
-    try {
-      const response = await deleteRecipient(show);
-      if (response.code === "200") {
-        toast.success("Receiver deleted successfully");
-        fetchList(); // Refresh list
-        handleClose(); // 🔴 Close the modal after deletion
-      } else {
-        toast.error(response.message || "Failed to delete receiver");
-      }
-    } catch (error) {
-      console.error("Deletion error:", error);
-      toast.error("Unexpected error occurred");
-    }
-  };
-
-
   return (
     <>
       <AnimatedPage>
@@ -158,13 +138,10 @@ const Receivers = () => {
             <div className="d-flex align-items-center">
               <img src={RecentReceiver} alt="img" /> <h1>Receivers List</h1>
             </div>
-            {/* {subHeaderComponent} */}
+
             <div className="add_receipent_row">
               <Link to={"/add-receiver"}>
-                <button
-                  type="button"
-                  class="float-end download-button btn btn-success"
-                >
+                <button type="button" className="download-button btn btn-success">
                   <img src={AddReceiver} alt="img" /> Add Receiver
                 </button>
               </Link>
@@ -175,33 +152,35 @@ const Receivers = () => {
         <div className="row mt-4 receiverslist-table">
           <DataTable
             columns={columns}
-            data={displayData}
+            data={filteredData}
             customStyles={customStyles}
             noHeader
             striped
             highlightOnHover
             pagination
-            paginationPerPage={10}
+            paginationPerPage={perPage}
             paginationRowsPerPageOptions={[5, 10, 15, 20]}
+            onChangePage={(page) => setCurrentPage(page)}
+            onChangeRowsPerPage={(newPerPage, page) => {
+              setPerPage(newPerPage);
+              setCurrentPage(page);
+            }}
           />
         </div>
       </AnimatedPage>
-      <Modal show={show} onHide={handleClose} backdrop="static">
-        <Modal.Header></Modal.Header>
+
+      <Modal show={!!deleteId} onHide={handleClose} backdrop="static" centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Receiver</Modal.Title>
+        </Modal.Header>
         <Modal.Body className="text-center">
-          <h5>Are you sure you want to delete ?</h5>
+          <h5>Are you sure you want to delete this receiver?</h5>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => handleClose()}>
-            Close
+          <Button variant="secondary" onClick={handleClose}>
+            Cancel
           </Button>
-          <Button
-            className="delete_recipient"
-            variant="danger"
-            onClick={() => {
-              handleDelete();
-            }}
-          >
+          <Button variant="danger" onClick={handleDelete}>
             Delete
           </Button>
         </Modal.Footer>

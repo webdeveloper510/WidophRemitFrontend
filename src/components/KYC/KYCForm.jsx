@@ -23,16 +23,16 @@ import {
 import TopNavbar from "../LoginSignup/TopNavbar";
 import Footer from "../Footer";
 import KYCimage from "../../assets/images/kyc-image.png";
+import { Veriff } from "@veriff/js-sdk";
+import { createVeriffFrame, MESSAGES } from "@veriff/incontext-sdk";
 
 const KYCForm = () => {
   const navigate = useNavigate();
   const [activeKey, setActiveKey] = useState("step1");
-  const [selectedFileName, setSelectedFileName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
   const [apiSuccess, setApiSuccess] = useState("");
   const [idVerified, setIdVerified] = useState(false);
-  const fileInputRef = useRef(null);
   const [countdown, setCountdown] = useState(10);
   const [verifyingID, setVerifyingID] = useState(false);
 
@@ -65,31 +65,87 @@ const KYCForm = () => {
     label: country,
   }));
 
-  const handleClick = async () => {
+  const handleVeriffClick = () => {
     setVerifyingID(true);
-    try {
-      const response = await getVeriffStatus();
 
-      if (response?.code === "200" && response?.data?.status === "submitted") {
-        setIdVerified(true);
-        setSelectedFileName("ID_Document_Verified.pdf");
-        setTimeout(() => setActiveKey("step3"), 500);
-      } else {
-        console.warn("Verification not successful:", response);
-      }
-    } catch (error) {
-      console.error("Error during verification:", error);
-    } finally {
-      setVerifyingID(false);
-    }
-  };
+    const veriff = Veriff({
+      apiKey: import.meta.env.VITE_APP_VERIFF_KEY,
+      parentId: "veriff-root",
+      onSession: (err, response) => {
+        if (err) {
+          console.error("Veriff error:", err);
+          setVerifyingID(false);
+          return;
+        }
 
+        createVeriffFrame({
+          url: response.verification.url,
+          onEvent: (msg) => {
+            switch (msg) {
+              case MESSAGES.CANCELED:
+                setVerifyingID(false);
+                break;
+              case MESSAGES.STARTED:
+                setVerifyingID(true);
+                break;
+              case MESSAGES.FINISHED:
+                setVerifyingID(true);
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setSelectedFileName(file.name);
-    }
+                let intervalCleared = false;
+                const interval = setInterval(async () => {
+                  const res = await getVeriffStatus({ session_id: response.verification.id });
+
+                  if (res?.data?.status === "approved") {
+                    clearInterval(interval);
+                    intervalCleared = true;
+                    setVerifyingID(false);
+                    setIdVerified(true);
+                    setActiveKey("step3");
+                  }
+
+                  if (res?.data?.status === "declined") {
+                    clearInterval(interval);
+                    intervalCleared = true;
+                    setVerifyingID(false);
+                    alert("Verification declined. Please try again.");
+                  }
+                }, 5000);
+
+                setTimeout(() => {
+                  if (!intervalCleared) {
+                    clearInterval(interval);
+                    setVerifyingID(false);
+                    alert("Verification pending. Please wait or try again later.");
+                  }
+                }, 15000);
+
+                break;
+
+              default:
+                break;
+            }
+          },
+        });
+      },
+    });
+
+    veriff.setParams({
+      vendorData: `${sessionStorage.getItem("customer_id")}`,
+      person: {
+        givenName: `${formData?.firstName}`,
+        lastName: `${formData?.lastName}`,
+      },
+    });
+
+    veriff.mount({
+      formLabel: {
+        givenName: "First Name",
+        lastName: "Last Name",
+        vendorData: "Customer ID",
+      },
+      submitBtnText: "Start Verification",
+      loadingText: "Initializing Veriff...",
+    });
   };
 
   const handleInputChange = (field, value) => {
@@ -123,7 +179,7 @@ const KYCForm = () => {
     } else if (!/^\d{9}$/.test(formData.phone)) {
       newErrors.phone = "Mobile number must be exactly 9 digits";
     }
-    
+
     if (!formData.dob) {
       newErrors.dob = "Date of birth is required";
     } else {
@@ -194,8 +250,7 @@ const KYCForm = () => {
       const response = await updateProfile(APIDATA);
       if (response && response.code === "200") {
         setApiSuccess("Profile updated successfully!");
-        // await getVeriffStatus();
-        setTimeout(() => setActiveKey("step2"), 1000);
+        setActiveKey("step2");
       } else if (response && response.code === "400") {
         setApiError(
           response.message || "Invalid input. Please check the form fields."
@@ -240,7 +295,6 @@ const KYCForm = () => {
         );
         return;
       }
-      console.log("coming");
     }
   };
 
@@ -836,26 +890,13 @@ const KYCForm = () => {
                       <button
                         className={`verify-btn ${idVerified ? "verified" : ""}`}
                         type="button"
-                        onClick={handleClick}
-                        disabled={idVerified}
+                        onClick={handleVeriffClick}
+                        disabled={idVerified || verifyingID}
                       >
-                        {idVerified ? "ID VERIFIED ✓" : "VERIFY YOUR ID"}
+                        {verifyingID ? "STARTING VERIFICATION..." : idVerified ? "ID VERIFIED ✓" : "VERIFY YOUR ID"}
                       </button>
+                      <div id="veriff-root" style={{ marginTop: "20px" }}></div>
 
-                      <input
-                        type="file"
-                        ref={fileInputRef}
-                        style={{ display: "none" }}
-                        onChange={handleFileChange}
-                        accept="image/*,.pdf"
-                      />
-
-                      {selectedFileName && (
-                        <p className="selected-file-name mt-3">
-                          <b>Selected file: </b>
-                          {selectedFileName}
-                        </p>
-                      )}
 
                       {idVerified && (
                         <p className="text-success mt-3">

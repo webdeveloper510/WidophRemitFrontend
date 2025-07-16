@@ -28,8 +28,6 @@ private_instance.interceptors.request.use(
           },
         }).then((response) => {
           const { data } = response
-          // console.log("true condition", response)
-          // return true;
           if (data.code === "200" && !data.data.is_deleted && data.data.is_digital_Id_verified !== "suspended") {
             return true;
           } else {

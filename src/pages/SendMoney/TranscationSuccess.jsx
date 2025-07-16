@@ -49,7 +49,6 @@ const TransactionSuccess = () => {
 
     navigate("/dashboard");
   };
-  console.log(transaction);
 
 
   return (
