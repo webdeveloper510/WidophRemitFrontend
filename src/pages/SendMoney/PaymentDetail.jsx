@@ -255,8 +255,6 @@ const PaymentDetail = () => {
       return;
     }
 
-    sessionStorage.setItem("transfer_reason", transferReason);
-
     if (paymentType === "payto") {
       try {
         setIsLoadingAgreement(true);
@@ -532,6 +530,7 @@ const PaymentDetail = () => {
                         onChange={(e) => {
                           setTransferReason(e.target.value);
                           setReasonError("");
+                          sessionStorage.setItem("transfer_reason", e.target.value);
                         }}
                         name="reason"
                         isInvalid={!!reasonError}

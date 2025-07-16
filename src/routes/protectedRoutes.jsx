@@ -29,7 +29,8 @@ const ProtectedRoute = ({ children }) => {
           if (idStatus !== 'approved') {
             setRedirectTo('/kyc');
           } else {
-              setVerified(true)
+            sessionStorage.setItem("User data", JSON.stringify(res?.data));
+            setVerified(true);
           }
         } else {
           setRedirectTo('/login');

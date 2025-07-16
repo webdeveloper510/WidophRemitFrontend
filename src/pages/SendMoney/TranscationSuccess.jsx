@@ -6,7 +6,6 @@ import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
 import { Col, Row, Button, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { ZaiPayId } from "../../services/Api";
 
 const TransactionSuccess = () => {
   const [transaction, setTransaction] = useState(null);
@@ -36,20 +35,25 @@ const TransactionSuccess = () => {
     setStatus("Success");
     setIsMonovaTransaction(!!monovaTransactionId);
     setLoading(false);
+
+    return () => {
+      sessionStorage.removeItem("monova_transaction_id");
+      sessionStorage.removeItem("transaction_id");
+      sessionStorage.removeItem("monova_payment_data");
+      sessionStorage.removeItem("monova_payment_response");
+      sessionStorage.removeItem("monova_form_data");
+      sessionStorage.removeItem("transfer_data");
+      sessionStorage.removeItem("selected_receiver");
+      sessionStorage.removeItem("transfer_reason");
+      sessionStorage.removeItem("payload");
+      sessionStorage.removeItem("selected_payment_method");
+    };
   }, []);
 
 
   const handleBackToDashboard = () => {
-    if (isMonovaTransaction) {
-      sessionStorage.removeItem("monova_transaction_id");
-      sessionStorage.removeItem("monova_form_data");
-    }
-    sessionStorage.removeItem("transfer_data");
-    sessionStorage.removeItem("selected_receiver");
-
     navigate("/dashboard");
   };
-
 
   return (
     <AnimatedPage>

@@ -41,38 +41,12 @@ const ReviewTransfer = () => {
   };
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const res = await userProfile();
-
-        // Handle both string and numeric codes
-        const statusCode = res?.code?.toString();
-
-        if (statusCode === "200" && res?.data) {
-          const user = res.data;
-          setSender({
-            fullName: `${user.First_name || ""} ${user.Middle_name || ""} ${user.Last_name || ""}`.trim(),
-            email: user.email || "N/A",
-            phone: user.mobile || "N/A",
-          });
-        }
-        else {
-          toast.error(res?.message || "Failed to fetch user profile");
-        }
-
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-        toast.error("Failed to fetch user profile");
-      }
-    };
-
     if (location.state && location.state.receiverData) {
       setReceiver(location.state.receiverData);
     } else {
       const storedReceiver = sessionStorage.getItem("selected_receiver");
       if (storedReceiver) {
         try {
-
           setReceiver(JSON.parse(storedReceiver));
         } catch (error) {
           console.error("Failed to parse selected_receiver:", error);
@@ -83,6 +57,7 @@ const ReviewTransfer = () => {
         navigate("/receivers-list");
       }
     }
+
     const storedAmount = sessionStorage.getItem("transfer_data");
     if (storedAmount) {
       try {
@@ -94,8 +69,34 @@ const ReviewTransfer = () => {
       }
     }
 
-    fetchUserProfile();
+    loadUserFromSession();
   }, [navigate, location.state]);
+
+
+  const loadUserFromSession = () => {
+    const storedUser = sessionStorage.getItem("User data");
+
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+
+        setSender({
+          fullName: `${user.First_name || ""} ${user.Middle_name || ""} ${user.Last_name || ""}`.trim(),
+          email: user.email || "N/A",
+          phone: user.mobile || "N/A",
+        });
+
+      } catch (error) {
+        console.error("Failed to parse User data from session:", error);
+        toast.error("User data is corrupted. Please login again.");
+        navigate("/dashboard");
+      }
+    } else {
+      toast.error("User not found in session. Please login again.");
+      navigate("/dashboard");
+    }
+  };
+
   const fullName = `${list?.First_name || list?.first_name || ""} ${list?.Last_name || list?.last_name || ""
     }`.trim();
   const receiverFullName = receiver

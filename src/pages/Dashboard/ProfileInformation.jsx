@@ -10,7 +10,7 @@ import { getNames } from "country-list";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { userProfile, changePassword, updateProfile } from "../../services/Api";
+import { changePassword, updateProfile } from "../../services/Api";
 
 const ProfileInformation = () => {
   const [countryCode, setCountryCode] = useState("61");
@@ -57,49 +57,40 @@ const ProfileInformation = () => {
   };
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await userProfile({});
-        if (response?.code === "200" && response?.data) {
-          const data = response.data;
-          sessionStorage.setItem(
-            "user_name",
-            JSON.stringify({
-              firstName: data.First_name || "",
-              lastName: data.Last_name || "",
-            })
-          );
-          setFormData((prev) => ({
-            ...prev,
-            firstName: data.First_name || "",
-            middleName: data.Middle_name || "",
-            lastName: data.Last_name || "",
-            customerId: data.customer_id || "",
-            email: data.email || "",
-            mobile: data.mobile || "",
-            dateOfBirth: data.Date_of_birth || "",
-            countryOfBirth: data.Country_of_birth || "",
-            occupation: data.occupation || "",
-            country: data.country || data.location || "",
-            address: data.address || "",
-            city: data.city || "",
-            zip: data.postcode || "",
-            state: data.state || "",
-          }));
+    const userData = JSON.parse(sessionStorage.getItem("User data") || "{}");
 
-          if (data.mobile && data.mobile.startsWith("+")) {
-            const countryCode = data.mobile.substring(1, 3);
-            const phoneNumber = data.mobile.substring(3);
-            setCountryCode(countryCode);
-            setRawMobile(phoneNumber);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching profile:", error);
+    if (Object.keys(userData).length > 0) {
+      const updatedData = {
+        firstName: userData.First_name || "",
+        middleName: userData.Middle_name || "",
+        lastName: userData.Last_name || "",
+        customerId: userData.customer_id || "",
+        email: userData.email || "",
+        mobile: userData.mobile || "",
+        dateOfBirth: userData.Date_of_birth || "",
+        countryOfBirth: userData.Country_of_birth || "",
+        occupation: userData.occupation || "",
+        country: userData.country || userData.location || "",
+        address: userData.address || "",
+        city: userData.city || "",
+        zip: userData.postcode || "",
+        state: userData.state || "",
+      };
+
+      setFormData((prev) => ({
+        ...prev,
+        ...updatedData,
+      }));
+
+      if (userData.mobile && userData.mobile.startsWith("+")) {
+        const countryCode = userData.mobile.substring(1, 3);
+        const phoneNumber = userData.mobile.substring(3);
+        setCountryCode(countryCode);
+        setRawMobile(phoneNumber);
       }
-    };
-    fetchProfile();
+    }
   }, []);
+
 
   const handlePasswordUpdate = async () => {
     const { currentPassword, newPassword, confirmPassword } = formData;

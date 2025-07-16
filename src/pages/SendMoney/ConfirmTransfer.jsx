@@ -37,6 +37,7 @@ const ConfirmTransfer = () => {
   useEffect(() => {
     const storedAmount = sessionStorage.getItem("transfer_data");
     const storedReceiver = sessionStorage.getItem("selected_receiver");
+    const storedUser = sessionStorage.getItem("User data");
 
     if (storedAmount) {
       try {
@@ -52,21 +53,31 @@ const ConfirmTransfer = () => {
       navigate("/receivers-list");
     }
 
-    fetchUserProfile();
+    if (storedUser) {
+      try {
+        setSender(JSON.parse(storedUser));
+      } catch (error) {
+        console.error("Failed to parse User data:", error);
+      }
+    } else {
+      console.error("User data not found in session.");
+      navigate("/dashboard");
+    }
   }, [navigate]);
 
-  const fetchUserProfile = async () => {
-    try {
-      const res = await userProfile();
-      if (res?.code === "200") {
-        setSender(res.data);
-      } else {
-        console.error("Failed to fetch user profile:", res?.message);
-      }
-    } catch (err) {
-      console.error("Error fetching user profile:", err);
-    }
-  };
+
+  // const fetchUserProfile = async () => {
+  //   try {
+  //     const res = await userProfile();
+  //     if (res?.code === "200") {
+  //       setSender(res.data);
+  //     } else {
+  //       console.error("Failed to fetch user profile:", res?.message);
+  //     }
+  //   } catch (err) {
+  //     console.error("Error fetching user profile:", err);
+  //   }
+  // };
 
   const handleMonovaPayment = async () => {
     const monovaFormData = sessionStorage.getItem("monova_form_data");

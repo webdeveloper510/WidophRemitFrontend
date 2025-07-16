@@ -10,52 +10,42 @@ import { useEffect, useState } from "react";
 import {
   recipientList,
   transactionHistory,
-  userProfile,
 } from "../../services/Api";
 import SendMoney from "../../assets/images/send-money.png";
 import Profile from "../../assets/images/profile.png";
 import loaderlogo from "../../assets/images/logo.png";
 
 const Dashboard = () => {
-  const [ReceiversCount, setReceiversCount] = useState(0);
-  const [TransactionsCount, setTransactionsCount] = useState(0);
-
+  const [receiversCount, setReceiversCount] = useState(0);
+  const [transactionsCount, setTransactionsCount] = useState(0);
+  const [firstName, setFirstName] = useState("User");
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Simulate loading
-    const timer = setTimeout(() => setLoading(false), 1500);
+    // Load user data from session
+    const userData = JSON.parse(sessionStorage.getItem("User data") || "{}");
+    setFirstName(userData.First_name || "User");
+
+    // Load receivers & transactions
+    const fetchData = async () => {
+      const recipientsResponse = await recipientList();
+      if (recipientsResponse.code === "200") {
+        setReceiversCount(recipientsResponse.data.length);
+      }
+
+      const transactionsResponse = await transactionHistory();
+      if (transactionsResponse.code === "200") {
+        setTransactionsCount(transactionsResponse.data.data.length);
+      }
+    };
+
+    fetchData();
+
+    // Simulate loader
+    const timer = setTimeout(() => setLoading(false), 500);
     return () => clearTimeout(timer);
   }, []);
-
-  useEffect(() => {
-    (async () => {
-      const response = await recipientList();
-      if (response.code === "200") {
-        setReceiversCount(response.data.length);
-      }
-    })();
-
-    (async () => {
-      const response = await transactionHistory();
-
-      if (response.code === "200") {
-        setTransactionsCount(response.data.data.length);
-      }
-    })();
-
-    (async () => {
-      const response = await userProfile();
-      if (response?.code === "200") {
-        const data = response?.data;
-        const name = data?.First_name?.trim();
-        setFirstName(name || "User");
-      }
-    })();
-  }, []);
-
-  const navigate = useNavigate();
-  const [firstName, setFirstName] = useState("");
 
   if (loading) {
     return (
@@ -76,36 +66,22 @@ const Dashboard = () => {
         <div className="row">
           <div className="col-md-7">
             <div className="dashbaord-bg-image p-4">
-              <h2>
-                Dashboard<br></br>
-              </h2>
+              <h2>Dashboard</h2>
+
               <div className="row mt-5">
-                <div
-                  className="col-md-4 mb-2 custom-width"
-                  style={{ paddingRight: 0 }}
-                >
+                <div className="col-md-4 mb-2 custom-width" style={{ paddingRight: 0 }}>
                   <div className="bg-white p-3 border-r stats-box">
-                    <img
-                      src={stats1}
-                      alt="stats"
-                      className="dashboard-info-img"
-                    />
+                    <img src={stats1} alt="stats" className="dashboard-info-img" />
                     <div className="d-flex flex-column stats-row">
                       <span>Receivers</span>
-                      <h4>{ReceiversCount}</h4>
+                      <h4>{receiversCount}</h4>
                     </div>
                   </div>
                 </div>
-                <div
-                  className="col-md-4 mb-2 custom-width"
-                  style={{ paddingleft: 0 }}
-                >
+
+                <div className="col-md-4 mb-2 custom-width" style={{ paddingLeft: 0 }}>
                   <div className="bg-white p-3 border-r stats-box">
-                    <img
-                      src={stats2}
-                      alt="stats"
-                      className="dashboard-info-img"
-                    />
+                    <img src={stats2} alt="stats" className="dashboard-info-img" />
                     <div className="d-flex flex-column stats-row">
                       <span>Send Money</span>
                       <Link to="/send-money">
@@ -115,33 +91,21 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div>
+
               <div className="row">
-                <div
-                  className="col-md-4 custom-width"
-                  style={{ paddingRight: 0 }}
-                >
+                <div className="col-md-4 custom-width" style={{ paddingRight: 0 }}>
                   <div className="bg-white p-3 border-r stats-box">
-                    <img
-                      src={stats3}
-                      alt="stats"
-                      className="dashboard-info-img"
-                    />
+                    <img src={stats3} alt="stats" className="dashboard-info-img" />
                     <div className="d-flex flex-column stats-row">
                       <span>Transfers</span>
-                      <h4>{TransactionsCount}</h4>
+                      <h4>{transactionsCount}</h4>
                     </div>
                   </div>
                 </div>
-                <div
-                  className="col-md-4 custom-width"
-                  style={{ paddingleft: 0 }}
-                >
+
+                <div className="col-md-4 custom-width" style={{ paddingLeft: 0 }}>
                   <div className="bg-white p-3 border-r stats-box">
-                    <img
-                      src={stats4}
-                      alt="stats"
-                      className="dashboard-info-img"
-                    />
+                    <img src={stats4} alt="stats" className="dashboard-info-img" />
                     <div className="d-flex flex-column stats-row">
                       <span>Profile</span>
                       <Link to="/profile-information">
@@ -151,8 +115,10 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
+
           <div className="col-md-5">
             <ReceiverTable />
           </div>
