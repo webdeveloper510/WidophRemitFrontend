@@ -86,9 +86,9 @@ export const userRegisterVerify = async (data) => {
 export const registerOtpResend = async (data) => {
 
   const response = await public_instance.post("/resend-register-otp/", data, {
-    headers: {
-      "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
-    }
+    // headers: {
+    //   "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
+    // }
   }).then(res => {
     return res?.data
   }).catch(error => {

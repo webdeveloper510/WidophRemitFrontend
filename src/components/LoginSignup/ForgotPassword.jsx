@@ -3,7 +3,7 @@ import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import { Form, Col } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "react-phone-input-2/lib/style.css";
 
 import PhoneInput from "react-phone-input-2";
@@ -89,13 +89,12 @@ const ForgotPassword = () => {
                     inputClass="userPhone w-100"
                     countryCodeEditable={false}
                     onChange={handlePhone}
-                    className={`form-control form-control-sm bg-transparent ${
-                      formik.touched.mobile && formik.errors.mobile
-                        ? "is-invalid"
-                        : formik.touched.mobile && !formik.errors.mobile
+                    className={`form-control form-control-sm bg-transparent ${formik.touched.mobile && formik.errors.mobile
+                      ? "is-invalid"
+                      : formik.touched.mobile && !formik.errors.mobile
                         ? "is-valid"
                         : ""
-                    }`}
+                      }`}
                   />
                   {formik.touched.mobile && formik.errors.mobile && (
                     <div className="text-danger">{formik.errors.mobile}</div>
@@ -112,13 +111,11 @@ const ForgotPassword = () => {
               </Button>
 
               <div>
-                Back to Login{" "}
-                <a
-                  href="/login"
+                <Link to={"/login"}>
+                  Back to Login{" "}
                   className="text-success fw-bold forgotpassword-text"
-                >
-                  Go Back
-                </a>
+                </Link >
+                Go Back
               </div>
             </Form>
           </div>

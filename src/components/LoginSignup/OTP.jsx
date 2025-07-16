@@ -20,7 +20,7 @@ import {
   getAgreementList,
   ZaiPayTo,
 } from "../../services/Api";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import LoginImage from "../../assets/images/login-image.png";
 
 const OtpVerification = () => {
@@ -358,9 +358,16 @@ const OtpVerification = () => {
         mobile: userData.mobile,
       };
 
-      const response = await registerOtpResend(payload);
+      let response;
+
+      if (from === "signup") {
+        response = await registerOtpResend({ mobile: JSON.parse(sessionStorage.getItem("signupData")).mobile })
+      } else {
+        response = await resendOtp(payload);
+      }
+
       if (response?.code === "200") {
-        toast.success("OTP has been resent successfully!");
+        toast.success(response?.message || "OTP has been resent successfully!");
       } else {
         toast.error(response?.message || "Failed to resend OTP");
       }
@@ -371,6 +378,7 @@ const OtpVerification = () => {
       setIsProcessing(false);
     }
   };
+
 
   return (
     <Container className="login-form-wrappe">
@@ -456,8 +464,8 @@ const OtpVerification = () => {
               </div>
 
               <div className="mt-3">
-                <a
-                  href={from === "transfer" ? "/payment-detail" : "/signup"}
+                <Link
+                  to={from === "transfer" ? "/payment-detail" : "/signup"}
                   className="text-success fw-bold forgotpassword-text"
                   onClick={() => {
                     if (from === "signup") {
@@ -468,7 +476,7 @@ const OtpVerification = () => {
                   }}
                 >
                   ← Back to {from === "transfer" ? "Payment Details" : "Signup"}
-                </a>
+                </Link>
               </div>
             </Form>
           </div>
