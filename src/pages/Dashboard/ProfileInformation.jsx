@@ -171,7 +171,6 @@ const ProfileInformation = () => {
     updateProfile(payloadData)
       .then((res) => {
         if (res?.code === "200") {
-          toast.success("Profile updated successfully");
           sessionStorage.setItem("User data", JSON.stringify(res?.data))
           setModalShow(true);
         } else {
