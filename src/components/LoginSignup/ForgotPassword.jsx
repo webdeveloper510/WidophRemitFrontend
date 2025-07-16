@@ -111,9 +111,10 @@ const ForgotPassword = () => {
               </Button>
 
               <div>
-                <Link to={"/login"}>
+                <Link to={"/login"}
+                  className="text-success fw-bold forgotpassword-text">
                   Back to Login{" "}
-                  className="text-success fw-bold forgotpassword-text"
+
                 </Link >
                 Go Back
               </div>
