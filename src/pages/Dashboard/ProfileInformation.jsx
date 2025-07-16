@@ -11,8 +11,13 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { changePassword, updateProfile } from "../../services/Api";
+import Modal from "react-bootstrap/Modal";
+import UpdatePopup from "../../assets/images/profilepopup.png";
+
 
 const ProfileInformation = () => {
+  const [modalShow, setModalShow] = useState(false);
+  const [modalShowVerify, setModalShowVerify] = useState(false);
   const [countryCode, setCountryCode] = useState("61");
   const [rawMobile, setRawMobile] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -168,7 +173,7 @@ const ProfileInformation = () => {
         if (res?.code === "200") {
           toast.success("Profile updated successfully");
           sessionStorage.setItem("User data", JSON.stringify(res?.data))
-          navigate("/dashboard");
+          setModalShow(true);
         } else {
           toast.error(res?.message || "Failed to update profile");
         }
@@ -517,6 +522,34 @@ const ProfileInformation = () => {
           {/* ... */}
         </Form>
       </div>
+      <Modal
+        size="md"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        className="profileupdate"
+      >
+        <Modal.Header closeButton></Modal.Header>
+        <Modal.Body>
+          <h4>Profile Information Updated Successfully</h4>
+          <p className="m-4 text-center">
+            <img src={UpdatePopup} alt="Profile Update Success" width="250px" />
+          </p>
+        </Modal.Body>
+        <Modal.Footer className="PopupButton">
+          <Button
+            onClick={() => {
+              setModalShow(false);
+              setTimeout(() => setModalShowVerify(true), 300);
+              navigate("/dashboard");
+            }}
+          >
+            Continue
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
     </AnimatedPage>
   );
 };
