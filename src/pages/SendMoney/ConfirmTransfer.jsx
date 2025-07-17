@@ -9,9 +9,7 @@ import Modal from "react-bootstrap/Modal";
 import OtpImage from "../../assets/images/Otp-image.png";
 import { useNavigate } from "react-router-dom";
 import {
-  userProfile,
   createMonovaPayment,
-  getAgreementList,
   ZaiPayTo,
   ZaiPayId,
   verifyEmail,
@@ -29,6 +27,8 @@ const ConfirmTransfer = () => {
   const [isLoadingMonova, setIsLoadingMonova] = useState(false);
   const [isLoadingZai, setIsLoadingZai] = useState(false);
   const [isLoadingPayID, setIsLoadingPayID] = useState(false);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+
 
   const navigate = useNavigate();
 
@@ -224,7 +224,7 @@ const ConfirmTransfer = () => {
 
       if (response?.code === "200") {
         toast.success("OTP Verified Successfully!");
-        setModalShow(false);
+        setIsProcessingPayment(true);
         await processTransferPayments();
       } else {
         toast.error(response?.message || "Invalid OTP");
@@ -252,8 +252,11 @@ const ConfirmTransfer = () => {
       }
 
       if (paymentSuccess) {
+        setModalShow(false);
+        setIsProcessingPayment(false);
         navigate("/transaction-success");
       } else {
+        setIsProcessingPayment(false);
         toast.error("Payment failed. Please try again.");
       }
     } catch (err) {
@@ -403,27 +406,40 @@ const ConfirmTransfer = () => {
         size="md"
         centered
         show={modalShow}
-        onHide={() => setModalShow(false)}
+        onHide={() => {
+          setModalShow(false);
+          setOtp("");
+          setIsProcessingPayment(false);
+        }}
         className="profileupdate"
       >
         <Modal.Header closeButton></Modal.Header>
         <Modal.Body>
-          <h4>Verify your account by entering the code</h4>
-          <p className="m-4">
-            <img src={OtpImage} alt="image" />
-          </p>
-          <Col className="inputBoxStyle">
-            <OtpInput
-              value={otp}
-              onChange={setOtp}
-              numInputs={6}
-              renderSeparator={<span>-</span>}
-              renderInput={(props) => <input {...props} />}
-            />
-          </Col>
-          <Button variant="link" onClick={handleResendOtp} className="resendOTP">
-            Resend OTP
-          </Button>
+          {isProcessingPayment ? (
+            <div className="text-center">
+              <Spinner animation="border" role="status" />
+              <p className="mt-3">Processing your payment, please wait...</p>
+            </div>
+          ) : (
+            <>
+              <h4>Verify your account by entering the code</h4>
+              <p className="m-4">
+                <img src={OtpImage} alt="image" />
+              </p>
+              <Col className="inputBoxStyle">
+                <OtpInput
+                  value={otp}
+                  onChange={setOtp}
+                  numInputs={6}
+                  renderSeparator={<span>-</span>}
+                  renderInput={(props) => <input {...props} />}
+                />
+              </Col>
+              <Button variant="link" onClick={handleResendOtp} className="resendOTP">
+                Resend OTP
+              </Button>
+            </>
+          )}
         </Modal.Body>
 
         <Modal.Footer className="d-flex justify-content-center align-items-center">
@@ -433,6 +449,7 @@ const ConfirmTransfer = () => {
                 variant="light"
                 className="cancel-btn float-start"
                 onClick={() => setModalShow(false)}
+                disabled={isProcessingPayment}
               >
                 Cancel
               </Button>
@@ -442,12 +459,14 @@ const ConfirmTransfer = () => {
                 onClick={verifyOtpHandler}
                 variant="primary"
                 className="submit-btn float-end"
+                disabled={isProcessingPayment}
               >
                 Continue
               </Button>
             </Col>
           </Row>
         </Modal.Footer>
+
       </Modal>
     </AnimatedPage>
   );

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AnimatedPage from "../../components/AnimatedPage";
 import {
   Form,
@@ -15,7 +15,6 @@ import { RiFileCopyLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import {
   createPayId,
-  createMonovaPayment,
   createAgreement,
   getAgreementList,
 } from "../../services/Api";
@@ -35,13 +34,18 @@ const PaymentDetail = () => {
   const [receiverName, setReceiverName] = useState("Receiver");
   const [isLoadingPayId, setIsLoadingPayId] = useState(false);
   const [payIdData, setPayIdData] = useState({ payId: "", transferId: "" });
+  const [monovaForm, setMonovaForm] = useState({
+    bsb: "",
+    accountNumber: "",
+    accountName: "",
+    paymentMethod: "",
+  });
   const [payToForm, setPayToForm] = useState({
     payIdType: "",
     payId: "",
     bsb: "",
     accountNumber: "",
   });
-  const [payToFormErrors, setPayToFormErrors] = useState({});
   const [payToLimitForm, setPayToLimitForm] = useState({
     payId: "",
     bsb: "",
@@ -49,15 +53,10 @@ const PaymentDetail = () => {
     amountLimit: "",
     startDate: "",
   });
+  const [payToFormErrors, setPayToFormErrors] = useState({});
   const [isCreatingAgreement, setIsCreatingAgreement] = useState(false);
   const [transferReason, setTransferReason] = useState("");
   const [reasonError, setReasonError] = useState("");
-  const [monovaForm, setMonovaForm] = useState({
-    bsb: "",
-    accountNumber: "",
-    accountName: "",
-    paymentMethod: "",
-  });
   const [monovaFormErrors, setMonovaFormErrors] = useState({});
   const [bsb, setbsb] = useState(0);
   const navigate = useNavigate();
