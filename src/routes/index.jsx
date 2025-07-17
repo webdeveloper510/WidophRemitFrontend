@@ -27,6 +27,7 @@ import KYCForm from "../components/KYC/KYCForm";
 import OtpVerification from "../components/LoginSignup/OTP";
 import ProfileInformation from "../pages/Dashboard/ProfileInformation";
 import TransactionSuccess from "../pages/SendMoney/TranscationSuccess";
+import ExchangeRatePage from "../ExchangeRatePage";
 
 const AppRoutes = () => {
   return (
@@ -49,6 +50,7 @@ const AppRoutes = () => {
         {/* Protected Routes */}
       </Route>
       <Route path="/kyc" element={<KYCForm />} />
+      <Route path="/web-exchange-rate" element={<ExchangeRatePage />} />
       <Route
         path="/"
         element={
