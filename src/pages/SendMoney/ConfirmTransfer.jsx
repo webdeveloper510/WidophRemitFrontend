@@ -112,6 +112,8 @@ const ConfirmTransfer = () => {
         await createTransaction({
           transaction_id: sessionStorage.getItem("transaction_id"),
           newTransaction_id: response.transactionId,
+          monoova_payment: true,
+          recipient_id: receiverData.id,
           amount: {
             send_amount: payloadData.amount.send_amount,
             receive_amount: payloadData.amount.receive_amount,
@@ -120,9 +122,8 @@ const ConfirmTransfer = () => {
             receive_method: payloadData.amount.receive_method,
             payout_partner: JSON.parse(sessionStorage.getItem("selected_receiver")).bank_name,
             reason: sessionStorage.getItem("transfer_reason"),
-            exchange_rate: payloadData.amount.exchange_rate
+            exchange_rate: payloadData.amount.exchange_rate,
           },
-          recipient_id: receiverData.id,
         });
 
         toast.success("Monova payment created successfully!");
@@ -251,7 +252,6 @@ const ConfirmTransfer = () => {
       }
 
       if (paymentSuccess) {
-        toast.success("Payment processed successfully!");
         navigate("/transaction-success");
       } else {
         toast.error("Payment failed. Please try again.");
