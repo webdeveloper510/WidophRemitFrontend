@@ -171,8 +171,15 @@ const ProfileInformation = () => {
     updateProfile(payloadData)
       .then((res) => {
         if (res?.code === "200") {
-          sessionStorage.setItem("User data", JSON.stringify(res?.data))
           setModalShow(true);
+          const newSessionData = {
+            ...JSON.parse(sessionStorage.getItem("User data") || "{}"),
+            ...payloadData,
+            mobile: fullMobile,
+            email: formData.email,
+          };
+
+          sessionStorage.setItem("User data", JSON.stringify(newSessionData));
         } else {
           toast.error(res?.message || "Failed to update profile");
         }
