@@ -215,7 +215,6 @@ const PaymentDetail = () => {
         const txResponse = await createTransaction(transferData);
 
         if (txResponse?.code === "200") {
-          toast.success("Transaction created successfully!");
           setModalShowMonova(false);
           navigate("/confirm-transfer");
         } else {
