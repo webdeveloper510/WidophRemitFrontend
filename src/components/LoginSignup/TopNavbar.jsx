@@ -75,7 +75,7 @@ const TopNavbar = () => {
 
       {/* Logo Section */}
       <Container className="d-flex justify-content-between align-items-center pt-3 pb-3">
-        <Navbar.Brand href="/">
+        <Navbar.Brand href="https://widophremit.com/homepage-elementor/">
           <img src={logo} alt="WidophRemit" className="logo-img" height="40" />
         </Navbar.Brand>
 

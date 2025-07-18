@@ -76,7 +76,7 @@ const TransfersList = () => {
     return matchesText && matchesStatus;
   });
 
-  const statusOptions = ["", "Cancelled", "Pending", "Incomplete", "Complete"];
+  const statusOptions = ["", "Incomplete", "Pending Review and Processing", "In progress", "Payment due", "Waiting for approval", "Partially done"];
 
   const subHeaderComponent = (
     <div className="d-flex gap-3 mb-3 align-items-center">
@@ -152,9 +152,8 @@ const TransfersList = () => {
 
             <Dropdown.Menu>
               <Dropdown.Item
-                href={`${import.meta.env.VITE_APP_API_URI}/payment/receipt/${
-                  row.id
-                }`}
+                href={`${import.meta.env.VITE_APP_API_URI}/payment/receipt/${row.id
+                  }`}
                 target="_blank"
                 rel="noopener noreferrer"
               >

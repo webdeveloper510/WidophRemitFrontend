@@ -825,3 +825,35 @@ export const getCustomerTypes = async () => {
   })
   return response
 }
+
+
+
+// Edit Edit
+// Copy Copy
+// Delete Delete
+// Incomplete
+
+// Edit Edit
+// Copy Copy
+// Delete Delete
+// Pending Review and Processing
+
+// Edit Edit
+// Copy Copy
+// Delete Delete
+// In progress
+
+// Edit Edit
+// Copy Copy
+// Delete Delete
+// Payment due
+
+// Edit Edit
+// Copy Copy
+// Delete Delete
+// Waiting for approval
+
+// Edit Edit
+// Copy Copy
+// Delete Delete
+// Partially done
