@@ -23,11 +23,11 @@ import Login from "../components/LoginSignup/Login";
 import SignUp from "../components/LoginSignup/Signup";
 import ForgotPassword from "../components/LoginSignup/ForgotPassword";
 import ResetPassword from "../components/LoginSignup/ResetPassword";
-import KYCForm from "../components/KYC/KYCForm";
 import OtpVerification from "../components/LoginSignup/OTP";
 import ProfileInformation from "../pages/Dashboard/ProfileInformation";
 import TransactionSuccess from "../pages/SendMoney/TranscationSuccess";
 import ExchangeRatePage from "../ExchangeRatePage";
+import KYCForm from "../components/KYC/KYCForm";
 
 const AppRoutes = () => {
   return (

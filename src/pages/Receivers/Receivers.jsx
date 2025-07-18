@@ -75,7 +75,7 @@ const Receivers = () => {
     }
   };
 
-  const filteredData = list.filter((item) =>
+  const filteredData = (list || []).filter((item) =>
     (item.first_name + item.middle_name + item.last_name + item.email)
       .toLowerCase()
       .includes(filterText.toLowerCase())

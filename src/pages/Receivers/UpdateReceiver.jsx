@@ -12,6 +12,7 @@ import { getNames } from "country-list";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { getUserRecipient, updateUserRecipient } from "../../services/Api";
+import { toast } from "react-toastify";
 
 const UpdateReceiver = () => {
   const navigate = useNavigate();
@@ -108,6 +109,7 @@ const UpdateReceiver = () => {
         const response = await updateUserRecipient(id, payload);
 
         if (Number(response.code) === 200) {
+          toast.success("Receiver updated successfully");
           navigate("/receivers");
         } else {
           setApiError(response.message || "Failed to update receiver.");

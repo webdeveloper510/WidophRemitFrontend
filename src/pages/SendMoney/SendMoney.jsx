@@ -145,7 +145,6 @@ const SendMoney = () => {
           to: to,
           direction: "from",
         });
-
         if (response) {
           setExchRate(response?.rate);
           setDefaultExchange(response.default_exchange);
@@ -219,14 +218,18 @@ const SendMoney = () => {
         const webData = sessionStorage.getItem("web_exchange_data");
         if (webData) {
           const parsedData = JSON.parse(webData);
-
-          setFieldValue("send_amt", parsedData.send_amount || "");
-          setFieldValue("exchange_amt", parsedData.receive_amount || "");
-          setFieldValue("from", parsedData.send_currency || "AUD");
-          setFieldValue("to", parsedData.receive_currency || "NGN");
-          setFieldValue("receive_method", parsedData.method || "Bank transfer");
-          setExchRate(parsedData.exchange_rate);
-          setDefaultExchange(parsedData.exchange_rate);
+          if (parsedData.send_amount && parsedData.receive_amount && parsedData.send_currency && parsedData.receive_currency) {
+            setFieldValue("send_amt", parsedData.send_amount || "");
+            setFieldValue("exchange_amt", parsedData.receive_amount || "");
+            setFieldValue("from", parsedData.send_currency || "AUD");
+            setFieldValue("to", parsedData.receive_currency || "NGN");
+            setFieldValue("receive_method", parsedData.method || "Bank transfer");
+            if (parsedData.exchange_rate)
+              setExchRate(parsedData.exchange_rate);
+            else
+              await getExchangeRate(parsedData.send_currency, parsedData.receive_currency);
+          }
+          else await getExchangeRate(initialValues.from, initialValues.to);
         } else {
           await getExchangeRate(initialValues.from, initialValues.to);
         }

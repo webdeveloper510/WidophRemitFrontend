@@ -25,6 +25,7 @@ import Footer from "../Footer";
 import KYCimage from "../../assets/images/kyc-image.png";
 import { Veriff } from "@veriff/js-sdk";
 import { createVeriffFrame, MESSAGES } from "@veriff/incontext-sdk";
+import { toast } from "react-toastify";
 
 const KYCForm = () => {
   const navigate = useNavigate();
@@ -37,15 +38,6 @@ const KYCForm = () => {
   const [verifyingID, setVerifyingID] = useState(false);
   const [VeriffMessage, setVeriffMessage] = useState("");
   const [isUnderReview, setIsUnderReview] = useState(false);
-
-  useEffect(() => {
-    if (activeKey === "step2" && !idVerified && !verifyingID) {
-      handleVeriffClick(); // Start Veriff automatically
-    }
-  }, [activeKey, idVerified, verifyingID]);
-
-
-
   const [formData, setFormData] = useState({
     firstName: "",
     middleName: "",
@@ -64,6 +56,68 @@ const KYCForm = () => {
     zip: "",
     state: "",
   });
+
+  useEffect(() => {
+    if (activeKey === "step2" && !idVerified && !verifyingID) {
+      handleVeriffClick();
+    }
+  }, [activeKey, idVerified, verifyingID]);
+
+  const extractCountryCode = (mobile) => {
+    if (!mobile) return "61";
+    const match = mobile.match(/^\+(\d{1,3})/);
+    return match ? match[1] : "61";
+  };
+
+  const extractPhoneNumber = (mobile) => {
+    if (!mobile) return "";
+    return mobile.replace(/^\+\d{1,3}/, "");
+  };
+
+
+  useEffect(() => {
+    const fetchAndVerifyUser = async () => {
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        setRedirectTo('/login');
+        return;
+      }
+
+      try {
+        const res = await userProfile();
+        if (res?.code === '200') {
+          const userData = res.data;
+          setFormData((prev) => (
+            {
+              ...prev,
+              firstName: userData.First_name || "",
+              middleName: userData.Middle_name || "",
+              lastName: userData.Last_name || "",
+              countryOfBirth: userData.Country_of_birth || "",
+              dob: userData.Date_of_birth || "",
+              email: userData.email || "",
+              occupation: userData.occupation || "",
+              buildingNo: userData.building || "",
+              streetName: userData.street || "",
+              zip: userData.postcode || "",
+              city: userData.city || "",
+              address: userData.address,
+              state: userData.state,
+              country: userData.country || "",
+              phone: extractPhoneNumber(userData.mobile),
+              countryCode: extractCountryCode(userData.mobile),
+            }
+
+          ))
+
+        }
+      } catch (error) {
+        console.error("Profile fetch error:", error);
+      }
+    }
+    fetchAndVerifyUser();
+  }, [])
+
 
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
@@ -102,6 +156,7 @@ const KYCForm = () => {
                 setVerifyingID(true);
 
                 let intervalCleared = false;
+                toast.info("Checking your ID verification status... Please wait.");
 
                 const interval = setInterval(async () => {
                   try {
@@ -123,6 +178,8 @@ const KYCForm = () => {
                     }
 
                     else if (res?.data?.status === "success" && res?.data?.verification === null) {
+                      console.log("Hi there");
+                      
                       clearInterval(interval);
                       intervalCleared = true;
                       setVerifyingID(false);
@@ -349,23 +406,25 @@ const KYCForm = () => {
     })();
   }, []);
 
- useEffect(() => {
-  if (activeKey === "step3" && !isUnderReview) {
-    setCountdown(5);
-    const interval = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          navigate("/dashboard");
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+  useEffect(() => {
+    if (activeKey === "step3" && !isUnderReview) {
+      console.log("coming");
 
-    return () => clearInterval(interval);
-  }
-}, [activeKey, isUnderReview, navigate]);
+      setCountdown(5);
+      const interval = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            navigate("/dashboard");
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [activeKey, isUnderReview, navigate]);
 
 
   return (
@@ -476,7 +535,7 @@ const KYCForm = () => {
                         as={Col}
                         label={
                           <span>
-                            Middle Name <span style={{ color: "red" }}>*</span>
+                            Middle Name
                           </span>
                         }
                         className="mb-3"

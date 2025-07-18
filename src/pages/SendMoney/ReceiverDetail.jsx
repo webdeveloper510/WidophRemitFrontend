@@ -69,7 +69,15 @@ const ReceiverDetail = () => {
       .min(2, "Last name must be at least 2 characters")
       .matches(/^[A-Za-z\s]+$/, "Last name must contain only letters"),
     email: Yup.string().email("Please enter a valid email address"),
-    mobile: Yup.string().required("Mobile number is required"),
+    mobile: Yup.string().required("Mobile number is required").test(
+      "is-10-digits",
+      "Mobile number must be exactly 10 digits",
+      (value) => {
+        if (!value) return false;
+        const digits = value.replace(/\D/g, "");
+        return digits.length === 10;
+      }
+    ),
     country: Yup.string().required("Country is required"),
     state: Yup.string().required("State is required"),
     city: Yup.string().required("City is required"),

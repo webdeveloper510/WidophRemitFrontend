@@ -68,7 +68,15 @@ const AddReceiver = () => {
       .required("Last name is required")
       .matches(/^[A-Za-z\s]+$/, "Only letters allowed"),
     email: Yup.string().email("Invalid email"),
-    mobile: Yup.string().required("Mobile number is required"),
+    mobile: Yup.string().required("Mobile number is required").test(
+      "is-10-digits",
+      "Mobile number must be exactly 10 digits",
+      (value) => {
+        if (!value) return false;
+        const digits = value.replace(/\D/g, ""); // remove non-numeric characters
+        return digits.length === 10;
+      }
+    ),
     country: Yup.string().required("Country is required"),
     state: Yup.string().required("State is required"),
     city: Yup.string().required("City is required"),

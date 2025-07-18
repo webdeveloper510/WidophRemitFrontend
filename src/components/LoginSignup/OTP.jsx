@@ -281,8 +281,8 @@ const OtpVerification = () => {
         }
       } else {
         response = await userRegisterVerify(payload);
-        sessionStorage.setItem("customer_id", response.data.customer_id);
-
+        if (response?.data?.customer_id)
+          sessionStorage.setItem("customer_id", response.data.customer_id);
       }
       if (response && response.code === "200") {
         toast.success("OTP Verified Successfully!");
