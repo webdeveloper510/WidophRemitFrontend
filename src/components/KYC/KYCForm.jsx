@@ -71,7 +71,7 @@ const KYCForm = () => {
 
   const extractPhoneNumber = (mobile) => {
     if (!mobile) return "";
-    return mobile.replace(/^\+\d{1,3}/, "");
+    return mobile.replace(/^\+\d{2}/, "");
   };
 
 
