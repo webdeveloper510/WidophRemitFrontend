@@ -5,7 +5,7 @@ import stats3 from "../../assets/images/info3.png";
 import stats4 from "../../assets/images/info4.png";
 import ReceiverTable from "./ReceiverTable";
 import LatestTransfer from "./LatestTransfer";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
   recipientList,
@@ -20,7 +20,6 @@ const Dashboard = () => {
   const [transactionsCount, setTransactionsCount] = useState(0);
   const [firstName, setFirstName] = useState("User");
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     // Load user data from session

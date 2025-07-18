@@ -9,7 +9,7 @@ import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { useEffect, useState } from "react";
 import { recipientList } from "../../services/Api";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 const ReceiverList = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -82,7 +82,7 @@ const ReceiverList = () => {
   useEffect(() => {
     const fetchRecipients = async () => {
       setLoading(true);
-      const res = await recipientList({});      
+      const res = await recipientList({});
 
       if (res?.code === "200") {
         if (Array.isArray(res.data)) {
@@ -113,9 +113,9 @@ const ReceiverList = () => {
       <div className="page-title">
         <div className="d-flex justify-content-between">
           <div className="d-flex align-items-center">
-            <a href="send-money">
+            <Link to={"/send-money"}>
               <img src={Back} alt="Back" />
-            </a>
+            </Link>
             <h1>Select a Receiver to Send money</h1>
           </div>
           <Button

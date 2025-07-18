@@ -9,7 +9,7 @@ import Select from "react-select";
 import { getNames } from "country-list";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { changePassword, updateProfile } from "../../services/Api";
 import Modal from "react-bootstrap/Modal";
 import UpdatePopup from "../../assets/images/profilepopup.png";
@@ -189,9 +189,9 @@ const ProfileInformation = () => {
     <AnimatedPage>
       <div className="page-title">
         <div className="d-flex align-items-center">
-          <a href="dashboard">
+          <Link to={"/dashboard"}>
             <img src={Back} alt="Back" />
-          </a>
+          </Link>
           <h1>Profile Information</h1>
         </div>
       </div>

@@ -401,7 +401,7 @@ const PaymentDetail = () => {
           <Button
             variant="link"
             className="p-0 border-0 bg-transparent"
-            onClick={() => navigate("/receivers-list")}
+            onClick={() => navigate("/review-transfer")}
           >
             <img src={Back} alt="Back" />
           </Button>

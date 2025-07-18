@@ -36,6 +36,12 @@ const KYCForm = () => {
   const [countdown, setCountdown] = useState(10);
   const [verifyingID, setVerifyingID] = useState(false);
 
+  useEffect(() => {
+    if (activeKey === "step2" && !idVerified && !verifyingID) {
+      handleVeriffClick(); // Start Veriff automatically
+    }
+  }, [activeKey, idVerified, verifyingID]);
+
 
 
   const [formData, setFormData] = useState({
@@ -146,6 +152,7 @@ const KYCForm = () => {
       submitBtnText: "Start Verification",
       loadingText: "Initializing Veriff...",
     });
+
   };
 
   const handleInputChange = (field, value) => {
@@ -176,8 +183,8 @@ const KYCForm = () => {
 
     if (!formData.phone.trim()) {
       newErrors.phone = "Mobile number is required";
-    } else if (!/^\d{9}$/.test(formData.phone)) {
-      newErrors.phone = "Mobile number must be exactly 9 digits";
+    } else if (!/^\d{10}$/.test(formData.phone)) {
+      newErrors.phone = "Mobile number must be exactly 10 digits";
     }
 
     if (!formData.dob) {
@@ -887,18 +894,20 @@ const KYCForm = () => {
                     </div>
 
                     <div className="verify-container">
-                      <button
-                        className={`verify-btn ${idVerified ? "verified" : ""}`}
-                        type="button"
-                        onClick={handleVeriffClick}
-                        disabled={idVerified || verifyingID}
-                      >
-                        {verifyingID ? "STARTING VERIFICATION..." : idVerified ? "ID VERIFIED ✓" : "VERIFY YOUR ID"}
-                      </button>
+                      {/* {!verifyingID && (
+                        <button
+                          className={`verify-btn ${idVerified ? "verified" : ""}`}
+                          type="button"
+                          onClick={handleVeriffClick}
+                          disabled={idVerified}
+                        >
+                          {idVerified ? "ID VERIFIED ✓" : "VERIFY YOUR ID"}
+                        </button>
+                      )} */}
                       <div id="veriff-root" style={{ marginTop: "20px" }}></div>
 
 
-                      {idVerified && (
+                      {/* {idVerified && (
                         <p className="text-success mt-3">
                           <strong>
                             ✓ ID Verification Completed Successfully!
@@ -906,10 +915,10 @@ const KYCForm = () => {
                         </p>
                       )}
 
-                      <p className="verify-description">
+                      {idVerified && <p className="verify-description">
                         <strong>Veriff</strong> is an identity verification
                         provider that helps companies connect with customers.
-                      </p>
+                      </p>} */}
                     </div>
 
                     <div className="d-flex gap-2 justify-content-start">

@@ -59,7 +59,8 @@ const TopNavbar = ({ onToggleSidebar }) => {
 
             <Nav className="ms-auto">
               <Nav.Link
-                href="profile-information"
+                as={NavLink}
+                to="/profile-information"
                 className="d-flex align-items-center gap-2 logged_user"
               >
                 <img src={LoggedUser} alt="user" />
