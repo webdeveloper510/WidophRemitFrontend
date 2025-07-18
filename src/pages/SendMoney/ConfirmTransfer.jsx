@@ -223,7 +223,6 @@ const ConfirmTransfer = () => {
       const response = await verifyEmail(otpPayload);
 
       if (response?.code === "200") {
-        toast.success("OTP Verified Successfully!");
         setIsProcessingPayment(true);
         await processTransferPayments();
       } else {

@@ -6,6 +6,7 @@ import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
 import { Col, Row, Button, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { paymentSummary } from "../../services/Api";
 
 const TransactionSuccess = () => {
   const [transaction, setTransaction] = useState(null);
@@ -31,7 +32,24 @@ const TransactionSuccess = () => {
       status: "Success",
     });
 
-    setStatus("Success");
+    async function GetTransactionDetails() {
+      setLoading(true);
+      try {
+        const result = await paymentSummary(transaction_id);
+        if (result?.code === "200") {
+        setStatus(result.data.payment_status)
+        } else {
+          setError("Transaction not found.");
+        }
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    GetTransactionDetails();
+
+    
     setLoading(false);
   }, []);
 
