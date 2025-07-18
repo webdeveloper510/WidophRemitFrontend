@@ -35,6 +35,8 @@ const KYCForm = () => {
   const [idVerified, setIdVerified] = useState(false);
   const [countdown, setCountdown] = useState(10);
   const [verifyingID, setVerifyingID] = useState(false);
+  const [VeriffMessage, setVeriffMessage] = useState("");
+  const [isUnderReview, setIsUnderReview] = useState(false);
 
   useEffect(() => {
     if (activeKey === "step2" && !idVerified && !verifyingID) {
@@ -91,29 +93,51 @@ const KYCForm = () => {
               case MESSAGES.CANCELED:
                 setVerifyingID(false);
                 break;
+
               case MESSAGES.STARTED:
                 setVerifyingID(true);
                 break;
+
               case MESSAGES.FINISHED:
                 setVerifyingID(true);
 
                 let intervalCleared = false;
+
                 const interval = setInterval(async () => {
-                  const res = await getVeriffStatus({ session_id: response.verification.id });
+                  try {
+                    const res = await getVeriffStatus({ session_id: response.verification.id });
 
-                  if (res?.data?.status === "submitted") {
+                    if (res?.data?.status === "approved") {
+                      clearInterval(interval);
+                      intervalCleared = true;
+                      setVerifyingID(false);
+                      setIdVerified(true);
+                      setActiveKey("step3");
+                    }
+
+                    else if (res?.data?.status === "declined") {
+                      clearInterval(interval);
+                      intervalCleared = true;
+                      setVerifyingID(false);
+                      setVeriffMessage("Verification declined. Please try again.");
+                    }
+
+                    else if (res?.data?.status === "success" && res?.data?.verification === null) {
+                      clearInterval(interval);
+                      intervalCleared = true;
+                      setVerifyingID(false);
+                      setIsUnderReview(true);
+                      setVeriffMessage("Your KYC has been submitted, please wait for admin approval.");
+                      setIdVerified(true);
+                      setActiveKey("step3");
+                    }
+
+                  } catch (err) {
+                    console.error("Veriff status check error", err);
                     clearInterval(interval);
                     intervalCleared = true;
                     setVerifyingID(false);
-                    setIdVerified(true);
-                    setActiveKey("step3");
-                  }
-
-                  if (res?.data?.status === "declined") {
-                    clearInterval(interval);
-                    intervalCleared = true;
-                    setVerifyingID(false);
-                    alert("Verification declined. Please try again.");
+                    setVeriffMessage("Error checking verification status. Please try again later.");
                   }
                 }, 5000);
 
@@ -121,7 +145,8 @@ const KYCForm = () => {
                   if (!intervalCleared) {
                     clearInterval(interval);
                     setVerifyingID(false);
-                    alert("Verification pending. Please wait or try again later.");
+                    setVeriffMessage("Your KYC has been submitted, please wait for admin approval.");
+                    setActiveKey("step3");
                   }
                 }, 15000);
 
@@ -152,8 +177,8 @@ const KYCForm = () => {
       submitBtnText: "Start Verification",
       loadingText: "Initializing Veriff...",
     });
-
   };
+
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -324,23 +349,23 @@ const KYCForm = () => {
     })();
   }, []);
 
-  useEffect(() => {
-    if (activeKey === "step3") {
-      setCountdown(5);
-      const interval = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(interval);
-            navigate("/dashboard");
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+ useEffect(() => {
+  if (activeKey === "step3" && !isUnderReview) {
+    setCountdown(5);
+    const interval = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          navigate("/dashboard");
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
 
-      return () => clearInterval(interval);
-    }
-  }, [activeKey, navigate]);
+    return () => clearInterval(interval);
+  }
+}, [activeKey, isUnderReview, navigate]);
 
 
   return (
@@ -894,31 +919,30 @@ const KYCForm = () => {
                     </div>
 
                     <div className="verify-container">
+                      <div id="veriff-root" style={{ marginTop: "20px" }}></div>
                       {/* {!verifyingID && (
                         <button
                           className={`verify-btn ${idVerified ? "verified" : ""}`}
                           type="button"
                           onClick={handleVeriffClick}
-                          disabled={idVerified}
+                          // disabled={idVerified}
                         >
                           {idVerified ? "ID VERIFIED ✓" : "VERIFY YOUR ID"}
                         </button>
                       )} */}
-                      <div id="veriff-root" style={{ marginTop: "20px" }}></div>
-
 
                       {/* {idVerified && (
                         <p className="text-success mt-3">
                           <strong>
                             ✓ ID Verification Completed Successfully!
                           </strong>
-                        </p>
-                      )}
-
-                      {idVerified && <p className="verify-description">
-                        <strong>Veriff</strong> is an identity verification
-                        provider that helps companies connect with customers.
-                      </p>} */}
+                          </p>
+                          )}
+                          
+                          {idVerified && <p className="verify-description">
+                          <strong>Veriff</strong> is an identity verification
+                          provider that helps companies connect with customers.
+                          </p>} */}
                     </div>
 
                     <div className="d-flex gap-2 justify-content-start">
@@ -935,27 +959,43 @@ const KYCForm = () => {
 
                 <Tab.Pane eventKey="step3">
                   <div className="text-center">
-                    <h2 className="text-success">✅ KYC Completed!</h2>
-                    <p>Your KYC data is under review.</p>
-                    <p className="text-muted">
-                      Redirecting to dashboard in {countdown} second{countdown !== 1 && "s"}...
-                    </p>
+                    {!VeriffMessage ? (
+                      <>
+                        <h2 className="text-success">✅ KYC Completed!</h2>
+                        <p>Your KYC data is under review.</p>
 
-                    <img src={KYCimage} alt="KYC Completed" />
-                    <Button
-                      variant="primary"
-                      className="mt-3"
-                      onClick={() => navigate("/dashboard")}
-                    >
-                      Go to Dashboard
-                    </Button>
+                        <p className="text-muted">
+                          {isUnderReview
+                            ? "You will be redirected to the dashboard once your verification is approved."
+                            : `Redirecting to dashboard in ${countdown} second${countdown !== 1 ? "s" : ""}...`}
+                        </p>
+
+                        <img src={KYCimage} alt="KYC Completed" />
+
+                        {!isUnderReview && (
+                          <Button
+                            variant="primary"
+                            className="mt-3"
+                            onClick={() => navigate("/dashboard")}
+                          >
+                            Go to Dashboard
+                          </Button>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <h2 className="text-warning">⚠️ Notice</h2>
+                        <p>{VeriffMessage}</p>
+                      </>
+                    )}
                   </div>
                 </Tab.Pane>
+
               </Tab.Content>
             </Col>
           </Row>
         </Tab.Container>
-      </Container>
+      </Container >
       <Footer />
     </>
   );

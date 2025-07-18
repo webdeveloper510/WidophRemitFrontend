@@ -216,14 +216,27 @@ const SendMoney = () => {
             currencyRes?.data?.payin_currencies?.map((cr) => cr.currency)
           );
         }
-        await getExchangeRate(initialValues.from, initialValues.to);
+        const webData = sessionStorage.getItem("web_exchange_data");
+        if (webData) {
+          const parsedData = JSON.parse(webData);
+
+          setFieldValue("send_amt", parsedData.send_amount || "");
+          setFieldValue("exchange_amt", parsedData.receive_amount || "");
+          setFieldValue("from", parsedData.send_currency || "AUD");
+          setFieldValue("to", parsedData.receive_currency || "NGN");
+          setFieldValue("receive_method", parsedData.method || "Bank transfer");
+          setExchRate(parsedData.exchange_rate);
+          setDefaultExchange(parsedData.exchange_rate);
+        } else {
+          await getExchangeRate(initialValues.from, initialValues.to);
+        }
       } catch (error) {
         console.error("Error loading initial data:", error);
       }
     };
 
     loadInitialData();
-  }, []);
+  }, [setFieldValue]);
 
   const handleTypeChange = (e) => {
     const { name, value } = e.target;
@@ -362,6 +375,7 @@ const SendMoney = () => {
                         type="text"
                         name="exchange_amt"
                         value={values.exchange_amt}
+                        readOnly
                         onChange={handleChange}
                         onBlur={handleAmountBlur}
                         //disabled={isConverting}
