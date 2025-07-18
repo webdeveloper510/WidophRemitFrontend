@@ -68,7 +68,8 @@ const ReceiverList = () => {
     rows: {
       style: {
         minHeight: "55px",
-      },
+        cursor: "pointer",
+      },  
     },
     cells: {
       style: {
@@ -141,6 +142,7 @@ const ReceiverList = () => {
             customStyles={customStyles}
             noHeader
             striped
+            pointerOnHover
             onRowClicked={handleSendAgain}
             highlightOnHover
           />
