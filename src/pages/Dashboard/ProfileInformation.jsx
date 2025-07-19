@@ -92,6 +92,13 @@ const ProfileInformation = () => {
             zip: userData.postcode || "",
             state: userData.state || "",
           }));
+
+          if (userData.mobile && userData.mobile.startsWith("+")) {
+            const countryCode = userData.mobile.substring(1, 3);
+            const phoneNumber = userData.mobile.substring(3);
+            setCountryCode(countryCode);
+            setRawMobile(phoneNumber);
+          }
         } else {
           navigate('/login');
           sessionStorage.clear();

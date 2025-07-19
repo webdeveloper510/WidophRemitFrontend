@@ -106,10 +106,11 @@ const KYCForm = () => {
               state: userData.state,
               country: userData.country || "",
               phone: extractPhoneNumber(userData.mobile),
-              countryCode: userData.country === "New Zealand" ? "NZ" : "AU",
+              countryCode: userData.mobile.substring(1, 3)
             }
 
           ))
+          console.log(userData.mobile.substring(1, 3));
 
         }
       } catch (error) {
