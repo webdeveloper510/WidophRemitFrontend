@@ -27,7 +27,7 @@ const ProtectedRoute = ({ children }) => {
         if (res?.code === '200') {
           const idStatus = res.data?.is_digital_Id_verified;
           if (idStatus !== 'approved') {
-            setRedirectTo('/kyc');
+            setRedirectTo('/dashboard');
           } else {
             sessionStorage.setItem("User data", JSON.stringify(res?.data));
             setVerified(true);

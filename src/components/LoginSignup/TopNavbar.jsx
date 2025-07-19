@@ -18,6 +18,7 @@ import {
   FaPhoneVolume,
   FaWhatsapp,
 } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 
 const TopNavbar = () => {
   const [howToOpen, setHowToOpen] = useState(false);
@@ -158,17 +159,14 @@ const TopNavbar = () => {
         </Nav>
 
         <div className="d-flex align-items-center gap-3">
-          <a href="/signup" variant="primary" className="px-4 text-dark signup">
+          <Link to="/signup" variant="primary" className="px-4 text-dark signup">
             SIGN UP
-          </a>
-          <a
-            href="/login"
-            variant="primary"
-            className="px-4 rounded-pill login"
-          >
+          </Link>
+          <Link to="/login" variant="primary" className="px-4 rounded-pill login">
             LOG IN
-          </a>
+          </Link>
         </div>
+
       </Container>
     </div>
   );

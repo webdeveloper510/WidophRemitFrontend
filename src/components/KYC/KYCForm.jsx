@@ -37,7 +37,6 @@ const KYCForm = () => {
   const [countdown, setCountdown] = useState(10);
   const [verifyingID, setVerifyingID] = useState(false);
   const [VeriffMessage, setVeriffMessage] = useState("");
-  const [isUnderReview, setIsUnderReview] = useState(false);
   const [customer_id, setcustomer_id] = useState("");
   const [formData, setFormData] = useState({
     firstName: "",
@@ -107,7 +106,7 @@ const KYCForm = () => {
               state: userData.state,
               country: userData.country || "",
               phone: extractPhoneNumber(userData.mobile),
-              countryCode: extractCountryCode(userData.mobile),
+              countryCode: userData.country === "New Zealand" ? "NZ" : "AU",
             }
 
           ))
@@ -184,7 +183,6 @@ const KYCForm = () => {
                       clearInterval(interval);
                       intervalCleared = true;
                       setVerifyingID(false);
-                      setIsUnderReview(true);
                       setVeriffMessage("Your KYC has been submitted, please wait for admin approval.");
                       setIdVerified(true);
                       setActiveKey("step3");
@@ -322,10 +320,6 @@ const KYCForm = () => {
     if (!(formData.zip || "").trim()) newErrors.zip = "Zip/Postal code is required";
     if (!(formData.state || "").trim()) newErrors.state = "State is required";
     setErrors((prev) => ({ ...prev, ...newErrors }));
-
-
-    console.log(errors);
-
     return Object.keys(newErrors).length === 0;
   };
 
@@ -420,9 +414,7 @@ const KYCForm = () => {
   }, []);
 
   useEffect(() => {
-    if (activeKey === "step3" && !isUnderReview) {
-      console.log("coming");
-
+    if (activeKey === "step3") {
       setCountdown(5);
       const interval = setInterval(() => {
         setCountdown((prev) => {
@@ -437,7 +429,7 @@ const KYCForm = () => {
 
       return () => clearInterval(interval);
     }
-  }, [activeKey, isUnderReview, navigate]);
+  }, [activeKey, navigate]);
 
 
 
@@ -1026,41 +1018,37 @@ const KYCForm = () => {
                       >
                         Previous
                       </Button>
+                      <Button
+                        variant="secondary"
+                        className="skipbtn"
+                        onClick={() => navigate("/dashboard")}
+                      >
+                        Skip
+                      </Button>
                     </div>
                   </div>
                 </Tab.Pane>
 
                 <Tab.Pane eventKey="step3">
                   <div className="text-center">
-                    {!VeriffMessage ? (
-                      <>
-                        <h2 className="text-success">✅ KYC Completed!</h2>
-                        <p>Your KYC data is under review.</p>
+                    <>
+                      <h2 className="text-success">✅ KYC Completed!</h2>
+                      <p>Your KYC data is under review.</p>
 
-                        <p className="text-muted">
-                          {isUnderReview
-                            ? "You will be redirected to the dashboard once your verification is approved."
-                            : `Redirecting to dashboard in ${countdown} second${countdown !== 1 ? "s" : ""}...`}
-                        </p>
+                      <p className="text-muted">
+                        {`Redirecting to dashboard in ${countdown} second${countdown !== 1 ? "s" : ""}...`}
+                      </p>
 
-                        <img src={KYCimage} alt="KYC Completed" />
+                      <img src={KYCimage} alt="KYC Completed" />
 
-                        {!isUnderReview && (
-                          <Button
-                            variant="primary"
-                            className="mt-3"
-                            onClick={() => navigate("/dashboard")}
-                          >
-                            Go to Dashboard
-                          </Button>
-                        )}
-                      </>
-                    ) : (
-                      <>
-                        <h2 className="text-warning">⚠️ Notice</h2>
-                        <p>{VeriffMessage}</p>
-                      </>
-                    )}
+                      <Button
+                        variant="primary"
+                        className="mt-3"
+                        onClick={() => navigate("/dashboard")}
+                      >
+                        Go to Dashboard
+                      </Button>
+                    </>
                   </div>
                 </Tab.Pane>
 
@@ -1075,20 +1063,3 @@ const KYCForm = () => {
 };
 
 export default KYCForm;
-
-
-
-// {
-//     "firstName": "First name is required",
-//     "lastName": "Last name is required",
-//     "dob": "Date of birth is required",
-//     "countryOfBirth": "Country of birth is required",
-//     "occupation": "Occupation is required",
-//     "country": "Country is required",
-//     "address": "Address is required",
-//     "buildingNo": "Building No. is required",
-//     "streetName": "Street Name is required",
-//     "city": "City is required",
-//     "zip": "Zip/Postal code is required",
-//     "state": "State is required"
-// }

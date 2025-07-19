@@ -50,7 +50,9 @@ const AppRoutes = () => {
         {/* Protected Routes */}
       </Route>
       <Route path="/kyc" element={<KYCForm />} />
+      <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/web-exchange-rate" element={<ExchangeRatePage />} />
+      <Route path="profile-information" element={<ProfileInformation />} />
       <Route
         path="/"
         element={
@@ -60,13 +62,11 @@ const AppRoutes = () => {
         }
       >
         <Route path="/transaction-success" element={<TransactionSuccess />} />
-        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="send-money" element={<SendMoney />} />
         <Route path="payment-info" element={<PaymentInfo />} />
         <Route path="transfers-list" element={<TransfersList />} />
         <Route path="receivers" element={<Receivers />} />
         <Route path="transfer-details/:id" element={<TransferDetails />} />
-        <Route path="profile-information" element={<ProfileInformation />} />
         <Route path="/receivers-list" element={<ReceiverList />} />
         <Route path="receiver-add" element={<ReceiverDetail />} />
         <Route path="review-transfer" element={<ReviewTransfer />} />

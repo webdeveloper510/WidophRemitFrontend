@@ -100,16 +100,19 @@ form.profile-form h3 {
   color: #434800;
 }
 button.skipbtn {
-  font-size: 16px;
-  font-weight: 600;
-  text-transform: uppercase;
-  border-radius: 10px 10px 10px 10px !important;
-  padding: 20px 25px;
-  color: #434800;
-  text-decoration: none;
+ font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    border-radius: 10px 10px 10px 10px !important;
+    padding: 20px 25px;
+    color: #434800;
+    text-decoration: none;
+    background: transparent;
+    border: none;
 }
 button.skipbtn:hover {
   color: #434800;
+     background: transparent;
 }
 button.prevbtn {
   background: transparent;

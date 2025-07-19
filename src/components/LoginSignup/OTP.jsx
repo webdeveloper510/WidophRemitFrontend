@@ -360,6 +360,7 @@ const OtpVerification = () => {
 
       if (from === "signup") {
         response = await registerOtpResend({ mobile: JSON.parse(sessionStorage.getItem("signupData")).mobile })
+        
       } else {
         response = await resendOtp(payload);
       }
