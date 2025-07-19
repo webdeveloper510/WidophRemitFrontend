@@ -179,7 +179,7 @@ const KYCForm = () => {
 
                     else if (res?.data?.status === "success" && res?.data?.verification === null) {
                       console.log("Hi there");
-                      
+
                       clearInterval(interval);
                       intervalCleared = true;
                       setVerifyingID(false);
@@ -265,8 +265,8 @@ const KYCForm = () => {
 
     if (!formData.phone.trim()) {
       newErrors.phone = "Mobile number is required";
-    } else if (!/^\d{10}$/.test(formData.phone)) {
-      newErrors.phone = "Mobile number must be exactly 10 digits";
+    } else if (!/^\d{1,10}$/.test(formData.phone)) {
+      newErrors.phone = "Mobile number must be at most 10 digits";
     }
 
     if (!formData.dob) {

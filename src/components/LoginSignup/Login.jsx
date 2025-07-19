@@ -53,7 +53,7 @@ const Login = () => {
       .required("Email or phone number is required")
       .test(
         "email-or-phone",
-        "Enter a valid email or 10-digit phone number",
+        "Enter a valid email or Mobile number must be at most 10 digits",
         function (value) {
           const { countryCode } = this.parent;
 
@@ -63,7 +63,7 @@ const Login = () => {
             return Yup.string().email().isValidSync(value);
           } else {
             const digitsOnly = value.replace(/\D/g, "");
-            return digitsOnly.length === 10;
+            return digitsOnly.length <= 10;
           }
         }
       ),

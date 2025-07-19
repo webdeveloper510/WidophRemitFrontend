@@ -322,6 +322,7 @@ const ProfileInformation = () => {
                         value={rawMobile}
                         readOnly
                         disabled
+                        max={10}
                         style={{
                           borderTopLeftRadius: 0,
                           borderBottomLeftRadius: 0,

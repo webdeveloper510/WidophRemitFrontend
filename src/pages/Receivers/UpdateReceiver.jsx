@@ -68,7 +68,7 @@ const UpdateReceiver = () => {
         .required("Last name is required")
         .matches(/^[A-Za-z\s]+$/, "Only letters allowed"),
       email: Yup.string().email("Invalid email"),
-      mobile: Yup.string().required("Mobile number is required"),
+      mobile: Yup.string().required("Mobile number is required").matches(/^\d{1,10}$/, "Mobile number must be at most 10 digits",),
       country: Yup.string().required("Country is required"),
       state: Yup.string().required("State is required"),
       city: Yup.string().required("City is required"),
