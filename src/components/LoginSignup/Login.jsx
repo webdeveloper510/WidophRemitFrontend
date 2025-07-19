@@ -98,7 +98,6 @@ const Login = () => {
     try {
       const response = await userLogin(payload);
       if (response?.code === 200 || response?.code === "200") {
-        toast.success("Login successful");
         navigate("/otp-verification", {
           state: {
             from: "login",

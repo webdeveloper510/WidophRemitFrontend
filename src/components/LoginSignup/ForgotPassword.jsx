@@ -116,7 +116,6 @@ const ForgotPassword = () => {
                   Back to Login{" "}
 
                 </Link >
-                Go Back
               </div>
             </Form>
           </div>

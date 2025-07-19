@@ -38,6 +38,7 @@ const KYCForm = () => {
   const [verifyingID, setVerifyingID] = useState(false);
   const [VeriffMessage, setVeriffMessage] = useState("");
   const [isUnderReview, setIsUnderReview] = useState(false);
+  const [customer_id, setcustomer_id] = useState("");
   const [formData, setFormData] = useState({
     firstName: "",
     middleName: "",
@@ -87,6 +88,7 @@ const KYCForm = () => {
         const res = await userProfile();
         if (res?.code === '200') {
           const userData = res.data;
+          setcustomer_id(userData.customer_id);
           setFormData((prev) => (
             {
               ...prev,
@@ -218,7 +220,7 @@ const KYCForm = () => {
     });
 
     veriff.setParams({
-      vendorData: `${sessionStorage.getItem("customer_id")}`,
+      vendorData: customer_id,
       person: {
         givenName: `${formData?.firstName}`,
         lastName: `${formData?.lastName}`,
@@ -239,7 +241,6 @@ const KYCForm = () => {
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    setTouched((prev) => ({ ...prev, [field]: true }));
 
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
@@ -250,6 +251,16 @@ const KYCForm = () => {
   };
 
   const validatePersonalDetails = () => {
+    setTouched((prev) => ({
+      ...prev,
+      firstName: true,
+      lastName: true,
+      email: true,
+      phone: true,
+      dob: true,
+      countryOfBirth: true,
+      occupation: true,
+    }));
     const newErrors = {};
 
     if (!formData.firstName.trim())
@@ -293,17 +304,29 @@ const KYCForm = () => {
   };
 
   const validateAddressDetails = () => {
+    setTouched((prev) => ({
+      ...prev,
+      country: true,
+      address: true,
+      buildingNo: true,
+      streetName: true,
+      city: true,
+      zip: true,
+      state: true,
+    }));
     const newErrors = {};
     if (!formData.country) newErrors.country = "Country is required";
-    if (!formData.address.trim()) newErrors.address = "Address is required";
-    if (!formData.buildingNo.trim())
-      newErrors.buildingNo = "Building No. is required";
-    if (!formData.streetName.trim())
-      newErrors.streetName = "Street Name is required";
-    if (!formData.city.trim()) newErrors.city = "City is required";
-    if (!formData.zip.trim()) newErrors.zip = "Zip/Postal code is required";
-    if (!formData.state.trim()) newErrors.state = "State is required";
+    if (!(formData.address || "").trim()) newErrors.address = "Address is required";
+    if (!(formData.buildingNo || "").trim()) newErrors.buildingNo = "Building No. is required";
+    if (!(formData.streetName || "").trim()) newErrors.streetName = "Street Name is required";
+    if (!(formData.city || "").trim()) newErrors.city = "City is required";
+    if (!(formData.zip || "").trim()) newErrors.zip = "Zip/Postal code is required";
+    if (!(formData.state || "").trim()) newErrors.state = "State is required";
     setErrors((prev) => ({ ...prev, ...newErrors }));
+
+
+    console.log(errors);
+
     return Object.keys(newErrors).length === 0;
   };
 
@@ -316,10 +339,10 @@ const KYCForm = () => {
         First_name: formData.firstName,
         Middle_name: formData.middleName,
         Last_name: formData.lastName,
-        email: formData.email,
+        // email: formData.email,
         address: formData.address,
         Country_of_birth: formData.countryOfBirth,
-        mobile: `+${formData.countryCode}${formData.phone}`,
+        // mobile: `+${formData.countryCode}${formData.phone}`,
         country_code: formData.countryCode,
         Date_of_birth: formData.dob,
         Gender: "Male",
@@ -358,20 +381,11 @@ const KYCForm = () => {
   };
 
   const handleSubmit = () => {
-    const allFields = Object.keys(formData);
-    const newTouched = {};
-    allFields.forEach((field) => {
-      newTouched[field] = true;
-    });
-    setTouched(newTouched);
-
-    setTimeout(() => {
-      const isPersonalValid = validatePersonalDetails();
-      const isAddressValid = validateAddressDetails();
-      if (isPersonalValid && isAddressValid) {
-        runUpdateProfileApi();
-      }
-    }, 0);
+    const isPersonalValid = validatePersonalDetails();
+    const isAddressValid = validateAddressDetails();
+    if (isPersonalValid && isAddressValid) {
+      runUpdateProfileApi();
+    }
   };
 
   const goToNext = () => {
@@ -425,6 +439,7 @@ const KYCForm = () => {
       return () => clearInterval(interval);
     }
   }, [activeKey, isUnderReview, navigate]);
+
 
 
   return (
@@ -1061,3 +1076,20 @@ const KYCForm = () => {
 };
 
 export default KYCForm;
+
+
+
+// {
+//     "firstName": "First name is required",
+//     "lastName": "Last name is required",
+//     "dob": "Date of birth is required",
+//     "countryOfBirth": "Country of birth is required",
+//     "occupation": "Occupation is required",
+//     "country": "Country is required",
+//     "address": "Address is required",
+//     "buildingNo": "Building No. is required",
+//     "streetName": "Street Name is required",
+//     "city": "City is required",
+//     "zip": "Zip/Postal code is required",
+//     "state": "State is required"
+// }

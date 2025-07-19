@@ -106,6 +106,7 @@ const Signup = () => {
     }
   };
 
+
   return (
     <Container className="login-form-wrapper">
       <Row>
@@ -262,9 +263,9 @@ const Signup = () => {
                             {visibility.current ? <FaEyeSlash /> : <FaEye />}
                           </span>
                         </div>
-                        <Form.Control.Feedback type="invalid">
-                          {errors.password}
-                        </Form.Control.Feedback>
+                        {touched.password && errors.password && (
+                          <div className="invalid-feedback d-block">{errors.password}</div>
+                        )}
                       </Col>
 
                       <Col>
@@ -291,9 +292,12 @@ const Signup = () => {
                             {visibility.confirm ? <FaEyeSlash /> : <FaEye />}
                           </span>
                         </div>
-                        <Form.Control.Feedback type="invalid">
-                          {errors.confirmPassword}
-                        </Form.Control.Feedback>
+                        {touched.confirmPassword && errors.confirmPassword && (
+                          <div className="invalid-feedback d-block">
+                            {errors.confirmPassword}
+                          </div>
+                        )}
+
                       </Col>
                     </Row>
 
