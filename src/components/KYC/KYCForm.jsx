@@ -131,7 +131,6 @@ const KYCForm = () => {
 
   const handleVeriffClick = () => {
     setVerifyingID(true);
-    console.log('sfasd',import.meta.env.VITE_APP_VERIFF_KEY)
     const veriff = Veriff({
       apiKey: import.meta.env.VITE_APP_VERIFF_KEY,
       parentId: "veriff-root",
