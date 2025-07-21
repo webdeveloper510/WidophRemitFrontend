@@ -28,7 +28,11 @@ const PaymentDetail = () => {
   const [modalShowPayToAgreement, setModalShowPayToAgreement] = useState(false);
   const [modalShowPayToLimit, setModalShowPayToLimit] = useState(false);
   const [isLoadingAgreement, setIsLoadingAgreement] = useState(false);
-  const [paymentType, setPaymentType] = useState("");
+  const storedPaymentMethod = sessionStorage.getItem("selected_payment_method");
+
+  const [paymentType, setPaymentType] = useState(
+    storedPaymentMethod === "monova" ? "bank_transfer" : storedPaymentMethod
+  );
   const [amount, setAmount] = useState("0.00");
   const [currency, setCurrency] = useState("AUD");
   const [receiverName, setReceiverName] = useState("Receiver");
@@ -55,7 +59,7 @@ const PaymentDetail = () => {
   });
   const [payToFormErrors, setPayToFormErrors] = useState({});
   const [isCreatingAgreement, setIsCreatingAgreement] = useState(false);
-  const [transferReason, setTransferReason] = useState("");
+  const [transferReason, setTransferReason] = useState(sessionStorage.getItem("transfer_reason") || "");
   const [reasonError, setReasonError] = useState("");
   const [monovaFormErrors, setMonovaFormErrors] = useState({});
   const [bsb, setbsb] = useState(0);
@@ -304,7 +308,7 @@ const PaymentDetail = () => {
       }
     } else if (paymentType === "payid") {
       handleCreatePayId();
-    } else if (paymentType === "monova") {
+    } else if (paymentType === "monova" || paymentType === "bank_transfer") {
       setModalShowMonova(true);
     } else {
       toast.warning("Please select a payment type.");

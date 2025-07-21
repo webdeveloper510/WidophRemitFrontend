@@ -44,7 +44,7 @@ const TransferDetails = () => {
     <AnimatedPage>
       <div className="page-title">
         <div className="d-flex align-items-center">
-          <Link to="/dashboard">
+          <Link to="/transfers-list">
             <img src={Back} alt="Back" />
           </Link>
           <h1>Transfer Details</h1>

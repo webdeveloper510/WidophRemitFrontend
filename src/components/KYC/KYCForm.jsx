@@ -178,12 +178,9 @@ const KYCForm = () => {
                     }
 
                     else if (res?.data?.status === "success" && res?.data?.verification === null) {
-                      console.log("Hi there");
-
                       clearInterval(interval);
                       intervalCleared = true;
                       setVerifyingID(false);
-                      setVeriffMessage("Your KYC has been submitted, please wait for admin approval.");
                       setIdVerified(true);
                       setActiveKey("step3");
                     }
@@ -201,7 +198,6 @@ const KYCForm = () => {
                   if (!intervalCleared) {
                     clearInterval(interval);
                     setVerifyingID(false);
-                    setVeriffMessage("Your KYC has been submitted, please wait for admin approval.");
                     setActiveKey("step3");
                   }
                 }, 15000);
@@ -1033,6 +1029,11 @@ const KYCForm = () => {
                         Skip
                       </Button>
                     </div>
+                    {VeriffMessage &&
+                      <p>
+                        {VeriffMessage}
+                      </p>
+                    }
                   </div>
                 </Tab.Pane>
 

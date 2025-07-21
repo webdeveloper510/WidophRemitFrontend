@@ -73,8 +73,8 @@ const AddReceiver = () => {
       "Mobile number must be at most 10 digits",
       (value) => {
         if (!value) return false;
-        const digits = value.replace(/\D/g, ""); // remove non-numeric characters
-        return digits.length <= 10;
+        const digits = value.replace(/\D/g, "");
+        return digits.length <= 12;
       }
     ),
     country: Yup.string().required("Country is required"),
