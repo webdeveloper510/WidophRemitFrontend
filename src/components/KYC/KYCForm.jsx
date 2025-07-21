@@ -79,7 +79,7 @@ const KYCForm = () => {
     const fetchAndVerifyUser = async () => {
       const token = sessionStorage.getItem("token");
       if (!token) {
-        setRedirectTo('/login');
+        navigate('/login');
         return;
       }
 
@@ -110,7 +110,6 @@ const KYCForm = () => {
             }
 
           ))
-          console.log(userData.mobile.substring(1, 3));
 
         }
       } catch (error) {
@@ -964,6 +963,13 @@ const KYCForm = () => {
                           ) : (
                             "SUBMIT & NEXT STEP"
                           )}
+                        </Button>
+                        <Button
+                          variant="secondary"
+                          className="skipbtn"
+                          onClick={() => navigate("/dashboard")}
+                        >
+                          Skip
                         </Button>
                         {isLoading && (
                           <p className="text-info mb-3">

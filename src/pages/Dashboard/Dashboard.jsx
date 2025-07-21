@@ -5,7 +5,7 @@ import stats3 from "../../assets/images/info3.png";
 import stats4 from "../../assets/images/info4.png";
 import ReceiverTable from "./ReceiverTable";
 import LatestTransfer from "./LatestTransfer";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
   recipientList,
@@ -20,6 +20,7 @@ import TopNavbar from "../../components/Navbar";
 import { AnimatePresence } from "framer-motion";
 import Footer from "../../components/Footer";
 import { toast } from "react-toastify";
+import { accessProvider } from "../../utils/accessProvider"
 
 const Dashboard = () => {
   const [receiversCount, setReceiversCount] = useState(0);
@@ -28,12 +29,11 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [collapsed, setCollapsed] = useState(false);
   const [Message, setMessage] = useState("");
+  const navigate = useNavigate();
+  const [profileCompleted, setprofileCompleted] = useState(false);
 
 
   useEffect(() => {
-    const userData = JSON.parse(sessionStorage.getItem("User data") || "{}");
-    setFirstName(userData.First_name || "User");
-
     const fetchData = async () => {
       const recipientsResponse = await recipientList();
       if (recipientsResponse.code === "200") {
@@ -52,31 +52,48 @@ const Dashboard = () => {
     return () => clearTimeout(timer);
   }, []);
 
-
   useEffect(() => {
     const fetchAndVerifyUser = async () => {
-
       try {
         const res = await userProfile();
 
-        if (res?.code === '200') {
-          const idStatus = res.data?.is_digital_Id_verified;
-          if (idStatus !== 'approved') {
-            setMessage("Please Complete your Kyc before proceeding ahead");
-            // setMessage("ਕਿਰਪਾ ਕਰਕੇ ਅੱਗੇ ਵਧਣ ਤੋਂ ਪਹਿਲਾਂ ਆਪਣਾ KYC ਪੂਰਾ ਕਰੋ।")
+        if (res?.code === "200") {
+          setFirstName(res.data.First_name || "User");
+
+          const { is_digital_Id_verified, veriff_status, profile_completed } = res.data;
+
+          setprofileCompleted(profile_completed);
+
+          const kycStatus = accessProvider(
+            is_digital_Id_verified
+            , veriff_status
+          );
+
+          if (!profile_completed) {
+            setMessage("Please complete your profile before proceeding ahead");
+          } else if (kycStatus === "pending") {
+            setMessage("Please complete your KYC before proceeding ahead");
+          } else if (kycStatus === "submitted") {
+            setMessage("Your KYC is submitted. Please wait for approval.");
+          } else if (kycStatus === "declined") {
+            setMessage("Your KYC was declined. Please resubmit.");
+          } else if (kycStatus === "suspended") {
+            setMessage("Your KYC has been suspended. Contact support.");
           }
+
         } else {
           sessionStorage.clear();
-          setRedirectTo('/login');
+          navigate("/login");
         }
       } catch (error) {
-        toast.error("Something is Up with server Please again later")
-        setRedirectTo('/login');
+        toast.error("Something is up with the server. Please try again later.");
+        navigate("/login");
       }
     };
 
     fetchAndVerifyUser();
   }, []);
+
 
   if (loading) {
     return (
@@ -103,7 +120,7 @@ const Dashboard = () => {
                   </div>
                   {Message && (
                     <div className="alert alert-warning mt-3" role="alert">
-                      {Message} <Link to="/kyc" className="alert-link">Complete Now</Link>
+                      {Message} <Link to={profileCompleted ? "/kyc" : "/profile-information"} className="alert-link">Complete Now</Link>
                     </div>
                   )}
 
