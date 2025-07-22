@@ -38,10 +38,11 @@ const PaymentDetail = () => {
   const [receiverName, setReceiverName] = useState("Receiver");
   const [isLoadingPayId, setIsLoadingPayId] = useState(false);
   const [payIdData, setPayIdData] = useState({ payId: "", transferId: "" });
+  const temp = JSON.parse(sessionStorage.getItem("User data")).First_name + JSON.parse(sessionStorage.getItem("User data")).Last_name;
   const [monovaForm, setMonovaForm] = useState({
     bsb: "",
     accountNumber: "",
-    accountName: "",
+    accountName: temp,
     paymentMethod: "",
   });
   const [payToForm, setPayToForm] = useState({
@@ -519,7 +520,7 @@ const PaymentDetail = () => {
                       )}
                     </div>
                   </Row>
-                  
+
                   <Row className="mt-5">
                     <FloatingLabel
                       controlId="floatingSelect"

@@ -69,7 +69,7 @@ const ReceiverList = () => {
       style: {
         minHeight: "55px",
         cursor: "pointer",
-      },  
+      },
     },
     cells: {
       style: {
@@ -114,9 +114,10 @@ const ReceiverList = () => {
       <div className="page-title">
         <div className="d-flex justify-content-between">
           <div className="d-flex align-items-center">
-            <Link to={"/send-money"}>
+            <Link to="/send-money" state={{ backFromReceivers: true }}>
               <img src={Back} alt="Back" />
             </Link>
+
             <h1>Select a Receiver to Send money</h1>
           </div>
           <Button

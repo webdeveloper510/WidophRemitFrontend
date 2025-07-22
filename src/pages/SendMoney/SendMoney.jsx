@@ -16,8 +16,14 @@ import {
   exchangeRate,
   getCurrencies,
 } from "../../services/Api";
+import { useLocation } from "react-router-dom";
+
+
 
 const SendMoney = () => {
+  const location = useLocation();
+
+  const isBackFromReceivers = location.state?.backFromReceivers === true;
   const navigate = useNavigate();
   const [curr_in, setCurrIn] = useState([]);
   const [curr_out, setCurrOut] = useState([]);
@@ -244,7 +250,7 @@ const SendMoney = () => {
           } else {
             await getExchangeRate(initialValues.from, initialValues.to);
           }
-        } else if (transferData) {
+        } else if (transferData && isBackFromReceivers) {
           const parsedTransfer = JSON.parse(transferData);
           if (parsedTransfer.amount) {
             const amt = parsedTransfer.amount;
