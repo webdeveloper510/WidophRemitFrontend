@@ -29,7 +29,7 @@ const PaymentDetail = () => {
   const [modalShowPayToLimit, setModalShowPayToLimit] = useState(false);
   const [isLoadingAgreement, setIsLoadingAgreement] = useState(false);
   const storedPaymentMethod = sessionStorage.getItem("selected_payment_method");
-const [otherReason, setOtherReason] = useState(sessionStorage.getItem("other_reason") || "");
+  const [otherReason, setOtherReason] = useState(sessionStorage.getItem("other_reason") || "");
 
   const [paymentType, setPaymentType] = useState(
     storedPaymentMethod === "monova" ? "bank_transfer" : storedPaymentMethod
@@ -183,66 +183,66 @@ const [otherReason, setOtherReason] = useState(sessionStorage.getItem("other_rea
     setModalShowMonova(false);
   };
 
-const handleMonovaContinue = async () => {
-  const errors = {};
-  if (!monovaForm.paymentMethod)
-    errors.paymentMethod = "Please select payment method.";
-  if (!monovaForm.bsb) errors.bsb = "BSB is required.";
-  if (!monovaForm.accountNumber)
-    errors.accountNumber = "Account number is required.";
-  if (!monovaForm.accountName)
-    errors.accountName = "Account name is required.";
+  const handleMonovaContinue = async () => {
+    const errors = {};
+    if (!monovaForm.paymentMethod)
+      errors.paymentMethod = "Please select payment method.";
+    if (!monovaForm.bsb) errors.bsb = "BSB is required.";
+    if (!monovaForm.accountNumber)
+      errors.accountNumber = "Account number is required.";
+    if (!monovaForm.accountName)
+      errors.accountName = "Account name is required.";
 
-  if (!transferReason) {
-    toast.error("Please select a transfer reason");
-    setModalShowMonova(false);
-    return;
-  }
-
-  // Check if "Other" is selected but no custom reason is provided
-  if (transferReason === "Other" && !otherReason.trim()) {
-    toast.error("Please specify the reason when selecting 'Other'");
-    setModalShowMonova(false);
-    return;
-  }
-
-  setMonovaFormErrors(errors);
-
-  if (Object.keys(errors).length === 0) {
-    try {
-      sessionStorage.setItem(
-        "monova_payment_data",
-        JSON.stringify(monovaForm)
-      );
-      sessionStorage.setItem("selected_payment_method", "monova");
-
-      const temp = {
-        amount: amount,
-        bsbNumber: monovaForm.bsb,
-        accountNumber: monovaForm.accountNumber,
-        accountName: monovaForm.accountName,
-        payment_mode: monovaForm.paymentMethod,
-      };
-
-      sessionStorage.setItem("monova_form_data", JSON.stringify(temp));
-      
-      // Use the final reason (either selected reason or custom "Other" reason)
-      const finalReason = transferReason === "Other" ? otherReason : transferReason;
-      transferData.amount.reason = finalReason;
-      
-      const txResponse = await createTransaction(transferData);
-
-      if (txResponse?.code === "200") {
-        setModalShowMonova(false);
-        navigate("/confirm-transfer");
-      } else {
-        toast.error(txResponse?.message || "Transaction creation failed.");
-      }
-    } catch (err) {
-      console.error("Unexpected error during payment creation:", err);
+    if (!transferReason) {
+      toast.error("Please select a transfer reason");
+      setModalShowMonova(false);
+      return;
     }
-  }
-};
+
+    // Check if "Other" is selected but no custom reason is provided
+    if (transferReason === "Other" && !otherReason.trim()) {
+      toast.error("Please specify the reason when selecting 'Other'");
+      setModalShowMonova(false);
+      return;
+    }
+
+    setMonovaFormErrors(errors);
+
+    if (Object.keys(errors).length === 0) {
+      try {
+        sessionStorage.setItem(
+          "monova_payment_data",
+          JSON.stringify(monovaForm)
+        );
+        sessionStorage.setItem("selected_payment_method", "monova");
+
+        const temp = {
+          amount: amount,
+          bsbNumber: monovaForm.bsb,
+          accountNumber: monovaForm.accountNumber,
+          accountName: monovaForm.accountName,
+          payment_mode: monovaForm.paymentMethod,
+        };
+
+        sessionStorage.setItem("monova_form_data", JSON.stringify(temp));
+
+        // Use the final reason (either selected reason or custom "Other" reason)
+        const finalReason = transferReason === "Other" ? otherReason : transferReason;
+        transferData.amount.reason = finalReason;
+
+        const txResponse = await createTransaction(transferData);
+
+        if (txResponse?.code === "200") {
+          setModalShowMonova(false);
+          navigate("/confirm-transfer");
+        } else {
+          toast.error(txResponse?.message || "Transaction creation failed.");
+        }
+      } catch (err) {
+        console.error("Unexpected error during payment creation:", err);
+      }
+    }
+  };
   const formatAmountLimit = (limit) => {
     if (!limit) return "Not specified";
     return `AUD ${parseInt(limit).toLocaleString()}`;
@@ -263,42 +263,42 @@ const handleMonovaContinue = async () => {
         toast.error("Failed to copy to clipboard.");
       });
   };
-const handleContinue = async () => {
-  // Check if transfer reason is selected
-  if (!transferReason) {
-    setReasonError("Please select a transfer reason.");
-    return;
-  }
-
-  // Check if "Other" is selected but no custom reason is provided
-  if (transferReason === "Other" && !otherReason.trim()) {
-    setReasonError("Please specify the reason when selecting 'Other'.");
-    return;
-  }
-
-  // Clear any previous errors
-  setReasonError("");
-
-  // Save the final reason to session storage
-  const finalReason = transferReason === "Other" ? otherReason : transferReason;
-  sessionStorage.setItem("final_transfer_reason", finalReason);
-
-  // Rest of your existing handleContinue code...
-  if (paymentType === "payto") {
-    try {
-      setIsLoadingAgreement(true);
-      // ... rest of your existing code
-    } catch (err) {
-      // ... existing error handling
+  const handleContinue = async () => {
+    // Check if transfer reason is selected
+    if (!transferReason) {
+      setReasonError("Please select a transfer reason.");
+      return;
     }
-  } else if (paymentType === "payid") {
-    handleCreatePayId();
-  } else if (paymentType === "monova" || paymentType === "bank_transfer") {
-    setModalShowMonova(true);
-  } else {
-    toast.warning("Please select a payment type.");
+
+    // Check if "Other" is selected but no custom reason is provided
+    if (transferReason === "Other" && !otherReason.trim()) {
+      setReasonError("Please specify the reason when selecting 'Other'.");
+      return;
+    }
+
+    // Clear any previous errors
+    setReasonError("");
+
+    // Save the final reason to session storage
+    const finalReason = transferReason === "Other" ? otherReason : transferReason;
+    sessionStorage.setItem("final_transfer_reason", finalReason);
+
+    // Rest of your existing handleContinue code...
+    if (paymentType === "payto") {
+      try {
+        setIsLoadingAgreement(true);
+        // ... rest of your existing code
+      } catch (err) {
+        // ... existing error handling
+      }
+    } else if (paymentType === "payid") {
+      handleCreatePayId();
+    } else if (paymentType === "monova" || paymentType === "bank_transfer") {
+      setModalShowMonova(true);
+    } else {
+      toast.warning("Please select a payment type.");
+    }
   }
-}
   const handleCreatePayId = async () => {
     setIsLoadingPayId(true);
     try {
@@ -503,72 +503,72 @@ const handleContinue = async () => {
                       )}
                     </div>
                   </Row>
-                <Row className="mt-5">
-  <FloatingLabel
-    controlId="floatingSelect"
-    as={Col}
-    label="Transfer Reason"
-    className="mb-3"
-  >
-    <Form.Select
-      value={transferReason}
-      onChange={(e) => {
-        setTransferReason(e.target.value);
-        setReasonError("");
-        sessionStorage.setItem("transfer_reason", e.target.value);
-        
-        // Clear other reason if not selecting "Other"
-        if (e.target.value !== "Other") {
-          setOtherReason("");
-          sessionStorage.removeItem("other_reason");
-        }
-      }}
-      name="reason"
-      isInvalid={!!reasonError}
-    >
-      <option value="">Select a Reason</option>
-      {reasonOptions.map((reason, i) => (
-        <option key={i} value={reason}>
-          {reason}
-        </option>
-      ))}
-    </Form.Select>
-    {reasonError && (
-      <Form.Control.Feedback type="invalid">
-        {reasonError}
-      </Form.Control.Feedback>
-    )}
-  </FloatingLabel>
-</Row>
+                  <Row className="mt-5">
+                    <FloatingLabel
+                      controlId="floatingSelect"
+                      as={Col}
+                      label="Transfer Reason"
+                      className="mb-3"
+                    >
+                      <Form.Select
+                        value={transferReason}
+                        onChange={(e) => {
+                          setTransferReason(e.target.value);
+                          setReasonError("");
+                          sessionStorage.setItem("transfer_reason", e.target.value);
 
-{/* Add this new row right after the Transfer Reason row for the "Other" text field */}
-{transferReason === "Other" && (
-  <Row className="mt-3">
-    <FloatingLabel
-      controlId="otherReasonField"
-      as={Col}
-      label="Please specify the reason"
-      className="mb-3"
-    >
-      <Form.Control
-        type="text"
-        value={otherReason}
-        onChange={(e) => {
-          setOtherReason(e.target.value);
-          setReasonError("");
-          sessionStorage.setItem("other_reason", e.target.value);
-        }}
-        placeholder="Enter your reason here"
-        isInvalid={transferReason === "Other" && !otherReason.trim() && !!reasonError}
-      />
-      {transferReason === "Other" && !otherReason.trim() && reasonError && (
-        <Form.Control.Feedback type="invalid">
-          Please specify the reason when selecting 'Other'.
-        </Form.Control.Feedback>
-      )}
-    </FloatingLabel>
-  </Row>
-)}
+                          // Clear other reason if not selecting "Other"
+                          if (e.target.value !== "Other") {
+                            setOtherReason("");
+                            sessionStorage.removeItem("other_reason");
+                          }
+                        }}
+                        name="reason"
+                        isInvalid={!!reasonError}
+                      >
+                        <option value="">Select a Reason</option>
+                        {reasonOptions.map((reason, i) => (
+                          <option key={i} value={reason}>
+                            {reason}
+                          </option>
+                        ))}
+                      </Form.Select>
+                      {reasonError && (
+                        <Form.Control.Feedback type="invalid">
+                          {reasonError}
+                        </Form.Control.Feedback>
+                      )}
+                    </FloatingLabel>
+                  </Row>
+
+                  {/* Add this new row right after the Transfer Reason row for the "Other" text field */}
+                  {transferReason === "Other" && (
+                    <Row className="mt-3">
+                      <FloatingLabel
+                        controlId="otherReasonField"
+                        as={Col}
+                        label="Please specify the reason"
+                        className="mb-3"
+                      >
+                        <Form.Control
+                          type="text"
+                          value={otherReason}
+                          onChange={(e) => {
+                            setOtherReason(e.target.value);
+                            setReasonError("");
+                            sessionStorage.setItem("other_reason", e.target.value);
+                          }}
+                          placeholder="Enter your reason here"
+                          isInvalid={transferReason === "Other" && !otherReason.trim() && !!reasonError}
+                        />
+                        {transferReason === "Other" && !otherReason.trim() && reasonError && (
+                          <Form.Control.Feedback type="invalid">
+                            Please specify the reason when selecting 'Other'.
+                          </Form.Control.Feedback>
+                        )}
+                      </FloatingLabel>
+                    </Row>
+                  )}
 
                   <Row className="mt-4">
                     <Col>
