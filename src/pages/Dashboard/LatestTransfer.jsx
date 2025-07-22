@@ -7,6 +7,7 @@ import RecentReceiver from "../../assets/images/icons1.png";
 import { BsThreeDots } from "react-icons/bs";
 import Dropdown from "react-bootstrap/Dropdown";
 import { pendingTransactions, transactionHistory } from "../../services/Api";
+import Spinner from 'react-bootstrap/Spinner'; // Import Spinner from react-bootstrap
 
 const customStyles = {
   headCells: {
@@ -33,6 +34,7 @@ const customStyles = {
 
 const LatestTransfer = () => {
   const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(true); // Add loading state
   const navigate = useNavigate();
 
   const handleViewDetails = (row) => {
@@ -101,6 +103,7 @@ const LatestTransfer = () => {
 
   useEffect(() => {
     (async () => {
+      setLoading(true); // Set loading to true before API calls
       let data = [];
       const response = await transactionHistory();
       const pend_res = await pendingTransactions();
@@ -115,9 +118,9 @@ const LatestTransfer = () => {
 
       data.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
       setList(data.length >= 5 ? data.slice(0, 5) : data);
+      setLoading(false); // Set loading to false after data is fetched
     })();
   }, []);
-
 
   return (
     <Card className="receiver-card">
@@ -128,17 +131,25 @@ const LatestTransfer = () => {
           </span>
           <Card.Title className="mb-0">Latest Transfers</Card.Title>
         </div>
-        <DataTable
-          columns={columns}
-          data={list}
-          customStyles={customStyles}
-          noHeader
-          striped
-          highlightOnHover
-          pagination
-          paginationPerPage={5}
-          paginationRowsPerPageOptions={[5, 10, 15, 20]}
-        />
+        {loading ? ( // Conditional rendering based on loading state
+          <div className="text-center">
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          </div>
+        ) : (
+          <DataTable
+            columns={columns}
+            data={list}
+            customStyles={customStyles}
+            noHeader
+            striped
+            highlightOnHover
+            pagination
+            paginationPerPage={5}
+            paginationRowsPerPageOptions={[5, 10, 15, 20]}
+          />
+        )}
       </Card.Body>
     </Card>
   );

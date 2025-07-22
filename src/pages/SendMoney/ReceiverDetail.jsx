@@ -54,38 +54,49 @@ const ReceiverDetail = () => {
     address: "",
   };
 
-  const validationSchema = Yup.object({
-    bank_name: Yup.string().required("Bank name is required"),
-    account_number: Yup.string()
-      .required("Account number is required")
-      .min(8, "Account number must be at least 8 characters")
-      .matches(/^[0-9]+$/, "Account number must contain only numbers"),
-    first_name: Yup.string()
-      .required("First name is required")
-      .min(2, "First name must be at least 2 characters")
-      .matches(/^[A-Za-z\s]+$/, "First name must contain only letters"),
-    last_name: Yup.string()
-      .required("Last name is required")
-      .min(2, "Last name must be at least 2 characters")
-      .matches(/^[A-Za-z\s]+$/, "Last name must contain only letters"),
-    email: Yup.string().email("Please enter a valid email address"),
-    mobile: Yup.string().required("Mobile number is required").test(
-      "is-10-digits",
-      "Mobile number must be at most 10 digits",
-      (value) => {
-        if (!value) return false;
-        const digits = value.replace(/\D/g, "");
-        return digits.length <= 12;
-      }
-    ),
-    country: Yup.string().required("Country is required"),
-    state: Yup.string().required("State is required"),
-    city: Yup.string().required("City is required"),
-    post_code: Yup.string()
-      .required("Postal code is required")
-      .matches(/^[0-9]+$/, "Postal code must contain only numbers"),
-    address: Yup.string().required("Address is required"),
-  });
+const validationSchema = Yup.object({
+  bank_name: Yup.string()
+    .required("Bank name is required"),
+
+  account_number: Yup.string()
+    .required("Account number is required")
+    .min(8, "Account number must be at least 8 characters")
+    .matches(/^[0-9]+$/, "Account number must contain only numbers"),
+
+  first_name: Yup.string()
+    .required("First name is required")
+    .min(2, "First name must be at least 2 characters")
+    .matches(/^[A-Za-z\s]+$/, "First name must contain only letters"),
+
+  last_name: Yup.string()
+    .required("Last name is required")
+    .min(2, "Last name must be at least 2 characters")
+    .matches(/^[A-Za-z\s]+$/, "Last name must contain only letters"),
+
+  email: Yup.string()
+    .email("Please enter a valid email address"),
+
+  mobile: Yup.string()
+    .required("Mobile number is required")
+    .matches(/^\d{8,10}$/, "Mobile number must be between 8 and 10 digits"),
+
+  country: Yup.string()
+    .required("Country is required"),
+
+  state: Yup.string()
+    .required("State is required"),
+
+  city: Yup.string()
+    .required("City is required"),
+
+  post_code: Yup.string()
+    .required("Postal code is required")
+    .matches(/^[0-9]+$/, "Postal code must contain only numbers"),
+
+  address: Yup.string()
+    .required("Address is required"),
+});
+
 
   const {
     values,

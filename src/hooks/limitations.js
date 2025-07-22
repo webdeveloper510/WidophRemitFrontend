@@ -18,7 +18,7 @@ const limits = {
     },
     country: 75,
     user_mobile: {
-        min: 9,
+        min: 8,
         max: 10
     },
     other_mobile: {

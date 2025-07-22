@@ -48,31 +48,32 @@ const Login = () => {
   };
 
   // Validation schema
-  const validationSchema = Yup.object({
-    value: Yup.string()
-      .required("Email or phone number is required")
-      .test(
-        "email-or-phone",
-        "Enter a valid email or Mobile number must be at most 10 digits",
-        function (value) {
-          const { countryCode } = this.parent;
+const validationSchema = Yup.object({
+  value: Yup.string()
+    .required("Email or phone number is required")
+    .test(
+      "email-or-phone",
+      "Enter a valid email or mobile number (8 to 10 digits)",
+      function (value) {
+        const { countryCode } = this.parent;
 
-          if (!value) return false;
+        if (!value) return false;
 
-          if (value.includes("@")) {
-            return Yup.string().email().isValidSync(value);
-          } else {
-            const digitsOnly = value.replace(/\D/g, "");
-            return digitsOnly.length <= 10;
-          }
+        if (value.includes("@")) {
+          return Yup.string().email().isValidSync(value);
+        } else {
+          const digitsOnly = value.replace(/\D/g, "");
+          return /^\d{8,10}$/.test(digitsOnly); 
         }
-      ),
-    password: Yup.string()
-      .required("Password is required")
-      .min(6, "Password must be at least 6 characters long"),
-    rememberMe: Yup.boolean(),
-    countryCode: Yup.string().required(),
-  });
+      }
+    ),
+  password: Yup.string()
+    .required("Password is required")
+    .min(6, "Password must be at least 6 characters long"),
+  rememberMe: Yup.boolean(),
+  countryCode: Yup.string().required(),
+});
+
 
 
   const initialValues = {

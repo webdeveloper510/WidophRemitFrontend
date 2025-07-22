@@ -19,20 +19,24 @@ import * as Yup from "yup";
 // Validation Schema
 const validationSchema = Yup.object({
   location: Yup.string().required("Location is required"),
+
   phone: Yup.string()
     .required("Mobile number is required")
-    .matches(/^\d+$/, "Mobile number must contain only digits")
-    .max(10, "Mobile number must be at most 10 digits"),
+    .matches(/^\d{8,10}$/, "Mobile number must be between 8 and 10 digits"),
+
   email: Yup.string()
     .email("Invalid email format")
     .required("Email is required"),
+
   password: Yup.string()
     .min(8, "Password must be at least 8 characters")
     .required("Password is required"),
+
   confirmPassword: Yup.string()
     .required("Confirm password is required")
     .oneOf([Yup.ref("password")], "Passwords do not match"),
 });
+
 
 
 const Signup = () => {

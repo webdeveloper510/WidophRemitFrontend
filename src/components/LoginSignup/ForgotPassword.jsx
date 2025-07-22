@@ -4,12 +4,10 @@ import Button from "react-bootstrap/Button";
 import { Form, Col } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 import { Link, useNavigate } from "react-router-dom";
-import "react-phone-input-2/lib/style.css";
-
-import PhoneInput from "react-phone-input-2";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
+import { parsePhoneNumber } from "libphonenumber-js";
 
 import LoginImage from "../../assets/images/login-image.png";
 import { resetEmail } from "../../services/Api";
@@ -18,23 +16,34 @@ const ForgotPassword = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-
-  const handlePhone = (val, country) => {
-    const localNumber = val.substring(country.dialCode.length);
-    const formattedMobile = country.dialCode + localNumber;
-    formik.setFieldValue("mobile", formattedMobile);
-    formik.setFieldTouched("mobile", true);
-  };
-
   const formik = useFormik({
-    initialValues: { mobile: "" },
+    initialValues: { 
+      mobile: "",
+      countryCode: "61" // default for Australia
+    },
     validationSchema: Yup.object().shape({
-      mobile: Yup.string().min(11).max(18).required("Mobile number is required"),
+      mobile: Yup.string()
+        .required("Mobile number is required")
+        .matches(/^\d{8,10}$/, "Mobile number must be between 8 and 10 digits"),
     }),
     onSubmit: async (values, { setSubmitting }) => {
       setLoading(true);
+      
+      const fullPhone = `+${values.countryCode}${values.mobile}`;
+      let parsedMobile = fullPhone;
+
       try {
-        const response = await resetEmail({ mobile: "+" + values.mobile });
+        const parsed = parsePhoneNumber(fullPhone);
+        parsedMobile = parsed.number;
+      } catch (error) {
+        toast.error("Invalid phone number format");
+        setLoading(false);
+        setSubmitting(false);
+        return;
+      }
+
+      try {
+        const response = await resetEmail({ mobile: parsedMobile });
 
         if (response?.data?.code === "200") {
           toast.success(response.data.message || "Reset link sent!", {
@@ -63,6 +72,12 @@ const ForgotPassword = () => {
     },
   });
 
+  const handleCustomChange = (e) => {
+    const { name, value } = e.target;
+    formik.setFieldValue(name, value);
+    formik.setFieldTouched(name, true);
+  };
+
   return (
     <Container className="login-form-wrapper">
       <Row>
@@ -78,26 +93,45 @@ const ForgotPassword = () => {
             </div>
 
             <Form onSubmit={formik.handleSubmit}>
-              <Row className="mb-3">
+              <Row className="mb-3 mobile_numbero">
                 <Col className="mb-3">
-                  <Form.Label>Your Mobile Number <span style={{ color: "red" }}>*</span></Form.Label>
-                  <PhoneInput
-                    onlyCountries={["au", "nz"]}
-                    country={"au"}
-                    name="mobile"
-                    inputStyle={{ border: "none" }}
-                    inputClass="userPhone w-100"
-                    countryCodeEditable={false}
-                    onChange={handlePhone}
-                    className={`form-control form-control-sm bg-transparent ${formik.touched.mobile && formik.errors.mobile
-                      ? "is-invalid"
-                      : formik.touched.mobile && !formik.errors.mobile
-                        ? "is-valid"
-                        : ""
-                      }`}
-                  />
+                  <Form.Label>
+                    Your Mobile Number <span style={{ color: "red" }}>*</span>
+                  </Form.Label>
+                  <div className="d-flex align-items-stretch p-0">
+                    <Form.Select
+                      name="countryCode"
+                      value={formik.values.countryCode}
+                      onChange={handleCustomChange}
+                      onBlur={formik.handleBlur}
+                      style={{
+                        maxWidth: "110px",
+                        borderTopRightRadius: 0,
+                        borderBottomRightRadius: 0,
+                      }}
+                    >
+                      <option value="61">+61 (AU)</option>
+                      <option value="64">+64 (NZ)</option>
+                    </Form.Select>
+
+                    <Form.Control
+                      type="text"
+                      name="mobile"
+                      placeholder="Enter mobile number"
+                      value={formik.values.mobile}
+                      onChange={handleCustomChange}
+                      onBlur={formik.handleBlur}
+                      isInvalid={formik.touched.mobile && formik.errors.mobile}
+                      style={{
+                        borderTopLeftRadius: 0,
+                        borderBottomLeftRadius: 0,
+                      }}
+                    />
+                  </div>
                   {formik.touched.mobile && formik.errors.mobile && (
-                    <div className="text-danger">{formik.errors.mobile}</div>
+                    <div className="invalid-feedback d-block">
+                      {formik.errors.mobile}
+                    </div>
                   )}
                 </Col>
               </Row>
@@ -111,11 +145,12 @@ const ForgotPassword = () => {
               </Button>
 
               <div>
-                <Link to={"/login"}
-                  className="text-success fw-bold forgotpassword-text">
+                <Link
+                  to={"/login"}
+                  className="text-success fw-bold forgotpassword-text"
+                >
                   Back to Login{" "}
-
-                </Link >
+                </Link>
               </div>
             </Form>
           </div>

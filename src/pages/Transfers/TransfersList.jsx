@@ -5,10 +5,10 @@ import DataTable from "react-data-table-component";
 import { BsThreeDots } from "react-icons/bs";
 import Dropdown from "react-bootstrap/Dropdown";
 import TransferList from "../../assets/images/transfer-list-icon.png";
+import loaderlogo from "../../assets/images/logo.png";
 import { pendingTransactions, transactionHistory } from "../../services/Api";
 import { Link } from "react-router-dom";
-import loaderlogo from "../../assets/images/logo.png"
-
+import axios from "axios";
 
 const customStyles = {
   headCells: {
@@ -37,32 +37,37 @@ const TransfersList = () => {
   const [filterText, setFilterText] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [list, setList] = useState([]);
-  const [Loader, setLoader] = useState(true);
-
+  const [loading, setLoading] = useState(true); // ✅ full-page loader
 
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(15);
 
   const fetchList = async () => {
-    let data = [];
-    const response = await transactionHistory();
-    const pend_res = await pendingTransactions();
+    setLoading(true);
+    try {
+      let data = [];
+      const response = await transactionHistory();
+      const pend_res = await pendingTransactions();
 
-    if (response.code === "200" && response.data?.data) {
-      data = response.data.data;
-    }
+      if (response.code === "200" && response.data?.data) {
+        data = response.data.data;
+      }
 
-    if (pend_res.code === "200" && pend_res.data) {
-      setList([...data, ...pend_res.data]);
-    } else {
-      setList(data);
+      if (pend_res.code === "200" && pend_res.data) {
+        setList([...data, ...pend_res.data]);
+      } else {
+        setList(data);
+      }
+    } catch (error) {
+      console.error("Error fetching transaction list:", error);
+      setList([]);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchList();
-    const timer = setTimeout(() => setLoader(false), 500);
-    return () => clearTimeout(timer);
   }, []);
 
   const filteredData = list.filter((item) => {
@@ -82,7 +87,15 @@ const TransfersList = () => {
     return matchesText && matchesStatus;
   });
 
-  const statusOptions = ["", "Incomplete", "Pending Review and Processing", "In progress", "Payment due", "Waiting for approval", "Partially done"];
+  const statusOptions = [
+    "",
+    "Incomplete",
+    "Pending Review and Processing",
+    "In progress",
+    "Payment due",
+    "Waiting for approval",
+    "Partially done",
+  ];
 
   const subHeaderComponent = (
     <div className="d-flex gap-3 mb-3 align-items-center">
@@ -99,6 +112,40 @@ const TransfersList = () => {
       </select>
     </div>
   );
+
+  const handleDownloadReceipt = async (id) => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_APP_API_URI}/payment/receipt/${id}`,
+        {
+          responseType: "blob",
+        }
+      );
+
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+
+      const disposition = response.headers["content-disposition"];
+      let filename = `receipt-${id}.pdf`;
+      if (disposition && disposition.includes("filename=")) {
+        filename = disposition.split("filename=")[1].replace(/"/g, "").trim();
+      }
+
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download failed:", error);
+      alert("Failed to download receipt. Please try again.");
+    }
+  };
 
   const columns = [
     {
@@ -147,47 +194,45 @@ const TransfersList = () => {
         </span>
       ),
     },
-    {
-      name: "Action",
-      cell: (row) => (
-        <div className="send-again-btn">
-          <Dropdown>
-            <Dropdown.Toggle variant="success" id="dropdown-basic">
-              <BsThreeDots />
-            </Dropdown.Toggle>
+{
+  name: "Action",
+  cell: (row) => {
+    const status = row.payment_status?.toLowerCase();
 
-            <Dropdown.Menu>
-              {!(["incomplete", "partially done"].includes(row.payment_status.toLowerCase())) && (
-                <Dropdown.Item
-                  href={`${import.meta.env.VITE_APP_API_URI}/payment/receipt/${row.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Download Receipt
-                </Dropdown.Item>
-              )}
+    const isDownloadAllowed = !["incomplete", "partially done", "payment due"].includes(status);
 
-              <Dropdown.Item
-                as={Link}
-                to={`/transfer-details/${row.transaction_id}`}
-              >
-                View Details
+    return (
+      <div className="send-again-btn">
+        <Dropdown>
+          <Dropdown.Toggle variant="success" id="dropdown-basic">
+            <BsThreeDots />
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu>
+            {isDownloadAllowed && (
+              <Dropdown.Item onClick={() => handleDownloadReceipt(row.id)}>
+                Download Receipt
               </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
-      ),
-      ignoreRowClick: true,
-      allowOverflow: true,
-      button: true,
-      center: true,
-      width: "120px",
-    }
+            )}
+            <Dropdown.Item as={Link} to={`/transfer-details/${row.transaction_id}`}>
+              View Details
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+      </div>
+    );
+  },
+  ignoreRowClick: true,
+  allowOverflow: true,
+  button: true,
+  center: true,
+  width: "120px",
+}
+
+
   ];
 
-
-
-  if (Loader) {
+  if (loading) {
     return (
       <div className="loader-wrapper">
         <img src={loaderlogo} alt="Logo" className="loader-logo" />
@@ -195,7 +240,6 @@ const TransfersList = () => {
       </div>
     );
   }
-
 
   return (
     <AnimatedPage>

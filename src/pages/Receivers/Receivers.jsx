@@ -4,12 +4,13 @@ import DataTable from "react-data-table-component";
 import { BsThreeDots } from "react-icons/bs";
 import Dropdown from "react-bootstrap/Dropdown";
 import RecentReceiver from "../../assets/images/icons1.png";
+import AddReceiver from "../../assets/images/add-receiver.png";
+import loaderlogo from "../../assets/images/logo.png";
+
 import { deleteRecipient, recipientList } from "../../services/Api";
 import { Button, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import AddReceiver from "../../assets/images/add-receiver.png";
 import { toast } from "react-toastify";
-import loaderlogo from "../../assets/images/logo.png"
 
 const customStyles = {
   headCells: {
@@ -40,8 +41,7 @@ const Receivers = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
-  const [Loader, setLoader] = useState(true);
-
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchList();
@@ -50,6 +50,7 @@ const Receivers = () => {
   }, []);
 
   const fetchList = async () => {
+    setLoading(true);
     try {
       const response = await recipientList();
       if (response.code === "200") {
@@ -57,6 +58,8 @@ const Receivers = () => {
       }
     } catch (err) {
       console.error("Error fetching list:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -135,7 +138,7 @@ const Receivers = () => {
     },
   ];
 
-  if (Loader) {
+  if (loading) {
     return (
       <div className="loader-wrapper">
         <img src={loaderlogo} alt="Logo" className="loader-logo" />

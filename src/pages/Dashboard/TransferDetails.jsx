@@ -9,6 +9,7 @@ import Col from "react-bootstrap/Col";
 import Table from "react-bootstrap/Table";
 import DownloadIcon from "../../assets/images/download.png";
 import Button from "react-bootstrap/Button";
+import loaderlogo from "../../assets/images/logo.png";
 import { paymentSummary } from "../../services/Api";
 
 const TransferDetails = () => {
@@ -37,7 +38,25 @@ const TransferDetails = () => {
     GetTransactionDetails();
   }, [id]);
 
-  if (loading) return <div className="text-center mt-5">Loading...</div>;
+  const handleDownloadReceipt = (id) => {
+    const url = `${import.meta.env.VITE_APP_API_URI}/payment/receipt/${id}`;
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `receipt-${id}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
+  if (loading) {
+    return (
+      <div className="loader-wrapper">
+        <img src={loaderlogo} alt="Logo" className="loader-logo" />
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+
   if (error) return <div className="text-center mt-5 text-danger">{error}</div>;
 
   return (
@@ -108,18 +127,34 @@ const TransferDetails = () => {
                             <h3>{transactionData?.transaction_id}</h3>
                           </Col>
                         </Row>
-                        {transactionData.payment_status !== "In progress" && transactionData.payment_status !== "Partially done" && transactionData.payment_status !== "incomplete" &&
-                          <Row>
-                            <Col>
-                              <Button
-                                variant="success"
-                                className="float-end download-button"
-                              >
-                                <img src={DownloadIcon} alt="Download Receipt" />{" "}
-                                Download Receipt
-                              </Button>
-                            </Col>
-                          </Row>}
+
+                        {/* ✅ Conditional Download Button */}
+                        {(() => {
+                          const blockedStatuses = [
+                            "incomplete",
+                            "partially done",
+                            "payment due",
+                          ];
+                          const status = transactionData?.payment_status?.toLowerCase();
+
+                          if (!blockedStatuses.includes(status)) {
+                            return (
+                              <Row>
+                                <Col>
+                                  <Button
+                                    variant="success"
+                                    className="float-end download-button"
+                                    onClick={() => handleDownloadReceipt(transactionData?.id)}
+                                  >
+                                    <img src={DownloadIcon} alt="Download Receipt" />{" "}
+                                    Download Receipt
+                                  </Button>
+                                </Col>
+                              </Row>
+                            );
+                          }
+                          return null;
+                        })()}
                       </Container>
                     </Card.Body>
                   </Card>
@@ -169,8 +204,7 @@ const TransferDetails = () => {
                         <tr>
                           <th>PayID</th>
                           <td>
-                            {transactionData?.send_method_details?.payid ||
-                              "N/A"}
+                            {transactionData?.send_method_details?.payid || "N/A"}
                           </td>
                         </tr>
                       </tbody>

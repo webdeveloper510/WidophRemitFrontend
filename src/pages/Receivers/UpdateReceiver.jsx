@@ -57,26 +57,37 @@ const UpdateReceiver = () => {
     },
     validationSchema: Yup.object({
       bank_name: Yup.string().required("Bank name is required"),
+
       account_number: Yup.string()
         .required("Account number is required")
         .min(8, "Minimum 8 digits")
         .matches(/^[0-9]+$/, "Only numbers allowed"),
+
       first_name: Yup.string()
         .required("First name is required")
         .matches(/^[A-Za-z\s]+$/, "Only letters allowed"),
+
       last_name: Yup.string()
         .required("Last name is required")
         .matches(/^[A-Za-z\s]+$/, "Only letters allowed"),
+
       email: Yup.string().email("Invalid email"),
-      mobile: Yup.string().required("Mobile number is required").matches(/^\d{1,10}$/, "Mobile number must be at most 10 digits",),
+
+      mobile: Yup.string()
+        .required("Mobile number is required")
+        .matches(/^\d{8,10}$/, "Mobile number must be between 8 and 10 digits"),
+
       country: Yup.string().required("Country is required"),
       state: Yup.string().required("State is required"),
       city: Yup.string().required("City is required"),
+
       post_code: Yup.string()
         .required("Postal code is required")
         .matches(/^[0-9]+$/, "Only numbers allowed"),
+
       address: Yup.string().required("Address is required"),
     }),
+
     onSubmit: async (values) => {
       setIsLoading(true);
       setApiError("");
@@ -104,7 +115,6 @@ const UpdateReceiver = () => {
           country_code: countryCode,
           address: values.address,
         };
-
 
         const response = await updateUserRecipient(id, payload);
 
@@ -150,8 +160,9 @@ const UpdateReceiver = () => {
             email: recipient.email || "",
             mobile:
               "+" +
-              recipient.mobile?.replace(/[^\d]/g, "").replace(/^(\d{10,15}).*/, "$1") ||
-              "",
+                recipient.mobile
+                  ?.replace(/[^\d]/g, "")
+                  .replace(/^(\d{10,15}).*/, "$1") || "",
             country: recipient.country || "",
             state: recipient.state || "",
             city: recipient.city || "",
@@ -164,7 +175,6 @@ const UpdateReceiver = () => {
           console.warn("Non-200 response code:", response.code);
           setApiError(response.message || "Failed to load recipient data.");
         }
-
       } catch (error) {
         console.error("Error fetching recipient:", error);
         setApiError("Failed to load recipient data.");

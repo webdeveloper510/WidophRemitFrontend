@@ -20,7 +20,7 @@ import TopNavbar from "../../components/Navbar";
 import { AnimatePresence } from "framer-motion";
 import Footer from "../../components/Footer";
 import { toast } from "react-toastify";
-import { accessProvider } from "../../utils/accessProvider"
+import { accessProvider } from "../../utils/accessProvider";
 
 const Dashboard = () => {
   const [receiversCount, setReceiversCount] = useState(0);
@@ -32,42 +32,38 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [profileCompleted, setprofileCompleted] = useState(false);
 
-
   useEffect(() => {
-    const fetchData = async () => {
-      const recipientsResponse = await recipientList();
-      if (recipientsResponse.code === "200") {
-        setReceiversCount(recipientsResponse.data.length);
-      }
-
-      const transactionsResponse = await transactionHistory();
-      if (transactionsResponse.code === "200") {
-        setTransactionsCount(transactionsResponse.data.data.length);
-      }
-    };
-
-    fetchData();
-
-    const timer = setTimeout(() => setLoading(false), 500);
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    const fetchAndVerifyUser = async () => {
+    const fetchAllData = async () => {
       try {
-        const res = await userProfile();
+        const [recipientsResponse, transactionsResponse, userResponse] = await Promise.all([
+          recipientList(),
+          transactionHistory(),
+          userProfile(),
+        ]);
 
-        if (res?.code === "200") {
-          setFirstName(res.data.First_name || "User");
+        // Recipients Count
+        if (recipientsResponse.code === "200") {
+          setReceiversCount(recipientsResponse.data.length);
+        }
 
-          const { is_digital_Id_verified, veriff_status, profile_completed } = res.data;
+        // Transactions Count
+        if (transactionsResponse.code === "200") {
+          setTransactionsCount(transactionsResponse.data.data.length);
+        }
+
+        // User Profile Data
+        if (userResponse?.code === "200") {
+          setFirstName(userResponse.data.First_name || "User");
+
+          const {
+            is_digital_Id_verified,
+            veriff_status,
+            profile_completed,
+          } = userResponse.data;
 
           setprofileCompleted(profile_completed);
 
-          const kycStatus = accessProvider(
-            is_digital_Id_verified
-            , veriff_status
-          );
+          const kycStatus = accessProvider(is_digital_Id_verified, veriff_status);
 
           if (kycStatus === "pending") {
             setMessage("Please complete your KYC before proceeding ahead");
@@ -78,20 +74,21 @@ const Dashboard = () => {
           } else if (kycStatus === "suspended") {
             setMessage("Your KYC has been suspended. Contact support.");
           }
-
         } else {
           sessionStorage.clear();
           navigate("/login");
         }
+
       } catch (error) {
-        toast.error("Something is up with the server. Please try again later.");
+        toast.error("Something went wrong. Please try again later.");
         navigate("/login");
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchAndVerifyUser();
+    fetchAllData();
   }, []);
-
 
   if (loading) {
     return (
@@ -116,6 +113,7 @@ const Dashboard = () => {
                   <div className="page-title">
                     <h1>Welcome, {firstName}</h1>
                   </div>
+
                   {Message && (
                     <div className="alert alert-warning mt-3" role="alert">
                       {Message} <Link to={"/kyc"} className="alert-link">Complete Now</Link>

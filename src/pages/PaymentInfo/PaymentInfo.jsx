@@ -4,9 +4,10 @@ import Card from "react-bootstrap/Card";
 import AnimatedPage from "../../components/AnimatedPage";
 import PayID from "../../assets/images/payid.png";
 import PayTo from "../../assets/images/payto.png";
+import loaderlogo from "../../assets/images/logo.png";
 import { useState, useEffect } from "react";
 import { getAgreementList, getPayID } from "../../services/Api";
-import loaderlogo from "../../assets/images/logo.png"
+
 
 
 const PaymentInfo = () => {
@@ -44,6 +45,24 @@ const PaymentInfo = () => {
       const timer = setTimeout(() => setLoader(false), 500);
     return () => clearTimeout(timer);
   }, []);
+
+  if (loading) {
+    return (
+      <div className="loader-wrapper">
+        <img src={loaderlogo} alt="Logo" className="loader-logo" />
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="loader-wrapper">
+        <img src={loaderlogo} alt="Logo" className="loader-logo" />
+        <div className="spinner"></div>
+      </div>
+    );
+  }
 
 
   if (Loader) {
@@ -128,8 +147,8 @@ const PaymentInfo = () => {
           </div>
         )}
 
-        {/* No Data Card */}
-        {!payIdDetail && !payToDetail && !loading && (
+        {/* No Data */}
+        {!payIdDetail && !payToDetail && (
           <div className="row">
             <div className="col-md-12">
               <Card className="receiver-card mt-4 bg-white p-2 payment-types">

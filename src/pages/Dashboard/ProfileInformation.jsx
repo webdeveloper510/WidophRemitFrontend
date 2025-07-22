@@ -18,7 +18,6 @@ import Sidebar from "../../components/Sidebar";
 import TopNavbar from "../../components/Navbar";
 import { AnimatePresence } from "framer-motion";
 
-
 const ProfileInformation = () => {
   const [modalShow, setModalShow] = useState(false);
   const [modalShowVerify, setModalShowVerify] = useState(false);
@@ -67,13 +66,12 @@ const ProfileInformation = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-
   useEffect(() => {
     const fetchAndVerifyUser = async () => {
       try {
         const res = await userProfile();
 
-        if (res?.code === '200') {
+        if (res?.code === "200") {
           const userData = res.data;
           setFormData((prev) => ({
             ...prev,
@@ -100,12 +98,12 @@ const ProfileInformation = () => {
             setRawMobile(phoneNumber);
           }
         } else {
-          navigate('/login');
+          navigate("/login");
           sessionStorage.clear();
         }
       } catch (error) {
         console.error("Profile fetch error:", error);
-        setRedirectTo('/login');
+        setRedirectTo("/login");
         sessionStorage.clear();
       }
     };
@@ -147,7 +145,6 @@ const ProfileInformation = () => {
   //     }
   //   }
   // }, []);
-
 
   // const handlePasswordUpdate = async () => {
   //   const { currentPassword, newPassword, confirmPassword } = formData;
@@ -245,8 +242,6 @@ const ProfileInformation = () => {
   const getInvalid = (field) => submitted && !formData[field];
 
   return (
-
-
     <>
       <div className="p-3 d-flex flex-row customdashboardheight">
         <div className="d-flex w-100">
@@ -276,7 +271,8 @@ const ProfileInformation = () => {
                               as={Col}
                               label={
                                 <span>
-                                  First Name <span style={{ color: "red" }}>*</span>
+                                  First Name{" "}
+                                  <span style={{ color: "red" }}>*</span>
                                 </span>
                               }
                               className="mb-3"
@@ -292,7 +288,11 @@ const ProfileInformation = () => {
                                 First Name is required
                               </Form.Control.Feedback>
                             </FloatingLabel>
-                            <FloatingLabel as={Col} label="Middle Name" className="mb-3">
+                            <FloatingLabel
+                              as={Col}
+                              label="Middle Name"
+                              className="mb-3"
+                            >
                               <Form.Control
                                 name="middleName"
                                 value={formData.middleName}
@@ -303,7 +303,8 @@ const ProfileInformation = () => {
                               as={Col}
                               label={
                                 <span>
-                                  Last Name <span style={{ color: "red" }}>*</span>
+                                  Last Name{" "}
+                                  <span style={{ color: "red" }}>*</span>
                                 </span>
                               }
                               className="mb-3"
@@ -325,7 +326,8 @@ const ProfileInformation = () => {
                               as={Col}
                               label={
                                 <span>
-                                  Customer ID <span style={{ color: "red" }}>*</span>
+                                  Customer ID{" "}
+                                  <span style={{ color: "red" }}>*</span>
                                 </span>
                               }
                               className="mb-3"
@@ -361,7 +363,8 @@ const ProfileInformation = () => {
                               <FloatingLabel
                                 label={
                                   <span>
-                                    Mobile Number <span style={{ color: "red" }}>*</span>
+                                    Mobile Number{" "}
+                                    <span style={{ color: "red" }}>*</span>
                                   </span>
                                 }
                                 className="mb-3"
@@ -375,6 +378,9 @@ const ProfileInformation = () => {
                                       maxWidth: "110px",
                                       borderTopRightRadius: 0,
                                       borderBottomRightRadius: 0,
+                                      backgroundColor: "#fff",
+                                      color: "#000",
+                                      opacity: 1,
                                     }}
                                   >
                                     <option value="61">+61 (AU)</option>
@@ -389,6 +395,9 @@ const ProfileInformation = () => {
                                     style={{
                                       borderTopLeftRadius: 0,
                                       borderBottomLeftRadius: 0,
+                                      backgroundColor: "#fff",
+                                      color: "#000",
+                                      opacity: 1,
                                     }}
                                   />
                                 </div>
@@ -400,7 +409,8 @@ const ProfileInformation = () => {
                               as={Col}
                               label={
                                 <span>
-                                  Date of Birth<span style={{ color: "red" }}>*</span>
+                                  Date of Birth
+                                  <span style={{ color: "red" }}>*</span>
                                 </span>
                               }
                               className="mb-3"
@@ -422,7 +432,8 @@ const ProfileInformation = () => {
                               as={Col}
                               label={
                                 <span>
-                                  Country of Birth<span style={{ color: "red" }}>*</span>
+                                  Country of Birth
+                                  <span style={{ color: "red" }}>*</span>
                                 </span>
                               }
                             >
@@ -441,7 +452,8 @@ const ProfileInformation = () => {
                               as={Col}
                               label={
                                 <span>
-                                  Occupation<span style={{ color: "red" }}>*</span>
+                                  Occupation
+                                  <span style={{ color: "red" }}>*</span>
                                 </span>
                               }
                             >
@@ -462,18 +474,24 @@ const ProfileInformation = () => {
                             <Col>
                               <div className="floating-label-wrapper kyc-country">
                                 <label>
-                                  Country <span style={{ color: "red" }}>*</span>
+                                  Country{" "}
+                                  <span style={{ color: "red" }}>*</span>
                                 </label>
 
                                 <Select
                                   options={countryOptions}
                                   name="country"
-                                  value={countryOptions.find((option) => option.value === formData.country)}
+                                  value={countryOptions.find(
+                                    (option) =>
+                                      option.value === formData.country
+                                  )}
                                   onChange={(selectedOption) =>
-                                    setFormData((prev) => ({ ...prev, country: selectedOption.value }))
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      country: selectedOption.value,
+                                    }))
                                   }
                                 />
-
 
                                 {/* <Form.Control
                     name="country"
@@ -493,7 +511,8 @@ const ProfileInformation = () => {
                                 as={Col}
                                 label={
                                   <span>
-                                    Address<span style={{ color: "red" }}>*</span>
+                                    Address
+                                    <span style={{ color: "red" }}>*</span>
                                   </span>
                                 }
                                 className="mb-3"
@@ -538,7 +557,8 @@ const ProfileInformation = () => {
                               as={Col}
                               label={
                                 <span>
-                                  Zip/Postal Code<span style={{ color: "red" }}>*</span>
+                                  Zip/Postal Code
+                                  <span style={{ color: "red" }}>*</span>
                                 </span>
                               }
                             >
@@ -547,7 +567,7 @@ const ProfileInformation = () => {
                                 type="number"
                                 value={formData.zip}
                                 onChange={handleChange}
-                                required
+                                requiredvalue={rawMobile}
                                 isInvalid={getInvalid("zip")}
                               />
                               <Form.Control.Feedback type="invalid">
@@ -604,7 +624,11 @@ const ProfileInformation = () => {
                     <Modal.Body>
                       <h4>Profile Information Updated Successfully</h4>
                       <p className="m-4 text-center">
-                        <img src={UpdatePopup} alt="Profile Update Success" width="250px" />
+                        <img
+                          src={UpdatePopup}
+                          alt="Profile Update Success"
+                          width="250px"
+                        />
                       </p>
                     </Modal.Body>
                     <Modal.Footer className="PopupButton">
@@ -619,7 +643,6 @@ const ProfileInformation = () => {
                       </Button>
                     </Modal.Footer>
                   </Modal>
-
                 </AnimatedPage>
               </AnimatePresence>
             </main>
@@ -627,7 +650,6 @@ const ProfileInformation = () => {
         </div>
       </div>
       <Footer />
-
     </>
   );
 };

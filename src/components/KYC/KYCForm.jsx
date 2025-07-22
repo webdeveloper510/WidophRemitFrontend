@@ -267,11 +267,12 @@ const KYCForm = () => {
     else if (!/\S+@\S+\.\S+/.test(formData.email))
       newErrors.email = "Email format is invalid";
 
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Mobile number is required";
-    } else if (!/^\d{1,10}$/.test(formData.phone)) {
-      newErrors.phone = "Mobile number must be at most 10 digits";
-    }
+ if (!formData.phone.trim()) {
+  newErrors.phone = "Mobile number is required";
+} else if (!/^\d{8,10}$/.test(formData.phone)) {
+  newErrors.phone = "Mobile number must be between 8 and 10 digits";
+}
+
 
     if (!formData.dob) {
       newErrors.dob = "Date of birth is required";
