@@ -5,15 +5,13 @@ import Back from "../../assets/images/back.png";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import { Form, FloatingLabel, Col, Row, Alert } from "react-bootstrap";
-import "react-phone-number-input/style.css";
-import PhoneInput from "react-phone-number-input";
 import Select from "react-select";
 import { getNames } from "country-list";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Bank_list from "../../utils/Bank_list";
 import { createRecipient } from "../../services/Api";
-import CountrySelect from "react-bootstrap-country-select";
+import { parsePhoneNumber } from "libphonenumber-js";
 
 const AddReceiver = () => {
   const navigate = useNavigate();
@@ -37,8 +35,6 @@ const AddReceiver = () => {
     value: country,
     label: country,
   }));
-  console.log(getNames());
-  
 
   const initialValues = {
     bank_name: "",
@@ -47,7 +43,8 @@ const AddReceiver = () => {
     middle_name: "",
     last_name: "",
     email: "",
-    mobile: "",
+    phone: "",
+    countryCode: "61", // default for Australia
     country: "",
     building_no: "",
     street_name: "",
@@ -75,7 +72,7 @@ const validationSchema = Yup.object({
 
   email: Yup.string().email("Invalid email"),
 
-  mobile: Yup.string()
+  phone: Yup.string()
     .required("Mobile number is required")
     .matches(/^\d{8,10}$/, "Mobile number must be between 8 and 10 digits"),
 
@@ -89,7 +86,6 @@ const validationSchema = Yup.object({
 
   address: Yup.string().required("Address is required"),
 });
-
 
   const {
     values,
@@ -112,6 +108,19 @@ const validationSchema = Yup.object({
         );
         const countryCode = selectedCountry ? selectedCountry.code : "";
 
+        // Format phone number similar to signup
+        const fullPhone = `+${values.countryCode}${values.phone}`;
+        let parsedMobile = fullPhone;
+
+        try {
+          const parsed = parsePhoneNumber(fullPhone);
+          parsedMobile = parsed.number;
+        } catch (error) {
+          setApiError("Invalid phone number format");
+          setIsLoading(false);
+          return;
+        }
+
         const payload = {
           account_type: "individual",
           bank_name: values.bank_name,
@@ -120,7 +129,7 @@ const validationSchema = Yup.object({
           first_name: values.first_name,
           last_name: values.last_name,
           email: values.email,
-          mobile: values.mobile,
+          mobile: parsedMobile,
           building: values.building_no,
           street: values.street_name,
           city: values.city,
@@ -299,46 +308,47 @@ const validationSchema = Yup.object({
                 </FloatingLabel>
               </Row>
 
-              <Row className="mb-3">
-                {/* <FloatingLabel as={Col} controlId="email" label="Email">
-                  <Form.Control
-                    type="email"
-                    name="email"
-                    value={values.email}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    isInvalid={touched.email && errors.email}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.email}
-                  </Form.Control.Feedback>
-                </FloatingLabel> */}
-
-                <Col className="col-4">
-                  <FloatingLabel
-                    as={Col}
-                    controlId="floatingMobile"
-                    label={
-                      <span>
-                        Mobile
-                        <span style={{ color: "red" }}> *</span>
-                      </span>
-                    }
-                    className="mobileinput mb-3"
-                  >
-                    <PhoneInput
-                      international
-                      defaultCountry="AU"
-                      countryCallingCodeEditable={false}
-                      value={values.mobile}
-                      onChange={(val) => setFieldValue("mobile", val)}
-                    />
-                    {touched.mobile && errors.mobile && (
-                      <div className="text-danger small mt-1">
-                        {errors.mobile}
-                      </div>
-                    )}
+              {/* Phone Number - Updated to match Signup style */}
+              <Row className="mb-3 mobile_numbero">
+                <Col>
+                  <FloatingLabel className="form-label">
+                    Mobile Number<span style={{ color: "red" }}> *</span>
                   </FloatingLabel>
+                  <div className="d-flex align-items-stretch p-0">
+                    <Form.Select
+                      name="countryCode"
+                      value={values.countryCode}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      style={{
+                        maxWidth: "110px",
+                        borderTopRightRadius: 0,
+                        borderBottomRightRadius: 0,
+                      }}
+                    >
+                      <option value="61">+61 (AU)</option>
+                      <option value="64">+64 (NZ)</option>
+                    </Form.Select>
+
+                    <Form.Control
+                      type="text"
+                      name="phone"
+                      placeholder="Enter mobile number"
+                      value={values.phone}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      isInvalid={touched.phone && errors.phone}
+                      style={{
+                        borderTopLeftRadius: 0,
+                        borderBottomLeftRadius: 0,
+                      }}
+                    />
+                  </div>
+                  {touched.phone && errors.phone && (
+                    <div className="invalid-feedback d-block">
+                      {errors.phone}
+                    </div>
+                  )}
                 </Col>
               </Row>
             </Card.Body>
@@ -363,17 +373,6 @@ const validationSchema = Yup.object({
                       onBlur={() => setFieldValue("country", values.country)}
                     />
 
-
-                    {/* <CountrySelect
-                        name="country"
-                        value={countryList.find(
-                          (c) => c.name === values.country
-                        )}
-                        onChange={(val) =>
-                          setFieldValue("country", val?.name || "")
-                        }
-                        flags
-                      /> */}
                     {touched.country && errors.country && (
                       <div className="text-danger small mt-1">
                         {errors.country}
@@ -409,44 +408,6 @@ const validationSchema = Yup.object({
                   </FloatingLabel>
                 </Col>
               </Row>
-
-              {/* <Row className="mb-3">
-                <FloatingLabel
-                  as={Col}
-                  controlId="building_no"
-                  label="Building Number *"
-                >
-                  <Form.Control
-                    type="text"
-                    name="building_no"
-                    value={values.building_no}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    isInvalid={touched.building_no && errors.building_no}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.building_no}
-                  </Form.Control.Feedback>
-                </FloatingLabel>
-
-                <FloatingLabel
-                  as={Col}
-                  controlId="street_name"
-                  label="Street Name *"
-                >
-                  <Form.Control
-                    type="text"
-                    name="street_name"
-                    value={values.street_name}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    isInvalid={touched.street_name && errors.street_name}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.street_name}
-                  </Form.Control.Feedback>
-                </FloatingLabel>
-              </Row> */}
 
               <Row className="mb-3">
                 <FloatingLabel
@@ -547,7 +508,6 @@ const validationSchema = Yup.object({
             </Card.Body>
           </Card>
         </Form>
-
       </div>
     </AnimatedPage>
   );
