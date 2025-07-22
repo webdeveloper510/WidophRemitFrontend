@@ -31,6 +31,7 @@ const Dashboard = () => {
   const [Message, setMessage] = useState("");
   const navigate = useNavigate();
   const [profileCompleted, setprofileCompleted] = useState(false);
+  const [kycStatus, setkycStatus] = useState("pending");
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -58,26 +59,25 @@ const Dashboard = () => {
           const {
             is_digital_Id_verified,
             veriff_status,
-            profile_completed,
           } = userResponse.data;
 
-          setprofileCompleted(profile_completed);
+          const currentKycStatus = accessProvider(is_digital_Id_verified, veriff_status);
+          setkycStatus(currentKycStatus);
 
-          const kycStatus = accessProvider(is_digital_Id_verified, veriff_status);
-
-          if (kycStatus === "pending") {
+          if (currentKycStatus === "pending") {
             setMessage("Please complete your KYC before proceeding ahead");
-          } else if (kycStatus === "submitted") {
-            setMessage("Your KYC is submitted. Please wait for approval.");
-          } else if (kycStatus === "declined") {
+          } else if (currentKycStatus === "submitted") {
+            setMessage("Your KYC has been submitted, please wait for approval .");
+          } else if (currentKycStatus === "declined") {
             setMessage("Your KYC was declined. Please resubmit.");
-          } else if (kycStatus === "suspended") {
-            setMessage("Your KYC has been suspended. Contact support.");
+          } else if (currentKycStatus === "suspended") {
+            setMessage(`Your KYC has been ${currentKycStatus}, please contact admin for information.`);
           }
         } else {
           sessionStorage.clear();
           navigate("/login");
         }
+
 
       } catch (error) {
         toast.error("Something went wrong. Please try again later.");
@@ -116,7 +116,12 @@ const Dashboard = () => {
 
                   {Message && (
                     <div className="alert alert-warning mt-3" role="alert">
-                      {Message} <Link to={"/kyc"} className="alert-link">Complete Now</Link>
+                      {Message}{" "}
+                      {kycStatus !== "submitted" && kycStatus !== "suspended" && (
+                        <Link to="/kyc" className="alert-link">
+                          Complete Now
+                        </Link>
+                      )}
                     </div>
                   )}
 
@@ -193,7 +198,7 @@ const Dashboard = () => {
             </main>
           </div>
         </div>
-      </div>
+      </div >
       <Footer />
     </>
   );

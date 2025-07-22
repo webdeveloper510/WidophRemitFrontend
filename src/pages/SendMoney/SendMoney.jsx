@@ -289,6 +289,9 @@ const SendMoney = () => {
     );
   }
 
+  console.log(values);
+
+
   return (
     <AnimatedPage>
       <div className="page-title">
@@ -393,8 +396,8 @@ const SendMoney = () => {
                         name="exchange_amt"
                         value={values.exchange_amt}
                         readOnly
-                        onChange={handleChange}
-                        onBlur={handleAmountBlur}
+                        // onChange={handleChange}
+                        // onBlur={handleAmountBlur}
                         //disabled={isConverting}
                         isInvalid={
                           touched.exchange_amt && !!errors.exchange_amt

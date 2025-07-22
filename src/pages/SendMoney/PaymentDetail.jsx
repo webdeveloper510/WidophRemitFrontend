@@ -519,7 +519,7 @@ const PaymentDetail = () => {
                       )}
                     </div>
                   </Row>
-
+                  
                   <Row className="mt-5">
                     <FloatingLabel
                       controlId="floatingSelect"

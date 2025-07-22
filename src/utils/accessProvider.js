@@ -1,7 +1,7 @@
 export const accessProvider = (onboard = "pending", veriff = "not started") => {
   if (onboard === "pending") {
     if (
-      veriff === "not started" ||
+      veriff === "Not Started" ||
       veriff === "started" ||
       veriff === "abandoned" ||
       veriff === "resubmission_requested" ||

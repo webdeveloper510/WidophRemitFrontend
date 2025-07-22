@@ -37,7 +37,7 @@ const TransactionSuccess = () => {
       try {
         const result = await paymentSummary(transaction_id);
         if (result?.code === "200") {
-        setStatus(result.data.payment_status)
+          setStatus(result.data.payment_status)
         } else {
           setError("Transaction not found.");
         }
@@ -49,7 +49,7 @@ const TransactionSuccess = () => {
     }
     GetTransactionDetails();
 
-    
+
     setLoading(false);
   }, []);
 
@@ -72,9 +72,9 @@ const TransactionSuccess = () => {
     <AnimatedPage>
       <div className="page-title">
         <div className="d-flex align-items-center">
-          <button className="btn btn-link p-0 me-2" onClick={() => navigate(-1)}>
+          {/* <button className="btn btn-link p-0 me-2" onClick={handleBackToDashboard}>
             <img src={Back} alt="Back" />
-          </button>
+          </button> */}
           <h1>Your transfer is being processed</h1>
         </div>
       </div>

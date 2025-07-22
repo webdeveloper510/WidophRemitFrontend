@@ -13,6 +13,8 @@ import * as Yup from "yup";
 import Bank_list from "../../utils/Bank_list";
 import { createRecipient } from "../../services/Api";
 import { useNavigate } from "react-router-dom";
+import { isValidPhoneNumber } from "react-phone-number-input";
+
 //import CountrySelect from "react-bootstrap-country-select";
 
 const ReceiverDetail = () => {
@@ -54,48 +56,51 @@ const ReceiverDetail = () => {
     address: "",
   };
 
-const validationSchema = Yup.object({
-  bank_name: Yup.string()
-    .required("Bank name is required"),
+  const validationSchema = Yup.object({
+    bank_name: Yup.string()
+      .required("Bank name is required"),
 
-  account_number: Yup.string()
-    .required("Account number is required")
-    .min(8, "Account number must be at least 8 characters")
-    .matches(/^[0-9]+$/, "Account number must contain only numbers"),
+    account_number: Yup.string()
+      .required("Account number is required")
+      .min(8, "Account number must be at least 8 characters")
+      .matches(/^[0-9]+$/, "Account number must contain only numbers"),
 
-  first_name: Yup.string()
-    .required("First name is required")
-    .min(2, "First name must be at least 2 characters")
-    .matches(/^[A-Za-z\s]+$/, "First name must contain only letters"),
+    first_name: Yup.string()
+      .required("First name is required")
+      .min(2, "First name must be at least 2 characters")
+      .matches(/^[A-Za-z\s]+$/, "First name must contain only letters"),
 
-  last_name: Yup.string()
-    .required("Last name is required")
-    .min(2, "Last name must be at least 2 characters")
-    .matches(/^[A-Za-z\s]+$/, "Last name must contain only letters"),
+    last_name: Yup.string()
+      .required("Last name is required")
+      .min(2, "Last name must be at least 2 characters")
+      .matches(/^[A-Za-z\s]+$/, "Last name must contain only letters"),
 
-  email: Yup.string()
-    .email("Please enter a valid email address"),
+    email: Yup.string()
+      .email("Please enter a valid email address"),
 
-  mobile: Yup.string()
-    .required("Mobile number is required")
-    .matches(/^\d{8,10}$/, "Mobile number must be between 8 and 10 digits"),
+    mobile: Yup.string()
+      .required("Mobile number is required")
+      .test("is-valid-phone", "Invalid mobile number", (value) =>
+        isValidPhoneNumber(value || "")
+      ),
 
-  country: Yup.string()
-    .required("Country is required"),
 
-  state: Yup.string()
-    .required("State is required"),
+    country: Yup.string()
+      .required("Country is required"),
 
-  city: Yup.string()
-    .required("City is required"),
+    state: Yup.string()
+      .required("State is required"),
 
-  post_code: Yup.string()
-    .required("Postal code is required")
-    .matches(/^[0-9]+$/, "Postal code must contain only numbers"),
+    city: Yup.string()
+      .required("City is required"),
 
-  address: Yup.string()
-    .required("Address is required"),
-});
+    post_code: Yup.string()
+      .required("Postal code is required")
+      .matches(/^[0-9]+$/, "Postal code must contain only numbers"),
+
+    address: Yup.string()
+      .required("Address is required"),
+  });
 
 
   const {

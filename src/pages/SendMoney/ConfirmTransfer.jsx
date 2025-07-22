@@ -412,7 +412,7 @@ const ConfirmTransfer = () => {
         }}
         className="profileupdate"
       >
-        <Modal.Header closeButton></Modal.Header>
+        <Modal.Header closeButton={!isProcessingPayment}></Modal.Header>
         <Modal.Body>
           {isProcessingPayment ? (
             <div className="text-center">
@@ -441,30 +441,31 @@ const ConfirmTransfer = () => {
           )}
         </Modal.Body>
 
-        <Modal.Footer className="d-flex justify-content-center align-items-center">
-          <Row className="mb-3">
-            <Col>
-              <Button
-                variant="light"
-                className="cancel-btn float-start"
-                onClick={() => setModalShow(false)}
-                disabled={isProcessingPayment}
-              >
-                Cancel
-              </Button>
-            </Col>
-            <Col>
-              <Button
-                onClick={verifyOtpHandler}
-                variant="primary"
-                className="submit-btn float-end"
-                disabled={isProcessingPayment}
-              >
-                Continue
-              </Button>
-            </Col>
-          </Row>
-        </Modal.Footer>
+        {!isProcessingPayment && (
+          <Modal.Footer className="d-flex justify-content-center align-items-center">
+            <Row className="mb-3">
+              <Col>
+                <Button
+                  variant="light"
+                  className="cancel-btn float-start"
+                  onClick={() => setModalShow(false)}
+                >
+                  Cancel
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  onClick={verifyOtpHandler}
+                  variant="primary"
+                  className="submit-btn float-end"
+                >
+                  Continue
+                </Button>
+              </Col>
+            </Row>
+          </Modal.Footer>
+        )}
+
 
       </Modal>
     </AnimatedPage>
