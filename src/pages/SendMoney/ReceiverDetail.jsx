@@ -4,8 +4,6 @@ import Back from "../../assets/images/back.png";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import { Form, FloatingLabel, Col, Alert, Row } from "react-bootstrap";
-import "react-phone-number-input/style.css";
-import PhoneInput from "react-phone-number-input";
 import Select from "react-select";
 import { getNames } from "country-list";
 import { useFormik } from "formik";
@@ -13,9 +11,7 @@ import * as Yup from "yup";
 import Bank_list from "../../utils/Bank_list";
 import { createRecipient } from "../../services/Api";
 import { useNavigate } from "react-router-dom";
-import { isValidPhoneNumber } from "react-phone-number-input";
-
-//import CountrySelect from "react-bootstrap-country-select";
+import { parsePhoneNumber } from "libphonenumber-js";
 
 const ReceiverDetail = () => {
   const navigate = useNavigate();
@@ -47,6 +43,7 @@ const ReceiverDetail = () => {
     last_name: "",
     email: "",
     mobile: "",
+    countryCode: "61", // default for Australia
     country: "",
     building_no: "",
     street_name: "",
@@ -80,10 +77,7 @@ const ReceiverDetail = () => {
 
     mobile: Yup.string()
       .required("Mobile number is required")
-      .test("is-valid-phone", "Invalid mobile number", (value) =>
-        isValidPhoneNumber(value || "")
-      ),
-
+      .matches(/^\d{8,10}$/, "Mobile number must be between 8 and 10 digits"),
 
     country: Yup.string()
       .required("Country is required"),
@@ -101,7 +95,6 @@ const ReceiverDetail = () => {
     address: Yup.string()
       .required("Address is required"),
   });
-
 
   const {
     values,
@@ -124,6 +117,19 @@ const ReceiverDetail = () => {
         );
         const countryCode = selectedCountry ? selectedCountry.code : "";
 
+        // Format mobile number with country code
+        const fullPhone = `+${values.countryCode}${values.mobile}`;
+        let parsedMobile = fullPhone;
+
+        try {
+          const parsed = parsePhoneNumber(fullPhone);
+          parsedMobile = parsed.number;
+        } catch (error) {
+          setApiError("Invalid phone number format");
+          setIsLoading(false);
+          return;
+        }
+
         const payload = {
           account_type: "individual",
           bank_name: values.bank_name,
@@ -132,7 +138,7 @@ const ReceiverDetail = () => {
           first_name: values.first_name,
           last_name: values.last_name,
           email: values.email,
-          mobile: values.mobile,
+          mobile: parsedMobile,
           building: values.building_no,
           street: values.street_name,
           city: values.city,
@@ -152,7 +158,7 @@ const ReceiverDetail = () => {
             bank_name: values.bank_name,
             account_number: values.account_number,
             email: values.email,
-            mobile: values.mobile,
+            mobile: parsedMobile,
             country: values.country,
             country_code: countryCode,
             first_name: values.first_name,
@@ -182,6 +188,16 @@ const ReceiverDetail = () => {
       }
     },
   });
+
+  const handleCustomChange = (e) => {
+    const { name, value } = e.target;
+    handleChange(e);
+
+    if (name === "countryCode") {
+      // Update country based on country code selection if needed
+      // This logic can be expanded based on your requirements
+    }
+  };
 
   return (
     <AnimatedPage>
@@ -329,54 +345,45 @@ const ReceiverDetail = () => {
                   </Row>
 
                   <Row className="mb-3">
-                    {/* <FloatingLabel
-                      as={Col}
-                      controlId="floatingEmail"
-                      label={
-                        <span>
-                          Email
-                          <span style={{ color: "red" }}> *</span>
-                        </span>
-                      }
-                      className="mb-3"
-                    >
-                      <Form.Control
-                        type="email"
-                        name="email"
-                        value={values.email}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        isInvalid={touched.email && errors.email}
-                      />
-                      <Form.Control.Feedback type="invalid">
-                        {errors.email}
-                      </Form.Control.Feedback>
-                    </FloatingLabel> */}
-                    <Col className="col-4">
-                      <FloatingLabel
-                        as={Col}
-                        controlId="floatingMobile"
-                        label={
-                          <span>
-                            Mobile
-                            <span style={{ color: "red" }}> *</span>
-                          </span>
-                        }
-                        className="mobileinput mb-3"
-                      >
-                        <PhoneInput
-                          international
-                          defaultCountry="AU"
-                          countryCallingCodeEditable={false}
+                    <Col className="mobile_numbero">
+                      <label className="form-label">
+                        Mobile Number<span style={{ color: "red" }}> *</span>
+                      </label>
+                      <div className="d-flex align-items-stretch p-0">
+                        <Form.Select
+                          name="countryCode"
+                          value={values.countryCode}
+                          onChange={handleCustomChange}
+                          onBlur={handleBlur}
+                          style={{
+                            maxWidth: "110px",
+                            borderTopRightRadius: 0,
+                            borderBottomRightRadius: 0,
+                          }}
+                        >
+                          <option value="61">+61 (AU)</option>
+                          <option value="64">+64 (NZ)</option>
+                        </Form.Select>
+
+                        <Form.Control
+                          type="text"
+                          name="mobile"
+                          placeholder="Enter mobile number"
                           value={values.mobile}
-                          onChange={(val) => setFieldValue("mobile", val)}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          isInvalid={touched.mobile && errors.mobile}
+                          style={{
+                            borderTopLeftRadius: 0,
+                            borderBottomLeftRadius: 0,
+                          }}
                         />
-                        {touched.mobile && errors.mobile && (
-                          <div className="text-danger small mt-1">
-                            {errors.mobile}
-                          </div>
-                        )}
-                      </FloatingLabel>
+                      </div>
+                      {touched.mobile && errors.mobile && (
+                        <div className="invalid-feedback d-block">
+                          {errors.mobile}
+                        </div>
+                      )}
                     </Col>
                   </Row>
                 </Card.Body>
@@ -402,17 +409,6 @@ const ReceiverDetail = () => {
                           onBlur={() => setFieldValue("country", values.country)}
                         />
 
-
-                        {/* <CountrySelect
-                        name="country"
-                        value={countryList.find(
-                          (c) => c.name === values.country
-                        )}
-                        onChange={(val) =>
-                          setFieldValue("country", val?.name || "")
-                        }
-                        flags
-                      /> */}
                         {touched.country && errors.country && (
                           <div className="text-danger small mt-1">
                             {errors.country}
@@ -447,44 +443,6 @@ const ReceiverDetail = () => {
                       </FloatingLabel>
                     </Col>
                   </Row>
-
-                  {/* <Row className="mb-3">
-                    <FloatingLabel
-                      as={Col}
-                      controlId="floatingBuilding"
-                      label="Building Number *"
-                    >
-                      <Form.Control
-                        type="text"
-                        name="building_no"
-                        value={values.building_no}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        isInvalid={touched.building_no && errors.building_no}
-                      />
-                      <Form.Control.Feedback type="invalid">
-                        {errors.building_no}
-                      </Form.Control.Feedback>
-                    </FloatingLabel>
-
-                    <FloatingLabel
-                      as={Col}
-                      controlId="floatingStreet"
-                      label="Street Name *"
-                    >
-                      <Form.Control
-                        type="text"
-                        name="street_name"
-                        value={values.street_name}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        isInvalid={touched.street_name && errors.street_name}
-                      />
-                      <Form.Control.Feedback type="invalid">
-                        {errors.street_name}
-                      </Form.Control.Feedback>
-                    </FloatingLabel>
-                  </Row> */}
 
                   <Row className="mb-3">
                     <FloatingLabel
