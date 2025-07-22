@@ -44,12 +44,12 @@ const Dashboard = () => {
 
         // Recipients Count
         if (recipientsResponse.code === "200") {
-          setReceiversCount(recipientsResponse.data.length);
+          setReceiversCount(recipientsResponse?.data?.length || 0);
         }
 
         // Transactions Count
         if (transactionsResponse.code === "200") {
-          setTransactionsCount(transactionsResponse.data.data.length);
+          setTransactionsCount(transactionsResponse?.data?.data?.length || 0);
         }
 
         // User Profile Data

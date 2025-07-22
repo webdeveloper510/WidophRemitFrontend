@@ -191,7 +191,7 @@ const TransferDetails = () => {
                       <tbody>
                         <tr>
                           <th>Payment Mode</th>
-                          <td>{transactionData?.send_method}</td>
+                          <td>{transactionData?.send_method === "zai_payid_per_user" ? "PayID" : "Bank Transfer"}</td>
                         </tr>
                         <tr>
                           <th>Customer ID</th>

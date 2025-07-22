@@ -37,6 +37,8 @@ const AddReceiver = () => {
     value: country,
     label: country,
   }));
+  console.log(getNames());
+  
 
   const initialValues = {
     bank_name: "",
@@ -525,7 +527,7 @@ const validationSchema = Yup.object({
                   <Button
                     variant="light"
                     className="cancel-btn float-start"
-                    onClick={() => navigate("/review-transfer")}
+                    onClick={() => navigate("/receivers")}
                     disabled={isLoading}
                   >
                     Back
