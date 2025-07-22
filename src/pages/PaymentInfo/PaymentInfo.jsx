@@ -6,11 +6,16 @@ import PayID from "../../assets/images/payid.png";
 import PayTo from "../../assets/images/payto.png";
 import { useState, useEffect } from "react";
 import { getAgreementList, getPayID } from "../../services/Api";
+import loaderlogo from "../../assets/images/logo.png"
+
 
 const PaymentInfo = () => {
   const [payIdDetail, setPayIdDetail] = useState(null);
   const [payToDetail, setPayToDetail] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [Loader, setLoader] = useState(true);
+
+
 
   useEffect(() => {
     (async () => {
@@ -36,7 +41,19 @@ const PaymentInfo = () => {
         setLoading(false);
       }
     })();
+      const timer = setTimeout(() => setLoader(false), 500);
+    return () => clearTimeout(timer);
   }, []);
+
+
+  if (Loader) {
+      return (
+        <div className="loader-wrapper">
+          <img src={loaderlogo} alt="Logo" className="loader-logo" />
+          <div className="spinner"></div>
+        </div>
+      );
+    }
 
   return (
     <AnimatedPage>

@@ -9,6 +9,7 @@ import { Button, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import AddReceiver from "../../assets/images/add-receiver.png";
 import { toast } from "react-toastify";
+import loaderlogo from "../../assets/images/logo.png"
 
 const customStyles = {
   headCells: {
@@ -39,9 +40,13 @@ const Receivers = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
+  const [Loader, setLoader] = useState(true);
+
 
   useEffect(() => {
     fetchList();
+    const timer = setTimeout(() => setLoader(false), 500);
+    return () => clearTimeout(timer);
   }, []);
 
   const fetchList = async () => {
@@ -129,6 +134,15 @@ const Receivers = () => {
       width: "120px",
     },
   ];
+
+  if (Loader) {
+    return (
+      <div className="loader-wrapper">
+        <img src={loaderlogo} alt="Logo" className="loader-logo" />
+        <div className="spinner"></div>
+      </div>
+    );
+  }
 
   return (
     <>

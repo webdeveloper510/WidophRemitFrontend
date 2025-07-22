@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import { userProfile } from '../services/Api';
+import loaderlogo from "../assets/images/logo.png"
+
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -46,7 +48,14 @@ const ProtectedRoute = ({ children }) => {
     fetchAndVerifyUser();
   }, [isAuthenticated]);
 
-  if (loading) return null;
+  if (loading)
+    return (
+      <div className="loader-wrapper">
+        <img src={loaderlogo} alt="Logo" className="loader-logo" />
+        <div className="spinner"></div>
+      </div>
+    );
+
 
   if (redirectTo) return <Navigate to={redirectTo} replace />;
 

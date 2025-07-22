@@ -9,6 +9,7 @@ import * as Yup from "yup";
 import { commaRemover } from "../../hooks/hook";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import loaderlogo from "../../assets/images/logo.png"
 
 import {
   createTransaction,
@@ -23,6 +24,8 @@ const SendMoney = () => {
   const [exch_rate, setExchRate] = useState();
   const [defaultExchange, setDefaultExchange] = useState();
   const [isConverting, setIsConverting] = useState(false);
+  const [loading, setLoading] = useState(true);
+
 
   const amtSchema = Yup.object().shape({
     send_amt: Yup.string()
@@ -239,6 +242,8 @@ const SendMoney = () => {
     };
 
     loadInitialData();
+    const timer = setTimeout(() => setLoading(false), 500);
+    return () => clearTimeout(timer);
   }, [setFieldValue]);
 
   const handleTypeChange = (e) => {
@@ -274,6 +279,15 @@ const SendMoney = () => {
       }
     }
   };
+
+  if (loading) {
+    return (
+      <div className="loader-wrapper">
+        <img src={loaderlogo} alt="Logo" className="loader-logo" />
+        <div className="spinner"></div>
+      </div>
+    );
+  }
 
   return (
     <AnimatedPage>

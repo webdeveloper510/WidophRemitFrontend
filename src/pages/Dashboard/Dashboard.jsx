@@ -69,9 +69,7 @@ const Dashboard = () => {
             , veriff_status
           );
 
-          if (!profile_completed) {
-            setMessage("Please complete your profile before proceeding ahead");
-          } else if (kycStatus === "pending") {
+          if (kycStatus === "pending") {
             setMessage("Please complete your KYC before proceeding ahead");
           } else if (kycStatus === "submitted") {
             setMessage("Your KYC is submitted. Please wait for approval.");
@@ -120,7 +118,7 @@ const Dashboard = () => {
                   </div>
                   {Message && (
                     <div className="alert alert-warning mt-3" role="alert">
-                      {Message} <Link to={profileCompleted ? "/kyc" : "/profile-information"} className="alert-link">Complete Now</Link>
+                      {Message} <Link to={"/kyc"} className="alert-link">Complete Now</Link>
                     </div>
                   )}
 

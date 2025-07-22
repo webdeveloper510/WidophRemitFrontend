@@ -310,8 +310,8 @@ const KYCForm = () => {
     const newErrors = {};
     if (!formData.country) newErrors.country = "Country is required";
     if (!(formData.address || "").trim()) newErrors.address = "Address is required";
-    if (!(formData.buildingNo || "").trim()) newErrors.buildingNo = "Building No. is required";
-    if (!(formData.streetName || "").trim()) newErrors.streetName = "Street Name is required";
+    // if (!(formData.buildingNo || "").trim()) newErrors.buildingNo = "Building No. is required";
+    // if (!(formData.streetName || "").trim()) newErrors.streetName = "Street Name is required";
     if (!(formData.city || "").trim()) newErrors.city = "City is required";
     if (!(formData.zip || "").trim()) newErrors.zip = "Zip/Postal code is required";
     if (!(formData.state || "").trim()) newErrors.state = "State is required";
@@ -805,7 +805,7 @@ const KYCForm = () => {
                       </FloatingLabel>
                     </Row>
 
-                    <Row className="mb-3">
+                    {/* <Row className="mb-3">
                       <FloatingLabel
                         as={Col}
                         label={
@@ -857,7 +857,7 @@ const KYCForm = () => {
                           </div>
                         )}
                       </FloatingLabel>
-                    </Row>
+                    </Row> */}
 
                     <Row className="mb-3">
                       <FloatingLabel
@@ -897,7 +897,7 @@ const KYCForm = () => {
                         className="mb-3"
                       >
                         <Form.Control
-                          type="text"
+                          type="number"
                           value={formData.zip}
                           onChange={(e) =>
                             handleInputChange("zip", e.target.value)

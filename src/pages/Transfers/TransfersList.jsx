@@ -7,6 +7,8 @@ import Dropdown from "react-bootstrap/Dropdown";
 import TransferList from "../../assets/images/transfer-list-icon.png";
 import { pendingTransactions, transactionHistory } from "../../services/Api";
 import { Link } from "react-router-dom";
+import loaderlogo from "../../assets/images/logo.png"
+
 
 const customStyles = {
   headCells: {
@@ -35,6 +37,8 @@ const TransfersList = () => {
   const [filterText, setFilterText] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [list, setList] = useState([]);
+  const [Loader, setLoader] = useState(true);
+
 
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(15);
@@ -57,6 +61,8 @@ const TransfersList = () => {
 
   useEffect(() => {
     fetchList();
+    const timer = setTimeout(() => setLoader(false), 500);
+    return () => clearTimeout(timer);
   }, []);
 
   const filteredData = list.filter((item) => {
@@ -151,14 +157,16 @@ const TransfersList = () => {
             </Dropdown.Toggle>
 
             <Dropdown.Menu>
-              <Dropdown.Item
-                href={`${import.meta.env.VITE_APP_API_URI}/payment/receipt/${row.id
-                  }`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Download Receipt
-              </Dropdown.Item>
+              {!(["incomplete", "partially done"].includes(row.payment_status.toLowerCase())) && (
+                <Dropdown.Item
+                  href={`${import.meta.env.VITE_APP_API_URI}/payment/receipt/${row.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Download Receipt
+                </Dropdown.Item>
+              )}
+
               <Dropdown.Item
                 as={Link}
                 to={`/transfer-details/${row.transaction_id}`}
@@ -174,8 +182,20 @@ const TransfersList = () => {
       button: true,
       center: true,
       width: "120px",
-    },
+    }
   ];
+
+
+
+  if (Loader) {
+    return (
+      <div className="loader-wrapper">
+        <img src={loaderlogo} alt="Logo" className="loader-logo" />
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+
 
   return (
     <AnimatedPage>

@@ -108,7 +108,7 @@ const TransferDetails = () => {
                             <h3>{transactionData?.transaction_id}</h3>
                           </Col>
                         </Row>
-                        {transactionData.payment_status !== "In progress" &&
+                        {transactionData.payment_status !== "In progress" && transactionData.payment_status !== "Partially done" && transactionData.payment_status !== "incomplete" &&
                           <Row>
                             <Col>
                               <Button

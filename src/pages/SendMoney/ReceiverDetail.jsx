@@ -75,7 +75,7 @@ const ReceiverDetail = () => {
       (value) => {
         if (!value) return false;
         const digits = value.replace(/\D/g, "");
-        return digits.length <= 10;
+        return digits.length <= 12;
       }
     ),
     country: Yup.string().required("Country is required"),
@@ -550,7 +550,7 @@ const ReceiverDetail = () => {
                         variant="light"
                         className="cancel-btn float-start"
                         disabled={isLoading}
-                        onClick={() => navigate("/review-transfer")}
+                        onClick={() => navigate("/receivers-list")}
                       >
                         Back
                       </Button>

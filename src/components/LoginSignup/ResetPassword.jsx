@@ -52,7 +52,7 @@ const ResetPassword = () => {
       });
       if (res.code === "200") {
         toast.success("Password Reset Successfully, please login to continue", {
-          position: "bottom-right",
+          position: "top-right",
           autoClose: 2000,
           hideProgressBar: true,
         });
@@ -60,7 +60,7 @@ const ResetPassword = () => {
         navigate("/login");
       } else if (res.code === "400") {
         toast.error(res.message, {
-          position: "bottom-right",
+          position: "top-right",
           autoClose: 2000,
           hideProgressBar: true,
         });
@@ -70,7 +70,7 @@ const ResetPassword = () => {
       toast.error(
         errRes?.message || errRes?.data?.message || errRes?.non_field_errors || "Error occurred",
         {
-          position: "bottom-right",
+          position: "top-right",
           autoClose: 2000,
           hideProgressBar: true,
         }
@@ -116,8 +116,8 @@ const ResetPassword = () => {
                             setFieldValue("reset_password_otp", filtered);
                           }}
                           className={`${errors.reset_password_otp && touched.reset_password_otp
-                              ? "is-invalid"
-                              : ""
+                            ? "is-invalid"
+                            : ""
                             }`}
                         />
                       )}
@@ -174,8 +174,8 @@ const ResetPassword = () => {
                             type={visibility.confirmPassword ? "text" : "password"}
                             placeholder="Confirm Password"
                             className={`passowrdinput ${errors.confirmPassword && touched.confirmPassword
-                                ? "is-invalid"
-                                : ""
+                              ? "is-invalid"
+                              : ""
                               }`}
                           />
                         )}

@@ -350,6 +350,7 @@ const OtpVerification = () => {
 
   const handleResendOtp = async () => {
     setIsProcessing(true);
+    setOtp("")
 
     try {
       const payload = {
@@ -360,7 +361,7 @@ const OtpVerification = () => {
 
       if (from === "signup") {
         response = await registerOtpResend({ mobile: JSON.parse(sessionStorage.getItem("signupData")).mobile })
-        
+
       } else {
         response = await resendOtp(payload);
       }
