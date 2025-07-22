@@ -239,7 +239,12 @@ const ReceiverDetail = () => {
                         type="text"
                         name="bank_name"
                         value={values.bank_name}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (/^[A-Za-z\s\-.]*$/.test(value)) {
+                            handleChange(e); // Only allow valid characters
+                          }
+                        }}
                         onBlur={handleBlur}
                         isInvalid={touched.bank_name && errors.bank_name}
                       />

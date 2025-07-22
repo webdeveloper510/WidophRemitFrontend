@@ -54,38 +54,38 @@ const AddReceiver = () => {
     address: "",
   };
 
-const validationSchema = Yup.object({
-  bank_name: Yup.string().required("Bank name is required"),
+  const validationSchema = Yup.object({
+    bank_name: Yup.string().required("Bank name is required"),
 
-  account_number: Yup.string()
-    .required("Account number is required")
-    .min(8, "Minimum 8 digits")
-    .matches(/^\d+$/, "Only numbers allowed"),
+    account_number: Yup.string()
+      .required("Account number is required")
+      .min(8, "Minimum 8 digits")
+      .matches(/^\d+$/, "Only numbers allowed"),
 
-  first_name: Yup.string()
-    .required("First name is required")
-    .matches(/^[A-Za-z\s]+$/, "Only letters allowed"),
+    first_name: Yup.string()
+      .required("First name is required")
+      .matches(/^[A-Za-z\s]+$/, "Only letters allowed"),
 
-  last_name: Yup.string()
-    .required("Last name is required")
-    .matches(/^[A-Za-z\s]+$/, "Only letters allowed"),
+    last_name: Yup.string()
+      .required("Last name is required")
+      .matches(/^[A-Za-z\s]+$/, "Only letters allowed"),
 
-  email: Yup.string().email("Invalid email"),
+    email: Yup.string().email("Invalid email"),
 
-  phone: Yup.string()
-    .required("Mobile number is required")
-    .matches(/^\d{8,10}$/, "Mobile number must be between 8 and 10 digits"),
+    phone: Yup.string()
+      .required("Mobile number is required")
+      .matches(/^\d{8,10}$/, "Mobile number must be between 8 and 10 digits"),
 
-  country: Yup.string().required("Country is required"),
-  state: Yup.string().required("State is required"),
-  city: Yup.string().required("City is required"),
+    country: Yup.string().required("Country is required"),
+    state: Yup.string().required("State is required"),
+    city: Yup.string().required("City is required"),
 
-  post_code: Yup.string()
-    .required("Postal code is required")
-    .matches(/^\d+$/, "Only numbers allowed"),
+    post_code: Yup.string()
+      .required("Postal code is required")
+      .matches(/^\d+$/, "Only numbers allowed"),
 
-  address: Yup.string().required("Address is required"),
-});
+    address: Yup.string().required("Address is required"),
+  });
 
   const {
     values,
@@ -205,10 +205,16 @@ const validationSchema = Yup.object({
                     type="text"
                     name="bank_name"
                     value={values.bank_name}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^[A-Za-z\s\-.]*$/.test(value)) {
+                        handleChange(e); 
+                      }
+                    }}
                     onBlur={handleBlur}
                     isInvalid={touched.bank_name && errors.bank_name}
                   />
+
                   <Form.Control.Feedback type="invalid">
                     {errors.bank_name}
                   </Form.Control.Feedback>

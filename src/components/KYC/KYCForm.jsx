@@ -267,11 +267,11 @@ const KYCForm = () => {
     else if (!/\S+@\S+\.\S+/.test(formData.email))
       newErrors.email = "Email format is invalid";
 
- if (!formData.phone.trim()) {
-  newErrors.phone = "Mobile number is required";
-} else if (!/^\d{8,10}$/.test(formData.phone)) {
-  newErrors.phone = "Mobile number must be between 8 and 10 digits";
-}
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Mobile number is required";
+    } else if (!/^\d{8,10}$/.test(formData.phone)) {
+      newErrors.phone = "Mobile number must be between 8 and 10 digits";
+    }
 
 
     if (!formData.dob) {
@@ -522,12 +522,16 @@ const KYCForm = () => {
                         <Form.Control
                           type="text"
                           value={formData.firstName}
-                          onChange={(e) =>
-                            handleInputChange("firstName", e.target.value)
-                          }
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (/^[A-Za-z\s]*$/.test(value)) {  // Allow only letters and spaces
+                              handleInputChange("firstName", value);
+                            }
+                          }}
                           isInvalid={touched.firstName && errors.firstName}
                           disabled={isLoading}
                         />
+
                         {touched.firstName && errors.firstName && (
                           <div className="text-danger mt-1 small">
                             {errors.firstName}
@@ -546,11 +550,15 @@ const KYCForm = () => {
                         <Form.Control
                           type="text"
                           value={formData.middleName}
-                          onChange={(e) =>
-                            handleInputChange("middleName", e.target.value)
-                          }
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (/^[A-Za-z\s]*$/.test(value)) {
+                              handleInputChange("middleName", value);
+                            }
+                          }}
                           disabled={isLoading}
                         />
+
                       </FloatingLabel>
                       <FloatingLabel
                         as={Col}
@@ -564,12 +572,16 @@ const KYCForm = () => {
                         <Form.Control
                           type="text"
                           value={formData.lastName}
-                          onChange={(e) =>
-                            handleInputChange("lastName", e.target.value)
-                          }
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (/^[A-Za-z\s]*$/.test(value)) {
+                              handleInputChange("lastName", value);
+                            }
+                          }}
                           isInvalid={touched.lastName && errors.lastName}
                           disabled={isLoading}
                         />
+
                         {touched.lastName && errors.lastName && (
                           <div className="text-danger mt-1 small">
                             {errors.lastName}
@@ -731,14 +743,17 @@ const KYCForm = () => {
                       >
                         <Form.Control
                           type="text"
-                          //placeholder="Occupation"
                           value={formData.occupation}
-                          onChange={(e) =>
-                            handleInputChange("occupation", e.target.value)
-                          }
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (/^[A-Za-z\s]*$/.test(value)) { 
+                              handleInputChange("occupation", value);
+                            }
+                          }}
                           isInvalid={touched.occupation && errors.occupation}
                           disabled={isLoading}
                         />
+
                         {touched.occupation && errors.occupation && (
                           <div className="text-danger mt-1 small">
                             {errors.occupation}
