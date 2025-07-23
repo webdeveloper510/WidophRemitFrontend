@@ -184,66 +184,74 @@ transferData.amount.payout_partner = JSON.parse(sessionStorage.getItem("selected
     setModalShowMonova(false);
   };
 
-  const handleMonovaContinue = async () => {
-    const errors = {};
-    if (!monovaForm.paymentMethod)
-      errors.paymentMethod = "Please select payment method.";
-    if (!monovaForm.bsb) errors.bsb = "BSB is required.";
-    if (!monovaForm.accountNumber)
-      errors.accountNumber = "Account number is required.";
-    if (!monovaForm.accountName)
-      errors.accountName = "Account name is required.";
+const handleMonovaContinue = async () => {
+  const errors = {};
+  if (!monovaForm.paymentMethod)
+    errors.paymentMethod = "Please select payment method.";
+  if (!monovaForm.bsb) errors.bsb = "BSB is required.";
+  if (!monovaForm.accountNumber)
+    errors.accountNumber = "Account number is required.";
+  if (!monovaForm.accountName)
+    errors.accountName = "Account name is required.";
 
-    if (!transferReason) {
-      toast.error("Please select a transfer reason");
-      setModalShowMonova(false);
-      return;
-    }
+  if (!transferReason) {
+    toast.error("Please select a transfer reason");
+    setModalShowMonova(false);
+    return;
+  }
 
-    // Check if "Other" is selected but no custom reason is provided
-    if (transferReason === "Other" && !otherReason.trim()) {
-      toast.error("Please specify the reason when selecting 'Other'");
-      setModalShowMonova(false);
-      return;
-    }
+  // Check if "Other" is selected but no custom reason is provided
+  if (transferReason === "Other" && !otherReason.trim()) {
+    toast.error("Please specify the reason when selecting 'Other'");
+    setModalShowMonova(false);
+    return;
+  }
 
-    setMonovaFormErrors(errors);
+  setMonovaFormErrors(errors);
 
-    if (Object.keys(errors).length === 0) {
-      try {
-        sessionStorage.setItem(
-          "monova_payment_data",
-          JSON.stringify(monovaForm)
-        );
-        sessionStorage.setItem("selected_payment_method", "monova");
+  if (Object.keys(errors).length === 0) {
+    try {
+      sessionStorage.setItem(
+        "monova_payment_data",
+        JSON.stringify(monovaForm)
+      );
+      sessionStorage.setItem("selected_payment_method", "monova");
 
-        const temp = {
-          amount: amount,
-          bsbNumber: monovaForm.bsb,
-          accountNumber: monovaForm.accountNumber,
-          accountName: monovaForm.accountName,
-          payment_mode: monovaForm.paymentMethod,
-        };
+      const temp = {
+        amount: amount,
+        bsbNumber: monovaForm.bsb,
+        accountNumber: monovaForm.accountNumber,
+        accountName: monovaForm.accountName,
+        payment_mode: monovaForm.paymentMethod,
+      };
 
-        sessionStorage.setItem("monova_form_data", JSON.stringify(temp));
+      sessionStorage.setItem("monova_form_data", JSON.stringify(temp));
 
-        // Use the final reason (either selected reason or custom "Other" reason)
-     const finalReason = transferReason === "Other" ? otherReason : transferReason;
-      transferData.amount.reason = finalReason;
-
-        const txResponse = await createTransaction(transferData);
-
-        if (txResponse?.code === "200") {
-          setModalShowMonova(false);
-          navigate("/confirm-transfer");
-        } else {
-          toast.error(txResponse?.message || "Transaction creation failed.");
+      // Use the final reason (either selected reason or custom "Other" reason)
+      const finalReason = transferReason === "Other" ? otherReason : transferReason;
+      
+      // Create a fresh copy of transferData and update the reason
+      const updatedTransferData = {
+        ...transferData,
+        amount: {
+          ...transferData.amount,
+          reason: finalReason
         }
-      } catch (err) {
-        console.error("Unexpected error during payment creation:", err);
+      };
+
+      const txResponse = await createTransaction(updatedTransferData);
+
+      if (txResponse?.code === "200") {
+        setModalShowMonova(false);
+        navigate("/confirm-transfer");
+      } else {
+        toast.error(txResponse?.message || "Transaction creation failed.");
       }
+    } catch (err) {
+      console.error("Unexpected error during payment creation:", err);
     }
-  };
+  }
+};
   const formatAmountLimit = (limit) => {
     if (!limit) return "Not specified";
     return `AUD ${parseInt(limit).toLocaleString()}`;

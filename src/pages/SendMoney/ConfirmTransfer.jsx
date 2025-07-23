@@ -142,7 +142,7 @@ const ConfirmTransfer = () => {
             receive_currency: payloadData.amount.receive_currency,
             receive_method: payloadData.amount.receive_method,
             payout_partner: JSON.parse(sessionStorage.getItem("selected_receiver")).bank_name,
-            reason: sessionStorage.getItem("transfer_reason"),
+            reason: sessionStorage.getItem("other_reason"),
             exchange_rate: payloadData.amount.exchange_rate,
           },
         });
@@ -204,7 +204,6 @@ const ConfirmTransfer = () => {
     setIsLoadingPayID(true);
     try {
       await ZaiPayId({ transaction_id: sessionStorage.getItem("transaction_id") });
-      toast.success("PayID payment processed successfully!");
       return true;
     } catch (error) {
       console.error("PayID payment error:", error);
