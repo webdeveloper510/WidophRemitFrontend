@@ -5,7 +5,7 @@ import processedImg from "../../assets/images/payment-processed-image.png";
 import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
 import { Col, Row, Button, Spinner } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { paymentSummary } from "../../services/Api";
 
 const TransactionSuccess = () => {
@@ -13,48 +13,10 @@ const TransactionSuccess = () => {
   const [status, setStatus] = useState("Loading...");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
-  useEffect(() => {
-    const monovaTransactionId = sessionStorage.getItem("monova_transaction_id");
-    const regularTransactionId = sessionStorage.getItem("transaction_id");
-
-    const transferData = JSON.parse(sessionStorage.getItem("transfer_data") || "{}");
-
-    let transaction_id = monovaTransactionId || regularTransactionId;
-    if (!transaction_id || !transferData) {
-      setLoading(false);
-      return;
-    }
-
-    setTransaction({
-      transaction_id: transaction_id,
-      final_amount: transferData.amount.send_amt || "N/A",
-      status: "Success",
-    });
-
-    async function GetTransactionDetails() {
-      setLoading(true);
-      try {
-        const result = await paymentSummary(transaction_id);
-        if (result?.code === "200") {
-          setStatus(result.data.payment_status)
-        } else {
-          setError("Transaction not found.");
-        }
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    GetTransactionDetails();
-
-
-    setLoading(false);
-  }, []);
-
-
-  const handleBackToDashboard = () => {
+  // Function to clear all session storage data
+  const clearSessionStorageData = () => {
     sessionStorage.removeItem("monova_transaction_id");
     sessionStorage.removeItem("monova_form_data");
     sessionStorage.removeItem("monova_payment_data");
@@ -65,27 +27,116 @@ const TransactionSuccess = () => {
     sessionStorage.removeItem("transaction_id");
     sessionStorage.removeItem("transfer_data");
     sessionStorage.removeItem("transfer_reason");
+    sessionStorage.removeItem("final_transfer_reason");
+    sessionStorage.removeItem("pageIsReloading");
+  };
+
+  // Handle page reload detection
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      sessionStorage.setItem('pageIsReloading', 'true');
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);  
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+  
+  // Handle browser back button - override browser history and clear session storage
+  useEffect(() => {
+    window.history.pushState(null, null, window.location.pathname);
+    
+    const handlePopState = (event) => {
+      window.history.pushState(null, null, window.location.pathname);
+      clearSessionStorageData();
+      navigate('/dashboard', { replace: true });
+    };
+    
+    window.addEventListener('popstate', handlePopState);
+    
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [navigate]);
+  
+  // Check if page was reloaded and redirect to dashboard
+  useEffect(() => {
+    const checkIfReloaded = () => {
+      if (sessionStorage.getItem('pageIsReloading') === 'true') {
+        sessionStorage.removeItem('pageIsReloading');
+          clearSessionStorageData();
+        navigate('/dashboard');
+      }
+    };
+    checkIfReloaded();
+  }, [navigate]);
+
+  // Load transaction details
+  useEffect(() => {
+    const monovaTransactionId = sessionStorage.getItem("monova_transaction_id");
+    const regularTransactionId = sessionStorage.getItem("transaction_id");
+    const transferData = JSON.parse(sessionStorage.getItem("transfer_data") || "{}");
+
+    let transaction_id = monovaTransactionId || regularTransactionId;
+    
+    // Set transaction data (we know it exists because of the protected route)
+    setTransaction({
+      transaction_id: transaction_id,
+      final_amount: transferData.amount?.send_amt || "N/A",
+      status: "Success",
+    });
+
+    async function GetTransactionDetails() {
+      setLoading(true);
+      try {
+        const result = await paymentSummary(transaction_id);
+        if (result?.code === "200") {
+          setStatus(result.data.payment_status);
+        } else {
+          console.log("Transaction not found.");
+        }
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    GetTransactionDetails();
+  }, []);
+
+  const handleBackToDashboard = () => {
+    // Clear all session storage items
+    clearSessionStorageData();
     navigate("/dashboard");
   };
+
+  if (loading) {
+    return (
+      <AnimatedPage>
+        <div className="page-title">
+          <h1>Loading Transaction Details</h1>
+        </div>
+        <div className="page-content-section mt-3">
+          <div className="text-center mt-5">
+            <Spinner animation="border" />
+            <p>Finalizing your transaction...</p>
+          </div>
+        </div>
+      </AnimatedPage>
+    );
+  }
 
   return (
     <AnimatedPage>
       <div className="page-title">
         <div className="d-flex align-items-center">
-          {/* <button className="btn btn-link p-0 me-2" onClick={handleBackToDashboard}>
-            <img src={Back} alt="Back" />
-          </button> */}
           <h1>Your transfer is being processed</h1>
         </div>
       </div>
 
       <div className="page-content-section mt-3">
-        {loading ? (
-          <div className="text-center mt-5">
-            <Spinner animation="border" />
-            <p>Loading transaction details...</p>
-          </div>
-        ) : transaction ? (
+        {transaction ? (
           <div className="row">
             <div className="col-md-12">
               <Card className="receiver-card mt-4 bg-white">

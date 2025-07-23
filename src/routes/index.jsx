@@ -2,6 +2,7 @@ import React from "react";
 import { Navigate, Route, Routes } from "react-router";
 import ProtectedRoute from "./protectedRoutes";
 import PublicRoute from "./publicRoutes";
+import TransactionProtectedRoute from "./orderProtectedRoute";
 import Layout from "../components/Layout";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import SendMoney from "../pages/SendMoney/SendMoney";
@@ -46,13 +47,14 @@ const AppRoutes = () => {
         <Route path="/reset-password" element={<ResetPassword />} />
         {/* OTP route accessible by both protected and public */}
         <Route path="/otp-verification" element={<OtpVerification />} />
-
-        {/* Protected Routes */}
       </Route>
+
       <Route path="/kyc" element={<KYCForm />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/web-exchange-rate" element={<ExchangeRatePage />} />
       <Route path="profile-information" element={<ProfileInformation />} />
+
+      {/* Protected Routes */}
       <Route
         path="/"
         element={
@@ -61,7 +63,6 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       >
-        <Route path="/transaction-success" element={<TransactionSuccess />} />
         <Route path="send-money" element={<SendMoney />} />
         <Route path="payment-info" element={<PaymentInfo />} />
         <Route path="transfers-list" element={<TransfersList />} />
@@ -76,7 +77,15 @@ const AppRoutes = () => {
         <Route path="/add-receiver" element={<AddReceiver />} />
         <Route path="/update-receiver/:id" element={<UpdateReceiver />} />
         <Route path="monoova" element={<MonoovaPaymentGateway />} />
-
+        {/* Transaction Success - Special Protection */}
+        <Route
+          path="/transaction-success"
+          element={
+            <TransactionProtectedRoute>
+              <TransactionSuccess />
+            </TransactionProtectedRoute>
+          }
+        />
         {/* Redirect / to /dashboard */}
         <Route index element={<Navigate to="dashboard" replace />} />
       </Route>
