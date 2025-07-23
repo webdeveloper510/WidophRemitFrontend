@@ -15,6 +15,7 @@ import {
   verifyEmail,
   resendOtp,
   createTransaction,
+  createAutoMatcher,
 } from "../../services/Api";
 import { toast } from "react-toastify";
 
@@ -94,12 +95,25 @@ const ConfirmTransfer = () => {
       const monovaForm = JSON.parse(monovaFormData);
       const receiverData = JSON.parse(selectedReceiver);
       const payloadData = JSON.parse(storedPayload);
+      const receiver = JSON.parse(sessionStorage.getItem("selected_receiver"));
+
+
+      const matcher = await createAutoMatcher({
+        akaNames: [`${receiver.first_name}`, `${receiver.first_name} ${receiver.last_name}`, `${receiver.first_name} ${receiver.last_name} ${receiver.middle_name}`],
+        bankAccountName: receiver.bank_name,
+        bsb: monovaForm.bsbNumber
+      })
+
+      if (!matcher.bankAccountNumbe || matcher.bankAccountNumber === 0) {
+        toast.error("Some createAutoMatcher Error");
+        return;
+      }
 
       const payload = {
         amount: parseFloat(monovaForm?.amount || 0),
-        bsbNumber: monovaForm.bsbNumber,
-        accountNumber: monovaForm.accountNumber,
-        accountName: monovaForm.accountName,
+        bsbNumber: matcher.bsb,
+        accountNumber: matcher.bankAccountNumber,
+        accountName: matcher.bankAccountName,
         payment_mode: monovaForm.payment_mode,
       };
 
@@ -140,8 +154,6 @@ const ConfirmTransfer = () => {
       setIsLoadingMonova(false);
     }
   };
-
-
 
   const handleZaiPayment = async () => {
     setIsLoadingZai(true);

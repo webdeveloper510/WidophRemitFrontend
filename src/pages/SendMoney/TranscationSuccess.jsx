@@ -36,50 +36,49 @@ const TransactionSuccess = () => {
     const handleBeforeUnload = () => {
       sessionStorage.setItem('pageIsReloading', 'true');
     };
-    window.addEventListener('beforeunload', handleBeforeUnload);  
+    window.addEventListener('beforeunload', handleBeforeUnload);
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
-  
+
   // Handle browser back button - override browser history and clear session storage
   useEffect(() => {
     window.history.pushState(null, null, window.location.pathname);
-    
+
     const handlePopState = (event) => {
       window.history.pushState(null, null, window.location.pathname);
       clearSessionStorageData();
       navigate('/dashboard', { replace: true });
     };
-    
+
     window.addEventListener('popstate', handlePopState);
-    
+
     return () => {
       window.removeEventListener('popstate', handlePopState);
     };
   }, [navigate]);
-  
+
   // Check if page was reloaded and redirect to dashboard
   useEffect(() => {
     const checkIfReloaded = () => {
       if (sessionStorage.getItem('pageIsReloading') === 'true') {
         sessionStorage.removeItem('pageIsReloading');
-          clearSessionStorageData();
+        clearSessionStorageData();
         navigate('/dashboard');
       }
     };
     checkIfReloaded();
   }, [navigate]);
 
-  // Load transaction details
   useEffect(() => {
-    const monovaTransactionId = sessionStorage.getItem("monova_transaction_id");
-    const regularTransactionId = sessionStorage.getItem("transaction_id");
+    const selectedMethod = sessionStorage.getItem("selected_payment_method");
+    const transaction_id = selectedMethod === "monova"
+      ? sessionStorage.getItem("monova_transaction_id")
+      : sessionStorage.getItem("transaction_id");
+
     const transferData = JSON.parse(sessionStorage.getItem("transfer_data") || "{}");
 
-    let transaction_id = monovaTransactionId || regularTransactionId;
-    
-    // Set transaction data (we know it exists because of the protected route)
     setTransaction({
       transaction_id: transaction_id,
       final_amount: transferData.amount?.send_amt || "N/A",
@@ -101,12 +100,12 @@ const TransactionSuccess = () => {
         setLoading(false);
       }
     }
-    
+
     GetTransactionDetails();
   }, []);
 
+
   const handleBackToDashboard = () => {
-    // Clear all session storage items
     clearSessionStorageData();
     navigate("/dashboard");
   };
