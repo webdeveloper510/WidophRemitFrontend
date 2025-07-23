@@ -31,8 +31,6 @@ const TransactionSuccess = () => {
     sessionStorage.removeItem("other_reason");
     sessionStorage.removeItem("pageIsReloading");
   };
-
-  // Handle page reload detection
   useEffect(() => {
     const handleBeforeUnload = () => {
       sessionStorage.setItem('pageIsReloading', 'true');
