@@ -18,6 +18,7 @@ const menuItems = [
 
 const Sidebar = ({ collapsed }) => {
   const location = useLocation();
+  const navigate=useNavigate()
 
   if (location.pathname === "/kyc") {
     return null;
