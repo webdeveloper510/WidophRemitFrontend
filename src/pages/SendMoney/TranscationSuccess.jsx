@@ -15,6 +15,22 @@ const TransactionSuccess = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Function to clear all session storage data
+  const clearSessionStorageData = () => {
+    sessionStorage.removeItem("monova_transaction_id");
+    sessionStorage.removeItem("monova_form_data");
+    sessionStorage.removeItem("monova_payment_data");
+    sessionStorage.removeItem("monova_payment_response");
+    sessionStorage.removeItem("payload");
+    sessionStorage.removeItem("selected_payment_method");
+    sessionStorage.removeItem("selected_receiver");
+    sessionStorage.removeItem("transaction_id");
+    sessionStorage.removeItem("transfer_data");
+    sessionStorage.removeItem("transfer_reason");
+    sessionStorage.removeItem("final_transfer_reason");
+    sessionStorage.removeItem("pageIsReloading");
+  };
+
   // Handle page reload detection
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -26,13 +42,13 @@ const TransactionSuccess = () => {
     };
   }, []);
   
-  // Handle browser back button - override browser history
+  // Handle browser back button - override browser history and clear session storage
   useEffect(() => {
     window.history.pushState(null, null, window.location.pathname);
     
     const handlePopState = (event) => {
       window.history.pushState(null, null, window.location.pathname);
-    sessionStorage.removeItem("selected_payment_method");
+      clearSessionStorageData();
       navigate('/dashboard', { replace: true });
     };
     
@@ -48,6 +64,7 @@ const TransactionSuccess = () => {
     const checkIfReloaded = () => {
       if (sessionStorage.getItem('pageIsReloading') === 'true') {
         sessionStorage.removeItem('pageIsReloading');
+          clearSessionStorageData();
         navigate('/dashboard');
       }
     };
@@ -90,17 +107,7 @@ const TransactionSuccess = () => {
 
   const handleBackToDashboard = () => {
     // Clear all session storage items
-    sessionStorage.removeItem("monova_transaction_id");
-    sessionStorage.removeItem("monova_form_data");
-    sessionStorage.removeItem("monova_payment_data");
-    sessionStorage.removeItem("monova_payment_response");
-    sessionStorage.removeItem("payload");
-    sessionStorage.removeItem("selected_payment_method");
-    sessionStorage.removeItem("selected_receiver");
-    sessionStorage.removeItem("transaction_id");
-    sessionStorage.removeItem("transfer_data");
-    sessionStorage.removeItem("transfer_reason");
-    sessionStorage.removeItem("final_transfer_reason");
+    clearSessionStorageData();
     navigate("/dashboard");
   };
 
