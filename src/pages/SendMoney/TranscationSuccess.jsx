@@ -28,6 +28,7 @@ const TransactionSuccess = () => {
     sessionStorage.removeItem("transfer_data");
     sessionStorage.removeItem("transfer_reason");
     sessionStorage.removeItem("final_transfer_reason");
+    sessionStorage.removeItem("other_reason");
     sessionStorage.removeItem("pageIsReloading");
   };
 
