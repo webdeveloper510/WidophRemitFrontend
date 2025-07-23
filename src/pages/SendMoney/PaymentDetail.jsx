@@ -188,8 +188,8 @@ const PaymentDetail = () => {
     if (!monovaForm.paymentMethod)
       errors.paymentMethod = "Please select payment method.";
     if (!monovaForm.bsb) errors.bsb = "BSB is required.";
-    // if (!monovaForm.accountNumber)
-    //   errors.accountNumber = "Account number is required.";
+    if (!monovaForm.accountNumber)
+      errors.accountNumber = "Account number is required.";
     if (!monovaForm.accountName)
       errors.accountName = "Account name is required.";
 
@@ -219,7 +219,7 @@ const PaymentDetail = () => {
         const temp = {
           amount: amount,
           bsbNumber: monovaForm.bsb,
-          // accountNumber: monovaForm.accountNumber,
+          accountNumber: monovaForm.accountNumber,
           accountName: monovaForm.accountName,
           payment_mode: monovaForm.paymentMethod,
         };
@@ -890,7 +890,7 @@ const PaymentDetail = () => {
                   )}
                 </FloatingLabel>
               </Row>
-              {/* <Row className="mb-3">
+              <Row className="mb-3">
                 <FloatingLabel
                   as={Col}
                   controlId="monova-account"
@@ -911,7 +911,7 @@ const PaymentDetail = () => {
                     </Form.Control.Feedback>
                   )}
                 </FloatingLabel>
-              </Row> */}
+              </Row>
               <Row className="mb-3">
                 <FloatingLabel
                   as={Col}
