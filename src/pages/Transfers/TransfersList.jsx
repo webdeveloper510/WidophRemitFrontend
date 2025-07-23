@@ -199,7 +199,7 @@ const TransfersList = () => {
   cell: (row) => {
     const status = row.payment_status?.toLowerCase();
 
-    const isDownloadAllowed = !["incomplete", "partially done", "payment due"].includes(status);
+    const isDownloadAllowed = !["incomplete", "partially done",].includes(status);
 
     return (
       <div className="send-again-btn">

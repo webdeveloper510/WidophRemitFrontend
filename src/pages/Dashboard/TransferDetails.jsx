@@ -133,7 +133,6 @@ const TransferDetails = () => {
                           const blockedStatuses = [
                             "incomplete",
                             "partially done",
-                            "payment due",
                           ];
                           const status = transactionData?.payment_status?.toLowerCase();
 
