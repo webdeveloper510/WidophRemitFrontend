@@ -145,10 +145,8 @@ const LatestTransfer = () => {
             noHeader
             striped
             highlightOnHover
-            pagination
-            paginationPerPage={5}
-            paginationRowsPerPageOptions={[5, 10, 15, 20]}
           />
+
         )}
       </Card.Body>
     </Card>

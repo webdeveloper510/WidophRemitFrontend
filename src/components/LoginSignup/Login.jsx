@@ -3,8 +3,6 @@ import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import { Form, FloatingLabel, Col } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { parsePhoneNumber, isValidPhoneNumber } from "libphonenumber-js";
@@ -47,7 +45,6 @@ const Login = () => {
     }
   };
 
-  // Validation schema
   const validationSchema = Yup.object({
     value: Yup.string()
       .required("Email or phone number is required")
@@ -70,16 +67,12 @@ const Login = () => {
     password: Yup.string()
       .required("Password is required")
       .min(6, "Password must be at least 6 characters long"),
-    rememberMe: Yup.boolean(),
     countryCode: Yup.string().required(),
   });
-
-
 
   const initialValues = {
     value: "",
     password: "",
-    rememberMe: false,
     countryCode: "61",
   };
 
@@ -96,6 +89,7 @@ const Login = () => {
       const fullMobile = `+${values.countryCode}${values.value}`;
       payload.mobile = fullMobile;
     }
+
     try {
       const response = await userLogin(payload);
       if (response?.code === 200 || response?.code === "200") {
@@ -124,7 +118,6 @@ const Login = () => {
   return (
     <Container className="login-form-wrapper">
       <Row>
-        {/* Left Form Column */}
         <Col md={7} className="d-flex align-items-center justify-content-start">
           <div className="login-form-wrapper w-100">
             <div className="exchange-title">
@@ -192,7 +185,7 @@ const Login = () => {
                             name="value"
                             placeholder="Enter mobile number"
                             value={values.value}
-                            ref={mobileInputRef} // 👈 attach ref here
+                            ref={mobileInputRef}
                             onChange={(e) =>
                               handleInputChange(e.target.value, setFieldValue)
                             }
@@ -213,6 +206,7 @@ const Login = () => {
                       />
                     </Col>
                   </Row>
+
                   <Row className="mb-3">
                     <label className="form-label">
                       Your Password<span>*</span>
@@ -246,17 +240,7 @@ const Login = () => {
                     />
                   </Row>
 
-                  <div className="d-flex justify-content-between align-items-center mb-3">
-                    <Field name="rememberMe">
-                      {({ field }) => (
-                        <Form.Check
-                          {...field}
-                          type="checkbox"
-                          label="Remember me"
-                          checked={values.rememberMe}
-                        />
-                      )}
-                    </Field>
+                  <div className="d-flex justify-content-end mb-3">
                     <Link
                       to={"/forgot-password"}
                       className="text-success fw-semibold small forgotpassword-text"
