@@ -156,7 +156,7 @@ const ConfirmTransfer = () => {
             receive_currency: payloadData.amount.receive_currency,
             receive_method: payloadData.amount.receive_method,
             payout_partner: receiverData.bank_name,
-            reason: sessionStorage.getItem("transfer_reason"),
+            reason: sessionStorage.getItem("final_transfer_reason"),
             exchange_rate: payloadData.amount.exchange_rate
           }
 
@@ -307,7 +307,7 @@ const ConfirmTransfer = () => {
       const response = await resendOtp(payload);
       if (response?.code === "200") {
         toast.success(response?.message || "OTP resent successfully!");
-        setOtp("")
+        setOtp(""); // Clear the OTP input field
       } else {
         toast.error(response?.message || "Failed to resend OTP");
       }

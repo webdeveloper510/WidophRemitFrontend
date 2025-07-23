@@ -18,11 +18,34 @@ const menuItems = [
 
 const Sidebar = ({ collapsed }) => {
   const location = useLocation();
-  const navigate=useNavigate()
+  const navigate = useNavigate();
 
   if (location.pathname === "/kyc") {
     return null;
   }
+
+  // Reuse the same function from TransactionSuccess component
+  const clearSessionStorageData = () => {
+    sessionStorage.removeItem("monova_transaction_id");
+    sessionStorage.removeItem("monova_form_data");
+    sessionStorage.removeItem("monova_payment_data");
+    sessionStorage.removeItem("monova_payment_response");
+    sessionStorage.removeItem("payload");
+    sessionStorage.removeItem("selected_payment_method");
+    sessionStorage.removeItem("selected_receiver");
+    sessionStorage.removeItem("transaction_id");
+    sessionStorage.removeItem("transfer_data");
+    sessionStorage.removeItem("transfer_reason");
+    sessionStorage.removeItem("final_transfer_reason");
+    sessionStorage.removeItem("other_reason");
+    sessionStorage.removeItem("pageIsReloading");
+  };
+
+  const handleLinkClick = () => {
+    if (location.pathname === "/transaction-success") {
+      clearSessionStorageData();
+    }
+  };
 
   const handleLogout = () => {
     sessionStorage.clear();
@@ -37,7 +60,7 @@ const Sidebar = ({ collapsed }) => {
       style={{ minHeight: "100%" }}
     >
       <h4 className="text-center mb-4 logo">
-        <Link to="/dashboard">
+        <Link to="/dashboard" onClick={handleLinkClick}>
           <img
             src={collapsed ? logoSmall : logoFull}
             alt="logo"
@@ -57,6 +80,7 @@ const Sidebar = ({ collapsed }) => {
             <Link
               to={item.path}
               className="nav-link d-flex align-items-center gap-2"
+              onClick={handleLinkClick}
             >
               {item.icon} <span>{item.name}</span>
             </Link>
