@@ -104,10 +104,15 @@ const ConfirmTransfer = () => {
         bsb: monovaForm.bsbNumber
       })
 
-      if (!matcher.bankAccountNumbe || matcher.bankAccountNumber === 0) {
+      if (!matcher.bankAccountNumber || matcher.bankAccountNumber === 0) {
         toast.error("Some createAutoMatcher Error");
         return;
       }
+
+      const temp = JSON.parse(sessionStorage.getItem("transfer_data"));
+      console.log(temp);
+
+
 
       const payload = {
         amount: parseFloat(monovaForm?.amount || 0),
@@ -115,6 +120,8 @@ const ConfirmTransfer = () => {
         accountNumber: matcher.bankAccountNumber,
         accountName: matcher.bankAccountName,
         payment_mode: monovaForm.payment_mode,
+        to: temp.amount.to,
+        from: temp.amount.from
       };
 
       const response = await createMonovaPayment(payload);
