@@ -159,6 +159,7 @@ const ConfirmTransfer = () => {
             reason: sessionStorage.getItem("transfer_reason"),
             exchange_rate: payloadData.amount.exchange_rate
           }
+
         });
 
         toast.success("Monova payment created successfully!");
@@ -218,7 +219,6 @@ const ConfirmTransfer = () => {
     setIsLoadingPayID(true);
     try {
       await ZaiPayId({ transaction_id: sessionStorage.getItem("transaction_id") });
-      toast.success("PayID payment processed successfully!");
       return true;
     } catch (error) {
       console.error("PayID payment error:", error);

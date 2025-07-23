@@ -118,7 +118,7 @@ const TransactionSuccess = () => {
         <div className="page-content-section mt-3">
           <div className="text-center mt-5">
             <Spinner animation="border" />
-            <p>Finalizing your transaction...</p>
+            <p></p>
           </div>
         </div>
       </AnimatedPage>
