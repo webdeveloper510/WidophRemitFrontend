@@ -68,16 +68,16 @@ const PaymentDetail = () => {
   const [bsb, setbsb] = useState(0);
   const navigate = useNavigate();
 
-const transferData = JSON.parse(sessionStorage.getItem("transfer_data"));
-const finalReason = transferReason === "Other" ? otherReason : transferReason;
-transferData.amount.reason = finalReason;
-transferData.amount.receive_amount = transferData.amount.exchange_amt;
-transferData.amount.receive_currency = transferData.amount.to;
-transferData.amount.send_currency = transferData.amount.from;
-transferData.amount.send_amount = transferData.amount.send_amt;
-transferData.recipient_id = JSON.parse(sessionStorage.getItem("selected_receiver")).id;
-transferData.transaction_id = sessionStorage.getItem("transaction_id");
-transferData.amount.payout_partner = JSON.parse(sessionStorage.getItem("selected_receiver")).bank_name;
+  const transferData = JSON.parse(sessionStorage.getItem("transfer_data"));
+  const finalReason = transferReason === "Other" ? otherReason : transferReason;
+  transferData.amount.reason = finalReason;
+  transferData.amount.receive_amount = transferData.amount.exchange_amt;
+  transferData.amount.receive_currency = transferData.amount.to;
+  transferData.amount.send_currency = transferData.amount.from;
+  transferData.amount.send_amount = transferData.amount.send_amt;
+  transferData.recipient_id = JSON.parse(sessionStorage.getItem("selected_receiver")).id;
+  transferData.transaction_id = sessionStorage.getItem("transaction_id");
+  transferData.amount.payout_partner = JSON.parse(sessionStorage.getItem("selected_receiver")).bank_name;
 
   const reasonOptions = [
     "Family Support",
@@ -189,8 +189,8 @@ transferData.amount.payout_partner = JSON.parse(sessionStorage.getItem("selected
     if (!monovaForm.paymentMethod)
       errors.paymentMethod = "Please select payment method.";
     if (!monovaForm.bsb) errors.bsb = "BSB is required.";
-    if (!monovaForm.accountNumber)
-      errors.accountNumber = "Account number is required.";
+    // if (!monovaForm.accountNumber)
+    //   errors.accountNumber = "Account number is required.";
     if (!monovaForm.accountName)
       errors.accountName = "Account name is required.";
 
@@ -228,8 +228,8 @@ transferData.amount.payout_partner = JSON.parse(sessionStorage.getItem("selected
         sessionStorage.setItem("monova_form_data", JSON.stringify(temp));
 
         // Use the final reason (either selected reason or custom "Other" reason)
-     const finalReason = transferReason === "Other" ? otherReason : transferReason;
-      transferData.amount.reason = finalReason;
+        const finalReason = transferReason === "Other" ? otherReason : transferReason;
+        transferData.amount.reason = finalReason;
 
         const txResponse = await createTransaction(transferData);
 
@@ -264,45 +264,45 @@ transferData.amount.payout_partner = JSON.parse(sessionStorage.getItem("selected
         toast.error("Failed to copy to clipboard.");
       });
   };
-const handleContinue = async () => {
-  // Check if transfer reason is selected
-  if (!transferReason) {
-    setReasonError("Please select a transfer reason.");
-    return;
-  }
-
-  // Check if "Other" is selected but no custom reason is provided
-  if (transferReason === "Other" && !otherReason.trim()) {
-    setReasonError("Please specify the reason when selecting 'Other'.");
-    return;
-  }
-
-  // Clear any previous errors
-  setReasonError("");
-
-  // Save the final reason to session storage and update transferData
-  const finalReason = transferReason === "Other" ? otherReason : transferReason;
-  sessionStorage.setItem("final_transfer_reason", finalReason);
-  
-  // Update transferData with the correct reason
-  transferData.amount.reason = finalReason;
-
-  // Rest of your existing handleContinue code...
-  if (paymentType === "payto") {
-    try {
-      setIsLoadingAgreement(true);
-      // ... rest of your existing code
-    } catch (err) {
-      // ... existing error handling
+  const handleContinue = async () => {
+    // Check if transfer reason is selected
+    if (!transferReason) {
+      setReasonError("Please select a transfer reason.");
+      return;
     }
-  } else if (paymentType === "payid") {
-    handleCreatePayId();
-  } else if (paymentType === "monova" || paymentType === "bank_transfer") {
-    setModalShowMonova(true);
-  } else {
-    toast.warning("Please select a payment type.");
-  }
-};
+
+    // Check if "Other" is selected but no custom reason is provided
+    if (transferReason === "Other" && !otherReason.trim()) {
+      setReasonError("Please specify the reason when selecting 'Other'.");
+      return;
+    }
+
+    // Clear any previous errors
+    setReasonError("");
+
+    // Save the final reason to session storage and update transferData
+    const finalReason = transferReason === "Other" ? otherReason : transferReason;
+    sessionStorage.setItem("final_transfer_reason", finalReason);
+
+    // Update transferData with the correct reason
+    transferData.amount.reason = finalReason;
+
+    // Rest of your existing handleContinue code...
+    if (paymentType === "payto") {
+      try {
+        setIsLoadingAgreement(true);
+        // ... rest of your existing code
+      } catch (err) {
+        // ... existing error handling
+      }
+    } else if (paymentType === "payid") {
+      handleCreatePayId();
+    } else if (paymentType === "monova" || paymentType === "bank_transfer") {
+      setModalShowMonova(true);
+    } else {
+      toast.warning("Please select a payment type.");
+    }
+  };
   const handleCreatePayId = async () => {
     setIsLoadingPayId(true);
     try {
@@ -337,53 +337,53 @@ const handleContinue = async () => {
       setIsLoadingPayId(false);
     }
   };
-const handlePayToAgreementContinue = async () => {
-  setIsCreatingAgreement(true);
-  try {
-    let payload;
+  const handlePayToAgreementContinue = async () => {
+    setIsCreatingAgreement(true);
+    try {
+      let payload;
 
-    if (payToLimitForm.payId) {
-      payload = {
-        pay_id: payToLimitForm.payId,
-        payid_type: payToForm.payIdType || "EMAL",
-      };
-    } else {
-      payload = {
-        bsb: payToLimitForm.bsb,
-        account_number: payToLimitForm.accountNumber,
-      };
-    }
-
-    payload.start_date = payToLimitForm.startDate;
-    payload.agreement_amount = payToLimitForm.amountLimit;
-    
-    // Add reason to payload - use custom reason if "Other" is selected
-    payload.reason = transferReason === "Other" ? otherReason : transferReason;
-
-    const agreementResponse = await createAgreement(payload);
-
-    if (agreementResponse?.code === "200" || agreementResponse?.success) {
-      sessionStorage.setItem("payto_limit_data", JSON.stringify(payToLimitForm));
-      sessionStorage.setItem("payto_agreement_response", JSON.stringify(agreementResponse));
-
-      const txResponse = await createTransaction(transferData);
-
-      if (txResponse?.code === "200") {
-        toast.success("PayTo agreement & transaction created successfully!");
-        setModalShowPayToAgreement(false);
-        navigate("/confirm-transfer");
+      if (payToLimitForm.payId) {
+        payload = {
+          pay_id: payToLimitForm.payId,
+          payid_type: payToForm.payIdType || "EMAL",
+        };
       } else {
-        toast.error(txResponse?.message || "Failed to create transaction.");
+        payload = {
+          bsb: payToLimitForm.bsb,
+          account_number: payToLimitForm.accountNumber,
+        };
       }
-    } else {
-      toast.error(agreementResponse?.message || "Failed to create agreement.");
+
+      payload.start_date = payToLimitForm.startDate;
+      payload.agreement_amount = payToLimitForm.amountLimit;
+
+      // Add reason to payload - use custom reason if "Other" is selected
+      payload.reason = transferReason === "Other" ? otherReason : transferReason;
+
+      const agreementResponse = await createAgreement(payload);
+
+      if (agreementResponse?.code === "200" || agreementResponse?.success) {
+        sessionStorage.setItem("payto_limit_data", JSON.stringify(payToLimitForm));
+        sessionStorage.setItem("payto_agreement_response", JSON.stringify(agreementResponse));
+
+        const txResponse = await createTransaction(transferData);
+
+        if (txResponse?.code === "200") {
+          toast.success("PayTo agreement & transaction created successfully!");
+          setModalShowPayToAgreement(false);
+          navigate("/confirm-transfer");
+        } else {
+          toast.error(txResponse?.message || "Failed to create transaction.");
+        }
+      } else {
+        toast.error(agreementResponse?.message || "Failed to create agreement.");
+      }
+    } catch (error) {
+      toast.error("Error creating agreement.");
+    } finally {
+      setIsCreatingAgreement(false);
     }
-  } catch (error) {
-    toast.error("Error creating agreement.");
-  } finally {
-    setIsCreatingAgreement(false);
-  }
-};
+  };
 
   return (
     <AnimatedPage>
@@ -473,7 +473,7 @@ const handlePayToAgreementContinue = async () => {
                         name="paymentType"
                         className="paymentoptions m-0"
                         type="radio"
-                        checked={paymentType === "bank_transfer"}
+                        checked={paymentType === "bank_transfer" || paymentType === "monova"}
                         onChange={() => {
                           setPaymentType("bank_transfer");
                           // Reset selected gateway
@@ -484,25 +484,23 @@ const handlePayToAgreementContinue = async () => {
                         }}
                       />
 
-                      {paymentType === "bank_transfer" && (
+                      {(paymentType === "bank_transfer" || paymentType === "monova") && (
                         <Form.Select
                           className="ms-3 payment-select"
                           style={{ width: "200px" }}
+                          value={paymentType === "monova" ? "monova" : ""}
                           onChange={(e) => {
                             const selectedGateway = e.target.value;
+
                             if (selectedGateway === "monova") {
                               setPaymentType("monova");
-                              sessionStorage.setItem(
-                                "selected_payment_method",
-                                "monova"
-                              );
-                              setModalShowMonova(true);
+                              sessionStorage.setItem("selected_payment_method", "monova");
+                              // DO NOT open modal here
                             }
                           }}
                         >
                           <option value="">Select Gateway</option>
                           <option value="monova">Monoova</option>
-                          {/* Future: add more gateways here */}
                         </Form.Select>
                       )}
                     </div>
@@ -894,7 +892,7 @@ const handlePayToAgreementContinue = async () => {
                   )}
                 </FloatingLabel>
               </Row>
-              <Row className="mb-3">
+              {/* <Row className="mb-3">
                 <FloatingLabel
                   as={Col}
                   controlId="monova-account"
@@ -915,7 +913,7 @@ const handlePayToAgreementContinue = async () => {
                     </Form.Control.Feedback>
                   )}
                 </FloatingLabel>
-              </Row>
+              </Row> */}
               <Row className="mb-3">
                 <FloatingLabel
                   as={Col}

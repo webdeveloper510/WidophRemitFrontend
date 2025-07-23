@@ -79,41 +79,55 @@ const ConfirmTransfer = () => {
   //     console.error("Error fetching user profile:", err);
   //   }
   // };
-
   const handleMonovaPayment = async () => {
     const monovaFormData = sessionStorage.getItem("monova_form_data");
     const selectedReceiver = sessionStorage.getItem("selected_receiver");
-    const storedPayload = sessionStorage.getItem("payload"); // Contains amounts
+    const storedPayload = sessionStorage.getItem("payload");
+    const transferData = sessionStorage.getItem("transfer_data");
 
-    if (!monovaFormData || !selectedReceiver || !storedPayload) {
+    if (!monovaFormData || !selectedReceiver || !storedPayload || !transferData) {
       toast.error("Required data not found in session.");
       return false;
     }
 
     setIsLoadingMonova(true);
     try {
-      const monovaForm = JSON.parse(monovaFormData);
-      const receiverData = JSON.parse(selectedReceiver);
-      const payloadData = JSON.parse(storedPayload);
-      const receiver = JSON.parse(sessionStorage.getItem("selected_receiver"));
-
-
-      const matcher = await createAutoMatcher({
-        akaNames: [`${receiver.first_name}`, `${receiver.first_name} ${receiver.last_name}`, `${receiver.first_name} ${receiver.last_name} ${receiver.middle_name}`],
-        bankAccountName: receiver.bank_name,
-        bsb: monovaForm.bsbNumber
-      })
-
-      if (!matcher.bankAccountNumber || matcher.bankAccountNumber === 0) {
-        toast.error("Some createAutoMatcher Error");
-        return;
+      // Safely parse session data
+      let monovaForm, receiverData, payloadData, temp;
+      try {
+        monovaForm = JSON.parse(monovaFormData);
+        receiverData = JSON.parse(selectedReceiver);
+        payloadData = JSON.parse(storedPayload);
+        temp = JSON.parse(transferData);
+      } catch (e) {
+        toast.error("Session data is corrupted or invalid.");
+        console.error("Parsing error:", e);
+        return false;
       }
 
-      const temp = JSON.parse(sessionStorage.getItem("transfer_data"));
-      console.log(temp);
+      // Validate transfer amount structure
+      if (!temp?.amount?.to || !temp?.amount?.from) {
+        toast.error("Transfer data is incomplete.");
+        return false;
+      }
 
+      // Matcher call
+      const matcher = await createAutoMatcher({
+        akaNames: [
+          `${receiverData.first_name}`,
+          `${receiverData.first_name} ${receiverData.last_name}`,
+          `${receiverData.first_name} ${receiverData.last_name} ${receiverData.middle_name || ""}`.trim()
+        ],
+        bankAccountName: `${receiverData.first_name} ${receiverData.last_name}`,
+        bsb: monovaForm.bsbNumber
+      });
 
+      if (!matcher?.bankAccountNumber) {
+        toast.error("Bank account matching failed.");
+        return false;
+      }
 
+      // Prepare payment payload
       const payload = {
         amount: parseFloat(monovaForm?.amount || 0),
         bsbNumber: matcher.bsb,
@@ -141,10 +155,10 @@ const ConfirmTransfer = () => {
             send_currency: payloadData.amount.send_currency,
             receive_currency: payloadData.amount.receive_currency,
             receive_method: payloadData.amount.receive_method,
-            payout_partner: JSON.parse(sessionStorage.getItem("selected_receiver")).bank_name,
+            payout_partner: receiverData.bank_name,
             reason: sessionStorage.getItem("transfer_reason"),
-            exchange_rate: payloadData.amount.exchange_rate,
-          },
+            exchange_rate: payloadData.amount.exchange_rate
+          }
         });
 
         toast.success("Monova payment created successfully!");
