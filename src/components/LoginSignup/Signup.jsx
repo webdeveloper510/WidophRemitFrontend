@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { Link } from "react-router-dom";
 
 // Validation Schema
 const validationSchema = Yup.object({
@@ -315,15 +316,14 @@ const Signup = () => {
                       {loading || isSubmitting ? "Processing..." : "SIGN UP"}
                     </Button>
 
+
                     <div className="mt-3">
                       Already have an account?{" "}
-                      <a
-                        href="/login"
-                        className="text-success fw-bold forgotpassword-text"
-                      >
+                      <Link to="/login" className="text-success fw-bold forgotpassword-text">
                         Sign in
-                      </a>
+                      </Link>
                     </div>
+
                   </Form>
                 );
               }}

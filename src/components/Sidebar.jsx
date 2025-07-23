@@ -47,8 +47,8 @@ const Sidebar = ({ collapsed }) => {
           <li
             key={item.path}
             className={`nav-item mb-2 ${location.pathname === item.path
-                ? "bg-light text-dark rounded"
-                : ""
+              ? "bg-light text-dark rounded"
+              : ""
               }`}
           >
             <Link
@@ -60,21 +60,16 @@ const Sidebar = ({ collapsed }) => {
           </li>
         ))}
         <li className="mt-auto logout-row">
-          <a
-            className="nav-link  d-flex align-items-center gap-2"
-            onClick={handleLogout}
+          <button
+            type="button"
+            className="logout-btn nav-link d-flex align-items-center gap-2"
+            onClick={() => {
+              sessionStorage.clear();
+              navigate("/login");
+            }}
           >
-            <button
-              type="button"
-              className="logout-btn nav-link  d-flex align-items-center"
-              onClick={() => {
-                sessionStorage.clear();
-                navigate("/login");
-              }}
-            >
-              <HiOutlineLogout /> <span>Logout</span>
-            </button>
-          </a>
+            <HiOutlineLogout /> <span>Logout</span>
+          </button>
         </li>
       </ul>
     </div>

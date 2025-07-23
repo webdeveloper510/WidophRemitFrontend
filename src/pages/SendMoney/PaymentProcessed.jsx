@@ -6,15 +6,18 @@ import processedImg from "../../assets/images/payment-processed-image.png";
 import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
 import { Col, Row, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
+
 
 const PaymentProcessed = () => {
   return (
     <AnimatedPage>
       <div className="page-title">
         <div className="d-flex align-items-center">
-          <a href="confirm-transfer">
-            <img src={Back} />
-          </a>
+          <Link to="/confirm-transfer">
+            <img src={Back} alt="Back" />
+          </Link>
+
           <h1>Your transfer is being processed</h1>
         </div>
       </div>
@@ -109,13 +112,15 @@ const PaymentProcessed = () => {
                   </Button>
                 </a>
               </Col> */}
+
               <Col>
-                <a href="dashboard">
+                <Link to="/dashboard">
                   <Button variant="primary" className="float-end updateform">
                     Go to Dashboard
                   </Button>
-                </a>
+                </Link>
               </Col>
+
             </Row>
           </div>
         </div>

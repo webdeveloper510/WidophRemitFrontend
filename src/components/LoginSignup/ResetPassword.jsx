@@ -9,6 +9,7 @@ import { Formik, Form as FormikForm, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 import LoginImage from "../../assets/images/login-image.png";
 import { resetPassword } from "../../services/Api";
@@ -204,12 +205,14 @@ const ResetPassword = () => {
                     {loading || isSubmitting ? "Processing..." : "UPDATE"}
                   </Button>
 
+
                   <div>
                     Back to Login{" "}
-                    <a href="/login" className="text-success fw-bold forgotpassword-text">
+                    <Link to="/login" className="text-success fw-bold forgotpassword-text">
                       Go Back
-                    </a>
+                    </Link>
                   </div>
+
                 </FormikForm>
               )}
             </Formik>
