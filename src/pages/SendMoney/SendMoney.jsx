@@ -122,7 +122,23 @@ const SendMoney = () => {
           defaultExchange: defaultExchange,
         };
 
+        // exchange_rate: queryParams.get("exchange_rate"),
+        //   send_amount: queryParams.get("send_amount"),
+        //     send_currency: queryParams.get("send_currency"),
+        //       receive_amount: queryParams.get("receive_amount"),
+        //         receive_currency: queryParams.get("receive_currency"),
+        //           method: queryParams.get("method"),
+
         sessionStorage.setItem("transfer_data", JSON.stringify(local));
+
+        sessionStorage.setItem("web_exchange_data", JSON.stringify({
+          exchange_rate: exch_rate,
+          send_amount: commaRemover(amt),
+          send_currency: values.from,
+          receive_amount: commaRemover(exch_data.amount),
+          receive_currency: values.to,
+          method: values.receive_method
+        }))
 
         navigate("/receivers-list");
       } else if (trans_res.code === "400") {

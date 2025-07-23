@@ -17,6 +17,7 @@ import {
   createPayId,
   createAgreement,
   getAgreementList,
+  getPayID,
 } from "../../services/Api";
 import { toast } from "react-toastify";
 import { createTransaction } from "../../services/Api";
@@ -194,64 +195,64 @@ const PaymentDetail = () => {
     if (!monovaForm.accountName)
       errors.accountName = "Account name is required.";
 
-  if (!transferReason) {
-    toast.error("Please select a transfer reason");
-    setModalShowMonova(false);
-    return;
-  }
-
-  // Check if "Other" is selected but no custom reason is provided
-  if (transferReason === "Other" && !otherReason.trim()) {
-    toast.error("Please specify the reason when selecting 'Other'");
-    setModalShowMonova(false);
-    return;
-  }
-
-  setMonovaFormErrors(errors);
-
-  if (Object.keys(errors).length === 0) {
-    try {
-      sessionStorage.setItem(
-        "monova_payment_data",
-        JSON.stringify(monovaForm)
-      );
-      sessionStorage.setItem("selected_payment_method", "monova");
-
-      const temp = {
-        amount: amount,
-        bsbNumber: monovaForm.bsb,
-        accountNumber: monovaForm.accountNumber,
-        accountName: monovaForm.accountName,
-        payment_mode: monovaForm.paymentMethod,
-      };
-
-      sessionStorage.setItem("monova_form_data", JSON.stringify(temp));
-
-      // Use the final reason (either selected reason or custom "Other" reason)
-      const finalReason = transferReason === "Other" ? otherReason : transferReason;
-      
-      // Create a fresh copy of transferData and update the reason
-      const updatedTransferData = {
-        ...transferData,
-        amount: {
-          ...transferData.amount,
-          reason: finalReason
-        }
-      };
-
-      const txResponse = await createTransaction(updatedTransferData);
-
-      if (txResponse?.code === "200") {
-        setModalShowMonova(false);
-        navigate("/confirm-transfer");
-      } else {
-        toast.error(txResponse?.message || "Transaction creation failed.");
-      }
-    } catch (err) {
-      console.error("Unexpected error during payment creation:", err);
+    if (!transferReason) {
+      toast.error("Please select a transfer reason");
+      setModalShowMonova(false);
+      return;
     }
-  }
-};
+
+    // Check if "Other" is selected but no custom reason is provided
+    if (transferReason === "Other" && !otherReason.trim()) {
+      toast.error("Please specify the reason when selecting 'Other'");
+      setModalShowMonova(false);
+      return;
+    }
+
+    setMonovaFormErrors(errors);
+
+    if (Object.keys(errors).length === 0) {
+      try {
+        sessionStorage.setItem(
+          "monova_payment_data",
+          JSON.stringify(monovaForm)
+        );
+        sessionStorage.setItem("selected_payment_method", "monova");
+
+        const temp = {
+          amount: amount,
+          bsbNumber: monovaForm.bsb,
+          accountNumber: monovaForm.accountNumber,
+          accountName: monovaForm.accountName,
+          payment_mode: monovaForm.paymentMethod,
+        };
+
+        sessionStorage.setItem("monova_form_data", JSON.stringify(temp));
+
+        // Use the final reason (either selected reason or custom "Other" reason)
+        const finalReason = transferReason === "Other" ? otherReason : transferReason;
+
+        // Create a fresh copy of transferData and update the reason
+        const updatedTransferData = {
+          ...transferData,
+          amount: {
+            ...transferData.amount,
+            reason: finalReason
+          }
+        };
+
+        const txResponse = await createTransaction(updatedTransferData);
+
+        if (txResponse?.code === "200") {
+          setModalShowMonova(false);
+          navigate("/confirm-transfer");
+        } else {
+          toast.error(txResponse?.message || "Transaction creation failed.");
+        }
+      } catch (err) {
+        console.error("Unexpected error during payment creation:", err);
+      }
+    }
+  };
   const formatAmountLimit = (limit) => {
     if (!limit) return "Not specified";
     return `AUD ${parseInt(limit).toLocaleString()}`;
@@ -312,32 +313,43 @@ const PaymentDetail = () => {
     }
   };
   const handleCreatePayId = async () => {
-    setIsLoadingPayId(true);
+
     try {
       const transactionId = sessionStorage.getItem("transaction_id");
       if (!transactionId) {
         toast.error("Transaction ID not found.");
-        setIsLoadingPayId(false);
         return;
       }
 
-      const response = await createPayId({ transaction_id: transactionId });
+      const existing = await getPayID();
 
-      if (response?.code === "200") {
+      if (existing?.data?.payid) {
         setPayIdData({
-          payId: response.data.payid || "",
-          transferId: response.data.transaction_id || "",
+          payId: existing.data.payid || "",
+          transferId: sessionStorage.getItem("transaction_id"),
         });
-
-        const txResponse = await createTransaction(transferData);
-
-        if (txResponse?.code === "200") {
-          setModalShowPayId(true);
-        } else {
-          toast.error(txResponse?.message || "Transaction creation failed.");
-        }
+        setModalShowPayId(true);
       } else {
-        toast.error(response.message || "PayID generation failed.");
+        setIsLoadingPayId(true);
+
+        const response = await createPayId({ transaction_id: transactionId });
+
+        if (response?.code === "200" && response.data?.payid) {
+          setPayIdData({
+            payId: response.data.payid || "",
+            transferId: response.data.transaction_id || "",
+          });
+
+          const txResponse = await createTransaction(transferData);
+
+          if (txResponse?.code === "200") {
+            setModalShowPayId(true);
+          } else {
+            toast.error(txResponse?.message || "Transaction creation failed.");
+          }
+        } else {
+          toast.error(response?.message || "PayID generation failed.");
+        }
       }
     } catch (err) {
       toast.error("Error generating PayID.");
@@ -345,6 +357,7 @@ const PaymentDetail = () => {
       setIsLoadingPayId(false);
     }
   };
+
   const handlePayToAgreementContinue = async () => {
     setIsCreatingAgreement(true);
     try {

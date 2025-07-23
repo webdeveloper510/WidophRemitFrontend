@@ -283,12 +283,13 @@ const OtpVerification = () => {
         response = await userRegisterVerify(payload);
       }
       if (response && response.code === "200") {
-        toast.success("OTP Verified Successfully!");
 
         if (from == "signup") {
           if (response?.access_token) {
             sessionStorage.setItem("token", response.access_token);
           }
+          toast.success("SignUp Successfull!");
+
           navigate("/kyc");
           return;
         }
@@ -297,6 +298,8 @@ const OtpVerification = () => {
           if (response?.access_token) {
             sessionStorage.setItem("token", response.access_token);
           }
+          toast.success("Login Successfull!");
+
           navigate("/dashboard");
           return;
         }

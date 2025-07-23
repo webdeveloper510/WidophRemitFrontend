@@ -19,7 +19,6 @@ const ReceiverList = () => {
     sessionStorage.setItem("selected_receiver", JSON.stringify(row));
     navigate("/review-transfer");
   };
-
   const columns = [
     {
       name: "S. No.",
@@ -30,31 +29,33 @@ const ReceiverList = () => {
     {
       name: "Receiver Name",
       selector: (row) => row.account_name,
-      cell: (row) => <strong>{row.account_name}</strong>,
+      // No need for cell override; row click will still work
     },
     {
       name: "Receiver Mobile",
       selector: (row) => row.mobile,
-      cell: (row) => <strong>{row.mobile}</strong>,
     },
     {
       name: "Action",
       cell: (row) => (
         <div
-          className="send-again-btn"
-          onClick={() => handleSendAgain(row)}
-          style={{ cursor: "pointer" }}
+          className="send-again-btn d-flex align-items-center gap-1"
+          onClick={(e) => {
+            e.stopPropagation(); // prevent row click and button click from both firing
+            handleSendAgain(row);
+          }}
+          style={{ cursor: "pointer", fontWeight: "bold" }}
         >
-          <MdOutlineKeyboardArrowRight />
+          <MdOutlineKeyboardArrowRight size={20} />
         </div>
       ),
-      ignoreRowClick: true,
       allowOverflow: true,
       button: true,
       center: true,
-      width: "120px",
+      width: "180px",
     },
   ];
+
 
   const customStyles = {
     headCells: {
