@@ -317,9 +317,15 @@ const AddReceiver = () => {
               {/* Phone Number - Updated to match Signup style */}
               <Row className="mb-3 mobile_numbero">
                 <Col>
-                  <FloatingLabel className="form-label">
-                    Mobile Number<span style={{ color: "red" }}> *</span>
-                  </FloatingLabel>
+                  <FloatingLabel
+                                                  label={
+                                                    <span>
+                                                      Mobile Number{" "}
+                                                    </span>
+                                                  }
+                                                  className="mb-3"
+                                                >
+                  
                   <div className="d-flex align-items-stretch p-0">
                     <Form.Select
                       name="countryCode"
@@ -350,6 +356,7 @@ const AddReceiver = () => {
                       }}
                     />
                   </div>
+                  </FloatingLabel>
                   {touched.phone && errors.phone && (
                     <div className="invalid-feedback d-block">
                       {errors.phone}

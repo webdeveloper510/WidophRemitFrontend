@@ -27,10 +27,19 @@ const ProfileInformation = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   const navigate = useNavigate();
-  const countryOptions = getNames().map((country) => ({
+
+  // Country options - only Australia and New Zealand
+  const countryOptions = [
+    { value: "Australia", label: "Australia" },
+    { value: "New Zealand", label: "New Zealand" }
+  ];
+
+  // Country of Birth dropdown options (all countries)
+  const countryOfBirthOptions = getNames().map((country) => ({
     value: country,
     label: country,
   }));
+
   const [visibility, setVisibility] = useState({
     current: false,
     new: false,
@@ -110,73 +119,6 @@ const ProfileInformation = () => {
 
     fetchAndVerifyUser();
   }, []);
-
-  // useEffect(() => {
-  //   const userData = JSON.parse(sessionStorage.getItem("User data") || "{}");
-
-  //   if (Object.keys(userData).length > 0) {
-  //     const updatedData = {
-  //       firstName: userData.First_name || "",
-  //       middleName: userData.Middle_name || "",
-  //       lastName: userData.Last_name || "",
-  //       customerId: userData.customer_id || "",
-  //       email: userData.email || "",
-  //       mobile: userData.mobile || "",
-  //       dateOfBirth: userData.Date_of_birth || "",
-  //       countryOfBirth: userData.Country_of_birth || "",
-  //       occupation: userData.occupation || "",
-  //       country: userData.country || userData.location || "",
-  //       address: userData.address || "",
-  //       city: userData.city || "",
-  //       zip: userData.postcode || "",
-  //       state: userData.state || "",
-  //     };
-
-  //     setFormData((prev) => ({
-  //       ...prev,
-  //       ...updatedData,
-  //     }));
-
-  //     if (userData.mobile && userData.mobile.startsWith("+")) {
-  //       const countryCode = userData.mobile.substring(1, 3);
-  //       const phoneNumber = userData.mobile.substring(3);
-  //       setCountryCode(countryCode);
-  //       setRawMobile(phoneNumber);
-  //     }
-  //   }
-  // }, []);
-
-  // const handlePasswordUpdate = async () => {
-  //   const { currentPassword, newPassword, confirmPassword } = formData;
-
-  //   if (!currentPassword || !newPassword || !confirmPassword) {
-  //     return toast.error("All password fields are required");
-  //   }
-  //   if (newPassword !== confirmPassword) {
-  //     return toast.error("New and confirm passwords do not match");
-  //   }
-  //   try {
-  //     const res = await changePassword({
-  //       old_password: currentPassword,
-  //       new_password: newPassword,
-  //       confirm_password: confirmPassword,
-  //     });
-  //     if (res?.code === "200") {
-  //       toast.success("Password updated successfully");
-  //       setFormData((prev) => ({
-  //         ...prev,
-  //         currentPassword: "",
-  //         newPassword: "",
-  //         confirmPassword: "",
-  //       }));
-  //     } else {
-  //       toast.error(res?.message || "Failed to update password");
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //     toast.error("Something went wrong");
-  //   }
-  // };
 
   const requiredFields = [
     "firstName",
@@ -427,26 +369,37 @@ const ProfileInformation = () => {
                                 Date of Birth is required
                               </Form.Control.Feedback>
                             </FloatingLabel>
-                            <FloatingLabel
-                              as={Col}
-                              label={
-                                <span>
-                                  Country of Birth
+
+                            {/* Updated Country of Birth - Now a dropdown */}
+                            <Col>
+                              <div className="floating-label-wrapper kyc-country">
+                                <label>
+                                  Country of Birth{" "}
                                   <span style={{ color: "red" }}>*</span>
-                                </span>
-                              }
-                            >
-                              <Form.Control
-                                name="countryOfBirth"
-                                value={formData.countryOfBirth}
-                                onChange={handleChange}
-                                required
-                                isInvalid={getInvalid("countryOfBirth")}
-                              />
-                              <Form.Control.Feedback type="invalid">
-                                Country of Birth is required
-                              </Form.Control.Feedback>
-                            </FloatingLabel>
+                                </label>
+                                <Select
+                                  options={countryOfBirthOptions}
+                                  name="countryOfBirth"
+                                  value={countryOfBirthOptions.find(
+                                    (option) =>
+                                      option.value === formData.countryOfBirth
+                                  )}
+                                  onChange={(selectedOption) =>
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      countryOfBirth: selectedOption.value,
+                                    }))
+                                  }
+                                  className={getInvalid("countryOfBirth") ? "is-invalid" : ""}
+                                />
+                                {getInvalid("countryOfBirth") && (
+                                  <div className="invalid-feedback d-block">
+                                    Country of Birth is required
+                                  </div>
+                                )}
+                              </div>
+                            </Col>
+
                             <FloatingLabel
                               as={Col}
                               label={
@@ -490,18 +443,13 @@ const ProfileInformation = () => {
                                       country: selectedOption.value,
                                     }))
                                   }
+                                  className={getInvalid("country") ? "is-invalid" : ""}
                                 />
-
-                                {/* <Form.Control
-                    name="country"
-                    value={formData.country}
-                    onChange={handleChange}
-                    required
-                    isInvalid={getInvalid("country")}
-                  /> */}
-                                <Form.Control.Feedback type="invalid">
-                                  Country is required
-                                </Form.Control.Feedback>
+                                {getInvalid("country") && (
+                                  <div className="invalid-feedback d-block">
+                                    Country is required
+                                  </div>
+                                )}
                               </div>
                             </Col>
 
@@ -566,7 +514,7 @@ const ProfileInformation = () => {
                                 type="number"
                                 value={formData.zip}
                                 onChange={handleChange}
-                                requiredvalue={rawMobile}
+                                required
                                 isInvalid={getInvalid("zip")}
                               />
                               <Form.Control.Feedback type="invalid">
@@ -593,7 +541,6 @@ const ProfileInformation = () => {
                               </Form.Control.Feedback>
                             </FloatingLabel>
                           </Row>
-
 
                           {/* Password Update Section */}
                           <Card className="receiver-card mt-4 bg-white">
@@ -664,9 +611,6 @@ const ProfileInformation = () => {
                           </Row>
                         </Card.Body>
                       </Card>
-
-                      {/* Password Section remains unchanged */}
-                      {/* ... */}
                     </Form>
                   </div>
                   <Modal
