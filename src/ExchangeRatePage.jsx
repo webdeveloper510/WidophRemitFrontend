@@ -17,6 +17,7 @@ const ExchangeRatePage = () => {
 
     useEffect(() => {
         sessionStorage.setItem("web_exchange_data", JSON.stringify(exchangeData));
+        sessionStorage.setItem("from_root", true);
         navigate("/login");
     }, [search]);
 

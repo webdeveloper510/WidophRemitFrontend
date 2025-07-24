@@ -37,7 +37,7 @@ const TransfersList = () => {
   const [filterText, setFilterText] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [list, setList] = useState([]);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(15);
 
@@ -100,12 +100,12 @@ const TransfersList = () => {
 
   const statusOptions = [
     "",
-    "Incomplete",
-    "Pending Review and Processing",
-    "In progress",
+    "Abandoned",
     "Payment due",
     "Waiting for approval",
-    "Partially done",
+    "Cancelled",
+    "Completed",
+    "Expired",
   ];
 
   const subHeaderComponent = (

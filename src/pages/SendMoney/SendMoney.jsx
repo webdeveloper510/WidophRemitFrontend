@@ -47,8 +47,8 @@ const SendMoney = () => {
   });
 
 
-  const updateWebExchangeData = (updatedValues) => {
-    sessionStorage.setItem("web_exchange_data", JSON.stringify({
+  const updateTempExchangeData = (updatedValues) => {
+    sessionStorage.setItem("temp_exchange_data", JSON.stringify({
       exchange_rate: exch_rate,
       send_amount: commaRemover(updatedValues.send_amt || ""),
       send_currency: updatedValues.from || "AUD",
@@ -95,7 +95,7 @@ const SendMoney = () => {
         direction: "from",
       });
 
-      let payload = {
+      let payload = { 
         amount: {
           send_amount: commaRemover(values.send_amt),
           receive_amount: commaRemover(exch_data.amount),
@@ -137,14 +137,6 @@ const SendMoney = () => {
 
         sessionStorage.setItem("transfer_data", JSON.stringify(local));
 
-        sessionStorage.setItem("web_exchange_data", JSON.stringify({
-          exchange_rate: exch_rate,
-          send_amount: commaRemover(amt),
-          send_currency: values.from,
-          receive_amount: commaRemover(exch_data.amount),
-          receive_currency: values.to,
-          method: values.receive_method
-        }))
 
         navigate("/receivers-list");
       } else if (trans_res.code === "400") {
@@ -248,9 +240,12 @@ const SendMoney = () => {
         }
 
         const webData = sessionStorage.getItem("web_exchange_data");
-        const transferData = sessionStorage.getItem("transfer_data");
+        const tempData = sessionStorage.getItem("temp_exchange_data");
+
 
         if (webData) {
+          sessionStorage.removeItem("web_exchange_data");
+          sessionStorage.removeItem("from_root");
           const parsedData = JSON.parse(webData);
           if (
             parsedData.send_amount &&
@@ -272,24 +267,13 @@ const SendMoney = () => {
           } else {
             await getExchangeRate(initialValues.from, initialValues.to);
           }
-        } else if (transferData && isBackFromReceivers) {
-          const parsedTransfer = JSON.parse(transferData);
-          if (parsedTransfer.amount) {
-            const amt = parsedTransfer.amount;
-            setFieldValue("send_amt", amt.send_amt || "");
-            setFieldValue("exchange_amt", amt.exchange_amt || "");
-            setFieldValue("from", amt.from || "AUD");
-            setFieldValue("to", amt.to || "NGN");
-            setFieldValue("receive_method", amt.receive_method || "Bank transfer");
-
-            if (amt.exchange_rate) {
-              setExchRate(amt.exchange_rate);
-            } else {
-              await getExchangeRate(amt.from, amt.to);
-            }
-          } else {
-            await getExchangeRate(initialValues.from, initialValues.to);
-          }
+        } else if (tempData && isBackFromReceivers) {
+          const parsedData = JSON.parse(tempData);
+          setFieldValue("send_amt", parsedData.send_amount || "");
+          setFieldValue("exchange_amt", parsedData.receive_amount || "");
+          setFieldValue("from", parsedData.send_currency || "AUD");
+          setFieldValue("to", parsedData.receive_currency || "NGN");
+          setFieldValue("receive_method", parsedData.method || "Bank transfer");
         } else {
           await getExchangeRate(initialValues.from, initialValues.to);
         }
@@ -309,7 +293,7 @@ const SendMoney = () => {
     handleChange(e);
 
     const updated = { ...values, [name]: value };
-    updateWebExchangeData(updated);
+    updateTempExchangeData(updated);
 
     if (name === "from" || name === "to") {
       debouncedConversion(name, value, "from");
@@ -327,17 +311,17 @@ const SendMoney = () => {
 
       if (name === "send_amt" && value === "") {
         setFieldValue("exchange_amt", "");
-        updateWebExchangeData({
+        updateTempExchangeData({
           ...values,
           send_amt: "",
           exchange_amt: "",
         });
         return;
       }
-      
+
       const updated = { ...values, [name]: value };
 
-      updateWebExchangeData(updated);
+      updateTempExchangeData(updated);
 
       if (name === "send_amt") {
         debouncedConversion(name, value, "from");
@@ -362,7 +346,7 @@ const SendMoney = () => {
     }
 
     const updated = { ...values, [name]: value };
-    updateWebExchangeData(updated);
+    updateTempExchangeData(updated);
   };
 
 

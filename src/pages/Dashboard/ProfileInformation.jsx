@@ -543,7 +543,7 @@ const ProfileInformation = () => {
                           </Row>
 
                           {/* Password Update Section */}
-                          <Card className="receiver-card mt-4 bg-white">
+                          {/* <Card className="receiver-card mt-4 bg-white">
                             <Card.Body>
                               <Card.Title>Change Password</Card.Title>
                               <Row className="mb-3">
@@ -596,7 +596,7 @@ const ProfileInformation = () => {
                               </Row>
 
                             </Card.Body>
-                          </Card>
+                          </Card> */}
 
                           <Row className="mb-3 mt-4">
                             <Col>

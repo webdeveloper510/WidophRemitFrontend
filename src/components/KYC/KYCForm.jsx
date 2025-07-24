@@ -432,7 +432,7 @@ const KYCForm = () => {
 
   return (
     <>
-      <TopNavbar />
+      {/* <TopNavbar /> */}
       <Container className="py-5 pt-2 mt-5 mb-5 d-flex justify-content-between">
         <Tab.Container
           activeKey={activeKey}

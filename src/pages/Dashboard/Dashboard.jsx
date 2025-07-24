@@ -51,8 +51,8 @@ const Dashboard = () => {
         if (transactionsResponse.code === "200") {
           setTransactionsCount(transactionsResponse?.data?.data?.length || 0);
         }
+       
 
-        // User Profile Data
         if (userResponse?.code === "200") {
           setFirstName(userResponse.data.First_name || "User");
 

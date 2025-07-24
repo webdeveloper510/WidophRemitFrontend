@@ -41,6 +41,12 @@ const TransactionSuccess = () => {
     };
   }, []);
 
+  useEffect(() => {
+    return () => {
+      sessionStorage.removeItem("web_exchange_data");
+    };
+  }, []);
+
   // Handle browser back button - override browser history and clear session storage
   useEffect(() => {
     window.history.pushState(null, null, window.location.pathname);
