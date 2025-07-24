@@ -46,6 +46,19 @@ const SendMoney = () => {
     receive_method: Yup.string().required("Please select a receive method"),
   });
 
+
+  const updateWebExchangeData = (updatedValues) => {
+    sessionStorage.setItem("web_exchange_data", JSON.stringify({
+      exchange_rate: exch_rate,
+      send_amount: commaRemover(updatedValues.send_amt || ""),
+      send_currency: updatedValues.from || "AUD",
+      receive_amount: commaRemover(updatedValues.exchange_amt || ""),
+      receive_currency: updatedValues.to || "NGN",
+      method: updatedValues.receive_method || "Bank transfer",
+    }));
+  };
+
+
   const initialValues = {
     send_amt: "",
     exchange_amt: "",
@@ -121,13 +134,6 @@ const SendMoney = () => {
           exchange_rate: exch_rate,
           defaultExchange: defaultExchange,
         };
-
-        // exchange_rate: queryParams.get("exchange_rate"),
-        //   send_amount: queryParams.get("send_amount"),
-        //     send_currency: queryParams.get("send_currency"),
-        //       receive_amount: queryParams.get("receive_amount"),
-        //         receive_currency: queryParams.get("receive_currency"),
-        //           method: queryParams.get("method"),
 
         sessionStorage.setItem("transfer_data", JSON.stringify(local));
 
@@ -302,18 +308,36 @@ const SendMoney = () => {
     const { name, value } = e.target;
     handleChange(e);
 
+    const updated = { ...values, [name]: value };
+    updateWebExchangeData(updated);
+
     if (name === "from" || name === "to") {
       debouncedConversion(name, value, "from");
     }
   };
 
+
   const handleAmountChange = (e) => {
     const { name, value } = e.target;
-
     const regex = /^\d*\.?\d{0,2}$/;
 
     if (value === "" || regex.test(value)) {
       setFieldValue(name, value);
+
+
+      if (name === "send_amt" && value === "") {
+        setFieldValue("exchange_amt", "");
+        updateWebExchangeData({
+          ...values,
+          send_amt: "",
+          exchange_amt: "",
+        });
+        return;
+      }
+      
+      const updated = { ...values, [name]: value };
+
+      updateWebExchangeData(updated);
 
       if (name === "send_amt") {
         debouncedConversion(name, value, "from");
@@ -336,7 +360,11 @@ const SendMoney = () => {
         }
       }
     }
+
+    const updated = { ...values, [name]: value };
+    updateWebExchangeData(updated);
   };
+
 
   if (loading) {
     return (

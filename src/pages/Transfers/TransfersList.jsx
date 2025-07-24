@@ -37,8 +37,7 @@ const TransfersList = () => {
   const [filterText, setFilterText] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [list, setList] = useState([]);
-  const [loading, setLoading] = useState(true); // ✅ full-page loader
-
+  const [loading, setLoading] = useState(true); 
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(15);
 
