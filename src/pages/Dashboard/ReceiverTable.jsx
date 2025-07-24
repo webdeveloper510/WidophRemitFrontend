@@ -53,7 +53,6 @@ const ReceiverTable = () => {
     {
       name: "Destination",
       selector: (row) => row.country,
-      sortable: true,
       cell: (row) => <strong>{row.country}</strong>,
     },
     {
@@ -61,7 +60,6 @@ const ReceiverTable = () => {
       selector: (row) => {
         `${row.first_name} ${row.last_name}`;
       },
-      sortable: true,
       cell: (row) => <strong>{`${row.first_name} ${row.last_name}`}</strong>,
     },
   ];
