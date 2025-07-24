@@ -276,7 +276,11 @@ div#basic-navbar-nav a {
 }
 
 /*********** dashbaord css ********/
-
+.textarea-label label {
+    background: transparent !important;
+    height: 30px !important;
+    top: -1px;
+}
 /* .receiverslist-table
   .sc-dKKIkQ.kqXKaa.rdt_TableBody
   .rdt_TableRow:nth-child(1)
@@ -543,7 +547,9 @@ span.status-badge.review {
 }
 
 /************** profile information css **********/
-
+input.PassowrdWidth.form-control {
+    padding-right: 57px;
+}
 .bg-white {
   background: #fff !important;
   padding: 10px 20px;
@@ -1134,11 +1140,14 @@ li.nav-item.mb-2.bg-light.text-dark.rounded {
   margin-top: 40px;
 }
 .mobile_numbero.row label {
-  position: absolute;
-  top: -27px;
-  font-size: 14px;
+    position: absolute;
+    top: -21px;
+    font-size: 14px;
+    background: #fff;
+    height: 30px;
+    padding: 0;
+    left: 18px;
 }
-
 .exchange-form label {
   background: transparent !important;
 }

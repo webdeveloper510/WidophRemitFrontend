@@ -286,3 +286,8 @@ form.profile-form h3 {
   background: #fff;
   left: 10px;
 }
+.textarea-label label {
+    background: transparent !important;
+    height: 30px !important;
+    top: -1px;
+}

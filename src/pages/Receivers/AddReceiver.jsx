@@ -397,7 +397,7 @@ const AddReceiver = () => {
                         <span style={{ color: "red" }}> *</span>
                       </span>
                     }
-                    className="mb-3"
+                    className="mb-3 textarea-label"
                   >
                     <Form.Control
                       as="textarea"
