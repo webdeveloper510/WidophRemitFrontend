@@ -288,7 +288,7 @@ const OtpVerification = () => {
           if (response?.access_token) {
             sessionStorage.setItem("token", response.access_token);
           }
-          toast.success("SignUp Successfull!");
+          toast.success("Registration successful");
 
           navigate("/kyc");
           return;
@@ -298,7 +298,7 @@ const OtpVerification = () => {
           if (response?.access_token) {
             sessionStorage.setItem("token", response.access_token);
           }
-          toast.success("Login Successfull!");
+          toast.success("Logged in successfully.");
 
           navigate("/dashboard");
           return;

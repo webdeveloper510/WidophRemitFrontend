@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import AnimatedPage from "../../components/AnimatedPage";
 import Card from "react-bootstrap/Card";
 import DataTable from "react-data-table-component";
@@ -50,6 +50,7 @@ const TransfersList = () => {
       const pend_res = await pendingTransactions();
 
       if (response.code === "200" && response.data?.data) {
+        data.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
         data = response.data.data;
       }
 
@@ -70,22 +71,33 @@ const TransfersList = () => {
     fetchList();
   }, []);
 
-  const filteredData = list.filter((item) => {
-    const matchesText = (
-      item.recipient_name +
-      item.payment_status +
-      item.date +
-      item.amount
-    )
-      .toLowerCase()
-      .includes(filterText.toLowerCase());
+  const filteredData = useMemo(() => {
+    let filtered = list.filter((item) => {
+      const matchesText = (
+        item.recipient_name +
+        item.payment_status +
+        item.date +
+        item.amount
+      )
+        .toLowerCase()
+        .includes(filterText.toLowerCase());
 
-    const matchesStatus = selectedStatus
-      ? item.payment_status.toLowerCase().includes(selectedStatus.toLowerCase())
-      : true;
+      const matchesStatus = selectedStatus
+        ? item.payment_status.toLowerCase().includes(selectedStatus.toLowerCase())
+        : true;
 
-    return matchesText && matchesStatus;
-  });
+      return matchesText && matchesStatus;
+    });
+
+    if (selectedStatus === "") {
+      filtered = filtered.sort(
+        (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
+      );
+    }
+
+    return filtered;
+  }, [list, filterText, selectedStatus]);
+
 
   const statusOptions = [
     "",
@@ -194,40 +206,40 @@ const TransfersList = () => {
         </span>
       ),
     },
-{
-  name: "Action",
-  cell: (row) => {
-    const status = row.payment_status?.toLowerCase();
+    {
+      name: "Action",
+      cell: (row) => {
+        const status = row.payment_status?.toLowerCase();
 
-    const isDownloadAllowed = !["incomplete", "partially done",].includes(status);
+        const isDownloadAllowed = !["incomplete", "partially done",].includes(status);
 
-    return (
-      <div className="send-again-btn">
-        <Dropdown>
-          <Dropdown.Toggle variant="success" id="dropdown-basic">
-            <BsThreeDots />
-          </Dropdown.Toggle>
+        return (
+          <div className="send-again-btn">
+            <Dropdown>
+              <Dropdown.Toggle variant="success" id="dropdown-basic">
+                <BsThreeDots />
+              </Dropdown.Toggle>
 
-          <Dropdown.Menu>
-            {isDownloadAllowed && (
-              <Dropdown.Item onClick={() => handleDownloadReceipt(row.id)}>
-                Download Receipt
-              </Dropdown.Item>
-            )}
-            <Dropdown.Item as={Link} to={`/transfer-details/${row.transaction_id}`}>
-              View Details
-            </Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      </div>
-    );
-  },
-  ignoreRowClick: true,
-  allowOverflow: true,
-  button: true,
-  center: true,
-  width: "120px",
-}
+              <Dropdown.Menu>
+                {isDownloadAllowed && (
+                  <Dropdown.Item onClick={() => handleDownloadReceipt(row.id)}>
+                    Download Receipt
+                  </Dropdown.Item>
+                )}
+                <Dropdown.Item as={Link} to={`/transfer-details/${row.transaction_id}`}>
+                  View Details
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
+        );
+      },
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+      center: true,
+      width: "120px",
+    }
 
 
   ];

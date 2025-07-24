@@ -595,61 +595,61 @@ const ProfileInformation = () => {
                           </Row>
 
 
-  {/* Password Update Section */}
-          <Card className="receiver-card mt-4 bg-white">
-            <Card.Body>
-              <Card.Title>Change Password</Card.Title>
-              <Row className="mb-3">
-                <FloatingLabel as={Col} label="Current Password" className="position-relative">
-                  <Form.Control
-                    type={visibility.current ? "text" : "password"}
-                    className="PassowrdWidth"
-                    name="currentPassword"
-                    value={formData.currentPassword}
-                    onChange={handleChange}
-                  />
-                  <span
-                    onClick={() => toggleVisibility("current")}
-                    className="password-eye"
-                  >
-                    {visibility.current ? <FaEyeSlash /> : <FaEye />}
-                  </span>
-                </FloatingLabel>
+                          {/* Password Update Section */}
+                          <Card className="receiver-card mt-4 bg-white">
+                            <Card.Body>
+                              <Card.Title>Change Password</Card.Title>
+                              <Row className="mb-3">
+                                <FloatingLabel as={Col} label="Current Password" className="position-relative">
+                                  <Form.Control
+                                    type={visibility.current ? "text" : "password"}
+                                    className="PassowrdWidth"
+                                    name="currentPassword"
+                                    value={formData.currentPassword}
+                                    onChange={handleChange}
+                                  />
+                                  <span
+                                    onClick={() => toggleVisibility("current")}
+                                    className="password-eye"
+                                  >
+                                    {visibility.current ? <FaEyeSlash /> : <FaEye />}
+                                  </span>
+                                </FloatingLabel>
 
-                <FloatingLabel as={Col} label="New Password" className="position-relative">
-                  <Form.Control
-                    type={visibility.new ? "text" : "password"}
-                    className="PassowrdWidth"
-                    name="newPassword"
-                    value={formData.newPassword}
-                    onChange={handleChange}
-                  />
-                  <span
-                    onClick={() => toggleVisibility("new")}
-                    className="password-eye"
-                  >
-                    {visibility.new ? <FaEyeSlash /> : <FaEye />}
-                  </span>
-                </FloatingLabel>
-                <FloatingLabel as={Col} label="Confirm Password" className="position-relative">
-                  <Form.Control
-                   type={visibility.confirm ? "text" : "password"}
-                   className="PassowrdWidth"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                  />
-                  <span
-                    onClick={() => toggleVisibility("confirm")}
-                    className="password-eye"
-                  >
-                    {visibility.confirm ? <FaEyeSlash /> : <FaEye />}
-                  </span>
-                </FloatingLabel>
-              </Row>
-              
-            </Card.Body>
-          </Card>
+                                <FloatingLabel as={Col} label="New Password" className="position-relative">
+                                  <Form.Control
+                                    type={visibility.new ? "text" : "password"}
+                                    className="PassowrdWidth"
+                                    name="newPassword"
+                                    value={formData.newPassword}
+                                    onChange={handleChange}
+                                  />
+                                  <span
+                                    onClick={() => toggleVisibility("new")}
+                                    className="password-eye"
+                                  >
+                                    {visibility.new ? <FaEyeSlash /> : <FaEye />}
+                                  </span>
+                                </FloatingLabel>
+                                <FloatingLabel as={Col} label="Confirm Password" className="position-relative">
+                                  <Form.Control
+                                    type={visibility.confirm ? "text" : "password"}
+                                    className="PassowrdWidth"
+                                    name="confirmPassword"
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
+                                  />
+                                  <span
+                                    onClick={() => toggleVisibility("confirm")}
+                                    className="password-eye"
+                                  >
+                                    {visibility.confirm ? <FaEyeSlash /> : <FaEye />}
+                                  </span>
+                                </FloatingLabel>
+                              </Row>
+
+                            </Card.Body>
+                          </Card>
 
                           <Row className="mb-3 mt-4">
                             <Col>

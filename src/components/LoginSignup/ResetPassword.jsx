@@ -51,6 +51,7 @@ const ResetPassword = () => {
         password: values.password,
         reset_password_otp: values.reset_password_otp,
       });
+
       if (res.code === "200") {
         toast.success("Password Reset Successfully, please login to continue", {
           position: "top-right",
@@ -93,128 +94,154 @@ const ResetPassword = () => {
             </div>
 
             <Formik
-              initialValues={{ reset_password_otp: "", password: "", confirmPassword: "" }}
+              initialValues={{
+                reset_password_otp: "",
+                password: "",
+                confirmPassword: "",
+              }}
               validationSchema={validationSchema}
-              onSubmit={handleSubmit}
+              validateOnMount
+              onSubmit={async (values, actions) => {
+                const errors = await actions.validateForm();
+                if (Object.keys(errors).length > 0) {
+                  actions.setTouched({
+                    reset_password_otp: true,
+                    password: true,
+                    confirmPassword: true,
+                  });
+                  return;
+                }
+
+                handleSubmit(values, actions);
+              }}
             >
-              {({ errors, touched, isSubmitting, values, setFieldValue }) => (
-                <FormikForm className="exchange-form">
-                  {/* OTP Field */}
-                  <Row className="mb-3">
-                    <label className="form-label">
-                      Reset Password OTP <span>*</span>
-                    </label>
-                    <Field name="reset_password_otp">
-                      {({ field }) => (
-                        <Form.Control
-                          {...field}
-                          type="text"
-                          maxLength={6}
-                          placeholder="Enter OTP"
-                          value={values.reset_password_otp}
-                          onChange={(e) => {
-                            const filtered = e.target.value.replace(/[^0-9]/g, "");
-                            setFieldValue("reset_password_otp", filtered);
-                          }}
-                          className={`${errors.reset_password_otp && touched.reset_password_otp
-                            ? "is-invalid"
-                            : ""
-                            }`}
-                        />
-                      )}
-                    </Field>
-                    <ErrorMessage
-                      name="reset_password_otp"
-                      component="div"
-                      className="invalid-feedback"
-                    />
-                  </Row>
+              {({ errors, touched, isSubmitting, values, setFieldValue }) => {
+                console.log("Live Errors:", errors);
+                console.log("Live Touched:", touched);
 
-                  {/* Password Field */}
-                  <Row className="mb-3">
-                    <label className="form-label">
-                      Password <span>*</span>
-                    </label>
-                    <div className="custom-password">
-                      <Field name="password">
+                return (
+                  <FormikForm className="exchange-form">
+                    {/* OTP Field */}
+                    <Row className="mb-3">
+                      <label className="form-label">
+                        Reset Password OTP <span>*</span>
+                      </label>
+                      <Field name="reset_password_otp">
                         {({ field }) => (
                           <Form.Control
                             {...field}
-                            type={visibility.password ? "text" : "password"}
-                            placeholder="Password"
-                            className={`passowrdinput ${errors.password && touched.password ? "is-invalid" : ""
-                              }`}
-                          />
-                        )}
-                      </Field>
-                      <span
-                        onClick={() => toggleVisibility("password")}
-                        className="password-eye"
-                        style={{ cursor: "pointer" }}
-                      >
-                        {visibility.password ? <FaEyeSlash /> : <FaEye />}
-                      </span>
-                    </div>
-                    <ErrorMessage
-                      name="password"
-                      component="div"
-                      className="invalid-feedback"
-                    />
-                  </Row>
-
-                  {/* Confirm Password */}
-                  <Row className="mb-3">
-                    <label className="form-label">
-                      Confirm Password <span>*</span>
-                    </label>
-                    <div className="custom-password">
-                      <Field name="confirmPassword">
-                        {({ field }) => (
-                          <Form.Control
-                            {...field}
-                            type={visibility.confirmPassword ? "text" : "password"}
-                            placeholder="Confirm Password"
-                            className={`passowrdinput ${errors.confirmPassword && touched.confirmPassword
+                            type="text"
+                            maxLength={6}
+                            placeholder="Enter OTP"
+                            value={values.reset_password_otp}
+                            onChange={(e) => {
+                              const filtered = e.target.value.replace(/[^0-9]/g, "");
+                              setFieldValue("reset_password_otp", filtered);
+                            }}
+                            className={`${errors.reset_password_otp && touched.reset_password_otp
                               ? "is-invalid"
                               : ""
                               }`}
                           />
                         )}
                       </Field>
-                      <span
-                        onClick={() => toggleVisibility("confirmPassword")}
-                        className="password-eye"
-                        style={{ cursor: "pointer" }}
-                      >
-                        {visibility.confirmPassword ? <FaEyeSlash /> : <FaEye />}
-                      </span>
+                      <ErrorMessage
+                        name="reset_password_otp"
+                        component="div"
+                        className="invalid-feedback"
+                      />
+                    </Row>
+
+                    {/* Password Field */}
+                    <Row className="mb-3">
+                      <label className="form-label">
+                        Password <span>*</span>
+                      </label>
+                      <div className="custom-password">
+                        <Field name="password">
+                          {({ field }) => (
+                            <Form.Control
+                              {...field}
+                              type={visibility.password ? "text" : "password"}
+                              placeholder="Password"
+                              className={`passowrdinput ${errors.password && touched.password ? "is-invalid" : ""
+                                }`}
+                            />
+                          )}
+                        </Field>
+                        <span
+                          onClick={() => toggleVisibility("password")}
+                          className="password-eye"
+                          style={{ cursor: "pointer" }}
+                        >
+                          {visibility.password ? <FaEyeSlash /> : <FaEye />}
+                        </span>
+                      </div>
+                      <div className="w-100">
+                        <ErrorMessage
+                          name="password"
+                          component="div"
+                          className="invalid-feedback d-block"
+                        />
+                      </div>
+
+                    </Row>
+
+                    {/* Confirm Password */}
+                    <Row className="mb-3">
+                      <label className="form-label">
+                        Confirm Password <span>*</span>
+                      </label>
+                      <div className="custom-password">
+                        <Field name="confirmPassword">
+                          {({ field }) => (
+                            <Form.Control
+                              {...field}
+                              type={visibility.confirmPassword ? "text" : "password"}
+                              placeholder="Confirm Password"
+                              className={`passowrdinput ${errors.confirmPassword && touched.confirmPassword
+                                ? "is-invalid"
+                                : ""
+                                }`}
+                            />
+                          )}
+                        </Field>
+                        <span
+                          onClick={() => toggleVisibility("confirmPassword")}
+                          className="password-eye"
+                          style={{ cursor: "pointer" }}
+                        >
+                          {visibility.confirmPassword ? <FaEyeSlash /> : <FaEye />}
+                        </span>
+                      </div>
+                      <div className="w-100">
+                        <ErrorMessage
+                          name="confirmPassword"
+                          component="div"
+                          className="invalid-feedback d-block"
+                        />
+                      </div>
+
+                    </Row>
+
+                    {/* Submit Button */}
+                    <Button
+                      type="submit"
+                      className="custom-signin-btn mb-3"
+                      disabled={loading || isSubmitting}
+                    >
+                      {loading || isSubmitting ? "Processing..." : "UPDATE"}
+                    </Button>
+
+                    <div>
+                      Back to Login{" "}
+                      <Link to="/login" className="text-success fw-bold forgotpassword-text">
+                        Go Back
+                      </Link>
                     </div>
-                    <ErrorMessage
-                      name="confirmPassword"
-                      component="div"
-                      className="invalid-feedback"
-                    />
-                  </Row>
-
-                  {/* Submit Button */}
-                  <Button
-                    type="submit"
-                    className="custom-signin-btn mb-3"
-                    disabled={loading || isSubmitting}
-                  >
-                    {loading || isSubmitting ? "Processing..." : "UPDATE"}
-                  </Button>
-
-
-                  <div>
-                    Back to Login{" "}
-                    <Link to="/login" className="text-success fw-bold forgotpassword-text">
-                      Go Back
-                    </Link>
-                  </div>
-
-                </FormikForm>
-              )}
+                  </FormikForm>
+                );
+              }}
             </Formik>
           </div>
         </Col>

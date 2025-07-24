@@ -12,7 +12,7 @@ import {
 } from "react-bootstrap";
 import Back from "../../assets/images/back.png";
 import { RiFileCopyLine } from "react-icons/ri";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   createPayId,
   createAgreement,
@@ -23,28 +23,29 @@ import { toast } from "react-toastify";
 import { createTransaction } from "../../services/Api";
 
 const PaymentDetail = () => {
+  const location = useLocation();
   const [modalShowPayTo, setModalShowPayTo] = useState(false);
   const [modalShowPayId, setModalShowPayId] = useState(false);
   const [modalShowMonova, setModalShowMonova] = useState(false);
   const [modalShowPayToAgreement, setModalShowPayToAgreement] = useState(false);
   const [modalShowPayToLimit, setModalShowPayToLimit] = useState(false);
   const [isLoadingAgreement, setIsLoadingAgreement] = useState(false);
-  const storedPaymentMethod = sessionStorage.getItem("selected_payment_method");
-  const [otherReason, setOtherReason] = useState(sessionStorage.getItem("other_reason") || "");
 
-  const [paymentType, setPaymentType] = useState(
-    storedPaymentMethod === "monova" ? "bank_transfer" : storedPaymentMethod
-  );
+  const storedPaymentMethod = sessionStorage.getItem("selected_payment_method");
+  const [otherReason, setOtherReason] = useState("");
+  const [transferReason, setTransferReason] = useState("");
+  const [paymentType, setPaymentType] = useState("");
+  const comingFromConfirmTransfer = location.state?.from === "/confirm-transfer";
+
   const [amount, setAmount] = useState("0.00");
   const [currency, setCurrency] = useState("AUD");
   const [receiverName, setReceiverName] = useState("Receiver");
   const [isLoadingPayId, setIsLoadingPayId] = useState(false);
   const [payIdData, setPayIdData] = useState({ payId: "", transferId: "" });
-  const temp = JSON.parse(sessionStorage.getItem("User data")).First_name + JSON.parse(sessionStorage.getItem("User data")).Last_name;
   const [monovaForm, setMonovaForm] = useState({
     bsb: "",
     accountNumber: "",
-    accountName: temp,
+    accountName: `${JSON.parse(sessionStorage.getItem("User data")).First_name} ${JSON.parse(sessionStorage.getItem("User data")).Last_name}`,
     paymentMethod: "",
   });
   const [payToForm, setPayToForm] = useState({
@@ -62,7 +63,6 @@ const PaymentDetail = () => {
   });
   const [payToFormErrors, setPayToFormErrors] = useState({});
   const [isCreatingAgreement, setIsCreatingAgreement] = useState(false);
-  const [transferReason, setTransferReason] = useState(sessionStorage.getItem("transfer_reason") || "");
 
   const [reasonError, setReasonError] = useState("");
   const [monovaFormErrors, setMonovaFormErrors] = useState({});
@@ -104,6 +104,16 @@ const PaymentDetail = () => {
       setReceiverName(receiver.account_name);
     }
   }, []);
+
+  useEffect(() => {
+    if (comingFromConfirmTransfer) {
+      const storedPaymentMethod = sessionStorage.getItem("selected_payment_method");
+
+      setOtherReason(sessionStorage.getItem("other_reason") || "");
+      setTransferReason(sessionStorage.getItem("transfer_reason") || "");
+      setPaymentType(storedPaymentMethod === "monova" ? "bank_transfer" : storedPaymentMethod || "");
+    }
+  }, [comingFromConfirmTransfer]);
 
   const handlePayToFormChange = (field, value) => {
     setPayToForm((prev) => ({ ...prev, [field]: value }));
@@ -178,7 +188,7 @@ const PaymentDetail = () => {
     setMonovaForm({
       bsb: "",
       accountNumber: "",
-      accountName: "",
+      accountName: `${JSON.parse(sessionStorage.getItem("User data")).First_name} ${JSON.parse(sessionStorage.getItem("User data")).Last_name}`,
       paymentMethod: "",
     });
     setMonovaFormErrors({});
@@ -312,8 +322,7 @@ const PaymentDetail = () => {
       toast.warning("Please select a payment type.");
     }
   };
-const handleCreatePayId = async () => {
-    setIsLoadingPayId(true);
+  const handleCreatePayId = async () => {
 
     try {
       const transactionId = sessionStorage.getItem("transaction_id");
@@ -330,6 +339,8 @@ const handleCreatePayId = async () => {
       if (existing?.data?.payid) {
         payId = existing.data.payid;
       } else {
+        setIsLoadingPayId(true);
+
         const response = await createPayId({ transaction_id: transactionId });
 
         if (response?.code !== "200" || !response.data?.payid) {

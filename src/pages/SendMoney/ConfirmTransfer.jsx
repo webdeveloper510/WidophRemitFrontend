@@ -162,7 +162,6 @@ const ConfirmTransfer = () => {
 
         });
 
-        toast.success("Monova payment created successfully!");
         return true;
       } else {
         toast.error(response?.statusDescription || "Monova payment creation failed.");
@@ -200,7 +199,6 @@ const ConfirmTransfer = () => {
 
       if (zaiResponse?.code === "400") {
         sessionStorage.setItem("zai_payment_response", JSON.stringify(zaiResponse));
-        toast.success("Zai payment processed successfully!");
         return true;
       } else {
         toast.error(zaiResponse?.message || "Zai payment failed.");
@@ -325,7 +323,7 @@ const ConfirmTransfer = () => {
         <div className="d-flex align-items-center">
           <Button
             variant="link"
-            onClick={() => navigate("/payment-detail")}
+            onClick={() => navigate("/payment-detail", { state: { from: "/confirm-transfer" } })}
             className="p-0 border-0 bg-transparent"
           >
             <img src={Back} alt="Back" />
@@ -415,7 +413,7 @@ const ConfirmTransfer = () => {
                 <Button
                   variant="light"
                   className="cancel-btn float-start"
-                  onClick={() => navigate("/payment-detail")}
+                  onClick={() => navigate("/payment-detail", { state: { from: "/confirm-transfer" } })}
                 >
                   Back
                 </Button>
