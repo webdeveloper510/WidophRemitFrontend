@@ -85,7 +85,10 @@ const TopNavbar = () => {
             Home
           </Nav.Link>
 
-          <Nav.Link href="/transfer" className="text-dark">
+          <Nav.Link
+            href="https://widophremit.com/notify-me/"
+            className="text-dark"
+          >
             International Money Transfer
           </Nav.Link>
 
@@ -159,14 +162,21 @@ const TopNavbar = () => {
         </Nav>
 
         <div className="d-flex align-items-center gap-3">
-          <Link to="/signup" variant="primary" className="px-4 text-dark signup">
+          <Link
+            to="/signup"
+            variant="primary"
+            className="px-4 text-dark signup"
+          >
             SIGN UP
           </Link>
-          <Link to="/login" variant="primary" className="px-4 rounded-pill login">
+          <Link
+            to="/login"
+            variant="primary"
+            className="px-4 rounded-pill login"
+          >
             LOG IN
           </Link>
         </div>
-
       </Container>
     </div>
   );

@@ -30,10 +30,11 @@ const ConfirmTransfer = () => {
   const [isLoadingPayID, setIsLoadingPayID] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
-
   const navigate = useNavigate();
 
-  const fullName = `${sender?.First_name || ""} ${sender?.Last_name || ""}`.trim();
+  const fullName = `${sender?.First_name || ""} ${
+    sender?.Last_name || ""
+  }`.trim();
 
   useEffect(() => {
     const storedAmount = sessionStorage.getItem("transfer_data");
@@ -66,7 +67,6 @@ const ConfirmTransfer = () => {
     }
   }, [navigate]);
 
-
   // const fetchUserProfile = async () => {
   //   try {
   //     const res = await userProfile();
@@ -85,7 +85,12 @@ const ConfirmTransfer = () => {
     const storedPayload = sessionStorage.getItem("payload");
     const transferData = sessionStorage.getItem("transfer_data");
 
-    if (!monovaFormData || !selectedReceiver || !storedPayload || !transferData) {
+    if (
+      !monovaFormData ||
+      !selectedReceiver ||
+      !storedPayload ||
+      !transferData
+    ) {
       toast.error("Required data not found in session.");
       return false;
     }
@@ -116,10 +121,12 @@ const ConfirmTransfer = () => {
         akaNames: [
           `${receiverData.first_name}`,
           `${receiverData.first_name} ${receiverData.last_name}`,
-          `${receiverData.first_name} ${receiverData.last_name} ${receiverData.middle_name || ""}`.trim()
+          `${receiverData.first_name} ${receiverData.last_name} ${
+            receiverData.middle_name || ""
+          }`.trim(),
         ],
         bankAccountName: `${receiverData.first_name} ${receiverData.last_name}`,
-        bsb: monovaForm.bsbNumber
+        bsb: monovaForm.bsbNumber,
       });
 
       if (!matcher?.bankAccountNumber) {
@@ -135,14 +142,17 @@ const ConfirmTransfer = () => {
         accountName: matcher.bankAccountName,
         payment_mode: monovaForm.payment_mode,
         to: temp.amount.to,
-        from: temp.amount.from
+        from: temp.amount.from,
       };
 
       const response = await createMonovaPayment(payload);
 
       if (response?.transactionId && response.transactionId !== 0) {
         sessionStorage.setItem("monova_transaction_id", response.transactionId);
-        sessionStorage.setItem("monova_payment_response", JSON.stringify(response));
+        sessionStorage.setItem(
+          "monova_payment_response",
+          JSON.stringify(response)
+        );
 
         await createTransaction({
           transaction_id: sessionStorage.getItem("transaction_id"),
@@ -157,14 +167,15 @@ const ConfirmTransfer = () => {
             receive_method: payloadData.amount.receive_method,
             payout_partner: receiverData.bank_name,
             reason: sessionStorage.getItem("final_transfer_reason"),
-            exchange_rate: payloadData.amount.exchange_rate
-          }
-
+            exchange_rate: payloadData.amount.exchange_rate,
+          },
         });
 
         return true;
       } else {
-        toast.error(response?.statusDescription || "Monova payment creation failed.");
+        toast.error(
+          response?.statusDescription || "Monova payment creation failed."
+        );
         return false;
       }
     } catch (err) {
@@ -198,7 +209,10 @@ const ConfirmTransfer = () => {
       const zaiResponse = await ZaiPayTo(zaiPayload);
 
       if (zaiResponse?.code === "400") {
-        sessionStorage.setItem("zai_payment_response", JSON.stringify(zaiResponse));
+        sessionStorage.setItem(
+          "zai_payment_response",
+          JSON.stringify(zaiResponse)
+        );
         return true;
       } else {
         toast.error(zaiResponse?.message || "Zai payment failed.");
@@ -216,7 +230,9 @@ const ConfirmTransfer = () => {
   const handlePayIDPayment = async () => {
     setIsLoadingPayID(true);
     try {
-      await ZaiPayId({ transaction_id: sessionStorage.getItem("transaction_id") });
+      await ZaiPayId({
+        transaction_id: sessionStorage.getItem("transaction_id"),
+      });
       return true;
     } catch (error) {
       console.error("PayID payment error:", error);
@@ -266,7 +282,9 @@ const ConfirmTransfer = () => {
   };
 
   const processTransferPayments = async () => {
-    const currentPaymentMethod = sessionStorage.getItem("selected_payment_method");
+    const currentPaymentMethod = sessionStorage.getItem(
+      "selected_payment_method"
+    );
     let paymentSuccess = false;
 
     try {
@@ -295,12 +313,11 @@ const ConfirmTransfer = () => {
     }
   };
 
-
   const handleResendOtp = async () => {
     try {
       const payload = {
         mobile: sender?.mobile,
-        type: "email"
+        type: "email",
       };
       const response = await resendOtp(payload);
       if (response?.code === "200") {
@@ -323,7 +340,11 @@ const ConfirmTransfer = () => {
         <div className="d-flex align-items-center">
           <Button
             variant="link"
-            onClick={() => navigate("/payment-detail", { state: { from: "/confirm-transfer" } })}
+            onClick={() =>
+              navigate("/payment-detail", {
+                state: { from: "/confirm-transfer" },
+              })
+            }
             className="p-0 border-0 bg-transparent"
           >
             <img src={Back} alt="Back" />
@@ -339,70 +360,75 @@ const ConfirmTransfer = () => {
               <Card.Body>
                 <div className="row">
                   <div className="col-md-6">
-                    <h2>Transfer Details</h2>
-                    <Table striped bordered>
-                      <tbody>
-                        <tr>
-                          <td>Sending Amount</td>
-                          <td>
-                            {transferData?.amount?.send_amt
-                              ? `${transferData.amount.send_amt} ${transferData.amount.from}`
-                              : "N/A"}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Amount Exchanged</td>
-                          <td>
-                            {transferData?.amount?.exchange_amt
-                              ? `${transferData.amount.exchange_amt} ${transferData.amount.to}`
-                              : "N/A"}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Total To Receiver</td>
-                          <td>
-                            {transferData?.amount?.exchange_amt
-                              ? `${transferData.amount.exchange_amt} ${transferData.amount.to}`
-                              : "N/A"}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Exchange Rate</td>
-                          <td>
-                            {transferData?.amount?.exchange_rate
-                              ? `1 ${transferData.amount.from} = ${transferData.amount.exchange_rate} ${transferData.amount.to}`
-                              : "N/A"}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </Table>
-
+                    <div className="table-column">
+                      <h2>Transfer Details</h2>
+                      <Table striped bordered>
+                        <tbody>
+                          <tr>
+                            <td>Sending Amount</td>
+                            <td>
+                              {transferData?.amount?.send_amt
+                                ? `${transferData.amount.send_amt} ${transferData.amount.from}`
+                                : "N/A"}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Amount Exchanged</td>
+                            <td>
+                              {transferData?.amount?.exchange_amt
+                                ? `${transferData.amount.exchange_amt} ${transferData.amount.to}`
+                                : "N/A"}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Total To Receiver</td>
+                            <td>
+                              {transferData?.amount?.exchange_amt
+                                ? `${transferData.amount.exchange_amt} ${transferData.amount.to}`
+                                : "N/A"}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Exchange Rate</td>
+                            <td>
+                              {transferData?.amount?.exchange_rate
+                                ? `1 ${transferData.amount.from} = ${transferData.amount.exchange_rate} ${transferData.amount.to}`
+                                : "N/A"}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </Table>
+                    </div>
                   </div>
 
                   <div className="col-md-6">
-                    <h2>Sender Details</h2>
-                    <Table striped bordered>
-                      <tbody>
-                        <tr>
-                          <td>Sender Name</td>
-                          <td>{fullName || "N/A"}</td>
-                        </tr>
-                      </tbody>
-                    </Table>
+                    <div className="table-column">
+                      <h2>Sender Details</h2>
+                      <Table striped bordered>
+                        <tbody>
+                          <tr>
+                            <td>Sender Name</td>
+                            <td>{fullName || "N/A"}</td>
+                          </tr>
+                        </tbody>
+                      </Table>
+                    </div>
 
-                    <h2 className="mt-3">Receiver Details</h2>
-                    <Table striped bordered>
-                      <tbody>
-                        <tr>
-                          <td>Beneficiary Name</td>
-                          <td>{receiver?.account_name || "N/A"}</td>
-                        </tr>
-                        <tr>
-                          <td>Bank Name</td>
-                          <td>{receiver?.bank_name || "N/A"}</td>
-                        </tr>
-                      </tbody>
-                    </Table>
+                    <div className="table-column mt-3">
+                      <h2>Receiver Details</h2>
+                      <Table striped bordered>
+                        <tbody>
+                          <tr>
+                            <td>Beneficiary Name</td>
+                            <td>{receiver?.account_name || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td>Bank Name</td>
+                            <td>{receiver?.bank_name || "N/A"}</td>
+                          </tr>
+                        </tbody>
+                      </Table>
+                    </div>
                   </div>
                 </div>
               </Card.Body>
@@ -413,7 +439,11 @@ const ConfirmTransfer = () => {
                 <Button
                   variant="light"
                   className="cancel-btn float-start"
-                  onClick={() => navigate("/payment-detail", { state: { from: "/confirm-transfer" } })}
+                  onClick={() =>
+                    navigate("/payment-detail", {
+                      state: { from: "/confirm-transfer" },
+                    })
+                  }
                 >
                   Back
                 </Button>
@@ -466,7 +496,11 @@ const ConfirmTransfer = () => {
                   renderInput={(props) => <input {...props} />}
                 />
               </Col>
-              <Button variant="link" onClick={handleResendOtp} className="resendOTP">
+              <Button
+                variant="link"
+                onClick={handleResendOtp}
+                className="resendOTP"
+              >
                 Resend OTP
               </Button>
             </>
@@ -497,8 +531,6 @@ const ConfirmTransfer = () => {
             </Row>
           </Modal.Footer>
         )}
-
-
       </Modal>
     </AnimatedPage>
   );

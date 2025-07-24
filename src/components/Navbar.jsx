@@ -15,8 +15,6 @@ const TopNavbar = ({ onToggleSidebar }) => {
     onToggleSidebar();
   };
 
-
-
   return (
     <div className="d-flex align-items-center">
       <button className="btn toggle-btn" onClick={handleToggle}>
