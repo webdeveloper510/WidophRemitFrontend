@@ -312,7 +312,8 @@ const PaymentDetail = () => {
       toast.warning("Please select a payment type.");
     }
   };
-  const handleCreatePayId = async () => {
+const handleCreatePayId = async () => {
+    setIsLoadingPayId(true);
 
     try {
       const transactionId = sessionStorage.getItem("transaction_id");
@@ -321,43 +322,41 @@ const PaymentDetail = () => {
         return;
       }
 
+      let payId = null;
+      let transferId = transactionId;
+
       const existing = await getPayID();
 
       if (existing?.data?.payid) {
-        setPayIdData({
-          payId: existing.data.payid || "",
-          transferId: sessionStorage.getItem("transaction_id"),
-        });
-        setModalShowPayId(true);
+        payId = existing.data.payid;
       } else {
-        setIsLoadingPayId(true);
-
         const response = await createPayId({ transaction_id: transactionId });
 
-        if (response?.code === "200" && response.data?.payid) {
-          setPayIdData({
-            payId: response.data.payid || "",
-            transferId: response.data.transaction_id || "",
-          });
-
-          const txResponse = await createTransaction(transferData);
-
-          if (txResponse?.code === "200") {
-            setModalShowPayId(true);
-          } else {
-            toast.error(txResponse?.message || "Transaction creation failed.");
-          }
-        } else {
+        if (response?.code !== "200" || !response.data?.payid) {
           toast.error(response?.message || "PayID generation failed.");
+          return;
         }
+
+        payId = response.data.payid;
+        transferId = response.data.transaction_id || transactionId;
       }
+
+      setPayIdData({ payId, transferId });
+
+      const txResponse = await createTransaction(transferData);
+
+      if (txResponse?.code === "200") {
+        setModalShowPayId(true);
+      } else {
+        toast.error(txResponse?.message || "Transaction creation failed.");
+      }
+
     } catch (err) {
-      toast.error("Error generating PayID.");
+      toast.error("Error during PayID or transaction process.");
     } finally {
       setIsLoadingPayId(false);
     }
   };
-
   const handlePayToAgreementContinue = async () => {
     setIsCreatingAgreement(true);
     try {
