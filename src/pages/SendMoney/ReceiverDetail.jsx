@@ -349,12 +349,17 @@ const ReceiverDetail = () => {
                     </FloatingLabel>
                   </Row>
 
-                  <Row className="mb-3">
-                    <Col className="mobile_numbero">
-                      <label className="form-label">
-                        Mobile Number<span style={{ color: "red" }}> *</span>
-                      </label>
-                      <div className="d-flex align-items-stretch p-0">
+                  <Row className="mb-3 mobile_numbero">
+                    <Col>
+                      <FloatingLabel
+                                                                        label={
+                                                                          <span>
+                                                                            Mobile Number{" "}
+                                                                          </span>
+                                                                        }
+                                                                        className="mb-3"
+                                                                      >
+                       <div className="d-flex align-items-stretch p-0">
                         <Form.Select
                           name="countryCode"
                           value={values.countryCode}
@@ -384,6 +389,7 @@ const ReceiverDetail = () => {
                           }}
                         />
                       </div>
+                       </FloatingLabel>
                       {touched.mobile && errors.mobile && (
                         <div className="invalid-feedback d-block">
                           {errors.mobile}
