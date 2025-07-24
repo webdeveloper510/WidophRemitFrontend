@@ -307,7 +307,7 @@ const ConfirmTransfer = () => {
       const response = await resendOtp(payload);
       if (response?.code === "200") {
         toast.success(response?.message || "OTP resent successfully!");
-        setOtp(""); // Clear the OTP input field
+        setOtp("");
       } else {
         toast.error(response?.message || "Failed to resend OTP");
       }
