@@ -72,6 +72,13 @@ const ProfileInformation = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    const charOnlyFields = ["firstName", "middleName", "lastName", "occupation"];
+    if (charOnlyFields.includes(name)) {
+      const valid = /^[A-Za-z\s]*$/.test(value);
+      if (!valid) return;
+    }
+
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 

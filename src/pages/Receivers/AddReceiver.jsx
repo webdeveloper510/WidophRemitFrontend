@@ -13,10 +13,15 @@ import Bank_list from "../../utils/Bank_list";
 import { createRecipient } from "../../services/Api";
 import { parsePhoneNumber } from "libphonenumber-js";
 
+const isAlphaOnly = (value) => /^[A-Za-z\s]*$/.test(value);
+
+
 const AddReceiver = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
+
+
 
   const countryList = [
     { name: "Australia", code: "AU", dialCode: "61" },
@@ -208,7 +213,7 @@ const AddReceiver = () => {
                     onChange={(e) => {
                       const value = e.target.value;
                       if (/^[A-Za-z\s\-.]*$/.test(value)) {
-                        handleChange(e); 
+                        handleChange(e);
                       }
                     }}
                     onBlur={handleBlur}
@@ -266,10 +271,16 @@ const AddReceiver = () => {
                     type="text"
                     name="first_name"
                     value={values.first_name}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (isAlphaOnly(value)) {
+                        handleChange(e);
+                      }
+                    }}
                     onBlur={handleBlur}
                     isInvalid={touched.first_name && errors.first_name}
                   />
+
                   <Form.Control.Feedback type="invalid">
                     {errors.first_name}
                   </Form.Control.Feedback>
@@ -285,8 +296,15 @@ const AddReceiver = () => {
                     type="text"
                     name="middle_name"
                     value={values.middle_name}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (isAlphaOnly(value)) {
+                        handleChange(e);
+                      }
+                    }}
+                    onBlur={handleBlur}
                   />
+
                 </FloatingLabel>
 
                 <FloatingLabel
@@ -304,10 +322,16 @@ const AddReceiver = () => {
                     type="text"
                     name="last_name"
                     value={values.last_name}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (isAlphaOnly(value)) {
+                        handleChange(e);
+                      }
+                    }}
                     onBlur={handleBlur}
                     isInvalid={touched.last_name && errors.last_name}
                   />
+
                   <Form.Control.Feedback type="invalid">
                     {errors.last_name}
                   </Form.Control.Feedback>
@@ -318,44 +342,44 @@ const AddReceiver = () => {
               <Row className="mb-3 mobile_numbero">
                 <Col>
                   <FloatingLabel
-                                                  label={
-                                                    <span>
-                                                      Mobile Number{" "}
-                                                    </span>
-                                                  }
-                                                  className="mb-3"
-                                                >
-                  
-                  <div className="d-flex align-items-stretch p-0">
-                    <Form.Select
-                      name="countryCode"
-                      value={values.countryCode}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      style={{
-                        maxWidth: "110px",
-                        borderTopRightRadius: 0,
-                        borderBottomRightRadius: 0,
-                      }}
-                    >
-                      <option value="61">+61 (AU)</option>
-                      <option value="64">+64 (NZ)</option>
-                    </Form.Select>
+                    label={
+                      <span>
+                        Mobile Number{" "}
+                      </span>
+                    }
+                    className="mb-3"
+                  >
 
-                    <Form.Control
-                      type="text"
-                      name="phone"
-                      placeholder="Enter mobile number"
-                      value={values.phone}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      isInvalid={touched.phone && errors.phone}
-                      style={{
-                        borderTopLeftRadius: 0,
-                        borderBottomLeftRadius: 0,
-                      }}
-                    />
-                  </div>
+                    <div className="d-flex align-items-stretch p-0">
+                      <Form.Select
+                        name="countryCode"
+                        value={values.countryCode}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        style={{
+                          maxWidth: "110px",
+                          borderTopRightRadius: 0,
+                          borderBottomRightRadius: 0,
+                        }}
+                      >
+                        <option value="61">+61 (AU)</option>
+                        <option value="64">+64 (NZ)</option>
+                      </Form.Select>
+
+                      <Form.Control
+                        type="text"
+                        name="phone"
+                        placeholder="Enter mobile number"
+                        value={values.phone}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={touched.phone && errors.phone}
+                        style={{
+                          borderTopLeftRadius: 0,
+                          borderBottomLeftRadius: 0,
+                        }}
+                      />
+                    </div>
                   </FloatingLabel>
                   {touched.phone && errors.phone && (
                     <div className="invalid-feedback d-block">

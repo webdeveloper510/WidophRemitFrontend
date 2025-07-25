@@ -160,9 +160,9 @@ const UpdateReceiver = () => {
             email: recipient.email || "",
             mobile:
               "+" +
-                recipient.mobile
-                  ?.replace(/[^\d]/g, "")
-                  .replace(/^(\d{10,15}).*/, "$1") || "",
+              recipient.mobile
+                ?.replace(/[^\d]/g, "")
+                .replace(/^(\d{10,15}).*/, "$1") || "",
             country: recipient.country || "",
             state: recipient.state || "",
             city: recipient.city || "",
@@ -257,10 +257,16 @@ const UpdateReceiver = () => {
                     type="text"
                     name="first_name"
                     value={values.first_name}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^[A-Za-z\s]*$/.test(value)) {
+                        handleChange(e);
+                      }
+                    }}
                     onBlur={handleBlur}
                     isInvalid={touched.first_name && errors.first_name}
                   />
+
                   <Form.Control.Feedback type="invalid">
                     {errors.first_name}
                   </Form.Control.Feedback>
@@ -271,8 +277,18 @@ const UpdateReceiver = () => {
                     type="text"
                     name="middle_name"
                     value={values.middle_name}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^[A-Za-z\s]*$/.test(value)) {
+                        handleChange(e);
+                      }
+                    }}
+                    onBlur={handleBlur}
+                    isInvalid={touched.middle_name && errors.middle_name}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.middle_name}
+                  </Form.Control.Feedback>
                 </FloatingLabel>
 
                 <FloatingLabel as={Col} label="Last Name *">
@@ -280,10 +296,16 @@ const UpdateReceiver = () => {
                     type="text"
                     name="last_name"
                     value={values.last_name}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^[A-Za-z\s]*$/.test(value)) {
+                        handleChange(e);
+                      }
+                    }}
                     onBlur={handleBlur}
                     isInvalid={touched.last_name && errors.last_name}
                   />
+
                   <Form.Control.Feedback type="invalid">
                     {errors.last_name}
                   </Form.Control.Feedback>

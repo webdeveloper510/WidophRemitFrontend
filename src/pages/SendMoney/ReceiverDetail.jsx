@@ -301,10 +301,16 @@ const ReceiverDetail = () => {
                         type="text"
                         name="first_name"
                         value={values.first_name}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (/^[A-Za-z\s]*$/.test(value)) {
+                            handleChange(e);
+                          }
+                        }}
                         onBlur={handleBlur}
                         isInvalid={touched.first_name && errors.first_name}
                       />
+
                       <Form.Control.Feedback type="invalid">
                         {errors.first_name}
                       </Form.Control.Feedback>
@@ -320,8 +326,15 @@ const ReceiverDetail = () => {
                         type="text"
                         name="middle_name"
                         value={values.middle_name}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (/^[A-Za-z\s]*$/.test(value)) {
+                            handleChange(e);
+                          }
+                        }}
+                        onBlur={handleBlur}
                       />
+
                     </FloatingLabel>
 
                     <FloatingLabel
@@ -339,10 +352,16 @@ const ReceiverDetail = () => {
                         type="text"
                         name="last_name"
                         value={values.last_name}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (/^[A-Za-z\s]*$/.test(value)) {
+                            handleChange(e);
+                          }
+                        }}
                         onBlur={handleBlur}
                         isInvalid={touched.last_name && errors.last_name}
                       />
+
                       <Form.Control.Feedback type="invalid">
                         {errors.last_name}
                       </Form.Control.Feedback>
@@ -352,44 +371,44 @@ const ReceiverDetail = () => {
                   <Row className="mb-3 mobile_numbero">
                     <Col>
                       <FloatingLabel
-                                                                        label={
-                                                                          <span>
-                                                                            Mobile Number{" "}
-                                                                          </span>
-                                                                        }
-                                                                        className="mb-3"
-                                                                      >
-                       <div className="d-flex align-items-stretch p-0">
-                        <Form.Select
-                          name="countryCode"
-                          value={values.countryCode}
-                          onChange={handleCustomChange}
-                          onBlur={handleBlur}
-                          style={{
-                            maxWidth: "110px",
-                            borderTopRightRadius: 0,
-                            borderBottomRightRadius: 0,
-                          }}
-                        >
-                          <option value="61">+61 (AU)</option>
-                          <option value="64">+64 (NZ)</option>
-                        </Form.Select>
+                        label={
+                          <span>
+                            Mobile Number{" "}
+                          </span>
+                        }
+                        className="mb-3"
+                      >
+                        <div className="d-flex align-items-stretch p-0">
+                          <Form.Select
+                            name="countryCode"
+                            value={values.countryCode}
+                            onChange={handleCustomChange}
+                            onBlur={handleBlur}
+                            style={{
+                              maxWidth: "110px",
+                              borderTopRightRadius: 0,
+                              borderBottomRightRadius: 0,
+                            }}
+                          >
+                            <option value="61">+61 (AU)</option>
+                            <option value="64">+64 (NZ)</option>
+                          </Form.Select>
 
-                        <Form.Control
-                          type="text"
-                          name="mobile"
-                          placeholder="Enter mobile number"
-                          value={values.mobile}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          isInvalid={touched.mobile && errors.mobile}
-                          style={{
-                            borderTopLeftRadius: 0,
-                            borderBottomLeftRadius: 0,
-                          }}
-                        />
-                      </div>
-                       </FloatingLabel>
+                          <Form.Control
+                            type="text"
+                            name="mobile"
+                            placeholder="Enter mobile number"
+                            value={values.mobile}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={touched.mobile && errors.mobile}
+                            style={{
+                              borderTopLeftRadius: 0,
+                              borderBottomLeftRadius: 0,
+                            }}
+                          />
+                        </div>
+                      </FloatingLabel>
                       {touched.mobile && errors.mobile && (
                         <div className="invalid-feedback d-block">
                           {errors.mobile}

@@ -603,24 +603,15 @@ const KYCForm = () => {
                         <Form.Control
                           type="email"
                           value={formData.email}
-                          onChange={(e) =>
-                            handleInputChange("email", e.target.value)
-                          }
-                          isInvalid={touched.email && errors.email}
-                          disabled={isLoading}
+                          readOnly
                         />
-                        {touched.email && errors.email && (
-                          <div className="text-danger mt-1 small">
-                            {errors.email}
-                          </div>
-                        )}
                       </FloatingLabel>
+
                       <FloatingLabel
                         as={Col}
                         label={
                           <span>
-                            Mobile Number
-                            <span style={{ color: "red" }}>*</span>
+                            Mobile Number<span style={{ color: "red" }}>*</span>
                           </span>
                         }
                         className="mb-3 mobileinput"
@@ -628,10 +619,7 @@ const KYCForm = () => {
                         <div className="d-flex align-items-stretch p-0">
                           <Form.Select
                             value={formData.countryCode}
-                            onChange={(e) =>
-                              handleInputChange("countryCode", e.target.value)
-                            }
-                            disabled={isLoading}
+                            disabled
                             style={{
                               maxWidth: "110px",
                               borderTopRightRadius: 0,
@@ -644,22 +632,13 @@ const KYCForm = () => {
                           <Form.Control
                             type="text"
                             value={formData.phone}
-                            onChange={(e) =>
-                              handleInputChange("phone", e.target.value)
-                            }
-                            isInvalid={touched.phone && errors.phone}
-                            disabled={isLoading}
+                            readOnly
                             style={{
                               borderTopLeftRadius: 0,
                               borderBottomLeftRadius: 0,
                             }}
                           />
                         </div>
-                        {touched.phone && errors.phone && (
-                          <div className="text-danger mt-1 small">
-                            {errors.phone}
-                          </div>
-                        )}
                       </FloatingLabel>
                     </Row>
 
@@ -746,7 +725,7 @@ const KYCForm = () => {
                           value={formData.occupation}
                           onChange={(e) => {
                             const value = e.target.value;
-                            if (/^[A-Za-z\s]*$/.test(value)) { 
+                            if (/^[A-Za-z\s]*$/.test(value)) {
                               handleInputChange("occupation", value);
                             }
                           }}

@@ -8,7 +8,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { commaRemover } from "../../hooks/hook";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Await, useNavigate } from "react-router-dom";
 import loaderlogo from "../../assets/images/logo.png"
 
 import {
@@ -95,7 +95,7 @@ const SendMoney = () => {
         direction: "from",
       });
 
-      let payload = { 
+      let payload = {
         amount: {
           send_amount: commaRemover(values.send_amt),
           receive_amount: commaRemover(exch_data.amount),
@@ -202,8 +202,11 @@ const SendMoney = () => {
       try {
         const response = await exchangeRate(payload);
         if (response) {
-          if (dir === "from" && values.send_amt) {
-            setFieldValue("exchange_amt", response.amount);
+          if (dir === "from" && JSON.parse(sessionStorage.getItem("temp_exchange_data")).send_amount) {
+            if (JSON.parse(sessionStorage.getItem("temp_exchange_data")).send_amount)
+              setFieldValue("exchange_amt", response.amount);
+            else
+              setFieldValue("exchange_amt", "");
           } else if (dir === "to" && values.exchange_amt) {
             setFieldValue("send_amt", response.amount);
           }
@@ -274,6 +277,7 @@ const SendMoney = () => {
           setFieldValue("from", parsedData.send_currency || "AUD");
           setFieldValue("to", parsedData.receive_currency || "NGN");
           setFieldValue("receive_method", parsedData.method || "Bank transfer");
+          await getExchangeRate(parsedData.send_currency, parsedData.receive_currency);
         } else {
           await getExchangeRate(initialValues.from, initialValues.to);
         }
