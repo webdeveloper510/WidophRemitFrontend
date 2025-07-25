@@ -33,8 +33,9 @@ const ConfirmTransfer = () => {
 
   const navigate = useNavigate();
 
-  const fullName = `${sender?.First_name || ""} ${sender?.Last_name || ""
-    }`.trim();
+  const fullName = `${sender?.First_name || ""} ${
+    sender?.Last_name || ""
+  }`.trim();
 
   useEffect(() => {
     const storedAmount = sessionStorage.getItem("transfer_data");
@@ -116,20 +117,26 @@ const ConfirmTransfer = () => {
         return false;
       }
 
-      let matcher;
-      
-      matcher = await GetAutoMatcher();
-      if (matcher.code === "200" && matcher.data[0].bankAccountNumber) {
-        matcher.bankAccountName = matcher.data[0].bankAccountName;
-        matcher.bankAccountNumber = matcher.data[0].bankAccountNumber;
-        matcher.bsb = matcher.data[0].bsb;
+      let matcher = await GetAutoMatcher();
+
+      if (
+        matcher?.code === "200" &&
+        Array.isArray(matcher.data) &&
+        matcher.data.length > 0 &&
+        matcher.data[0].bankAccountNumber
+      ) {
+        const bankInfo = matcher.data[0];
+        matcher.bankAccountName = bankInfo.bankAccountName;
+        matcher.bankAccountNumber = bankInfo.bankAccountNumber;
+        matcher.bsb = bankInfo.bsb;
       } else {
         matcher = await createAutoMatcher({
           akaNames: [
-            `${receiverData.first_name}`,
+            receiverData.first_name,
             `${receiverData.first_name} ${receiverData.last_name}`,
-            `${receiverData.first_name} ${receiverData.last_name} ${receiverData.middle_name || ""
-              }`.trim(),
+            `${receiverData.first_name} ${receiverData.last_name} ${
+              receiverData.middle_name || ""
+            }`.trim(),
           ],
           bankAccountName: `${receiverData.first_name} ${receiverData.last_name}`,
           bsb: monovaForm.bsbNumber,
