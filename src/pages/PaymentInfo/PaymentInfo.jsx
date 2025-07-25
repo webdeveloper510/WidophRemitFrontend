@@ -6,7 +6,7 @@ import PayID from "../../assets/images/payid.png";
 import PayTo from "../../assets/images/payto.png";
 import loaderlogo from "../../assets/images/logo.png";
 import { useState, useEffect } from "react";
-import { getAgreementList, getPayID } from "../../services/Api";
+import { getAgreementList, GetAutoMatcher, getPayID } from "../../services/Api";
 
 
 
@@ -15,19 +15,27 @@ const PaymentInfo = () => {
   const [payToDetail, setPayToDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [Loader, setLoader] = useState(true);
-
-
+  const [AutoMatcherData, setAutoMatcherData] = useState(null);
 
   useEffect(() => {
     (async () => {
       try {
-        const [payIdRes, agreementRes] = await Promise.all([
+        const [payIdRes, agreementRes, AutoMatcherRes] = await Promise.all([
           getPayID(),
           getAgreementList(),
+          GetAutoMatcher()
         ]);
 
         if (payIdRes.code === "200" && payIdRes.data?.payid) {
           setPayIdDetail(payIdRes.data);
+        }
+
+        if (AutoMatcherRes.code === "200" && AutoMatcherRes.data[0].bankAccountNumber) {
+          setAutoMatcherData({
+            bankAccountName: AutoMatcherRes.data[0].bankAccountName,
+            bankAccountNumber: AutoMatcherRes.data[0].bankAccountNumber,
+            bsb: AutoMatcherRes.data[0].bsb
+          })
         }
 
         if (
@@ -42,7 +50,7 @@ const PaymentInfo = () => {
         setLoading(false);
       }
     })();
-      const timer = setTimeout(() => setLoader(false), 500);
+    const timer = setTimeout(() => setLoader(false), 500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -66,13 +74,13 @@ const PaymentInfo = () => {
 
 
   if (Loader) {
-      return (
-        <div className="loader-wrapper">
-          <img src={loaderlogo} alt="Logo" className="loader-logo" />
-          <div className="spinner"></div>
-        </div>
-      );
-    }
+    return (
+      <div className="loader-wrapper">
+        <img src={loaderlogo} alt="Logo" className="loader-logo" />
+        <div className="spinner"></div>
+      </div>
+    );
+  }
 
   return (
     <AnimatedPage>
@@ -102,6 +110,35 @@ const PaymentInfo = () => {
             </div>
           </div>
         )}
+
+        {AutoMatcherData && (
+          <div className="row">
+            <div className="col-md-12">
+              <Card className="receiver-card mt-3 bg-white p-2 payment-types">
+                <Card.Body>
+                  <h5>Auto Matcher Detail</h5>
+                  <Row className="mb-3 mt-4">
+                    <Col xs={3}>
+                      <img src={PayID} alt="Pay ID" />
+                    </Col>
+                    <Col>
+                      <label>Bank Account Name</label>
+                      <p>{AutoMatcherData.bankAccountName || "—"}</p>
+                    </Col>
+                    <Col>
+                      <label>Bank Account Number</label>
+                      <p>{AutoMatcherData.bankAccountNumber || "—"}</p>
+                    </Col><Col>
+                      <label>BSB Number</label>
+                      <p>{AutoMatcherData.bsb || "—"}</p>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
+            </div>
+          </div>
+        )}
+
 
         {/* Pay To Card */}
         {payToDetail && (

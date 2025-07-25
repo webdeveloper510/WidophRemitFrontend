@@ -16,6 +16,7 @@ import {
   resendOtp,
   createTransaction,
   createAutoMatcher,
+  GetAutoMatcher,
 } from "../../services/Api";
 import { toast } from "react-toastify";
 
@@ -32,9 +33,8 @@ const ConfirmTransfer = () => {
 
   const navigate = useNavigate();
 
-  const fullName = `${sender?.First_name || ""} ${
-    sender?.Last_name || ""
-  }`.trim();
+  const fullName = `${sender?.First_name || ""} ${sender?.Last_name || ""
+    }`.trim();
 
   useEffect(() => {
     const storedAmount = sessionStorage.getItem("transfer_data");
@@ -116,18 +116,25 @@ const ConfirmTransfer = () => {
         return false;
       }
 
-      // Matcher call
-      const matcher = await createAutoMatcher({
-        akaNames: [
-          `${receiverData.first_name}`,
-          `${receiverData.first_name} ${receiverData.last_name}`,
-          `${receiverData.first_name} ${receiverData.last_name} ${
-            receiverData.middle_name || ""
-          }`.trim(),
-        ],
-        bankAccountName: `${receiverData.first_name} ${receiverData.last_name}`,
-        bsb: monovaForm.bsbNumber,
-      });
+      let matcher;
+      
+      matcher = await GetAutoMatcher();
+      if (matcher.code === "200" && matcher.data[0].bankAccountNumber) {
+        matcher.bankAccountName = matcher.data[0].bankAccountName;
+        matcher.bankAccountNumber = matcher.data[0].bankAccountNumber;
+        matcher.bsb = matcher.data[0].bsb;
+      } else {
+        matcher = await createAutoMatcher({
+          akaNames: [
+            `${receiverData.first_name}`,
+            `${receiverData.first_name} ${receiverData.last_name}`,
+            `${receiverData.first_name} ${receiverData.last_name} ${receiverData.middle_name || ""
+              }`.trim(),
+          ],
+          bankAccountName: `${receiverData.first_name} ${receiverData.last_name}`,
+          bsb: monovaForm.bsbNumber,
+        });
+      }
 
       if (!matcher?.bankAccountNumber) {
         toast.error("Bank account matching failed.");

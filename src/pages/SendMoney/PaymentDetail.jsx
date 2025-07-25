@@ -18,6 +18,7 @@ import {
   createAgreement,
   getAgreementList,
   getPayID,
+  GetAutoMatcher,
 } from "../../services/Api";
 import { toast } from "react-toastify";
 import { createTransaction } from "../../services/Api";
@@ -27,6 +28,7 @@ const PaymentDetail = () => {
   const [modalShowPayTo, setModalShowPayTo] = useState(false);
   const [modalShowPayId, setModalShowPayId] = useState(false);
   const [modalShowMonova, setModalShowMonova] = useState(false);
+  const [ModalShowMonovaExisting, setModalShowMonovaExisting] = useState(false);
   const [modalShowPayToAgreement, setModalShowPayToAgreement] = useState(false);
   const [modalShowPayToLimit, setModalShowPayToLimit] = useState(false);
   const [isLoadingAgreement, setIsLoadingAgreement] = useState(false);
@@ -193,9 +195,11 @@ const PaymentDetail = () => {
     });
     setMonovaFormErrors({});
     setModalShowMonova(false);
+    setModalShowMonovaExisting(false);
   };
 
   const handleMonovaContinue = async () => {
+
     const errors = {};
     if (!monovaForm.paymentMethod)
       errors.paymentMethod = "Please select payment method.";
@@ -283,6 +287,7 @@ const PaymentDetail = () => {
         toast.error("Failed to copy to clipboard.");
       });
   };
+  
   const handleContinue = async () => {
     // Check if transfer reason is selected
     if (!transferReason) {
@@ -317,7 +322,14 @@ const PaymentDetail = () => {
     } else if (paymentType === "payid") {
       handleCreatePayId();
     } else if (paymentType === "monova" || paymentType === "bank_transfer") {
-      setModalShowMonova(true);
+      const AutoMatcherRes = await GetAutoMatcher();
+      if (AutoMatcherRes.code === "200" && AutoMatcherRes.data[0].bankAccountNumber) {
+        monovaForm.accountName = AutoMatcherRes.data[0].bankAccountName;
+        monovaForm.accountNumber = AutoMatcherRes.data[0].bankAccountNumber;
+        monovaForm.bsb = AutoMatcherRes.data[0].bsb;
+        setModalShowMonovaExisting(true)
+      } else
+        setModalShowMonova(true);
     } else {
       toast.warning("Please select a payment type.");
     }
@@ -967,6 +979,160 @@ const PaymentDetail = () => {
                   )}
                 </FloatingLabel>
               </Row>
+              <Row className="mb-3">
+                <Col>
+                  <Button
+                    variant="light"
+                    className="cancel-btn float-start"
+                    onClick={CancelMonovaContinue}
+                  >
+                    Cancel
+                  </Button>
+                </Col>
+                <Col>
+                  <Button
+                    variant="primary"
+                    className="submit-btn float-end"
+                    onClick={handleMonovaContinue}
+                  >
+                    Continue
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          </Modal.Body>
+        </Modal>
+
+        <Modal
+          size="lg"
+          centered
+          show={ModalShowMonovaExisting}
+          onHide={CancelMonovaContinue}
+          className="profileupdate"
+        >
+          <Modal.Header closeButton className="payment-popup">
+            Monoova
+          </Modal.Header>
+          <Modal.Body>
+            <Form className="profile-form">
+              <Row className="mb-3">
+                <FloatingLabel
+                  as={Col}
+                  controlId="monova-payment-method"
+                  label="Payment Method"
+                  className="mb-3"
+                >
+                  <Form.Select
+                    value={monovaForm.paymentMethod}
+                    onChange={(e) =>
+                      handleMonovaFormChange("paymentMethod", e.target.value)
+                    }
+                    isInvalid={!!monovaFormErrors.paymentMethod}
+                  >
+                    <option value="">Select Payment Method</option>
+                    <option value="debit">Direct Debit</option>
+                    <option value="npp">NPP Credit Bank Account</option>
+                  </Form.Select>
+                  {monovaFormErrors.paymentMethod && (
+                    <Form.Control.Feedback type="invalid">
+                      {monovaFormErrors.paymentMethod}
+                    </Form.Control.Feedback>
+                  )}
+                </FloatingLabel>
+              </Row>
+              <Row className="mb-3">
+                <FloatingLabel
+                  as={Col}
+                  controlId="monova-name"
+                  label="Account Name"
+                  className="mb-3"
+                >
+                  <Form.Control
+                    type="text"
+                    readOnly
+                    value={monovaForm.accountName}
+                    onChange={(e) =>
+                      handleMonovaFormChange("accountName", e.target.value)
+                    }
+                    isInvalid={!!monovaFormErrors.accountName}
+                  />
+                  <span
+                    className="copyText"
+                    onClick={() => copyToClipboard(monovaForm.accountName)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <RiFileCopyLine />
+                  </span>
+                  {monovaFormErrors.accountName && (
+                    <Form.Control.Feedback type="invalid">
+                      {monovaFormErrors.accountName}
+                    </Form.Control.Feedback>
+                  )}
+                </FloatingLabel>
+              </Row>
+
+              <Row className="mb-3">
+                <FloatingLabel
+                  as={Col}
+                  controlId="monova-account"
+                  label="Account Number"
+                  className="mb-3"
+                >
+                  <Form.Control
+                    type="text"
+                    readOnly
+                    value={monovaForm.accountNumber}
+                    onChange={(e) =>
+                      handleMonovaFormChange("accountNumber", e.target.value)
+                    }
+                    isInvalid={!!monovaFormErrors.accountNumber}
+                  />
+                  <span
+                    className="copyText"
+                    onClick={() => copyToClipboard(monovaForm.accountNumber)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <RiFileCopyLine />
+                  </span>
+                  {monovaFormErrors.accountNumber && (
+                    <Form.Control.Feedback type="invalid">
+                      {monovaFormErrors.accountNumber}
+                    </Form.Control.Feedback>
+                  )}
+                </FloatingLabel>
+              </Row>
+
+              <Row className="mb-3">
+                <FloatingLabel
+                  as={Col}
+                  controlId="monova-bsb"
+                  label="BSB Number"
+                  className="mb-3"
+                >
+                  <Form.Control
+                    type="text"
+                    readOnly
+                    value={monovaForm.bsb}
+                    onChange={(e) =>
+                      handleMonovaFormChange("bsb", e.target.value)
+                    }
+                    isInvalid={!!monovaFormErrors.bsb}
+                  />
+                  <span
+                    className="copyText"
+                    onClick={() => copyToClipboard(monovaForm.bsb)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <RiFileCopyLine />
+                  </span>
+                  {monovaFormErrors.bsb && (
+                    <Form.Control.Feedback type="invalid">
+                      {monovaFormErrors.bsb}
+                    </Form.Control.Feedback>
+                  )}
+                </FloatingLabel>
+              </Row>
+
               <Row className="mb-3">
                 <Col>
                   <Button
