@@ -49,6 +49,11 @@ const AppRoutes = () => {
         <Route path="/otp-verification" element={<OtpVerification />} />
       </Route>
 
+      <Route path="/kyc" element={<KYCForm />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/web-exchange-rate" element={<ExchangeRatePage />} />
+      <Route path="profile-information" element={<ProfileInformation />} />
+
       {/* Protected Routes */}
       <Route
         path="/"
@@ -58,35 +63,29 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       >
-        {/* Move all protected routes inside ProtectedRoute */}
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="kyc" element={<KYCForm />} />
-        <Route path="web-exchange-rate" element={<ExchangeRatePage />} />
-        <Route path="profile-information" element={<ProfileInformation />} />
         <Route path="send-money" element={<SendMoney />} />
         <Route path="payment-info" element={<PaymentInfo />} />
         <Route path="transfers-list" element={<TransfersList />} />
         <Route path="receivers" element={<Receivers />} />
         <Route path="transfer-details/:id" element={<TransferDetails />} />
-        <Route path="receivers-list" element={<ReceiverList />} />
+        <Route path="/receivers-list" element={<ReceiverList />} />
         <Route path="receiver-add" element={<ReceiverDetail />} />
         <Route path="review-transfer" element={<ReviewTransfer />} />
         <Route path="payment-detail" element={<PaymentDetail />} />
         <Route path="confirm-transfer" element={<ConfirmTransfer />} />
-        <Route path="add-receiver" element={<AddReceiver />} />
-        <Route path="update-receiver/:id" element={<UpdateReceiver />} />
+        <Route path="payment-processed" element={<PaymentProcessed />} />
+        <Route path="/add-receiver" element={<AddReceiver />} />
+        <Route path="/update-receiver/:id" element={<UpdateReceiver />} />
         <Route path="monoova" element={<MonoovaPaymentGateway />} />
-        
         {/* Transaction Success - Special Protection */}
         <Route
-          path="transaction-success"
+          path="/transaction-success"
           element={
             <TransactionProtectedRoute>
               <TransactionSuccess />
             </TransactionProtectedRoute>
           }
         />
-        
         {/* Redirect / to /dashboard */}
         <Route index element={<Navigate to="dashboard" replace />} />
       </Route>
