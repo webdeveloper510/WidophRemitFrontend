@@ -313,6 +313,7 @@ const ProfileInformation = () => {
                                 label={
                                   <span>
                                     Mobile Number{" "}
+                                    <span style={{ color: "red" }}>*</span>
                                   </span>
                                 }
                                 className="mb-3"

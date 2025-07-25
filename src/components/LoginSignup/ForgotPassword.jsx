@@ -47,7 +47,7 @@ const ForgotPassword = () => {
 
         if (response?.data?.code === "200") {
           toast.success(response.data.message || "Reset link sent!", {
-            position: "bottom-right",
+            position: "top-right",
             autoClose: 2000,
             hideProgressBar: true,
           });
@@ -58,7 +58,7 @@ const ForgotPassword = () => {
           });
         } else {
           toast.error(response?.data?.message || "Something went wrong", {
-            position: "bottom-right",
+            position: "top-right",
             autoClose: 2000,
             hideProgressBar: true,
           });

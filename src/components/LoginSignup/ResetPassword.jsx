@@ -33,8 +33,8 @@ const ResetPassword = () => {
 
   const validationSchema = Yup.object().shape({
     reset_password_otp: Yup.string()
-      .length(6, "O.T.P must be of 6 digits")
-      .required("O.T.P is required"),
+      .length(6, "OTP must be of 6 digits")
+      .required("OTP is required"),
     password: Yup.string()
       .min(8, "Password must be at least 8 characters")
       .required("Password is required"),

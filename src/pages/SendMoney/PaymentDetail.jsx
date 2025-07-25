@@ -952,7 +952,7 @@ const PaymentDetail = () => {
                     isInvalid={!!monovaFormErrors.paymentMethod}
                   >
                     <option value="">Select Payment Method</option>
-                    <option value="debit">Direct Debit</option>
+                    {/* <option value="debit">Direct Debit</option> */}
                     <option value="npp">NPP Credit Bank Account</option>
                   </Form.Select>
                   {monovaFormErrors.paymentMethod && (
