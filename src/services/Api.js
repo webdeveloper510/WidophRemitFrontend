@@ -64,7 +64,27 @@ private_instance.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+private_instance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    const res = error?.response;
 
+    if (
+      res?.status === 401 &&
+      (res?.data?.code === "token_not_valid" ||
+        res?.data?.detail?.includes("token not valid"))
+    ) {
+      console.warn("⛔ Token is invalid or expired. Logging out...");
+      sessionStorage.clear();
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+    }
+
+    return Promise.reject(error);
+  }
+);
 export const userRegisterCheck = async (data) => {
   const response = await public_instance.post("/register-check/", data).then(res => {
     return res?.data
@@ -844,34 +864,3 @@ export const getCustomerTypes = async () => {
   return response
 }
 
-
-
-// Edit Edit
-// Copy Copy
-// Delete Delete
-// Incomplete
-
-// Edit Edit
-// Copy Copy
-// Delete Delete
-// Pending Review and Processing
-
-// Edit Edit
-// Copy Copy
-// Delete Delete
-// In progress
-
-// Edit Edit
-// Copy Copy
-// Delete Delete
-// Payment due
-
-// Edit Edit
-// Copy Copy
-// Delete Delete
-// Waiting for approval
-
-// Edit Edit
-// Copy Copy
-// Delete Delete
-// Partially done
