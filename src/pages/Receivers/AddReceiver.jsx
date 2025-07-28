@@ -344,7 +344,7 @@ const AddReceiver = () => {
                   <FloatingLabel
                     label={
                       <span>
-                        Mobile Number{" "}
+                        Mobile Number{" "}<span style={{ color: "red" }}>*</span>
                       </span>
                     }
                     className="mb-3"
