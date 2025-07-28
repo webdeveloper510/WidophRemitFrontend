@@ -131,8 +131,9 @@ const TransferDetails = () => {
                         {/* ✅ Conditional Download Button */}
                         {(() => {
                           const blockedStatuses = [
-                            "incomplete",
+                            "abandoned",
                             "partially done",
+                            "expired",
                           ];
                           const status = transactionData?.payment_status?.toLowerCase();
 

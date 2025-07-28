@@ -366,19 +366,23 @@ const AddReceiver = () => {
                         <option value="64">+64 (NZ)</option>
                       </Form.Select>
 
-                      <Form.Control
-                        type="text"
-                        name="phone"
-                        placeholder="Enter mobile number"
-                        value={values.phone}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        isInvalid={touched.phone && errors.phone}
-                        style={{
-                          borderTopLeftRadius: 0,
-                          borderBottomLeftRadius: 0,
-                        }}
-                      />
+                    <Form.Control
+  type="text"
+  name="phone"
+  placeholder="Enter mobile number"
+  value={values.phone}
+  onChange={(e) => {
+    const numericValue = e.target.value.replace(/\D/g, "");
+    setFieldValue("phone", numericValue);
+  }}
+  onBlur={handleBlur}
+  isInvalid={touched.phone && errors.phone}
+  style={{
+    borderTopLeftRadius: 0,
+    borderBottomLeftRadius: 0,
+  }}
+/>
+
                     </div>
                   </FloatingLabel>
                   {touched.phone && errors.phone && (
