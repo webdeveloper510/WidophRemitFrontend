@@ -209,7 +209,11 @@ const ReceiverDetail = () => {
         <div className="d-flex align-items-center">
           <Button
             variant="link"
-            onClick={() => navigate("/receivers-list")}
+            onClick={() => navigate("/receivers-list", {
+              state: {
+                from: "receiver-add"
+              }
+            })}
             className="p-0 border-0 bg-transparent"
           >
             <img src={Back} alt="Back" />
@@ -558,7 +562,11 @@ const ReceiverDetail = () => {
                         variant="light"
                         className="cancel-btn float-start"
                         disabled={isLoading}
-                        onClick={() => navigate("/receivers-list")}
+                        onClick={() => navigate("/receivers-list", {
+                          state: {
+                            from: "receiver-add"
+                          }
+                        })}
                       >
                         Back
                       </Button>

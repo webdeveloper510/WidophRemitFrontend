@@ -40,7 +40,7 @@ const PaymentDetail = () => {
   const comingFromConfirmTransferOrReviewTransfer =
     location.state?.from === "/confirm-transfer" || location.state?.from === "/review-transfer";
 
-  if (!comingFromConfirmTransferOrReviewTransfer) navigate("/send-money")
+  if (!comingFromConfirmTransferOrReviewTransfer) navigate("/send-money");
 
   const [amount, setAmount] = useState("0.00");
   const [currency, setCurrency] = useState("AUD");

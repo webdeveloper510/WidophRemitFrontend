@@ -24,10 +24,12 @@ const ReceiverList = () => {
       }
     });
   };
-  
+
   useEffect(() => {
-    if (!(location.state?.from === "send-money" || location.state?.from === "review-Transfer"))
+    if (!(location.state?.from === "send-money" || location.state?.from === "review-Transfer" || location.state?.from === "receiver-add")) {
+      console.log("coming");
       navigate("/send-money")
+    }
   }, [location])
 
   const columns = [

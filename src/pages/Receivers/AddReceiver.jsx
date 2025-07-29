@@ -41,6 +41,9 @@ const AddReceiver = () => {
     label: country,
   }));
 
+  console.log(getNames());
+  
+
   const initialValues = {
     bank_name: "",
     account_number: "",
