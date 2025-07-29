@@ -176,7 +176,11 @@ const ReceiverDetail = () => {
             "selected_receiver",
             JSON.stringify(newRecipient)
           );
-          navigate("/review-transfer");
+          navigate("/review-transfer", {
+            state: {
+              from: "receivers-list"
+            }
+          });
         } else {
           setApiError(response.message || "Failed to create receiver.");
         }
