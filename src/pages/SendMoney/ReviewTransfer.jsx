@@ -13,8 +13,8 @@ import {
 import { toast } from "react-toastify";
 
 const ReviewTransfer = () => {
-  const navigate = useNavigate();
   const location = useLocation();
+  const navigate = useNavigate();
   const [receiver, setReceiver] = useState(null);
   const [sender, setSender] = useState({});
   const [transferData, setTransferData] = useState(null);
@@ -44,8 +44,8 @@ const ReviewTransfer = () => {
 
     if (!(location.state?.from === "receivers-list" || location.state?.from === "Payment-Detail")) {
       navigate("/send-money")
+      return;
     }
-
 
     if (location.state && location.state.receiverData) {
       setReceiver(location.state.receiverData);

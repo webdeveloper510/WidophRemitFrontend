@@ -83,11 +83,11 @@ const PaymentDetail = () => {
   transferData.amount.send_amount = transferData.amount.send_amt;
   transferData.recipient_id = JSON.parse(
     sessionStorage.getItem("selected_receiver")
-  ).id;
+  )?.id;
   transferData.transaction_id = sessionStorage.getItem("transaction_id");
   transferData.amount.payout_partner = JSON.parse(
     sessionStorage.getItem("selected_receiver")
-  ).bank_name;
+  )?.bank_name;
 
   const reasonOptions = [
     "Family Support",
