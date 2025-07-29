@@ -272,7 +272,7 @@ const PaymentDetail = () => {
 
         if (txResponse?.code === "200") {
           setModalShowMonova(false);
-          navigate("/confirm-transfer");
+          navigate("/confirm-transfer", { state: { from: "Payment-Detail" } });
         } else {
           toast.error(txResponse?.message || "Transaction creation failed.");
         }
@@ -447,7 +447,7 @@ const PaymentDetail = () => {
         if (txResponse?.code === "200") {
           toast.success("PayTo agreement & transaction created successfully!");
           setModalShowPayToAgreement(false);
-          navigate("/confirm-transfer");
+          navigate("/confirm-transfer", { state: { from: "Payment-Detail" } });
         } else {
           toast.error(txResponse?.message || "Failed to create transaction.");
         }
@@ -470,7 +470,11 @@ const PaymentDetail = () => {
           <Button
             variant="link"
             className="p-0 border-0 bg-transparent"
-            onClick={() => navigate("/review-transfer")}
+            onClick={() => navigate("/review-transfer", {
+              state: {
+                from: "Payment-Detail"
+              }
+            })}
           >
             <img src={Back} alt="Back" />
           </Button>
@@ -670,7 +674,11 @@ const PaymentDetail = () => {
                       <Button
                         variant="light"
                         className="cancel-btn float-start"
-                        onClick={() => navigate("/review-transfer")}
+                        onClick={() => navigate("/review-transfer", {
+                          state: {
+                            from: "Payment-Detail"
+                          }
+                        })}
                       >
                         Back
                       </Button>
@@ -912,7 +920,7 @@ const PaymentDetail = () => {
                     variant="primary"
                     className="submit-btn float-end"
                     onClick={() => {
-                      navigate("/confirm-transfer");
+                      navigate("/confirm-transfer", { state: { from: "Payment-Detail" } });
                     }}
                   >
                     Continue

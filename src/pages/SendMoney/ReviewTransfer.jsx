@@ -41,6 +41,12 @@ const ReviewTransfer = () => {
   };
 
   useEffect(() => {
+
+    if (!(location.state?.from === "receivers-list" || location.state?.from === "Payment-Detail")) {
+      navigate("/send-money")
+    }
+
+
     if (location.state && location.state.receiverData) {
       setReceiver(location.state.receiverData);
     } else {
@@ -50,11 +56,19 @@ const ReviewTransfer = () => {
           setReceiver(JSON.parse(storedReceiver));
         } catch (error) {
           console.error("Failed to parse selected_receiver:", error);
-          navigate("/receivers-list");
+          navigate("/receivers-list", {
+            state: {
+              from: "review-Transfer"
+            }
+          });
         }
       } else {
         toast.error("No receiver selected. Please select a receiver first.");
-        navigate("/receivers-list");
+        navigate("/receivers-list", {
+          state: {
+            from: "review-Transfer"
+          }
+        });
       }
     }
 
@@ -153,9 +167,17 @@ const ReviewTransfer = () => {
 
   const handleBack = () => {
     if (location.state && location.state.receiverData) {
-      navigate("/receivers-list");
+      navigate("/receivers-list", {
+        state: {
+          from: "review-Transfer"
+        }
+      });
     } else {
-      navigate("/receivers-list");
+      navigate("/receivers-list", {
+        state: {
+          from: "review-Transfer"
+        }
+      });
     }
   };
 

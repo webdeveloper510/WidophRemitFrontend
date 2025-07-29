@@ -138,7 +138,12 @@ const SendMoney = () => {
         sessionStorage.setItem("transfer_data", JSON.stringify(local));
 
 
-        navigate("/receivers-list");
+        navigate("/receivers-list",
+          {
+            state: {
+              from: "send-money"
+            }
+          });
       } else if (trans_res.code === "400") {
         toast.error(trans_res.message, {
           autoClose: 2000,

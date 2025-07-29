@@ -7,7 +7,7 @@ import Table from "react-bootstrap/Table";
 import { Col, Row, Button, Spinner } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import OtpImage from "../../assets/images/Otp-image.png";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   createMonovaPayment,
   ZaiPayTo,
@@ -21,6 +21,7 @@ import {
 import { toast } from "react-toastify";
 
 const ConfirmTransfer = () => {
+  const location = useLocation();
   const [modalShow, setModalShow] = useState(false);
   const [otp, setOtp] = useState("");
   const [receiver, setReceiver] = useState(null);
@@ -33,9 +34,15 @@ const ConfirmTransfer = () => {
 
   const navigate = useNavigate();
 
-  const fullName = `${sender?.First_name || ""} ${
-    sender?.Last_name || ""
-  }`.trim();
+  useEffect(() => {
+    if (!(location.state?.from === "Payment-Detail")) {
+      navigate("/send-money");
+      return;
+    }
+  }, [location])
+
+  const fullName = `${sender?.First_name || ""} ${sender?.Last_name || ""
+    }`.trim();
 
   useEffect(() => {
     const storedAmount = sessionStorage.getItem("transfer_data");
@@ -134,9 +141,8 @@ const ConfirmTransfer = () => {
           akaNames: [
             receiverData.first_name,
             `${receiverData.first_name} ${receiverData.last_name}`,
-            `${receiverData.first_name} ${receiverData.last_name} ${
-              receiverData.middle_name || ""
-            }`.trim(),
+            `${receiverData.first_name} ${receiverData.last_name} ${receiverData.middle_name || ""
+              }`.trim(),
           ],
           bankAccountName: `${receiverData.first_name} ${receiverData.last_name}`,
           bsb: monovaForm.bsbNumber,

@@ -9,16 +9,27 @@ import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { useEffect, useState } from "react";
 import { recipientList } from "../../services/Api";
 import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 const ReceiverList = () => {
+  const location = useLocation();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const handleSendAgain = (row) => {
     sessionStorage.setItem("selected_receiver", JSON.stringify(row));
-    navigate("/review-transfer");
+    navigate("/review-transfer", {
+      state: {
+        from: "receivers-list"
+      }
+    });
   };
+  
+  useEffect(() => {
+    if (!(location.state?.from === "send-money" || location.state?.from === "review-Transfer"))
+      navigate("/send-money")
+  }, [location])
+
   const columns = [
     {
       name: "S. No.",
