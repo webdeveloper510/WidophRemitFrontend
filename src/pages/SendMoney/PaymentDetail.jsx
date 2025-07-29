@@ -87,9 +87,9 @@ const PaymentDetail = () => {
     const storedTransferData = JSON.parse(sessionStorage.getItem("transfer_data") || "null");
     const receiver = JSON.parse(sessionStorage.getItem("selected_receiver") || "null");
     const txnId = sessionStorage.getItem("transaction_id") || "";
-    const reason = sessionStorage.getItem("transfer_reason") || "";
+    const reason = location?.state.from === "/review-transfer" ? "" : sessionStorage.getItem("transfer_reason") || "";
     const other = sessionStorage.getItem("other_reason") || "";
-    const method = sessionStorage.getItem("selected_payment_method") || "";
+    const method = location?.state.from === "/review-transfer" ? "" : sessionStorage.getItem("selected_payment_method") || "";
 
     if (!storedTransferData || !storedTransferData.amount) return;
 
@@ -120,7 +120,7 @@ const PaymentDetail = () => {
     setOtherReason(other);
     setPaymentType(method === "monova" ? "monova" : method);
   }, []);
-  
+
   const handlePayToFormChange = (field, value) => {
     setPayToForm((prev) => ({ ...prev, [field]: value }));
   };
