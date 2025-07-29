@@ -137,7 +137,11 @@ const ReceiverList = () => {
           <Button
             type="button"
             className="float-end download-button btn btn-success"
-            onClick={() => navigate("/receiver-add")}
+            onClick={() => navigate("/receiver-add", {
+              state: {
+                from: "receivers-list"
+              }
+            })}
           >
             <img src={AddReceiver} alt="Add" /> Add Receiver
           </Button>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AnimatedPage from "../../components/AnimatedPage";
 import Back from "../../assets/images/back.png";
 import Card from "react-bootstrap/Card";
@@ -10,18 +10,22 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import Bank_list from "../../utils/Bank_list";
 import { createRecipient } from "../../services/Api";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { parsePhoneNumber } from "libphonenumber-js";
 
 const ReceiverDetail = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
   const countryOptions = getNames().map((country) => ({
     value: country,
     label: country,
-  }));
-
+  })); 
+  useEffect(() => {
+    if (location?.state?.from !== "receivers-list")
+      navigate("/send-money")
+  }, [location])
   const countryList = [
     { name: "Australia", code: "AU", dialCode: "61" },
     { name: "Brazil", code: "BR", dialCode: "55" },
