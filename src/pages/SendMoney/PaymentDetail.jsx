@@ -19,75 +19,47 @@ import {
   getAgreementList,
   getPayID,
   GetAutoMatcher,
+  createTransaction,
 } from "../../services/Api";
 import { toast } from "react-toastify";
-import { createTransaction } from "../../services/Api";
 
 const PaymentDetail = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [transferData, setTransferData] = useState(null);
+  const [amount, setAmount] = useState("0.00");
+  const [currency, setCurrency] = useState("AUD");
+  const [receiverName, setReceiverName] = useState("Receiver");
+  const [recipientId, setRecipientId] = useState("");
+  const [transactionId, setTransactionId] = useState("");
+  const [otherReason, setOtherReason] = useState("");
+  const [transferReason, setTransferReason] = useState("");
+  const [paymentType, setPaymentType] = useState("");
+  const [payIdData, setPayIdData] = useState({ payId: "", transferId: "" });
   const [modalShowPayTo, setModalShowPayTo] = useState(false);
   const [modalShowPayId, setModalShowPayId] = useState(false);
   const [modalShowMonova, setModalShowMonova] = useState(false);
   const [ModalShowMonovaExisting, setModalShowMonovaExisting] = useState(false);
   const [modalShowPayToAgreement, setModalShowPayToAgreement] = useState(false);
   const [modalShowPayToLimit, setModalShowPayToLimit] = useState(false);
-  const [isLoadingAgreement, setIsLoadingAgreement] = useState(false);
-  const navigate = useNavigate();
-  const storedPaymentMethod = sessionStorage.getItem("selected_payment_method");
-  const [otherReason, setOtherReason] = useState("");
-  const [transferReason, setTransferReason] = useState("");
-  const [paymentType, setPaymentType] = useState("");
-  const comingFromConfirmTransferOrReviewTransfer =
-    location.state?.from === "/confirm-transfer" || location.state?.from === "/review-transfer";
-
-  if (!comingFromConfirmTransferOrReviewTransfer) navigate("/send-money");
-
-  const [amount, setAmount] = useState("0.00");
-  const [currency, setCurrency] = useState("AUD");
-  const [receiverName, setReceiverName] = useState("Receiver");
   const [isLoadingPayId, setIsLoadingPayId] = useState(false);
-  const [payIdData, setPayIdData] = useState({ payId: "", transferId: "" });
-  const [monovaForm, setMonovaForm] = useState({
-    bsb: "",
-    accountNumber: "",
-    accountName: `${JSON.parse(sessionStorage.getItem("User data")).First_name
-      } ${JSON.parse(sessionStorage.getItem("User data")).Last_name}`,
-    paymentMethod: "",
-  });
-  const [payToForm, setPayToForm] = useState({
-    payIdType: "",
-    payId: "",
-    bsb: "",
-    accountNumber: "",
-  });
-  const [payToLimitForm, setPayToLimitForm] = useState({
-    payId: "",
-    bsb: "",
-    accountNumber: "",
-    amountLimit: "",
-    startDate: "",
-  });
+  const [isLoadingAgreement, setIsLoadingAgreement] = useState(false);
+  const [payToForm, setPayToForm] = useState({ payIdType: "", payId: "", bsb: "", accountNumber: "" });
+  const [payToLimitForm, setPayToLimitForm] = useState({ payId: "", bsb: "", accountNumber: "", amountLimit: "", startDate: "" });
   const [payToFormErrors, setPayToFormErrors] = useState({});
   const [isCreatingAgreement, setIsCreatingAgreement] = useState(false);
-
   const [reasonError, setReasonError] = useState("");
   const [monovaFormErrors, setMonovaFormErrors] = useState({});
   const [bsb, setbsb] = useState(0);
 
-  const transferData = JSON.parse(sessionStorage.getItem("transfer_data"));
-  const finalReason = transferReason === "Other" ? otherReason : transferReason;
-  transferData.amount.reason = finalReason;
-  transferData.amount.receive_amount = transferData.amount.exchange_amt;
-  transferData.amount.receive_currency = transferData.amount.to;
-  transferData.amount.send_currency = transferData.amount.from;
-  transferData.amount.send_amount = transferData.amount.send_amt;
-  transferData.recipient_id = JSON.parse(
-    sessionStorage.getItem("selected_receiver")
-  )?.id;
-  transferData.transaction_id = sessionStorage.getItem("transaction_id");
-  transferData.amount.payout_partner = JSON.parse(
-    sessionStorage.getItem("selected_receiver")
-  )?.bank_name;
+  const userData = JSON.parse(sessionStorage.getItem("User data") || "{}");
+
+  const [monovaForm, setMonovaForm] = useState({
+    bsb: "",
+    accountNumber: "",
+    accountName: `${userData.First_name || ""} ${userData.Last_name || ""}`,
+    paymentMethod: "",
+  });
 
   const reasonOptions = [
     "Family Support",
@@ -100,36 +72,55 @@ const PaymentDetail = () => {
     "Other",
   ];
 
+  const comingFromConfirmTransferOrReviewTransfer =
+    location.state?.from === "/confirm-transfer" || location.state?.from === "/review-transfer";
+
+  // ✅ Prevent access if not coming from confirm/review
   useEffect(() => {
-    const transferData = JSON.parse(sessionStorage.getItem("transfer_data"));
-    const receiver = JSON.parse(sessionStorage.getItem("selected_receiver"));
-
-    if (transferData?.amount) {
-      setAmount(transferData.amount.send_amt || "0.00");
-      setCurrency(transferData.amount.from || "AUD");
+    if (!comingFromConfirmTransferOrReviewTransfer) {
+      navigate("/send-money");
     }
+  }, [comingFromConfirmTransferOrReviewTransfer, navigate]);
 
-    if (receiver?.account_name) {
-      setReceiverName(receiver.account_name);
-    }
-  }, []);
-
+  // ✅ Set initial values
   useEffect(() => {
-    if (comingFromConfirmTransferOrReviewTransfer) {
-      const storedPaymentMethod = sessionStorage.getItem(
-        "selected_payment_method"
-      );
+    const storedTransferData = JSON.parse(sessionStorage.getItem("transfer_data") || "null");
+    const receiver = JSON.parse(sessionStorage.getItem("selected_receiver") || "null");
+    const txnId = sessionStorage.getItem("transaction_id") || "";
+    const reason = sessionStorage.getItem("transfer_reason") || "";
+    const other = sessionStorage.getItem("other_reason") || "";
+    const method = sessionStorage.getItem("selected_payment_method") || "";
 
-      setOtherReason(sessionStorage.getItem("other_reason") || "");
-      setTransferReason(sessionStorage.getItem("transfer_reason") || "");
-      setPaymentType(
-        storedPaymentMethod === "monova"
-          ? "monova"
-          : storedPaymentMethod || ""
-      );
-    }
+    if (!storedTransferData || !storedTransferData.amount) return;
+
+    const finalReason = reason === "Other" ? other : reason;
+
+    const updatedTransferData = {
+      ...storedTransferData,
+      amount: {
+        ...storedTransferData.amount,
+        reason: finalReason,
+        receive_amount: storedTransferData.amount.exchange_amt || "",
+        receive_currency: storedTransferData.amount.to || "",
+        send_currency: storedTransferData.amount.from || "",
+        send_amount: storedTransferData.amount.send_amt || "",
+        payout_partner: receiver?.bank_name || "",
+      },
+      recipient_id: receiver?.id || "",
+      transaction_id: txnId,
+    };
+
+    setTransferData(updatedTransferData);
+    setAmount(updatedTransferData.amount.send_amt || "0.00");
+    setCurrency(updatedTransferData.amount.from || "AUD");
+    setReceiverName(receiver?.account_name || "Receiver");
+    setRecipientId(receiver?.id || "");
+    setTransactionId(txnId);
+    setTransferReason(reason);
+    setOtherReason(other);
+    setPaymentType(method === "monova" ? "monova" : method);
   }, []);
-
+  
   const handlePayToFormChange = (field, value) => {
     setPayToForm((prev) => ({ ...prev, [field]: value }));
   };
@@ -1086,7 +1077,7 @@ const PaymentDetail = () => {
                     isInvalid={!!monovaFormErrors.paymentMethod}
                   >
                     <option value="">Select Payment Method</option>
-                    <option value="debit">Direct Debit</option>
+                    {/* <option value="debit">Direct Debit</option> */}
                     <option value="npp">NPP Credit Bank Account</option>
                   </Form.Select>
                   {monovaFormErrors.paymentMethod && (

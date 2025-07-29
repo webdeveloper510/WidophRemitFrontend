@@ -176,7 +176,7 @@ const ConfirmTransfer = () => {
 
         await createTransaction({
           transaction_id: sessionStorage.getItem("transaction_id"),
-          newTransaction_id: response.transactionId,
+          newTransaction_id: `${response.transaction_prefix}${response.transactionId}`,
           monoova_payment: true,
           recipient_id: receiverData.id,
           amount: {
