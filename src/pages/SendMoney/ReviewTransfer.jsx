@@ -138,7 +138,7 @@ const ReviewTransfer = () => {
 
       if (res?.code === "200") {
         navigate("/payment-detail", {
-          state: { transaction_id: res?.data?.id || "", transferData },
+          state: { transaction_id: res?.data?.id || "", transferData, from: "/review-transfer" },
         });
       } else {
         toast.error(res?.message || "Failed to create transaction.");

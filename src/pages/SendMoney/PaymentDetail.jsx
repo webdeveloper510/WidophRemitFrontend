@@ -32,13 +32,15 @@ const PaymentDetail = () => {
   const [modalShowPayToAgreement, setModalShowPayToAgreement] = useState(false);
   const [modalShowPayToLimit, setModalShowPayToLimit] = useState(false);
   const [isLoadingAgreement, setIsLoadingAgreement] = useState(false);
-
+  const navigate = useNavigate();
   const storedPaymentMethod = sessionStorage.getItem("selected_payment_method");
   const [otherReason, setOtherReason] = useState("");
   const [transferReason, setTransferReason] = useState("");
   const [paymentType, setPaymentType] = useState("");
-  const comingFromConfirmTransfer =
-    location.state?.from === "/confirm-transfer";
+  const comingFromConfirmTransferOrReviewTransfer =
+    location.state?.from === "/confirm-transfer" || location.state?.from === "/review-transfer";
+
+  if (!comingFromConfirmTransferOrReviewTransfer) navigate("/send-money")
 
   const [amount, setAmount] = useState("0.00");
   const [currency, setCurrency] = useState("AUD");
@@ -48,9 +50,8 @@ const PaymentDetail = () => {
   const [monovaForm, setMonovaForm] = useState({
     bsb: "",
     accountNumber: "",
-    accountName: `${
-      JSON.parse(sessionStorage.getItem("User data")).First_name
-    } ${JSON.parse(sessionStorage.getItem("User data")).Last_name}`,
+    accountName: `${JSON.parse(sessionStorage.getItem("User data")).First_name
+      } ${JSON.parse(sessionStorage.getItem("User data")).Last_name}`,
     paymentMethod: "",
   });
   const [payToForm, setPayToForm] = useState({
@@ -72,7 +73,6 @@ const PaymentDetail = () => {
   const [reasonError, setReasonError] = useState("");
   const [monovaFormErrors, setMonovaFormErrors] = useState({});
   const [bsb, setbsb] = useState(0);
-  const navigate = useNavigate();
 
   const transferData = JSON.parse(sessionStorage.getItem("transfer_data"));
   const finalReason = transferReason === "Other" ? otherReason : transferReason;
@@ -115,7 +115,7 @@ const PaymentDetail = () => {
   }, []);
 
   useEffect(() => {
-    if (comingFromConfirmTransfer) {
+    if (comingFromConfirmTransferOrReviewTransfer) {
       const storedPaymentMethod = sessionStorage.getItem(
         "selected_payment_method"
       );
@@ -124,11 +124,11 @@ const PaymentDetail = () => {
       setTransferReason(sessionStorage.getItem("transfer_reason") || "");
       setPaymentType(
         storedPaymentMethod === "monova"
-          ? "bank_transfer"
+          ? "monova"
           : storedPaymentMethod || ""
       );
     }
-  }, [comingFromConfirmTransfer]);
+  }, []);
 
   const handlePayToFormChange = (field, value) => {
     setPayToForm((prev) => ({ ...prev, [field]: value }));
@@ -203,9 +203,8 @@ const PaymentDetail = () => {
     setMonovaForm({
       bsb: "",
       accountNumber: "",
-      accountName: `${
-        JSON.parse(sessionStorage.getItem("User data")).First_name
-      } ${JSON.parse(sessionStorage.getItem("User data")).Last_name}`,
+      accountName: `${JSON.parse(sessionStorage.getItem("User data")).First_name
+        } ${JSON.parse(sessionStorage.getItem("User data")).Last_name}`,
       paymentMethod: "",
     });
     setMonovaFormErrors({});
@@ -568,27 +567,27 @@ const PaymentDetail = () => {
 
                       {(paymentType === "bank_transfer" ||
                         paymentType === "monova") && (
-                        <Form.Select
-                          className="ms-3 payment-select"
-                          style={{ width: "200px" }}
-                          value={paymentType === "monova" ? "monova" : ""}
-                          onChange={(e) => {
-                            const selectedGateway = e.target.value;
+                          <Form.Select
+                            className="ms-3 payment-select"
+                            style={{ width: "200px" }}
+                            value={paymentType === "monova" ? "monova" : ""}
+                            onChange={(e) => {
+                              const selectedGateway = e.target.value;
 
-                            if (selectedGateway === "monova") {
-                              setPaymentType("monova");
-                              sessionStorage.setItem(
-                                "selected_payment_method",
-                                "monova"
-                              );
-                              // DO NOT open modal here
-                            }
-                          }}
-                        >
-                          <option value="">Select Gateway</option>
-                          <option value="monova">Monoova</option>
-                        </Form.Select>
-                      )}
+                              if (selectedGateway === "monova") {
+                                setPaymentType("monova");
+                                sessionStorage.setItem(
+                                  "selected_payment_method",
+                                  "monova"
+                                );
+                                // DO NOT open modal here
+                              }
+                            }}
+                          >
+                            <option value="">Select Gateway</option>
+                            <option value="monova">Monoova</option>
+                          </Form.Select>
+                        )}
                     </div>
                   </Row>
                   <Row className="mt-5">
@@ -633,38 +632,38 @@ const PaymentDetail = () => {
                   </Row>
 
                   {/* Add this new row right after the Transfer Reason row for the "Other" text field */}
-    {transferReason === "Other" && (
-  <Row className="mt-3">
-    <FloatingLabel
-      controlId="otherReasonField"
-      as={Col}
-      label="Please specify the reason"
-      className="mb-3"
-    >
-      <Form.Control
-        type="text"
-        value={otherReason}
-        onChange={(e) => {
-          setOtherReason(e.target.value);
-          setReasonError("");
-          sessionStorage.setItem("other_reason", e.target.value);
-        }}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault(); // Prevent form submission
-          }
-        }}
-        placeholder="Enter your reason here"
-        isInvalid={transferReason === "Other" && !otherReason.trim() && !!reasonError}
-      />
-      {transferReason === "Other" && !otherReason.trim() && reasonError && (
-        <Form.Control.Feedback type="invalid">
-          Please specify the reason when selecting 'Other'.
-        </Form.Control.Feedback>
-      )}
-    </FloatingLabel>
-  </Row>
-)}
+                  {transferReason === "Other" && (
+                    <Row className="mt-3">
+                      <FloatingLabel
+                        controlId="otherReasonField"
+                        as={Col}
+                        label="Please specify the reason"
+                        className="mb-3"
+                      >
+                        <Form.Control
+                          type="text"
+                          value={otherReason}
+                          onChange={(e) => {
+                            setOtherReason(e.target.value);
+                            setReasonError("");
+                            sessionStorage.setItem("other_reason", e.target.value);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault(); // Prevent form submission
+                            }
+                          }}
+                          placeholder="Enter your reason here"
+                          isInvalid={transferReason === "Other" && !otherReason.trim() && !!reasonError}
+                        />
+                        {transferReason === "Other" && !otherReason.trim() && reasonError && (
+                          <Form.Control.Feedback type="invalid">
+                            Please specify the reason when selecting 'Other'.
+                          </Form.Control.Feedback>
+                        )}
+                      </FloatingLabel>
+                    </Row>
+                  )}
 
                   <Row className="mt-4">
                     <Col>

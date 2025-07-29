@@ -624,11 +624,16 @@ const KYCForm = () => {
                               maxWidth: "110px",
                               borderTopRightRadius: 0,
                               borderBottomRightRadius: 0,
+                              backgroundColor: "#fff",    
+                              opacity: 1,                  
+                              pointerEvents: "none",       
+                              color: "#212529",            
                             }}
                           >
                             <option value="61">+61 (AU)</option>
                             <option value="64">+64 (NZ)</option>
                           </Form.Select>
+
                           <Form.Control
                             type="text"
                             value={formData.phone}

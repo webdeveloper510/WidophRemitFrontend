@@ -134,7 +134,10 @@ const TransferDetails = () => {
                             "abandoned",
                             "partially done",
                             "expired",
+                            "payment due",
+                            "cancelled",
                           ];
+
                           const status = transactionData?.payment_status?.toLowerCase();
 
                           if (!blockedStatuses.includes(status)) {
@@ -146,15 +149,16 @@ const TransferDetails = () => {
                                     className="float-end download-button"
                                     onClick={() => handleDownloadReceipt(transactionData?.id)}
                                   >
-                                    <img src={DownloadIcon} alt="Download Receipt" />{" "}
-                                    Download Receipt
+                                    <img src={DownloadIcon} alt="Download Receipt" /> Download Receipt
                                   </Button>
                                 </Col>
                               </Row>
                             );
                           }
-                          return null;
+
+                          return null; // Optional fallback
                         })()}
+
                       </Container>
                     </Card.Body>
                   </Card>
