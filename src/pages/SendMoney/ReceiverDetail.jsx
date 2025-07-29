@@ -368,53 +368,53 @@ const ReceiverDetail = () => {
                     </FloatingLabel>
                   </Row>
 
-          <Row className="mb-3 mobile_numbero">
-  <Col>
-    <FloatingLabel
-      label={<span>Mobile Number</span>}
-      className="mb-3"
-    >
-      <div className="d-flex align-items-stretch p-0">
-        <Form.Select
-          name="countryCode"
-          value={values.countryCode}
-          onChange={handleCustomChange}
-          onBlur={handleBlur}
-          style={{
-            maxWidth: "110px",
-            borderTopRightRadius: 0,
-            borderBottomRightRadius: 0,
-          }}
-        >
-          <option value="61">+61 (AU)</option>
-          <option value="64">+64 (NZ)</option>
-        </Form.Select>
+                  <Row className="mb-3 mobile_numbero">
+                    <Col>
+                      <FloatingLabel
+                        label={<span>Mobile Number <span style={{ color: "red" }}> *</span></span>}
+                        className="mb-3"
+                      >
+                        <div className="d-flex align-items-stretch p-0">
+                          <Form.Select
+                            name="countryCode"
+                            value={values.countryCode}
+                            onChange={handleCustomChange}
+                            onBlur={handleBlur}
+                            style={{
+                              maxWidth: "110px",
+                              borderTopRightRadius: 0,
+                              borderBottomRightRadius: 0,
+                            }}
+                          >
+                            <option value="61">+61 (AU)</option>
+                            <option value="64">+64 (NZ)</option>
+                          </Form.Select>
 
-        <Form.Control
-          type="text"
-          name="mobile"
-          placeholder="Enter mobile number"
-          value={values.mobile}
-          onChange={(e) => {
-            const numericValue = e.target.value.replace(/\D/g, "");
-            setFieldValue("mobile", numericValue);
-          }}
-          onBlur={handleBlur}
-          isInvalid={touched.mobile && errors.mobile}
-          style={{
-            borderTopLeftRadius: 0,
-            borderBottomLeftRadius: 0,
-          }}
-        />
-      </div>
-    </FloatingLabel>
-    {touched.mobile && errors.mobile && (
-      <div className="invalid-feedback d-block">
-        {errors.mobile}
-      </div>
-    )}
-  </Col>
-</Row>
+                          <Form.Control
+                            type="text"
+                            name="mobile"
+                            placeholder="Enter mobile number"
+                            value={values.mobile}
+                            onChange={(e) => {
+                              const numericValue = e.target.value.replace(/\D/g, "");
+                              setFieldValue("mobile", numericValue);
+                            }}
+                            onBlur={handleBlur}
+                            isInvalid={touched.mobile && errors.mobile}
+                            style={{
+                              borderTopLeftRadius: 0,
+                              borderBottomLeftRadius: 0,
+                            }}
+                          />
+                        </div>
+                      </FloatingLabel>
+                      {touched.mobile && errors.mobile && (
+                        <div className="invalid-feedback d-block">
+                          {errors.mobile}
+                        </div>
+                      )}
+                    </Col>
+                  </Row>
 
                 </Card.Body>
               </Card>
