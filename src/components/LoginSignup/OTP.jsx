@@ -268,73 +268,42 @@ const OtpVerification = () => {
             sessionStorage.removeItem("transferOtpData");
             sessionStorage.removeItem("transfer_data");
             sessionStorage.removeItem("selected_receiver");
-
             navigate("/transaction-success");
-            return;
           } else {
             toast.error("Payment processing failed. Please try again.");
-            return;
           }
         } else {
           toast.error(response?.message || "Invalid OTP");
-          return;
         }
+
+        return;
       } else {
         response = await userRegisterVerify(payload);
       }
+
       if (response && response.code === "200") {
+        if (response?.access_token) {
+          sessionStorage.setItem("token", response.access_token);
 
-        if (from == "signup") {
-          if (response?.access_token) {
-            sessionStorage.setItem("token", response.access_token);
+          try {
+            if (from === "signup")
+              await sendEmail();
+          } catch {
+            toast.error("Email send error.");
           }
-          toast.success("Registration successful");
+        }
 
+        if (from === "signup") {
+          toast.success("Registration successful");
+          sessionStorage.removeItem("signupData");
           navigate("/kyc");
           return;
         }
 
         if (from === "login") {
-          if (response?.access_token) {
-            sessionStorage.setItem("token", response.access_token);
-          }
           toast.success("Logged in successfully.");
-
           navigate("/dashboard");
           return;
-        }
-
-        if (from === "profile") {
-          const updateData = JSON.parse(
-            sessionStorage.getItem("pendingProfileUpdate")
-          );
-
-          try {
-            const updateResponse = await updateProfile(updateData);
-            if (updateResponse?.code === "200") {
-              toast.success("Profile updated successfully!");
-            } else {
-              toast.warning(
-                updateResponse?.message || "Failed to update profile."
-              );
-            }
-          } catch (err) {
-            console.error("Profile update failed:", err);
-            toast.error("Error updating profile");
-          }
-
-          sessionStorage.removeItem("pendingProfileUpdate");
-          navigate("/profile-information");
-          return;
-        }
-
-        if (response?.access_token) {
-          sessionStorage.setItem("token", response.access_token);
-          try {
-            const emailRes = await sendEmail();
-          } catch {
-            toast.error("Email send error.");
-          }
         }
 
         sessionStorage.removeItem("signupData");

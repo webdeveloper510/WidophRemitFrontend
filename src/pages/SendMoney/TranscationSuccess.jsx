@@ -15,6 +15,13 @@ const TransactionSuccess = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  useEffect(() => {
+    if (location.state?.from !== "confirm-transfer") {
+      navigate("/send-money");
+      return;
+    }
+  }, [location])
+
   // Function to clear all session storage data
   const clearSessionStorageData = () => {
     sessionStorage.removeItem("monova_transaction_id");

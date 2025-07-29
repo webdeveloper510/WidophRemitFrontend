@@ -322,7 +322,11 @@ const ConfirmTransfer = () => {
       if (paymentSuccess) {
         setModalShow(false);
         setIsProcessingPayment(false);
-        navigate("/transaction-success");
+        navigate("/transaction-success", {
+          state: {
+            from: "confirm-transfer"
+          }
+        });
       } else {
         setIsProcessingPayment(false);
         toast.error("Payment failed. Please try again.");

@@ -29,10 +29,11 @@ import ProfileInformation from "../pages/Dashboard/ProfileInformation";
 import TransactionSuccess from "../pages/SendMoney/TranscationSuccess";
 import ExchangeRatePage from "../ExchangeRatePage";
 import KYCForm from "../components/KYC/KYCForm";
+import Emailverify from "../components/Emailverify";
 
 const AppRoutes = () => {
   return (
-    <Routes>
+    <Routes>  
       {/* Public Routes */}
       <Route
         element={
@@ -47,6 +48,7 @@ const AppRoutes = () => {
         <Route path="/reset-password" element={<ResetPassword />} />
         {/* OTP route accessible by both protected and public */}
         <Route path="/otp-verification" element={<OtpVerification />} />
+        <Route path="/remi-user-email-verification/:id" element={<Emailverify />} />
       </Route>
 
       <Route path="/kyc" element={<KYCForm />} />
