@@ -168,7 +168,7 @@ const ConfirmTransfer = () => {
       const response = await createMonovaPayment(payload);
 
       if (response?.transactionId && response.transactionId !== 0) {
-        sessionStorage.setItem("monova_transaction_id", response.transactionId);
+        sessionStorage.setItem("monova_transaction_id", `${response.transaction_prefix}${response.transactionId}`);
         sessionStorage.setItem(
           "monova_payment_response",
           JSON.stringify(response)
