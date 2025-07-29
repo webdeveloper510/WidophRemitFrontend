@@ -1,14 +1,13 @@
 import { useState } from "react";
-import { NavLink, useLocation } from "react-router-dom"; // ⬅️ import useLocation
+import { NavLink, useLocation } from "react-router-dom";
 import { Navbar, Nav, NavDropdown, Container } from "react-bootstrap";
-import { RxHamburgerMenu } from "react-icons/rx";
 import openToggle from "../assets/images/Left.png";
 import closeToggle from "../assets/images/Right.png";
 import LoggedUser from "../assets/images/loggeduser.png";
 
 const TopNavbar = ({ onToggleSidebar }) => {
   const [collapsed, setCollapsed] = useState(false);
-  const location = useLocation(); // ⬅️ get current route
+  const location = useLocation();
 
   const handleToggle = () => {
     setCollapsed((prev) => !prev);
@@ -25,34 +24,34 @@ const TopNavbar = ({ onToggleSidebar }) => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="">
-              <NavLink to="/" className="nav-link fw-bold">
+              <Nav.Link as="a" href="https://widophremit.com/" className="fw-bold">
                 Home
-              </NavLink>
-              <NavLink to="/" className="nav-link">
+              </Nav.Link>
+              <Nav.Link as="a" href="https://widophremit.com/notify-me/">
                 International Money Transfer
-              </NavLink>
+              </Nav.Link>
 
               <NavDropdown title="How To" id="how-to-dropdown">
-                <NavDropdown.Item as={NavLink} to="/">
+                <NavDropdown.Item as="a" href="https://widophremit.com/how-to-send-and-receive-money-with-the-widoph-transfer-app/">
                   Send Money
                 </NavDropdown.Item>
-                <NavDropdown.Item as={NavLink} to="/">
+                <NavDropdown.Item as="a" href="https://widophremit.com/how-to-send-and-receive-money-with-the-widoph-transfer-app/">
                   Receive Money
                 </NavDropdown.Item>
               </NavDropdown>
 
               <NavDropdown title="Blog" id="blog-dropdown">
-                <NavDropdown.Item as={NavLink} to="/">
+                <NavDropdown.Item as="a" href="/">
                   Tips
                 </NavDropdown.Item>
-                <NavDropdown.Item as={NavLink} to="/">
+                <NavDropdown.Item as="a" href="/">
                   Guides
                 </NavDropdown.Item>
               </NavDropdown>
 
-              <NavLink to="/" className="nav-link">
+              <Nav.Link as="a" href="https://widophremit.com/community-responsibility/">
                 SR
-              </NavLink>
+              </Nav.Link>
             </Nav>
 
             <Nav className="ms-auto">
