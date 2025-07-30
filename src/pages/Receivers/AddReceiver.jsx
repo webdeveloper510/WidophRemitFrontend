@@ -12,6 +12,7 @@ import * as Yup from "yup";
 import Bank_list from "../../utils/Bank_list";
 import { createRecipient } from "../../services/Api";
 import { parsePhoneNumber } from "libphonenumber-js";
+import allCountries from "../../utils/AllCountries";
 
 const isAlphaOnly = (value) => /^[A-Za-z\s]*$/.test(value);
 
@@ -36,13 +37,10 @@ const AddReceiver = () => {
     { name: "Vietnam", code: "VN", dialCode: "84" },
   ];
 
-  const countryOptions = getNames().map((country) => ({
-    value: country,
-    label: country,
+  const countryOptions = allCountries.map((country) => ({
+    value: country.name,
+    label: country.name,
   }));
-
-  console.log(getNames());
-  
 
   const initialValues = {
     bank_name: "",
@@ -369,22 +367,22 @@ const AddReceiver = () => {
                         <option value="64">+64 (NZ)</option>
                       </Form.Select>
 
-                    <Form.Control
-  type="text"
-  name="phone"
-  placeholder="Enter mobile number"
-  value={values.phone}
-  onChange={(e) => {
-    const numericValue = e.target.value.replace(/\D/g, "");
-    setFieldValue("phone", numericValue);
-  }}
-  onBlur={handleBlur}
-  isInvalid={touched.phone && errors.phone}
-  style={{
-    borderTopLeftRadius: 0,
-    borderBottomLeftRadius: 0,
-  }}
-/>
+                      <Form.Control
+                        type="text"
+                        name="phone"
+                        placeholder="Enter mobile number"
+                        value={values.phone}
+                        onChange={(e) => {
+                          const numericValue = e.target.value.replace(/\D/g, "");
+                          setFieldValue("phone", numericValue);
+                        }}
+                        onBlur={handleBlur}
+                        isInvalid={touched.phone && errors.phone}
+                        style={{
+                          borderTopLeftRadius: 0,
+                          borderBottomLeftRadius: 0,
+                        }}
+                      />
 
                     </div>
                   </FloatingLabel>

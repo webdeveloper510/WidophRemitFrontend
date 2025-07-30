@@ -17,18 +17,26 @@ const ForgotPassword = () => {
   const navigate = useNavigate();
 
   const formik = useFormik({
-    initialValues: { 
+    initialValues: {
       mobile: "",
       countryCode: "61" // default for Australia
     },
-    validationSchema: Yup.object().shape({
+    validationSchema: Yup.object({
       mobile: Yup.string()
         .required("Mobile number is required")
-        .matches(/^\d{8,10}$/, "Mobile number must be between 8 and 10 digits"),
+        .test(
+          "is-valid-mobile",
+          "Mobile number must be between 8 and 10 digits",
+          function (value) {
+            if (!value) return false;
+            const digitsOnly = value.replace(/\D/g, "");
+            return /^\d{8,10}$/.test(digitsOnly);
+          }
+        ),
     }),
     onSubmit: async (values, { setSubmitting }) => {
       setLoading(true);
-      
+
       const fullPhone = `+${values.countryCode}${values.mobile}`;
       let parsedMobile = fullPhone;
 
@@ -74,7 +82,9 @@ const ForgotPassword = () => {
 
   const handleCustomChange = (e) => {
     const { name, value } = e.target;
-    formik.setFieldValue(name, value);
+    const digitsOnly = value.replace(/\D/g, "");
+
+    formik.setFieldValue(name, digitsOnly);
     formik.setFieldTouched(name, true);
   };
 

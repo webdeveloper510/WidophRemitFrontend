@@ -13,6 +13,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { getUserRecipient, updateUserRecipient } from "../../services/Api";
 import { toast } from "react-toastify";
+import allCountries from "../../utils/AllCountries";
 
 const UpdateReceiver = () => {
   const navigate = useNavigate();
@@ -35,9 +36,9 @@ const UpdateReceiver = () => {
     { name: "Vietnam", code: "VN", dialCode: "84" },
   ];
 
-  const countryOptions = getNames().map((country) => ({
-    value: country,
-    label: country,
+  const countryOptions = allCountries.map((country) => ({
+    value: country.name,
+    label: country.name,
   }));
 
   const formik = useFormik({

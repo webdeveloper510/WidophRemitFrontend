@@ -199,7 +199,6 @@ const ConfirmTransfer = () => {
         return false;
       }
     } catch (err) {
-      toast.error("Error while creating Monova payment.");
       console.error("Monova payment error:", err);
       return false;
     } finally {

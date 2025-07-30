@@ -87,9 +87,9 @@ const PaymentDetail = () => {
     const storedTransferData = JSON.parse(sessionStorage.getItem("transfer_data") || "null");
     const receiver = JSON.parse(sessionStorage.getItem("selected_receiver") || "null");
     const txnId = sessionStorage.getItem("transaction_id") || "";
-    const reason = location?.state.from === "/review-transfer" ? "" : sessionStorage.getItem("transfer_reason") || "";
+    const reason = sessionStorage.getItem("transfer_reason") || "";
     const other = sessionStorage.getItem("other_reason") || "";
-    const method = location?.state.from === "/review-transfer" ? "" : sessionStorage.getItem("selected_payment_method") || "";
+    const method = sessionStorage.getItem("selected_payment_method") || "";
 
     if (!storedTransferData || !storedTransferData.amount) return;
 
@@ -344,9 +344,6 @@ const PaymentDetail = () => {
 
         setModalShowMonovaExisting(true);
       } else {
-        console.log(
-          "No existing bank account found, proceeding with new entry"
-        );
         setModalShowMonova(true);
       }
     } else {

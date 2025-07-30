@@ -7,6 +7,7 @@ import Table from "react-bootstrap/Table";
 import { Col, Row, Button, Spinner } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
 import { paymentSummary } from "../../services/Api";
+import { clearSessionStorageData } from "../../utils/sessionUtils";
 
 const TransactionSuccess = () => {
   const [transaction, setTransaction] = useState(null);
@@ -22,22 +23,6 @@ const TransactionSuccess = () => {
     }
   }, [location])
 
-  // Function to clear all session storage data
-  const clearSessionStorageData = () => {
-    sessionStorage.removeItem("monova_transaction_id");
-    sessionStorage.removeItem("monova_form_data");
-    sessionStorage.removeItem("monova_payment_data");
-    sessionStorage.removeItem("monova_payment_response");
-    sessionStorage.removeItem("payload");
-    sessionStorage.removeItem("selected_payment_method");
-    sessionStorage.removeItem("selected_receiver");
-    sessionStorage.removeItem("transaction_id");
-    sessionStorage.removeItem("transfer_data");
-    sessionStorage.removeItem("transfer_reason");
-    sessionStorage.removeItem("final_transfer_reason");
-    sessionStorage.removeItem("other_reason");
-    sessionStorage.removeItem("pageIsReloading");
-  };
   useEffect(() => {
     const handleBeforeUnload = () => {
       sessionStorage.setItem('pageIsReloading', 'true');
@@ -103,11 +88,9 @@ const TransactionSuccess = () => {
         const result = await paymentSummary(transaction_id);
         if (result?.code === "200") {
           setStatus(result.data.payment_status);
-        } else {
-          console.log("Transaction not found.");
         }
       } catch (err) {
-        console.log(err);
+        console.error(err);
       } finally {
         setLoading(false);
       }

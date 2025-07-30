@@ -116,8 +116,6 @@ const ResetPassword = () => {
               }}
             >
               {({ errors, touched, isSubmitting, values, setFieldValue }) => {
-                console.log("Live Errors:", errors);
-                console.log("Live Touched:", touched);
 
                 return (
                   <FormikForm className="exchange-form">

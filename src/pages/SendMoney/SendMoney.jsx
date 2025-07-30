@@ -17,10 +17,14 @@ import {
   getCurrencies,
 } from "../../services/Api";
 import { useLocation } from "react-router-dom";
-
-
+import { clearSessionStorageData } from "../../utils/sessionUtils";
 
 const SendMoney = () => {
+
+  useEffect(() => {
+    clearSessionStorageData();
+  }, [])
+
   const location = useLocation();
 
   const isBackFromReceivers = location.state?.backFromReceivers === true;
@@ -223,7 +227,7 @@ const SendMoney = () => {
       } finally {
         setIsConverting(false);
       }
-    }, 500),
+    }, 2000),
     [
       values.from,
       values.to,

@@ -12,16 +12,17 @@ import Bank_list from "../../utils/Bank_list";
 import { createRecipient } from "../../services/Api";
 import { useLocation, useNavigate } from "react-router-dom";
 import { parsePhoneNumber } from "libphonenumber-js";
+import allCountries from "../../utils/AllCountries";
 
 const ReceiverDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
-  const countryOptions = getNames().map((country) => ({
-    value: country,
-    label: country,
-  })); 
+  const countryOptions = allCountries.map((country) => ({
+    value: country.name,
+    label: country.name,
+  }));
   useEffect(() => {
     if (location?.state?.from !== "receivers-list")
       navigate("/send-money")
