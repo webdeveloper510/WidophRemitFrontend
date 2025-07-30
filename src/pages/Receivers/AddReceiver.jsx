@@ -488,7 +488,7 @@ const AddReceiver = () => {
                   className="mb-3"
                 >
                   <Form.Control
-                    type="text"
+                    type="number"
                     name="post_code"
                     value={values.post_code}
                     onChange={handleChange}

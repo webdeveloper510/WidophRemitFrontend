@@ -624,10 +624,10 @@ const KYCForm = () => {
                               maxWidth: "110px",
                               borderTopRightRadius: 0,
                               borderBottomRightRadius: 0,
-                              backgroundColor: "#fff",    
-                              opacity: 1,                  
-                              pointerEvents: "none",       
-                              color: "#212529",            
+                              backgroundColor: "#fff",
+                              opacity: 1,
+                              pointerEvents: "none",
+                              color: "#212529",
                             }}
                           >
                             <option value="61">+61 (AU)</option>
@@ -785,7 +785,7 @@ const KYCForm = () => {
                             <span style={{ color: "red" }}>*</span>
                           </span>
                         }
-                        className="mb-3 textarea-label"
+                        className="mb-3"
                       >
                         <Form.Control
                           as="textarea"
@@ -804,60 +804,6 @@ const KYCForm = () => {
                         )}
                       </FloatingLabel>
                     </Row>
-
-                    {/* <Row className="mb-3">
-                      <FloatingLabel
-                        as={Col}
-                        label={
-                          <span>
-                            Building No.
-                            <span style={{ color: "red" }}>*</span>
-                          </span>
-                        }
-                        className="mb-3"
-                      >
-                        <Form.Control
-                          type="text"
-                          value={formData.buildingNo}
-                          onChange={(e) =>
-                            handleInputChange("buildingNo", e.target.value)
-                          }
-                          isInvalid={touched.buildingNo && errors.buildingNo}
-                          disabled={isLoading}
-                        />
-                        {touched.buildingNo && errors.buildingNo && (
-                          <div className="text-danger mt-1 small">
-                            {errors.buildingNo}
-                          </div>
-                        )}
-                      </FloatingLabel>
-
-                      <FloatingLabel
-                        as={Col}
-                        label={
-                          <span>
-                            Street Name
-                            <span style={{ color: "red" }}>*</span>
-                          </span>
-                        }
-                        className="mb-3"
-                      >
-                        <Form.Control
-                          type="text"
-                          value={formData.streetName}
-                          onChange={(e) =>
-                            handleInputChange("streetName", e.target.value)
-                          }
-                          isInvalid={touched.streetName && errors.streetName}
-                          disabled={isLoading}
-                        />
-                        {touched.streetName && errors.streetName && (
-                          <div className="text-danger mt-1 small">
-                            {errors.streetName}
-                          </div>
-                        )}
-                      </FloatingLabel>
-                    </Row> */}
 
                     <Row className="mb-3">
                       <FloatingLabel

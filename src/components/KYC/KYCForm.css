@@ -9,12 +9,14 @@
   background-color: #b3d42a;
   color: #fff;
 }
+
 .sidebar-steps {
   background: rgb(208 219 52 / 50%);
   border-radius: 20px;
   height: 100vh;
   padding-right: 0 !important;
 }
+
 /* .kyc-content-form {
   height: 90vh;
 } */
@@ -60,6 +62,7 @@
   left: 16px;
   top: 42px;
 }
+
 .step-label {
   font-size: 0.95rem;
   color: #333;
@@ -72,6 +75,7 @@
   transition: all 0.3s ease;
   background: linear-gradient(to right, #cfda2f 0%, #e8eda9 100%) !important;
 }
+
 .step-label.active {
   background: linear-gradient(to right, #9cb417 0%, #e8eda9 100%) !important;
   color: #fff;
@@ -82,38 +86,46 @@
   border-top-right-radius: 0px !important;
   border-bottom-right-radius: 0px !important;
 }
+
 strong.steps-number {
   color: #434800;
 }
+
 .steps-name {
   color: rgb(67 72 0 / 60%);
   font-weight: 400 !important;
 }
+
 .kyc-content-form h2 {
   color: #434800;
   font-weight: 900;
 }
+
 .kyc-content-form p {
   color: #7c804d;
 }
+
 form.profile-form h3 {
   color: #434800;
 }
+
 button.skipbtn {
- font-size: 16px;
-    font-weight: 600;
-    text-transform: uppercase;
-    border-radius: 10px 10px 10px 10px !important;
-    padding: 20px 25px;
-    color: #434800;
-    text-decoration: none;
-    background: transparent;
-    border: none;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-radius: 10px 10px 10px 10px !important;
+  padding: 20px 25px;
+  color: #434800;
+  text-decoration: none;
+  background: transparent;
+  border: none;
 }
+
 button.skipbtn:hover {
   color: #434800;
-     background: transparent;
+  background: transparent;
 }
+
 button.prevbtn {
   background: transparent;
   border: 1px solid rgb(67 72 0 / 23%);
@@ -121,6 +133,7 @@ button.prevbtn {
   text-transform: uppercase;
   padding: 20px 25px;
 }
+
 button.nextbtn {
   background-color: #cadb00;
   border: none;
@@ -129,10 +142,12 @@ button.nextbtn {
   font-size: 16px;
   color: #434800;
 }
+
 form.profile-form h3 {
   font-size: 20px;
   font-weight: 600;
 }
+
 .verify-container {
   padding: 40px 0;
 }
@@ -212,6 +227,7 @@ form.profile-form h3 {
   flex-direction: column;
   justify-content: space-between;
 }
+
 .kyc-complete-content h2 {
   font-size: 2rem;
   color: #2d2d00;
@@ -239,10 +255,12 @@ form.profile-form h3 {
   margin-left: 10px;
   color: #434800;
 }
+
 .redirect-msg span {
   font-weight: bold;
   color: #9cb417;
 }
+
 p.selected-file-name {
   color: #434800;
 }
@@ -250,9 +268,11 @@ p.selected-file-name {
 form.profile-form h3 {
   margin-bottom: 35px;
 }
+
 .mobileinput {
   position: relative;
 }
+
 .mobileinput label {
   position: absolute;
   top: -23px;
@@ -263,9 +283,10 @@ form.profile-form h3 {
   left: 34px;
   font-size: 14px;
 }
+
 .react-select__control.css-13cymwt-control,
-.css-b62m3t-container, css-13cymwt-control
-.css-t3ipsp-control,
+.css-b62m3t-container,
+css-13cymwt-control .css-t3ipsp-control,
 .css-t3ipsp-control:hover {
   height: calc(3.5rem + calc(var(--bs-border-width) * 2)) !important;
   min-height: calc(3.5rem + calc(var(--bs-border-width) * 2)) !important;
@@ -274,9 +295,11 @@ form.profile-form h3 {
   resize: none;
   border-radius: 10px;
 }
+
 .kyc-country {
   position: relative;
 }
+
 .kyc-country label {
   position: absolute;
   z-index: 9;
@@ -286,8 +309,9 @@ form.profile-form h3 {
   background: #fff;
   left: 10px;
 }
+
 .textarea-label label {
-    background: transparent !important;
-    height: 30px !important;
-    top: -1px;
+  background: transparent !important;
+  height: 30px !important;
+  top: -1px;
 }

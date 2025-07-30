@@ -188,7 +188,12 @@ export const verifyEmail = async (data) => {
 
 export const resendOtp = async (data) => {
 
-  const response = await public_instance.post("/resend-otp/", data)
+  const response = await public_instance.post("/resend-otp/", data, {
+    headers: {
+      'Content-Type': 'application/json',
+      "Authorization": `Bearer ${sessionStorage.getItem("token")}`
+    }
+  })
     .then(res => {
       return res?.data
     }).catch(error => {
