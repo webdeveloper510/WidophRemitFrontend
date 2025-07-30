@@ -137,6 +137,7 @@ const ConfirmTransfer = () => {
         matcher.bankAccountNumber = bankInfo.bankAccountNumber;
         matcher.bsb = bankInfo.bsb;
       } else {
+        toast.info("Monoova virtual account is being processed")
         matcher = await createAutoMatcher({
           akaNames: [
             receiverData.first_name,
