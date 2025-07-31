@@ -17,6 +17,7 @@ import Footer from "../../components/Footer";
 import Sidebar from "../../components/Sidebar";
 import TopNavbar from "../../components/Navbar";
 import { AnimatePresence } from "framer-motion";
+import { accessProvider } from "../../utils/accessProvider";
 
 const ProfileInformation = () => {
   const [modalShow, setModalShow] = useState(false);
@@ -25,6 +26,8 @@ const ProfileInformation = () => {
   const [rawMobile, setRawMobile] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [kycStatus, setkycStatus] = useState("pending");
+
 
   const navigate = useNavigate();
 
@@ -113,13 +116,20 @@ const ProfileInformation = () => {
             setCountryCode(countryCode);
             setRawMobile(phoneNumber);
           }
+
+          const {
+            is_digital_Id_verified,
+            veriff_status,
+          } = userData;
+
+          const currentKycStatus = accessProvider(is_digital_Id_verified, veriff_status);
+          setkycStatus(currentKycStatus);
         } else {
           navigate("/login");
           sessionStorage.clear();
         }
       } catch (error) {
         console.error("Profile fetch error:", error);
-        setRedirectTo("/login");
         sessionStorage.clear();
       }
     };
@@ -194,7 +204,7 @@ const ProfileInformation = () => {
     <>
       <div className="p-3 d-flex flex-row customdashboardheight">
         <div className="d-flex w-100">
-          <Sidebar collapsed={collapsed} />
+          <Sidebar collapsed={collapsed} disabled={kycStatus !== "approved"} />
 
           <div className="flex-grow-1 d-flex flex-column right-side-content">
             <TopNavbar onToggleSidebar={() => setCollapsed(!collapsed)} />

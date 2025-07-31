@@ -51,7 +51,7 @@ const Dashboard = () => {
         if (transactionsResponse.code === "200") {
           setTransactionsCount(transactionsResponse?.data?.data?.length || 0);
         }
-       
+
 
         if (userResponse?.code === "200") {
           setFirstName(userResponse.data.First_name || "User");
@@ -103,7 +103,7 @@ const Dashboard = () => {
     <>
       <div className="p-3 d-flex flex-row customdashboardheight">
         <div className="d-flex w-100">
-          <Sidebar collapsed={collapsed} />
+          <Sidebar collapsed={collapsed} disabled={kycStatus !== "approved"} />
 
           <div className="flex-grow-1 d-flex flex-column right-side-content">
             <TopNavbar onToggleSidebar={() => setCollapsed(!collapsed)} />
