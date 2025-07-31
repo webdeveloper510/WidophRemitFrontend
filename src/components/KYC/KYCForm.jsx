@@ -747,7 +747,7 @@ const KYCForm = () => {
                     </Row>
 
                     <Row className="mb-3 mt-3">
-                      <h3>Your Address</h3>
+                      <h3>Your Address </h3>
                       <FloatingLabel
                         as={Col}
                         label={
@@ -780,12 +780,12 @@ const KYCForm = () => {
                       <FloatingLabel
                         as={Col}
                         label={
-                          <span>
+                          <span className="kyc_address">
                             Address
                             <span style={{ color: "red" }}>*</span>
                           </span>
                         }
-                        className="mb-3"
+                        className="mb-3 outer_kycaddress"
                       >
                         <Form.Control
                           as="textarea"
