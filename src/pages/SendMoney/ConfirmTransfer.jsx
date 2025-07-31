@@ -497,6 +497,8 @@ const ConfirmTransfer = () => {
           setIsProcessingPayment(false);
         }}
         className="profileupdate"
+        backdrop="static"
+        keyboard={false}
       >
         <Modal.Header closeButton={!isProcessingPayment}></Modal.Header>
         <Modal.Body>
