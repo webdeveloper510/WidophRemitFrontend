@@ -39,8 +39,6 @@ private_instance.interceptors.request.use(
             return false;
           }
         }).catch((error) => {
-          // console.log(error)
-          // return false
           if (!error.response.status === 503) {
             localStorage.setItem("inactive", "true");
             sessionStorage.clear()
@@ -463,10 +461,8 @@ export const ZaiPayId = async (data) => {
       "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
     },
   }).then(res => {
-    // //console.log(res)
     return res?.data
   }).catch(err => {
-    // //console.log(err)
     return err.response.data
   })
   return response
@@ -479,10 +475,8 @@ export const ZaiPayTo = async (data) => {
       "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
     },
   }).then(res => {
-    //console.log(res)
     return res?.data
   }).catch(err => {
-    //console.log(err)
     return err.response.data
   })
   return response
@@ -495,10 +489,8 @@ export const ZaiDashPayTo = async (data) => {
       "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
     },
   }).then(res => {
-    //console.log(res)
     return res?.data
   }).catch(err => {
-    //console.log(err)
     return err.response.data
   })
   return response
@@ -511,10 +503,8 @@ export const ZaiDashPayId = async (data) => {
       "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
     },
   }).then(res => {
-    //console.log(res)
     return res?.data
   }).catch(err => {
-    //console.log(err)
     return err.response.data
   })
   return response
@@ -527,10 +517,8 @@ export const verifyPayId = async (data) => {
       "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
     },
   }).then(res => {
-    //console.log(res)
     return res?.data
   }).catch(err => {
-    //console.log(err)
     return err.response.data
   })
   return response
@@ -543,10 +531,8 @@ export const verifyPayTo = async (data) => {
       "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
     },
   }).then(res => {
-    //console.log(res)
     return res?.data
   }).catch(err => {
-    //console.log(err)
     return err.response.data
   })
   return response
@@ -560,10 +546,8 @@ export const createPayId = async (data) => {
       "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
     },
   }).then(res => {
-    //console.log(res)
     return res?.data
   }).catch(err => {
-    //console.log(err)
     return err.response.data
   })
   return response
@@ -576,10 +560,8 @@ export const createAgreement = async (data) => {
       "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
     },
   }).then(res => {
-    //console.log(res)
     return res?.data
   }).catch(err => {
-    //console.log(err)
     return err.response.data
   })
   return response
@@ -592,10 +574,8 @@ export const getAgreementList = async (amount) => {
       "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
     },
   }).then(res => {
-    //console.log(res)
     return res?.data
   }).catch(err => {
-    //console.log(err)
     return err.response.data
   })
   return response
@@ -609,10 +589,8 @@ export const updateAgreement = async (data) => {
       "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
     },
   }).then(res => {
-    //console.log(res)
     return res?.data
   }).catch(err => {
-    //console.log(err)
     return err.response.data
   })
   return response
@@ -625,10 +603,8 @@ export const getVeriffStatus = async (data) => {
       "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
     },
   }).then(res => {
-    //console.log(res)
     return res?.data
   }).catch(err => {
-    //console.log(err)
     return err.response.data
   })
   return response
@@ -641,10 +617,8 @@ export const createTransaction = async (data) => {
       "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
     },
   }).then(res => {
-    //console.log(res)
     return res?.data
   }).catch(err => {
-    //console.log(err)
     return err.response.data
   })
   return response
@@ -657,10 +631,8 @@ export const pendingTransactions = async () => {
       "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
     },
   }).then(res => {
-    //console.log(res)
     return res?.data
   }).catch(err => {
-    //console.log(err)
     return err.response.data
   })
   return response
@@ -673,10 +645,8 @@ export const getPreferredCurrency = async () => {
       "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
     },
   }).then(res => {
-    //console.log(res)
     return res?.data
   }).catch(err => {
-    //console.log(err)
     return err.response.data
   })
   return response

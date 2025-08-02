@@ -58,6 +58,7 @@ const AddReceiver = () => {
     city: "",
     post_code: "",
     address: "",
+    swift_code: ""
   };
 
   const validationSchema = Yup.object({
@@ -91,6 +92,7 @@ const AddReceiver = () => {
       .matches(/^\d+$/, "Only numbers allowed"),
 
     address: Yup.string().required("Address is required"),
+    swift_code: Yup.string().required("Swift code is required"),
   });
 
   const {
@@ -144,6 +146,7 @@ const AddReceiver = () => {
           country: values.country,
           country_code: countryCode,
           address: values.address,
+          swift_code: values.swift_code
         };
 
         const response = await createRecipient(payload);
@@ -246,6 +249,28 @@ const AddReceiver = () => {
                   />
                   <Form.Control.Feedback type="invalid">
                     {errors.account_number}
+                  </Form.Control.Feedback>
+                </FloatingLabel>
+                <FloatingLabel
+                  as={Col}
+                  controlId="accountNumber"
+                  label={
+                    <span>
+                      Swift Number
+                      <span style={{ color: "red" }}> *</span>
+                    </span>
+                  }
+                >
+                  <Form.Control
+                    type="text"
+                    name="swift_code"
+                    value={values.swift_code}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    isInvalid={touched.swift_code && errors.swift_code}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.swift_code}
                   </Form.Control.Feedback>
                 </FloatingLabel>
               </Row>

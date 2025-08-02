@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Container,
   Row,
   Col,
   Form,
   Button,
-  FloatingLabel,
 } from "react-bootstrap";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import SignupImage from "../../assets/images/signup-image.png";

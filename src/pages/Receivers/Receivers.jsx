@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AnimatedPage from "../../components/AnimatedPage";
 import DataTable from "react-data-table-component";
 import { BsThreeDots } from "react-icons/bs";
@@ -45,8 +45,6 @@ const Receivers = () => {
 
   useEffect(() => {
     fetchList();
-    const timer = setTimeout(() => setLoader(false), 500);
-    return () => clearTimeout(timer);
   }, []);
 
   const fetchList = async () => {

@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AnimatedPage from "../../components/AnimatedPage";
 import Back from "../../assets/images/back.png";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import { Form, FloatingLabel, Col, Alert, Row } from "react-bootstrap";
 import Select from "react-select";
-import { getNames } from "country-list";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import Bank_list from "../../utils/Bank_list";
 import { createRecipient } from "../../services/Api";
 import { useLocation, useNavigate } from "react-router-dom";
 import { parsePhoneNumber } from "libphonenumber-js";
@@ -56,6 +54,7 @@ const ReceiverDetail = () => {
     city: "",
     post_code: "",
     address: "",
+    swift_code: ""
   };
 
   const validationSchema = Yup.object({
@@ -99,6 +98,9 @@ const ReceiverDetail = () => {
 
     address: Yup.string()
       .required("Address is required"),
+
+    swift_code: Yup.string()
+      .required("Swift code is required")
   });
 
   const {
@@ -152,6 +154,7 @@ const ReceiverDetail = () => {
           country: values.country,
           country_code: countryCode,
           address: values.address,
+          swift_code: values.swift_code
         };
 
         const response = await createRecipient(payload);
@@ -288,6 +291,31 @@ const ReceiverDetail = () => {
                       />
                       <Form.Control.Feedback type="invalid">
                         {errors.account_number}
+                      </Form.Control.Feedback>
+                    </FloatingLabel>
+
+                    <FloatingLabel
+                      as={Col}
+                      controlId="floatingAccountNumber"
+                      label={
+                        <span>
+                          Swift Code
+                          <span style={{ color: "red" }}> *</span>
+                        </span>
+                      }
+                    >
+                      <Form.Control
+                        type="text"
+                        name="swift_code"
+                        value={values.swift_code}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={
+                          touched.swift_code && errors.swift_code
+                        }
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.swift_code}
                       </Form.Control.Feedback>
                     </FloatingLabel>
                   </Row>

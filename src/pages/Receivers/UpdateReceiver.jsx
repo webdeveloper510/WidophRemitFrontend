@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AnimatedPage from "../../components/AnimatedPage";
 import Back from "../../assets/images/back.png";
@@ -8,12 +8,13 @@ import { Form, FloatingLabel, Col, Row, Alert } from "react-bootstrap";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import Select from "react-select";
-import { getNames } from "country-list";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { getUserRecipient, updateUserRecipient } from "../../services/Api";
 import { toast } from "react-toastify";
 import allCountries from "../../utils/AllCountries";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
+
 
 const UpdateReceiver = () => {
   const navigate = useNavigate();
@@ -55,6 +56,7 @@ const UpdateReceiver = () => {
       city: "",
       post_code: "",
       address: "",
+      swift_code: ""
     },
     validationSchema: Yup.object({
       bank_name: Yup.string().required("Bank name is required"),
@@ -76,8 +78,18 @@ const UpdateReceiver = () => {
 
       mobile: Yup.string()
         .required("Mobile number is required")
-        .matches(/^\d{8,10}$/, "Mobile number must be between 8 and 10 digits"),
-
+        .test(
+          "valid-length",
+          "Mobile number must be between 8 and 10 digits",
+          (value) => {
+            if (!value) return false;
+            const phoneNumber = parsePhoneNumberFromString(value);
+            if (!phoneNumber) return false;
+            const nationalNumber = phoneNumber.nationalNumber || "";
+            return nationalNumber.length >= 8 && nationalNumber.length <= 10;
+          }
+        ),
+        
       country: Yup.string().required("Country is required"),
       state: Yup.string().required("State is required"),
       city: Yup.string().required("City is required"),
@@ -87,6 +99,7 @@ const UpdateReceiver = () => {
         .matches(/^[0-9]+$/, "Only numbers allowed"),
 
       address: Yup.string().required("Address is required"),
+      swift_code: Yup.string().required("Swift code is required"),
     }),
 
     onSubmit: async (values) => {
@@ -115,6 +128,7 @@ const UpdateReceiver = () => {
           country: values.country,
           country_code: countryCode,
           address: values.address,
+          swift_code: values.swift_code
         };
 
         const response = await updateUserRecipient(id, payload);
@@ -169,6 +183,7 @@ const UpdateReceiver = () => {
             city: recipient.city || "",
             post_code: recipient.postcode || "",
             address: recipient.address || "",
+            swift_code: recipient.swift_code || ""
           };
 
           setValues(initialValues);
@@ -237,12 +252,26 @@ const UpdateReceiver = () => {
                     type="text"
                     name="account_number"
                     value={values.account_number}
-                    onChange={handleChange}
+                    onChange={() => { handleChange }}
                     onBlur={handleBlur}
                     isInvalid={touched.account_number && errors.account_number}
                   />
                   <Form.Control.Feedback type="invalid">
                     {errors.account_number}
+                  </Form.Control.Feedback>
+                </FloatingLabel>
+
+                <FloatingLabel as={Col} label="Swift Number *">
+                  <Form.Control
+                    type="text"
+                    name="swift_code"
+                    value={values.swift_code}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    isInvalid={touched.swift_code && errors.swift_code}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.swift_code}
                   </Form.Control.Feedback>
                 </FloatingLabel>
               </Row>
@@ -318,11 +347,15 @@ const UpdateReceiver = () => {
                   <PhoneInput
                     international
                     defaultCountry="AU"
+                    countries={['AU', 'NZ']}
                     countryCallingCodeEditable={false}
                     value={values.mobile}
-                    onChange={(val) => setFieldValue("mobile", val)}
+                    onChange={(val) => {
+                      setFieldValue("mobile", val)
+                    }}
                     onBlur={() => formik.setFieldTouched("mobile", true)}
                   />
+
                   {touched.mobile && errors.mobile && (
                     <div className="text-danger small mt-1">
                       {errors.mobile}

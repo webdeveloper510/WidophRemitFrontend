@@ -1,11 +1,10 @@
-import React, { useState, useRef, useEffect } from "react";
+import  { useState, useRef, useEffect } from "react";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
-import { Form, FloatingLabel, Col } from "react-bootstrap";
+import { Form, Col } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
-import { parsePhoneNumber, isValidPhoneNumber } from "libphonenumber-js";
 import { Link, useNavigate } from "react-router-dom";
 import { Formik, Form as FormikForm, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";

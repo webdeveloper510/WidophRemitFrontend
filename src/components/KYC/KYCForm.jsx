@@ -20,7 +20,6 @@ import {
   updateProfile,
   userProfile,
 } from "../../services/Api";
-import TopNavbar from "../LoginSignup/TopNavbar";
 import Footer from "../Footer";
 import KYCimage from "../../assets/images/kyc-image.png";
 import { Veriff } from "@veriff/js-sdk";

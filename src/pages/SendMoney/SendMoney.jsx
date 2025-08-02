@@ -8,7 +8,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { commaRemover } from "../../hooks/hook";
 import { toast } from "react-toastify";
-import { Await, useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 import loaderlogo from "../../assets/images/logo.png"
 
 import {
@@ -40,9 +40,10 @@ const SendMoney = () => {
   const amtSchema = Yup.object().shape({
     send_amt: Yup.string()
       .required("Send amount is required")
-      .test("min-amount", "Minimum $100 required", (value) => {
+      .test("min-amount", "Amount must be between $100 and $15000", (value) => {
         if (!value) return false;
-        return Number(commaRemover(value)) >= 100;
+        const amount = Number(commaRemover(value));
+        return amount >= 100 && amount <= 15000;
       }),
     exchange_amt: Yup.string().required("Exchange amount is required"),
     from: Yup.string().required("Source currency is required"),

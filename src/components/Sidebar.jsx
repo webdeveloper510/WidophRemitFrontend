@@ -1,4 +1,3 @@
-import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import logoFull from "../assets/images/logo.png";
 import logoSmall from "../assets/images/mobile-logo.png";
@@ -24,8 +23,7 @@ const Sidebar = ({ collapsed, disabled = false }) => {
     return null;
   }
 
-  // Reuse the same function from TransactionSuccess component
-  const clearSessionStorageData = () => {
+  function clearSessionStorageData() {
     sessionStorage.removeItem("monova_transaction_id");
     sessionStorage.removeItem("monova_form_data");
     sessionStorage.removeItem("monova_payment_data");
@@ -39,7 +37,7 @@ const Sidebar = ({ collapsed, disabled = false }) => {
     sessionStorage.removeItem("final_transfer_reason");
     sessionStorage.removeItem("other_reason");
     sessionStorage.removeItem("pageIsReloading");
-  };
+  }
 
   const handleLinkClick = () => {
     if (location.pathname === "/transaction-success") {

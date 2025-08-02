@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import AnimatedPage from "../../components/AnimatedPage";
 import Back from "../../assets/images/back.png";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
-import { Form, FloatingLabel, Col } from "react-bootstrap";
+import { Form, FloatingLabel, Col, Spinner } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 import Select from "react-select";
 import { getNames } from "country-list";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
-import { changePassword, updateProfile, userProfile } from "../../services/Api";
+import { changePassword, resendOtp, updateProfile, userProfile, verifyEmail } from "../../services/Api";
 import Modal from "react-bootstrap/Modal";
 import UpdatePopup from "../../assets/images/profilepopup.png";
 import Footer from "../../components/Footer";
@@ -18,16 +18,22 @@ import Sidebar from "../../components/Sidebar";
 import TopNavbar from "../../components/Navbar";
 import { AnimatePresence } from "framer-motion";
 import { accessProvider } from "../../utils/accessProvider";
+import OtpImage from "../../assets/images/Otp-image.png";
+import OTPInput from "react-otp-input";
 
 const ProfileInformation = () => {
   const [modalShow, setModalShow] = useState(false);
+  const [modalShowOtp, setmodalShowOtp] = useState(false);
   const [modalShowVerify, setModalShowVerify] = useState(false);
   const [countryCode, setCountryCode] = useState("61");
   const [rawMobile, setRawMobile] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [kycStatus, setkycStatus] = useState("pending");
-
+  const [PasswordChange, setPasswordChange] = useState(false);
+  const [changingPassword, setchangingPassword] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [user, setuser] = useState({});
 
   const navigate = useNavigate();
 
@@ -69,6 +75,53 @@ const ProfileInformation = () => {
     confirmPassword: "",
   });
 
+  const verifyOtpHandler = async () => {
+    if (otp.length < 6) {
+      toast.error("Please enter a valid 6-digit OTP.");
+      return;
+    }
+
+    const otpPayload = {
+      email: user?.email,
+      mobile: user?.Mobile || user?.mobile,
+      otp: otp,
+    };
+
+    try {
+      const response = await verifyEmail(otpPayload);
+      if (response?.code === "200") {
+        setchangingPassword(true);
+        handleUpdateProfile();
+      } else {
+        toast.error(response?.message || "Invalid OTP");
+      }
+      setOtp("");
+    } catch (err) {
+      console.error("OTP Verification Error:", err);
+      toast.error("Error verifying OTP");
+    }
+  };
+
+
+  const handleResendOtp = async () => {
+    try {
+      const payload = {
+        mobile: user?.mobile,
+        type: "email",
+      };
+      const response = await resendOtp(payload);
+      if (response?.code === "200") {
+        toast.success(response?.message || "OTP resent successfully!");
+        setOtp("");
+      } else {
+        toast.error(response?.message || "Failed to resend OTP");
+      }
+    } catch (error) {
+      console.error("Resend OTP Error:", error);
+      toast.error("Something went wrong while resending OTP");
+    }
+  };
+
   const toggleVisibility = (field) => {
     setVisibility((prev) => ({ ...prev, [field]: !prev[field] }));
   };
@@ -92,6 +145,7 @@ const ProfileInformation = () => {
 
         if (res?.code === "200") {
           const userData = res.data;
+          setuser(res.data);
           setFormData((prev) => ({
             ...prev,
             firstName: userData.First_name || "",
@@ -153,10 +207,53 @@ const ProfileInformation = () => {
   const handleUpdateProfile = () => {
     setSubmitted(true);
 
-    const missingFields = requiredFields.filter((field) => !formData[field]);
-    if (missingFields.length > 0) {
+    if (PasswordChange) {
+      const { currentPassword, newPassword, confirmPassword } = formData;
+      setchangingPassword(true);
+
+      const passwordInvalid =
+        !currentPassword ||
+        !newPassword ||
+        newPassword.length < 8 ||
+        confirmPassword !== newPassword;
+
+      if (passwordInvalid) return;
+
+      changePassword({
+        old_password: currentPassword,
+        new_password: newPassword,
+      })
+        .then((res) => {
+          if (res?.code === "200") {
+            toast.success("Password updated successfully");
+            setFormData((prev) => ({
+              ...prev,
+              currentPassword: "",
+              newPassword: "",
+              confirmPassword: "",
+            }));
+            setOtp("");
+            setPasswordChange(false);
+
+            setTimeout(() => {
+              setSubmitted(false);
+            }, 0);
+          } else {
+            toast.error(res?.message || "Failed to update password");
+          }
+          setchangingPassword(false);
+          setmodalShowOtp(false);
+        })
+        .catch((err) => {
+          console.error("Password update error:", err);
+          toast.error("Unexpected error while updating password");
+        });
+
       return;
     }
+
+    const missingFields = requiredFields.filter((field) => !formData[field]);
+    if (missingFields.length > 0) return;
 
     const fullMobile = `+${countryCode}${rawMobile}`;
     const { email, mobile, ...rest } = formData;
@@ -186,7 +283,6 @@ const ProfileInformation = () => {
             mobile: fullMobile,
             email: formData.email,
           };
-
           sessionStorage.setItem("User data", JSON.stringify(newSessionData));
         } else {
           toast.error(res?.message || "Failed to update profile");
@@ -198,7 +294,28 @@ const ProfileInformation = () => {
       });
   };
 
-  const getInvalid = (field) => submitted && !formData[field];
+  const getInvalid = (field) => {
+    if (!submitted) return false;
+
+    if (PasswordChange) {
+      if (field === "currentPassword") return !formData.currentPassword;
+      if (field === "newPassword") return !formData.newPassword || formData.newPassword.length < 8;
+      if (field === "confirmPassword") return formData.confirmPassword !== formData.newPassword;
+    }
+
+    return !formData[field];
+  };
+
+
+  const hasPasswordErrors = () => {
+    return (
+      !formData.currentPassword ||
+      !formData.newPassword ||
+      formData.newPassword.length < 8 ||
+      formData.confirmPassword !== formData.newPassword
+    );
+  };
+
 
   return (
     <>
@@ -225,353 +342,361 @@ const ProfileInformation = () => {
                       <Card className="receiver-card bg-white">
                         <Card.Body>
                           <Card.Title>Personal Details</Card.Title>
-                          <Row className="mb-3">
-                            <FloatingLabel
-                              as={Col}
-                              label={
-                                <span>
-                                  First Name{" "}
-                                  <span style={{ color: "red" }}>*</span>
-                                </span>
-                              }
-                              className="mb-3"
-                            >
-                              <Form.Control
-                                name="firstName"
-                                value={formData.firstName}
-                                onChange={handleChange}
-                                required
-                                isInvalid={getInvalid("firstName")}
-                              />
-                              <Form.Control.Feedback type="invalid">
-                                First Name is required
-                              </Form.Control.Feedback>
-                            </FloatingLabel>
-                            <FloatingLabel
-                              as={Col}
-                              label="Middle Name"
-                              className="mb-3"
-                            >
-                              <Form.Control
-                                name="middleName"
-                                value={formData.middleName}
-                                onChange={handleChange}
-                              />
-                            </FloatingLabel>
-                            <FloatingLabel
-                              as={Col}
-                              label={
-                                <span>
-                                  Last Name{" "}
-                                  <span style={{ color: "red" }}>*</span>
-                                </span>
-                              }
-                              className="mb-3"
-                            >
-                              <Form.Control
-                                name="lastName"
-                                value={formData.lastName}
-                                onChange={handleChange}
-                                required
-                                isInvalid={getInvalid("lastName")}
-                              />
-                              <Form.Control.Feedback type="invalid">
-                                Last Name is required
-                              </Form.Control.Feedback>
-                            </FloatingLabel>
-                          </Row>
-                          <Row className="mb-3">
-                            <FloatingLabel
-                              as={Col}
-                              label={
-                                <span>
-                                  Customer ID{" "}
-                                  <span style={{ color: "red" }}>*</span>
-                                </span>
-                              }
-                              className="mb-3"
-                            >
-                              <Form.Control
-                                name="customerId"
-                                value={formData.customerId}
-                                readOnly
-                                disabled
-                                plaintext
-                              />
-                            </FloatingLabel>
-                            <FloatingLabel
-                              as={Col}
-                              label={
-                                <span>
-                                  Email <span style={{ color: "red" }}>*</span>
-                                </span>
-                              }
-                              className="mb-3"
-                            >
-                              <Form.Control
-                                type="email"
-                                value={formData.email}
-                                readOnly
-                                disabled
-                                plaintext
-                              />
-                            </FloatingLabel>
-                          </Row>
-                          <Row className="mb-3 mobile_numbero">
-                            <Col>
-                              <FloatingLabel
-                                label={
-                                  <span>
-                                    Mobile Number{" "}
-                                    <span style={{ color: "red" }}>*</span>
-                                  </span>
-                                }
-                                className="mb-3"
-                              >
-                                <div className="d-flex align-items-stretch">
-                                  <Form.Select
-                                    value={countryCode}
-                                    readOnly
-                                    disabled
-                                    style={{
-                                      maxWidth: "110px",
-                                      borderTopRightRadius: 0,
-                                      borderBottomRightRadius: 0,
-                                      backgroundColor: "#fff",
-                                      color: "#000",
-                                      opacity: 1,
-                                    }}
-                                  >
-                                    <option value="61">+61 (AU)</option>
-                                    <option value="64">+64 (NZ)</option>
-                                  </Form.Select>
-                                  <Form.Control
-                                    type="text"
-                                    value={rawMobile}
-                                    readOnly
-                                    disabled
-                                    max={10}
-                                    style={{
-                                      borderTopLeftRadius: 0,
-                                      borderBottomLeftRadius: 0,
-                                      backgroundColor: "#fff",
-                                      color: "#000",
-                                      opacity: 1,
-                                    }}
-                                  />
-                                </div>
-                              </FloatingLabel>
-                            </Col>
-                          </Row>
-                          <Row className="mb-3">
-                            <FloatingLabel
-                              as={Col}
-                              label={
-                                <span>
-                                  Date of Birth
-                                  <span style={{ color: "red" }}>*</span>
-                                </span>
-                              }
-                              className="mb-3"
-                            >
-                              <Form.Control
-                                name="dateOfBirth"
-                                type="date"
-                                value={formData.dateOfBirth}
-                                onChange={handleChange}
-                                readOnly
-                                required
-                                isInvalid={getInvalid("dateOfBirth")}
-                              />
-                              <Form.Control.Feedback type="invalid">
-                                Date of Birth is required
-                              </Form.Control.Feedback>
-                            </FloatingLabel>
-
-                            {/* Updated Country of Birth - Now a dropdown */}
-                            <Col>
-                              <div className="floating-label-wrapper kyc-country">
-                                <label>
-                                  Country of Birth{" "}
-                                  <span style={{ color: "red" }}>*</span>
-                                </label>
-                                <Select
-                                  options={countryOfBirthOptions}
-                                  name="countryOfBirth"
-                                  value={countryOfBirthOptions.find(
-                                    (option) =>
-                                      option.value === formData.countryOfBirth
-                                  )}
-                                  onChange={(selectedOption) =>
-                                    setFormData((prev) => ({
-                                      ...prev,
-                                      countryOfBirth: selectedOption.value,
-                                    }))
-                                  }
-                                  className={getInvalid("countryOfBirth") ? "is-invalid" : ""}
-                                />
-                                {getInvalid("countryOfBirth") && (
-                                  <div className="invalid-feedback d-block">
-                                    Country of Birth is required
-                                  </div>
-                                )}
-                              </div>
-                            </Col>
-
-                            <FloatingLabel
-                              as={Col}
-                              label={
-                                <span>
-                                  Occupation
-                                  <span style={{ color: "red" }}>*</span>
-                                </span>
-                              }
-                            >
-                              <Form.Control
-                                name="occupation"
-                                value={formData.occupation}
-                                onChange={handleChange}
-                                required
-                                isInvalid={getInvalid("occupation")}
-                              />
-                              <Form.Control.Feedback type="invalid">
-                                Occupation is required
-                              </Form.Control.Feedback>
-                            </FloatingLabel>
-                          </Row>
-
-                          <Row className="mb-3">
-                            <Col>
-                              <div className="floating-label-wrapper kyc-country">
-                                <label>
-                                  Country{" "}
-                                  <span style={{ color: "red" }}>*</span>
-                                </label>
-
-                                <Select
-                                  options={countryOptions}
-                                  name="country"
-                                  value={countryOptions.find(
-                                    (option) =>
-                                      option.value === formData.country
-                                  )}
-                                  onChange={(selectedOption) =>
-                                    setFormData((prev) => ({
-                                      ...prev,
-                                      country: selectedOption.value,
-                                    }))
-                                  }
-                                  className={getInvalid("country") ? "is-invalid" : ""}
-                                />
-                                {getInvalid("country") && (
-                                  <div className="invalid-feedback d-block">
-                                    Country is required
-                                  </div>
-                                )}
-                              </div>
-                            </Col>
-
-                            <Col>
+                          {!PasswordChange && <>
+                            <Row className="mb-3">
                               <FloatingLabel
                                 as={Col}
                                 label={
                                   <span>
-                                    Address
+                                    First Name{" "}
                                     <span style={{ color: "red" }}>*</span>
                                   </span>
                                 }
                                 className="mb-3"
                               >
                                 <Form.Control
-                                  name="address"
-                                  as="textarea"
-                                  style={{ height: "50px" }}
-                                  value={formData.address}
+                                  name="firstName"
+                                  value={formData.firstName}
                                   onChange={handleChange}
                                   required
-                                  isInvalid={getInvalid("address")}
+                                  isInvalid={getInvalid("firstName")}
                                 />
                                 <Form.Control.Feedback type="invalid">
-                                  Address is required
+                                  First Name is required
                                 </Form.Control.Feedback>
                               </FloatingLabel>
-                            </Col>
-                          </Row>
+                              <FloatingLabel
+                                as={Col}
+                                label="Middle Name"
+                                className="mb-3"
+                              >
+                                <Form.Control
+                                  name="middleName"
+                                  value={formData.middleName}
+                                  onChange={handleChange}
+                                />
+                              </FloatingLabel>
+                              <FloatingLabel
+                                as={Col}
+                                label={
+                                  <span>
+                                    Last Name{" "}
+                                    <span style={{ color: "red" }}>*</span>
+                                  </span>
+                                }
+                                className="mb-3"
+                              >
+                                <Form.Control
+                                  name="lastName"
+                                  value={formData.lastName}
+                                  onChange={handleChange}
+                                  required
+                                  isInvalid={getInvalid("lastName")}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                  Last Name is required
+                                </Form.Control.Feedback>
+                              </FloatingLabel>
+                            </Row>
+                            <Row className="mb-3">
+                              <FloatingLabel
+                                as={Col}
+                                label={
+                                  <span>
+                                    Customer ID{" "}
+                                    <span style={{ color: "red" }}>*</span>
+                                  </span>
+                                }
+                                className="mb-3"
+                              >
+                                <Form.Control
+                                  name="customerId"
+                                  value={formData.customerId}
+                                  readOnly
+                                  disabled
+                                  plaintext
+                                />
+                              </FloatingLabel>
+                              <FloatingLabel
+                                as={Col}
+                                label={
+                                  <span>
+                                    Email <span style={{ color: "red" }}>*</span>
+                                  </span>
+                                }
+                                className="mb-3"
+                              >
+                                <Form.Control
+                                  type="email"
+                                  value={formData.email}
+                                  readOnly
+                                  disabled
+                                  plaintext
+                                />
+                              </FloatingLabel>
+                            </Row>
+                            <Row className="mb-3 mobile_numbero">
+                              <Col>
+                                <FloatingLabel
+                                  label={
+                                    <span>
+                                      Mobile Number{" "}
+                                      <span style={{ color: "red" }}>*</span>
+                                    </span>
+                                  }
+                                  className="mb-3"
+                                >
+                                  <div className="d-flex align-items-stretch">
+                                    <Form.Select
+                                      value={countryCode}
+                                      readOnly
+                                      disabled
+                                      style={{
+                                        maxWidth: "110px",
+                                        borderTopRightRadius: 0,
+                                        borderBottomRightRadius: 0,
+                                        backgroundColor: "#fff",
+                                        color: "#000",
+                                        opacity: 1,
+                                      }}
+                                    >
+                                      <option value="61">+61 (AU)</option>
+                                      <option value="64">+64 (NZ)</option>
+                                    </Form.Select>
+                                    <Form.Control
+                                      type="text"
+                                      value={rawMobile}
+                                      readOnly
+                                      disabled
+                                      max={10}
+                                      style={{
+                                        borderTopLeftRadius: 0,
+                                        borderBottomLeftRadius: 0,
+                                        backgroundColor: "#fff",
+                                        color: "#000",
+                                        opacity: 1,
+                                      }}
+                                    />
+                                  </div>
+                                </FloatingLabel>
+                              </Col>
+                            </Row>
+                            <Row className="mb-3">
+                              <FloatingLabel
+                                as={Col}
+                                label={
+                                  <span>
+                                    Date of Birth
+                                    <span style={{ color: "red" }}>*</span>
+                                  </span>
+                                }
+                                className="mb-3"
+                              >
+                                <Form.Control
+                                  name="dateOfBirth"
+                                  type="date"
+                                  value={formData.dateOfBirth}
+                                  onChange={handleChange}
+                                  readOnly
+                                  required
+                                  isInvalid={getInvalid("dateOfBirth")}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                  Date of Birth is required
+                                </Form.Control.Feedback>
+                              </FloatingLabel>
 
-                          <Row className="mb-3">
-                            <FloatingLabel
-                              as={Col}
-                              label={
-                                <span>
-                                  City<span style={{ color: "red" }}>*</span>
-                                </span>
-                              }
-                            >
-                              <Form.Control
-                                name="city"
-                                value={formData.city}
-                                onChange={handleChange}
-                                required
-                                isInvalid={getInvalid("city")}
-                              />
-                              <Form.Control.Feedback type="invalid">
-                                City is required
-                              </Form.Control.Feedback>
-                            </FloatingLabel>
-                            <FloatingLabel
-                              as={Col}
-                              label={
-                                <span>
-                                  Zip/Postal Code
-                                  <span style={{ color: "red" }}>*</span>
-                                </span>
-                              }
-                            >
-                              <Form.Control
-                                name="zip"
-                                type="number"
-                                value={formData.zip}
-                                onChange={handleChange}
-                                required
-                                isInvalid={getInvalid("zip")}
-                              />
-                              <Form.Control.Feedback type="invalid">
-                                Zip is required
-                              </Form.Control.Feedback>
-                            </FloatingLabel>
-                            <FloatingLabel
-                              as={Col}
-                              label={
-                                <span>
-                                  State<span style={{ color: "red" }}>*</span>
-                                </span>
-                              }
-                            >
-                              <Form.Control
-                                name="state"
-                                value={formData.state}
-                                onChange={handleChange}
-                                required
-                                isInvalid={getInvalid("state")}
-                              />
-                              <Form.Control.Feedback type="invalid">
-                                State is required
-                              </Form.Control.Feedback>
-                            </FloatingLabel>
-                          </Row>
+                              {/* Updated Country of Birth - Now a dropdown */}
+                              <Col>
+                                <div className="floating-label-wrapper kyc-country">
+                                  <label>
+                                    Country of Birth{" "}
+                                    <span style={{ color: "red" }}>*</span>
+                                  </label>
+                                  <Select
+                                    options={countryOfBirthOptions}
+                                    name="countryOfBirth"
+                                    value={countryOfBirthOptions.find(
+                                      (option) =>
+                                        option.value === formData.countryOfBirth
+                                    )}
+                                    onChange={(selectedOption) =>
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        countryOfBirth: selectedOption.value,
+                                      }))
+                                    }
+                                    className={getInvalid("countryOfBirth") ? "is-invalid" : ""}
+                                  />
+                                  {getInvalid("countryOfBirth") && (
+                                    <div className="invalid-feedback d-block">
+                                      Country of Birth is required
+                                    </div>
+                                  )}
+                                </div>
+                              </Col>
+
+                              <FloatingLabel
+                                as={Col}
+                                label={
+                                  <span>
+                                    Occupation
+                                    <span style={{ color: "red" }}>*</span>
+                                  </span>
+                                }
+                              >
+                                <Form.Control
+                                  name="occupation"
+                                  value={formData.occupation}
+                                  onChange={handleChange}
+                                  required
+                                  isInvalid={getInvalid("occupation")}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                  Occupation is required
+                                </Form.Control.Feedback>
+                              </FloatingLabel>
+                            </Row>
+
+                            <Row className="mb-3">
+                              <Col>
+                                <div className="floating-label-wrapper kyc-country">
+                                  <label>
+                                    Country{" "}
+                                    <span style={{ color: "red" }}>*</span>
+                                  </label>
+
+                                  <Select
+                                    options={countryOptions}
+                                    name="country"
+                                    value={countryOptions.find(
+                                      (option) =>
+                                        option.value === formData.country
+                                    )}
+                                    onChange={(selectedOption) =>
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        country: selectedOption.value,
+                                      }))
+                                    }
+                                    className={getInvalid("country") ? "is-invalid" : ""}
+                                  />
+                                  {getInvalid("country") && (
+                                    <div className="invalid-feedback d-block">
+                                      Country is required
+                                    </div>
+                                  )}
+                                </div>
+                              </Col>
+
+                              <Col>
+                                <FloatingLabel
+                                  as={Col}
+                                  label={
+                                    <span>
+                                      Address
+                                      <span style={{ color: "red" }}>*</span>
+                                    </span>
+                                  }
+                                  className="mb-3"
+                                >
+                                  <Form.Control
+                                    name="address"
+                                    as="textarea"
+                                    style={{ height: "50px" }}
+                                    value={formData.address}
+                                    onChange={handleChange}
+                                    required
+                                    isInvalid={getInvalid("address")}
+                                  />
+                                  <Form.Control.Feedback type="invalid">
+                                    Address is required
+                                  </Form.Control.Feedback>
+                                </FloatingLabel>
+                              </Col>
+                            </Row>
+
+                            <Row className="mb-3">
+                              <FloatingLabel
+                                as={Col}
+                                label={
+                                  <span>
+                                    City<span style={{ color: "red" }}>*</span>
+                                  </span>
+                                }
+                              >
+                                <Form.Control
+                                  name="city"
+                                  value={formData.city}
+                                  onChange={handleChange}
+                                  required
+                                  isInvalid={getInvalid("city")}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                  City is required
+                                </Form.Control.Feedback>
+                              </FloatingLabel>
+                              <FloatingLabel
+                                as={Col}
+                                label={
+                                  <span>
+                                    Zip/Postal Code
+                                    <span style={{ color: "red" }}>*</span>
+                                  </span>
+                                }
+                              >
+                                <Form.Control
+                                  name="zip"
+                                  type="number"
+                                  value={formData.zip}
+                                  onChange={handleChange}
+                                  required
+                                  isInvalid={getInvalid("zip")}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                  Zip is required
+                                </Form.Control.Feedback>
+                              </FloatingLabel>
+                              <FloatingLabel
+                                as={Col}
+                                label={
+                                  <span>
+                                    State<span style={{ color: "red" }}>*</span>
+                                  </span>
+                                }
+                              >
+                                <Form.Control
+                                  name="state"
+                                  value={formData.state}
+                                  onChange={handleChange}
+                                  required
+                                  isInvalid={getInvalid("state")}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                  State is required
+                                </Form.Control.Feedback>
+                              </FloatingLabel>
+                            </Row>
+                          </>}
 
                           {/* Password Update Section */}
-                          {/* <Card className="receiver-card mt-4 bg-white">
+                          {PasswordChange && <Card className="receiver-card mt-4 bg-white">
                             <Card.Body>
                               <Card.Title>Change Password</Card.Title>
                               <Row className="mb-3">
-                                <FloatingLabel as={Col} label="Current Password" className="position-relative">
+                                <FloatingLabel as={Col} label={
+                                  <span>
+                                    Current password<span style={{ color: "red" }}>*</span>
+                                  </span>
+                                } className="position-relative">
                                   <Form.Control
                                     type={visibility.current ? "text" : "password"}
                                     className="PassowrdWidth"
                                     name="currentPassword"
                                     value={formData.currentPassword}
                                     onChange={handleChange}
+                                    isInvalid={getInvalid("currentPassword")}
+                                    required
                                   />
                                   <span
                                     onClick={() => toggleVisibility("current")}
@@ -579,15 +704,24 @@ const ProfileInformation = () => {
                                   >
                                     {visibility.current ? <FaEyeSlash /> : <FaEye />}
                                   </span>
+                                  <Form.Control.Feedback type="invalid">
+                                    Current password is required
+                                  </Form.Control.Feedback>
                                 </FloatingLabel>
 
-                                <FloatingLabel as={Col} label="New Password" className="position-relative">
+                                <FloatingLabel as={Col} label={
+                                  <span>
+                                    New password<span style={{ color: "red" }}>*</span>
+                                  </span>
+                                } className="position-relative">
                                   <Form.Control
                                     type={visibility.new ? "text" : "password"}
                                     className="PassowrdWidth"
                                     name="newPassword"
                                     value={formData.newPassword}
                                     onChange={handleChange}
+                                    isInvalid={getInvalid("newPassword")}
+                                    required
                                   />
                                   <span
                                     onClick={() => toggleVisibility("new")}
@@ -595,14 +729,24 @@ const ProfileInformation = () => {
                                   >
                                     {visibility.new ? <FaEyeSlash /> : <FaEye />}
                                   </span>
+                                  <Form.Control.Feedback type="invalid">
+                                    New password must be at least 8 characters
+                                  </Form.Control.Feedback>
                                 </FloatingLabel>
-                                <FloatingLabel as={Col} label="Confirm Password" className="position-relative">
+
+                                <FloatingLabel as={Col} label={
+                                  <span>
+                                    Confirm password<span style={{ color: "red" }}>*</span>
+                                  </span>
+                                } className="position-relative">
                                   <Form.Control
                                     type={visibility.confirm ? "text" : "password"}
                                     className="PassowrdWidth"
                                     name="confirmPassword"
                                     value={formData.confirmPassword}
                                     onChange={handleChange}
+                                    isInvalid={getInvalid("confirmPassword")}
+                                    required
                                   />
                                   <span
                                     onClick={() => toggleVisibility("confirm")}
@@ -610,23 +754,82 @@ const ProfileInformation = () => {
                                   >
                                     {visibility.confirm ? <FaEyeSlash /> : <FaEye />}
                                   </span>
+                                  <Form.Control.Feedback type="invalid">
+                                    Passwords do not match
+                                  </Form.Control.Feedback>
                                 </FloatingLabel>
+
                               </Row>
 
                             </Card.Body>
-                          </Card> */}
+                          </Card>}
 
                           <Row className="mb-3 mt-4">
-                            <Col>
-                              <Button
-                                variant="primary"
-                                className="float-end updateform"
-                                onClick={handleUpdateProfile}
-                              >
-                                Update
-                              </Button>
+                            <Col className="d-flex justify-content-end gap-2">
+                              {!PasswordChange && (
+                                <Button
+                                  variant="primary"
+                                  className="updateform"
+                                  onClick={() => {
+                                    setSubmitted(false);
+                                    setPasswordChange(true)
+                                  }}
+                                >
+                                  Change Password
+                                </Button>
+                              )}
+
+                              {PasswordChange && (
+                                <>
+                                  <Button
+                                    variant="primary"
+                                    className="updateform"
+                                    onClick={() => {
+                                      setPasswordChange(false);
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        currentPassword: "",
+                                        newPassword: "",
+                                        confirmPassword: "",
+                                      }));
+                                      setSubmitted(false);
+                                    }}
+                                  >
+                                    Cancel
+                                  </Button>
+                                  <Button
+                                    variant="primary"
+                                    className="updateform"
+                                    onClick={() => {
+                                      setSubmitted(true);
+                                      if (!hasPasswordErrors()) {
+                                        setmodalShowOtp(true);
+                                        const payload = {
+                                          mobile: user?.mobile,
+                                        };
+                                        setSubmitted(false);
+                                        resendOtp(payload);
+                                      }
+                                    }}
+                                  >
+                                    Save Password
+                                  </Button>
+
+                                </>
+                              )}
+
+                              {!PasswordChange && (
+                                <Button
+                                  variant="primary"
+                                  className="updateform"
+                                  onClick={() => { handleUpdateProfile() }}
+                                >
+                                  Update
+                                </Button>
+                              )}
                             </Col>
                           </Row>
+
                         </Card.Body>
                       </Card>
                     </Form>
@@ -668,6 +871,78 @@ const ProfileInformation = () => {
           </div>
         </div>
       </div>
+
+      <Modal
+        size="md"
+        centered
+        show={modalShowOtp}
+        onHide={() => {
+          setmodalShowOtp(false);
+          setOtp("");
+          setchangingPassword(false);
+        }}
+        className="profileupdate"
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton={!changingPassword}></Modal.Header>
+        <Modal.Body>
+          {changingPassword ? (
+            <div className="text-center">
+              <Spinner animation="border" role="status" />
+              <p className="mt-3">Changing your password, please wait...</p>
+            </div>
+          ) : (
+            <>
+              <h4>Verify your account by entering the code</h4>
+              <p className="m-4">
+                <img src={OtpImage} alt="image" />
+              </p>
+              <Col className="inputBoxStyle">
+                <OTPInput
+                  value={otp}
+                  onChange={setOtp}
+                  numInputs={6}
+                  renderSeparator={<span>-</span>}
+                  renderInput={(props) => <input {...props} />}
+                />
+              </Col>
+              <Button
+                variant="link"
+                onClick={handleResendOtp}
+                className="resendOTP"
+              >
+                Resend OTP
+              </Button>
+            </>
+          )}
+        </Modal.Body>
+
+        {!changingPassword && (
+          <Modal.Footer className="d-flex justify-content-center align-items-center">
+            <Row className="mb-3">
+              <Col>
+                <Button
+                  variant="light"
+                  className="cancel-btn float-start"
+                  onClick={() => setmodalShowOtp(false)}
+                >
+                  Cancel
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  onClick={verifyOtpHandler}
+                  variant="primary"
+                  className="submit-btn float-end"
+                >
+                  Continue
+                </Button>
+              </Col>
+            </Row>
+          </Modal.Footer>
+        )}
+      </Modal>
       <Footer />
     </>
   );
