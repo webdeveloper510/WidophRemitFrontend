@@ -380,7 +380,6 @@ const PaymentDetail = () => {
       }
 
       setPayIdData({ payId, transferId });
-
       const txResponse = await createTransaction(transferData);
 
       if (txResponse?.code === "200") {

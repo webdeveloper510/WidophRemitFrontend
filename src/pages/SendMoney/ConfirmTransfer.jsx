@@ -164,6 +164,7 @@ const ConfirmTransfer = () => {
         payment_mode: monovaForm.payment_mode,
         to: temp.amount.to,
         from: temp.amount.from,
+        description:sessionStorage.getItem("final_transfer_reason")
       };
 
       const response = await createMonovaPayment(payload);
