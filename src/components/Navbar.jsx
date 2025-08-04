@@ -6,7 +6,11 @@ import closeToggle from "../assets/images/Right.png";
 import LoggedUser from "../assets/images/loggeduser.png";
 
 const TopNavbar = ({ onToggleSidebar }) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+  const stored = sessionStorage.getItem("collapsed");
+  return stored === "true";
+});
+;
   const location = useLocation();
   const [howToOpen, setHowToOpen] = useState(false);
   const [blogOpen, setBlogOpen] = useState(false);

@@ -28,7 +28,11 @@ const ProfileInformation = () => {
   const [countryCode, setCountryCode] = useState("61");
   const [rawMobile, setRawMobile] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+  const stored = sessionStorage.getItem("collapsed");
+  return stored === "true"; 
+});
+;
   const [kycStatus, setkycStatus] = useState("pending");
   const [PasswordChange, setPasswordChange] = useState(false);
   const [changingPassword, setchangingPassword] = useState(false);

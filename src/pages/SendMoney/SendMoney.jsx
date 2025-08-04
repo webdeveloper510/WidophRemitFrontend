@@ -23,7 +23,7 @@ const SendMoney = () => {
 
   useEffect(() => {
     clearSessionStorageData();
-    
+
     const webData = sessionStorage.getItem("web_exchange_data");
     const tempData = sessionStorage.getItem("temp_exchange_data");
     if (!webData && !(tempData && location.state?.backFromReceivers === true)) {
@@ -202,8 +202,10 @@ const SendMoney = () => {
     debounce(async (key, value, dir) => {
       if (!value || value === "0" || isConverting) return;
 
+      const cleanValue = commaRemover(value) || "1";
+
       let payload = {
-        amount: commaRemover(value) || "1",
+        amount: cleanValue,
         from: values.from,
         to: values.to,
         direction: dir,
@@ -218,12 +220,9 @@ const SendMoney = () => {
       try {
         const response = await exchangeRate(payload);
         if (response) {
-          if (dir === "from" && JSON.parse(sessionStorage.getItem("temp_exchange_data")).send_amount) {
-            if (JSON.parse(sessionStorage.getItem("temp_exchange_data")).send_amount)
-              setFieldValue("exchange_amt", response.amount);
-            else
-              setFieldValue("exchange_amt", "");
-          } else if (dir === "to" && values.exchange_amt) {
+          if (dir === "from") {
+            setFieldValue("exchange_amt", response.amount);
+          } else if (dir === "to") {
             setFieldValue("send_amt", response.amount);
           }
           setDefaultExchange(response.default_exchange);
@@ -235,15 +234,9 @@ const SendMoney = () => {
         setIsConverting(false);
       }
     }, 2000),
-    [
-      values.from,
-      values.to,
-      values.send_amt,
-      values.exchange_amt,
-      setFieldValue,
-      isConverting,
-    ]
+    [values.from, values.to, isConverting, setFieldValue]
   );
+
 
   useEffect(() => {
     const loadInitialData = async () => {
@@ -483,11 +476,8 @@ const SendMoney = () => {
                       <Form.Control
                         type="text"
                         name="exchange_amt"
-                        value={values.exchange_amt}
+                        value={values.send_amt && values.exchange_amt}
                         readOnly
-                        // onChange={handleChange}
-                        // onBlur={handleAmountBlur}
-                        //disabled={isConverting}
                         isInvalid={
                           touched.exchange_amt && !!errors.exchange_amt
                         }

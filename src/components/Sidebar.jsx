@@ -6,6 +6,7 @@ import { RiExchangeDollarFill } from "react-icons/ri";
 import { TbCreditCard, TbExchange } from "react-icons/tb";
 import { LuUsers } from "react-icons/lu";
 import { HiOutlineLogout } from "react-icons/hi";
+import { useEffect } from "react";
 
 const menuItems = [
   { path: "/dashboard", name: "Dashboard", icon: <VscDashboard /> },
@@ -49,6 +50,11 @@ const Sidebar = ({ collapsed, disabled = false }) => {
     sessionStorage.clear();
     navigate("/login");
   };
+
+  useEffect(() => {
+    sessionStorage.setItem("collapsed", collapsed)
+  }, [collapsed])
+
 
   return (
     <div

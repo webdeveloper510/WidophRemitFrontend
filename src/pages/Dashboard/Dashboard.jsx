@@ -27,7 +27,11 @@ const Dashboard = () => {
   const [transactionsCount, setTransactionsCount] = useState(0);
   const [firstName, setFirstName] = useState("User");
   const [loading, setLoading] = useState(true);
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+  const stored = sessionStorage.getItem("collapsed");
+  return stored === "true"; 
+});
+;
   const [Message, setMessage] = useState("");
   const navigate = useNavigate();
   const [profileCompleted, setprofileCompleted] = useState(false);

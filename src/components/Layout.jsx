@@ -7,7 +7,11 @@ import { AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
 
 const Layout = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+  const stored = sessionStorage.getItem("collapsed");
+  return stored === "true"; 
+});
+
   const location = useLocation();
 
   return (
