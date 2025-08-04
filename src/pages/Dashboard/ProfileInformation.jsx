@@ -34,6 +34,7 @@ const ProfileInformation = () => {
   const [changingPassword, setchangingPassword] = useState(false);
   const [otp, setOtp] = useState("");
   const [user, setuser] = useState({});
+  const [otpPurpose, setOtpPurpose] = useState("");
 
   const navigate = useNavigate();
 
@@ -75,32 +76,6 @@ const ProfileInformation = () => {
     confirmPassword: "",
   });
 
-  const verifyOtpHandler = async () => {
-    if (otp.length < 6) {
-      toast.error("Please enter a valid 6-digit OTP.");
-      return;
-    }
-
-    const otpPayload = {
-      email: user?.email,
-      mobile: user?.Mobile || user?.mobile,
-      otp: otp,
-    };
-
-    try {
-      const response = await verifyEmail(otpPayload);
-      if (response?.code === "200") {
-        setchangingPassword(true);
-        handleUpdateProfile();
-      } else {
-        toast.error(response?.message || "Invalid OTP");
-      }
-      setOtp("");
-    } catch (err) {
-      console.error("OTP Verification Error:", err);
-      toast.error("Error verifying OTP");
-    }
-  };
 
 
   const handleResendOtp = async () => {
@@ -190,6 +165,81 @@ const ProfileInformation = () => {
 
     fetchAndVerifyUser();
   }, []);
+
+  const verifyOtpHandler = async () => {
+    if (otp.length < 6) {
+      toast.error("Please enter a valid 6-digit OTP.");
+      return;
+    }
+
+    const otpPayload = {
+      email: user?.email,
+      mobile: user?.Mobile || user?.mobile,
+      otp: otp,
+    };
+
+    try {
+      const response = await verifyEmail(otpPayload);
+      if (response?.code === "200") {
+        if (otpPurpose === "password") {
+          setchangingPassword(true);
+          handleUpdateProfile(); // it already handles password logic
+        } else if (otpPurpose === "profile") {
+          updateProfileAfterOtp(); // define separately
+        }
+      } else {
+        toast.error(response?.message || "Invalid OTP");
+      }
+      setOtp("");
+    } catch (err) {
+      console.error("OTP Verification Error:", err);
+      toast.error("Error verifying OTP");
+    }
+  };
+
+  const updateProfileAfterOtp = () => {
+    const fullMobile = `+${countryCode}${rawMobile}`;
+    const { email, mobile, ...rest } = formData;
+
+    const payloadData = {
+      First_name: rest.firstName,
+      Middle_name: rest.middleName,
+      Last_name: rest.lastName,
+      customer_id: rest.customerId,
+      Date_of_birth: rest.dateOfBirth,
+      Country_of_birth: rest.countryOfBirth,
+      occupation: rest.occupation,
+      address: rest.address,
+      country: rest.country,
+      city: rest.city,
+      postcode: rest.zip,
+      state: rest.state,
+    };
+
+    updateProfile(payloadData)
+      .then((res) => {
+        if (res?.code === "200") {
+          setModalShow(true);
+          const newSessionData = {
+            ...JSON.parse(sessionStorage.getItem("User data") || "{}"),
+            ...payloadData,
+            mobile: fullMobile,
+            email: formData.email,
+          };
+          sessionStorage.setItem("User data", JSON.stringify(newSessionData));
+        } else {
+          toast.error(res?.message || "Failed to update profile");
+        }
+        setmodalShowOtp(false);
+      })
+      .catch((err) => {
+        console.error("Profile update error:", err);
+        toast.error("Unexpected error while updating profile");
+        setmodalShowOtp(false);
+      });
+  };
+
+
 
   const requiredFields = [
     "firstName",
@@ -341,8 +391,8 @@ const ProfileInformation = () => {
                     <Form className="profile-form">
                       <Card className="receiver-card bg-white">
                         <Card.Body>
-                          <Card.Title>Personal Details</Card.Title>
                           {!PasswordChange && <>
+                            <Card.Title>Personal Details</Card.Title>
                             <Row className="mb-3">
                               <FloatingLabel
                                 as={Col}
@@ -803,17 +853,15 @@ const ProfileInformation = () => {
                                     onClick={() => {
                                       setSubmitted(true);
                                       if (!hasPasswordErrors()) {
+                                        setOtpPurpose("password");
                                         setmodalShowOtp(true);
-                                        const payload = {
-                                          mobile: user?.mobile,
-                                        };
-                                        setSubmitted(false);
-                                        resendOtp(payload);
+                                        resendOtp({ mobile: user?.mobile });
                                       }
                                     }}
                                   >
                                     Save Password
                                   </Button>
+
 
                                 </>
                               )}
@@ -822,7 +870,14 @@ const ProfileInformation = () => {
                                 <Button
                                   variant="primary"
                                   className="updateform"
-                                  onClick={() => { handleUpdateProfile() }}
+                                  onClick={() => {
+                                    setSubmitted(true);
+                                    if (requiredFields.every((field) => formData[field])) {
+                                      setOtpPurpose("profile");
+                                      setmodalShowOtp(true);
+                                      resendOtp({ mobile: user?.mobile });
+                                    }
+                                  }}
                                 >
                                   Update
                                 </Button>

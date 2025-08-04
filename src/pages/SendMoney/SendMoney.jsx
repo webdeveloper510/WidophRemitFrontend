@@ -8,7 +8,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { commaRemover } from "../../hooks/hook";
 import { toast } from "react-toastify";
-import {useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import loaderlogo from "../../assets/images/logo.png"
 
 import {
@@ -23,7 +23,13 @@ const SendMoney = () => {
 
   useEffect(() => {
     clearSessionStorageData();
-  }, [])
+    
+    const webData = sessionStorage.getItem("web_exchange_data");
+    const tempData = sessionStorage.getItem("temp_exchange_data");
+    if (!webData && !(tempData && location.state?.backFromReceivers === true)) {
+      sessionStorage.removeItem("temp_exchange_data");
+    }
+  }, []);
 
   const location = useLocation();
 
@@ -55,9 +61,9 @@ const SendMoney = () => {
   const updateTempExchangeData = (updatedValues) => {
     sessionStorage.setItem("temp_exchange_data", JSON.stringify({
       exchange_rate: exch_rate,
-      send_amount: commaRemover(updatedValues.send_amt || ""),
+      send_amount: commaRemover(updatedValues.send_amt || updatedValues.send_amount || ""),
       send_currency: updatedValues.from || "AUD",
-      receive_amount: commaRemover(updatedValues.exchange_amt || ""),
+      receive_amount: commaRemover(updatedValues.exchange_amt || updatedValues.receive_amount || ""),
       receive_currency: updatedValues.to || "NGN",
       method: updatedValues.receive_method || "Bank transfer",
     }));
@@ -277,6 +283,8 @@ const SendMoney = () => {
             } else {
               await getExchangeRate(parsedData.send_currency, parsedData.receive_currency);
             }
+            updateTempExchangeData(parsedData);
+
           } else {
             await getExchangeRate(initialValues.from, initialValues.to);
           }
