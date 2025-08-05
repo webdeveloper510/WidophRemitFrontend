@@ -21,10 +21,12 @@ const ReceiverDetail = () => {
     value: country.name,
     label: country.name,
   }));
+  
   useEffect(() => {
     if (location?.state?.from !== "receivers-list")
       navigate("/send-money")
   }, [location])
+
   const countryList = [
     { name: "Australia", code: "AU", dialCode: "61" },
     { name: "Brazil", code: "BR", dialCode: "55" },

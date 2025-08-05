@@ -225,12 +225,12 @@ const ProfileInformation = () => {
         if (res?.code === "200") {
           setModalShow(true);
           const newSessionData = {
-            ...JSON.parse(sessionStorage.getItem("User data") || "{}"),
+            ...JSON.parse(sessionStorage.getItem("user_data") || "{}"),
             ...payloadData,
             mobile: fullMobile,
             email: formData.email,
           };
-          sessionStorage.setItem("User data", JSON.stringify(newSessionData));
+          sessionStorage.setItem("user_data", JSON.stringify(newSessionData));
         } else {
           toast.error(res?.message || "Failed to update profile");
         }
@@ -332,12 +332,12 @@ const ProfileInformation = () => {
         if (res?.code === "200") {
           setModalShow(true);
           const newSessionData = {
-            ...JSON.parse(sessionStorage.getItem("User data") || "{}"),
+            ...JSON.parse(sessionStorage.getItem("user_data") || "{}"),
             ...payloadData,
             mobile: fullMobile,
             email: formData.email,
           };
-          sessionStorage.setItem("User data", JSON.stringify(newSessionData));
+          sessionStorage.setItem("user_data", JSON.stringify(newSessionData));
         } else {
           toast.error(res?.message || "Failed to update profile");
         }

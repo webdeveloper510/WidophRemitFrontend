@@ -52,7 +52,7 @@ const PaymentDetail = () => {
   const [monovaFormErrors, setMonovaFormErrors] = useState({});
   const [bsb, setbsb] = useState(0);
 
-  const userData = JSON.parse(sessionStorage.getItem("User data") || "{}");
+  const userData = JSON.parse(sessionStorage.getItem("user_data") || "{}");
 
   const [monovaForm, setMonovaForm] = useState({
     bsb: "",
@@ -194,8 +194,8 @@ const PaymentDetail = () => {
     setMonovaForm({
       bsb: "",
       accountNumber: "",
-      accountName: `${JSON.parse(sessionStorage.getItem("User data")).First_name
-        } ${JSON.parse(sessionStorage.getItem("User data")).Last_name}`,
+      accountName: `${JSON.parse(sessionStorage.getItem("user_data")).First_name
+        } ${JSON.parse(sessionStorage.getItem("user_data")).Last_name}`,
       paymentMethod: "",
     });
     setMonovaFormErrors({});

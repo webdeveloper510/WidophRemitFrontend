@@ -1,4 +1,3 @@
-import React from "react";
 import { useLocation } from "react-router-dom"; // <-- Import here
 import footerlogo from "../../src/assets/images/footer-logo.png";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";

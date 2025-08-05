@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Card from "react-bootstrap/Card";
 import DataTable from "react-data-table-component";
-import { FaArrowRotateRight } from "react-icons/fa6";
 import RecentReceiver from "../../assets/images/icons1.png";
 import { BsThreeDots } from "react-icons/bs";
 import Dropdown from "react-bootstrap/Dropdown";
 import { pendingTransactions, transactionHistory } from "../../services/Api";
-import Spinner from 'react-bootstrap/Spinner'; // Import Spinner from react-bootstrap
+import Spinner from 'react-bootstrap/Spinner';
 
 const customStyles = {
   headCells: {

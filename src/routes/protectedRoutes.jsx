@@ -31,7 +31,7 @@ const ProtectedRoute = ({ children }) => {
           if (idStatus !== 'approved') {
             setRedirectTo('/dashboard');
           } else {
-            sessionStorage.setItem("User data", JSON.stringify(res?.data));
+            sessionStorage.setItem("user_data", JSON.stringify(res?.data));
             setVerified(true);
           }
         } else {

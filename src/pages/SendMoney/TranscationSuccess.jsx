@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AnimatedPage from "../../components/AnimatedPage";
-import Back from "../../assets/images/back.png";
 import processedImg from "../../assets/images/payment-processed-image.png";
 import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";

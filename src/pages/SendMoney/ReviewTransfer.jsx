@@ -88,7 +88,7 @@ const ReviewTransfer = () => {
 
 
   const loadUserFromSession = () => {
-    const storedUser = sessionStorage.getItem("User data");
+    const storedUser = sessionStorage.getItem("user_data");
 
     if (storedUser) {
       try {

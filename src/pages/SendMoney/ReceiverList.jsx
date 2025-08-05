@@ -1,9 +1,8 @@
 import AnimatedPage from "../../components/AnimatedPage";
 import Back from "../../assets/images/back.png";
 import Button from "react-bootstrap/Button";
-import { Row, Col, Spinner } from "react-bootstrap";
+import { Spinner } from "react-bootstrap";
 import AddReceiver from "../../assets/images/add-receiver.png";
-import Card from "react-bootstrap/Card";
 import DataTable from "react-data-table-component";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { useEffect, useState } from "react";

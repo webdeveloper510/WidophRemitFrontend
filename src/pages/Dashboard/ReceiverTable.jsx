@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Card from "react-bootstrap/Card";
 import DataTable from "react-data-table-component";
-import { FaArrowRotateRight } from "react-icons/fa6";
 import RecentReceiver from "../../assets/images/icons1.png";
 import { recipientList } from "../../services/Api";
-
-const handleSendAgain = (row) => { };
 
 const customStyles = {
   headCells: {

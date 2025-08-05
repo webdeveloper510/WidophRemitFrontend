@@ -34,7 +34,6 @@ const Dashboard = () => {
 ;
   const [Message, setMessage] = useState("");
   const navigate = useNavigate();
-  const [profileCompleted, setprofileCompleted] = useState(false);
   const [kycStatus, setkycStatus] = useState("pending");
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import OtpInput from "react-otp-input";
 import AnimatedPage from "../../components/AnimatedPage";
 import Back from "../../assets/images/back.png";
@@ -47,7 +47,7 @@ const ConfirmTransfer = () => {
   useEffect(() => {
     const storedAmount = sessionStorage.getItem("transfer_data");
     const storedReceiver = sessionStorage.getItem("selected_receiver");
-    const storedUser = sessionStorage.getItem("User data");
+    const storedUser = sessionStorage.getItem("user_data");
 
     if (storedAmount) {
       try {
@@ -75,18 +75,6 @@ const ConfirmTransfer = () => {
     }
   }, [navigate]);
 
-  // const fetchUserProfile = async () => {
-  //   try {
-  //     const res = await userProfile();
-  //     if (res?.code === "200") {
-  //       setSender(res.data);
-  //     } else {
-  //       console.error("Failed to fetch user profile:", res?.message);
-  //     }
-  //   } catch (err) {
-  //     console.error("Error fetching user profile:", err);
-  //   }
-  // };
   const handleMonovaPayment = async () => {
     const monovaFormData = sessionStorage.getItem("monova_form_data");
     const selectedReceiver = sessionStorage.getItem("selected_receiver");

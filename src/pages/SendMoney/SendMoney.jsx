@@ -200,7 +200,7 @@ const SendMoney = () => {
 
   const debouncedConversion = useCallback(
     debounce(async (key, value, dir) => {
-      if (!value || value === "0" || isConverting) return;
+      if (!value || value === "0") return;
 
       const cleanValue = commaRemover(value) || "1";
 
@@ -233,7 +233,7 @@ const SendMoney = () => {
       } finally {
         setIsConverting(false);
       }
-    }, 2000),
+    }, 500),
     [values.from, values.to, isConverting, setFieldValue]
   );
 

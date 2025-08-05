@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Container } from 'react-bootstrap'
 import { activEmail } from '../services/Api'
 import { useParams, Link } from 'react-router-dom'

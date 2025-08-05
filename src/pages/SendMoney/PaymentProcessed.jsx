@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-
 import AnimatedPage from "../../components/AnimatedPage";
 import Back from "../../assets/images/back.png";
 import processedImg from "../../assets/images/payment-processed-image.png";
