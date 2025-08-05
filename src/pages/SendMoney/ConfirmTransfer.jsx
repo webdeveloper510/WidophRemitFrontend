@@ -116,11 +116,9 @@ const ConfirmTransfer = () => {
 
       if (
         matcher?.code === "200" &&
-        Array.isArray(matcher.data) &&
-        matcher.data.length > 0 &&
-        matcher.data[0].bankAccountNumber
+        matcher.data.bankAccountNumber
       ) {
-        const bankInfo = matcher.data[0];
+        const bankInfo = matcher.data;
         matcher.bankAccountName = bankInfo.bankAccountName;
         matcher.bankAccountNumber = bankInfo.bankAccountNumber;
         matcher.bsb = bankInfo.bsb;
@@ -138,7 +136,7 @@ const ConfirmTransfer = () => {
         });
       }
 
-      if (!matcher?.bankAccountNumber) {
+      if (!matcher?.data.bankAccountNumber) {
         toast.error("Bank account matching failed.");
         return false;
       }
@@ -146,13 +144,13 @@ const ConfirmTransfer = () => {
       // Prepare payment payload
       const payload = {
         amount: parseFloat(monovaForm?.amount || 0),
-        bsbNumber: matcher.bsb,
-        accountNumber: matcher.bankAccountNumber,
-        accountName: matcher.bankAccountName,
-        payment_mode: monovaForm.payment_mode,
+        bsbNumber: matcher?.data.bsb,
+        accountNumber: matcher?.data.bankAccountNumber,
+        accountName: matcher?.data.bankAccountName,
+        payment_mode: monovaForm?.payment_mode,
         to: temp.amount.to,
         from: temp.amount.from,
-        description:sessionStorage.getItem("final_transfer_reason")
+        description: sessionStorage.getItem("final_transfer_reason")
       };
 
       const response = await createMonovaPayment(payload);

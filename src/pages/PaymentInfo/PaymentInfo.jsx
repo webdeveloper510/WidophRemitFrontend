@@ -32,14 +32,12 @@ const PaymentInfo = () => {
 
         if (
           AutoMatcherRes?.code === "200" &&
-          Array.isArray(AutoMatcherRes.data) && 
-          AutoMatcherRes.data.length > 0 &&
-          AutoMatcherRes.data[0].bankAccountNumber
+          AutoMatcherRes.data.bankAccountNumber
         ) {
           setAutoMatcherData({
-            bankAccountName: AutoMatcherRes.data[0].bankAccountName,
-            bankAccountNumber: AutoMatcherRes.data[0].bankAccountNumber,
-            bsb: AutoMatcherRes.data[0].bsb
+            bankAccountName: AutoMatcherRes.data.bankAccountName,
+            bankAccountNumber: AutoMatcherRes.data.bankAccountNumber,
+            bsb: AutoMatcherRes.data.bsb
           })
         }
 
@@ -190,7 +188,7 @@ const PaymentInfo = () => {
         )}
 
         {/* No Data */}
-        {!payIdDetail && !payToDetail && !AutoMatcherData && ( 
+        {!payIdDetail && !payToDetail && !AutoMatcherData && (
           <div className="row">
             <div className="col-md-12">
               <Card className="receiver-card mt-4 bg-white p-2 payment-types">

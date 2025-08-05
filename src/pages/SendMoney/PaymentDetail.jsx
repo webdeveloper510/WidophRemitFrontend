@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AnimatedPage from "../../components/AnimatedPage";
+import MonovaForm from "../../components/MonovaForm";
 import {
   Form,
   FloatingLabel,
@@ -15,8 +16,6 @@ import { RiFileCopyLine } from "react-icons/ri";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   createPayId,
-  createAgreement,
-  getAgreementList,
   getPayID,
   GetAutoMatcher,
   createTransaction,
@@ -36,24 +35,13 @@ const PaymentDetail = () => {
   const [transferReason, setTransferReason] = useState("");
   const [paymentType, setPaymentType] = useState("");
   const [payIdData, setPayIdData] = useState({ payId: "", transferId: "" });
-  const [modalShowPayTo, setModalShowPayTo] = useState(false);
   const [modalShowPayId, setModalShowPayId] = useState(false);
   const [modalShowMonova, setModalShowMonova] = useState(false);
   const [ModalShowMonovaExisting, setModalShowMonovaExisting] = useState(false);
-  const [modalShowPayToAgreement, setModalShowPayToAgreement] = useState(false);
-  const [modalShowPayToLimit, setModalShowPayToLimit] = useState(false);
   const [isLoadingPayId, setIsLoadingPayId] = useState(false);
-  const [isLoadingAgreement, setIsLoadingAgreement] = useState(false);
-  const [payToForm, setPayToForm] = useState({ payIdType: "", payId: "", bsb: "", accountNumber: "" });
-  const [payToLimitForm, setPayToLimitForm] = useState({ payId: "", bsb: "", accountNumber: "", amountLimit: "", startDate: "" });
-  const [payToFormErrors, setPayToFormErrors] = useState({});
-  const [isCreatingAgreement, setIsCreatingAgreement] = useState(false);
   const [reasonError, setReasonError] = useState("");
   const [monovaFormErrors, setMonovaFormErrors] = useState({});
-  const [bsb, setbsb] = useState(0);
-
   const userData = JSON.parse(sessionStorage.getItem("user_data") || "{}");
-
   const [monovaForm, setMonovaForm] = useState({
     bsb: "",
     accountNumber: "",
@@ -75,14 +63,12 @@ const PaymentDetail = () => {
   const comingFromConfirmTransferOrReviewTransfer =
     location.state?.from === "/confirm-transfer" || location.state?.from === "/review-transfer";
 
-  // ✅ Prevent access if not coming from confirm/review
   useEffect(() => {
     if (!comingFromConfirmTransferOrReviewTransfer) {
       navigate("/send-money");
     }
   }, [comingFromConfirmTransferOrReviewTransfer, navigate]);
 
-  // ✅ Set initial values
   useEffect(() => {
     const storedTransferData = JSON.parse(sessionStorage.getItem("transfer_data") || "null");
     const receiver = JSON.parse(sessionStorage.getItem("selected_receiver") || "null");
@@ -121,73 +107,8 @@ const PaymentDetail = () => {
     setPaymentType(method === "monova" ? "monova" : method);
   }, []);
 
-  const handlePayToFormChange = (field, value) => {
-    setPayToForm((prev) => ({ ...prev, [field]: value }));
-  };
-
   const handleMonovaFormChange = (field, value) => {
     setMonovaForm((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const validatePayToForm = () => {
-    const errors = {};
-
-    const hasPayId = !!payToForm.payId;
-    const hasBsb = !!payToForm.bsb;
-    const hasAccountNumber = !!payToForm.accountNumber;
-
-    if (hasPayId) {
-      if (!payToForm.payIdType) {
-        errors.payIdType = "Please select PayID type.";
-      }
-    }
-
-    if (!hasPayId) {
-      if (!hasBsb) {
-        errors.bsb = "BSB is required.";
-      }
-      if (!hasAccountNumber) {
-        errors.accountNumber = "Account number is required.";
-      }
-    }
-
-    if (!hasPayId && !hasBsb && !hasAccountNumber) {
-      errors.payId = "Please enter either PayID or BSB + Account Number.";
-    }
-
-    if (hasPayId && (hasBsb || hasAccountNumber)) {
-      errors.payId =
-        "Please use either PayID or BSB + Account Number — not both.";
-      errors.bsb = "Clear PayID to enter BSB.";
-      errors.accountNumber = "Clear PayID to enter Account Number.";
-    }
-
-    setPayToFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
-  const handlePayToContinue = () => {
-    const isValid = validatePayToForm();
-    if (isValid) {
-      setModalShowPayTo(false);
-      setModalShowPayToLimit(true);
-      setPayToLimitForm({
-        payId: payToForm.payId,
-        bsb: payToForm.bsb,
-        accountNumber: payToForm.accountNumber,
-        amountLimit: "",
-        startDate: new Date().toISOString().split("T")[0],
-      });
-    }
-  };
-
-  const handlePayToLimitContinue = () => {
-    if (!payToLimitForm.amountLimit) {
-      toast.error("Please select an amount limit.");
-      return;
-    }
-    setModalShowPayToLimit(false);
-    setModalShowPayToAgreement(true);
   };
 
   const CancelMonovaContinue = () => {
@@ -272,15 +193,6 @@ const PaymentDetail = () => {
       }
     }
   };
-  const formatAmountLimit = (limit) => {
-    if (!limit) return "Not specified";
-    return `AUD ${parseInt(limit).toLocaleString()}`;
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return "Not specified";
-    return new Date(dateString).toLocaleDateString("en-AU");
-  };
 
   const copyToClipboard = (text) => {
     navigator.clipboard
@@ -293,63 +205,6 @@ const PaymentDetail = () => {
       });
   };
 
-  const handleContinue = async () => {
-    // Check if transfer reason is selected
-    if (!transferReason) {
-      setReasonError("Please select a transfer reason.");
-      return;
-    }
-
-    // Check if "Other" is selected but no custom reason is provided
-    if (transferReason === "Other" && !otherReason.trim()) {
-      setReasonError("Please specify the reason when selecting 'Other'.");
-      return;
-    }
-
-    // Clear any previous errors
-    setReasonError("");
-
-    // Save the final reason to session storage and update transferData
-    const finalReason =
-      transferReason === "Other" ? otherReason : transferReason;
-    sessionStorage.setItem("final_transfer_reason", finalReason);
-
-    // Update transferData with the correct reason
-    transferData.amount.reason = finalReason;
-
-    // Rest of your existing handleContinue code...
-    if (paymentType === "payto") {
-      try {
-        setIsLoadingAgreement(true);
-        // ... rest of your existing code
-      } catch (err) {
-        // ... existing error handling
-      }
-    } else if (paymentType === "payid") {
-      handleCreatePayId();
-    } else if (paymentType === "monova" || paymentType === "bank_transfer") {
-      const AutoMatcherRes = await GetAutoMatcher();
-
-      if (
-        AutoMatcherRes?.code === "200" &&
-        Array.isArray(AutoMatcherRes.data) &&
-        AutoMatcherRes.data.length > 0 &&
-        AutoMatcherRes.data[0].bankAccountNumber
-      ) {
-        const bankDetails = AutoMatcherRes.data[0];
-
-        monovaForm.accountName = bankDetails.bankAccountName;
-        monovaForm.accountNumber = bankDetails.bankAccountNumber;
-        monovaForm.bsb = bankDetails.bsb;
-
-        setModalShowMonovaExisting(true);
-      } else {
-        setModalShowMonova(true);
-      }
-    } else {
-      toast.warning("Please select a payment type.");
-    }
-  };
   const handleCreatePayId = async () => {
     try {
       const transactionId = sessionStorage.getItem("transaction_id");
@@ -393,60 +248,56 @@ const PaymentDetail = () => {
       setIsLoadingPayId(false);
     }
   };
-  const handlePayToAgreementContinue = async () => {
-    setIsCreatingAgreement(true);
-    try {
-      let payload;
 
-      if (payToLimitForm.payId) {
-        payload = {
-          pay_id: payToLimitForm.payId,
-          payid_type: payToForm.payIdType || "EMAL",
-        };
-      } else {
-        payload = {
-          bsb: payToLimitForm.bsb,
-          account_number: payToLimitForm.accountNumber,
-        };
+  const handleContinue = async () => {
+    if (!transferReason) {
+      setReasonError("Please select a transfer reason.");
+      return;
+    }
+
+    if (transferReason === "Other" && !otherReason.trim()) {
+      setReasonError("Please specify the reason when selecting 'Other'.");
+      return;
+    }
+
+    setReasonError("");
+
+    const finalReason =
+      transferReason === "Other" ? otherReason : transferReason;
+    sessionStorage.setItem("final_transfer_reason", finalReason);
+
+    transferData.amount.reason = finalReason;
+
+    if (paymentType === "payto") {
+      try {
+        // setIsLoadingAgreement(true);
+        // ... rest of your existing code
+      } catch (err) {
+        // ... existing error handling
       }
+    } else if (paymentType === "payid") {
+      handleCreatePayId();
+    } else if (paymentType === "monova") {
+      const AutoMatcherRes = await GetAutoMatcher();
 
-      payload.start_date = payToLimitForm.startDate;
-      payload.agreement_amount = payToLimitForm.amountLimit;
+      if (
+        AutoMatcherRes?.code === "200" &&
+        AutoMatcherRes.data.bankAccountNumber
+      ) {
+        const bankDetails = AutoMatcherRes.data;
 
-      // Add reason to payload - use custom reason if "Other" is selected
-      payload.reason =
-        transferReason === "Other" ? otherReason : transferReason;
+        monovaForm.accountName = bankDetails.bankAccountName;
+        monovaForm.accountNumber = bankDetails.bankAccountNumber;
+        monovaForm.bsb = bankDetails.bsb;
 
-      const agreementResponse = await createAgreement(payload);
-
-      if (agreementResponse?.code === "200" || agreementResponse?.success) {
-        sessionStorage.setItem(
-          "payto_limit_data",
-          JSON.stringify(payToLimitForm)
-        );
-        sessionStorage.setItem(
-          "payto_agreement_response",
-          JSON.stringify(agreementResponse)
-        );
-
-        const txResponse = await createTransaction(transferData);
-
-        if (txResponse?.code === "200") {
-          toast.success("PayTo agreement & transaction created successfully!");
-          setModalShowPayToAgreement(false);
-          navigate("/confirm-transfer", { state: { from: "Payment-Detail" } });
-        } else {
-          toast.error(txResponse?.message || "Failed to create transaction.");
-        }
+        setModalShowMonovaExisting(true);
       } else {
-        toast.error(
-          agreementResponse?.message || "Failed to create agreement."
-        );
+        setModalShowMonova(true);
       }
-    } catch (error) {
-      toast.error("Error creating agreement.");
-    } finally {
-      setIsCreatingAgreement(false);
+    } else if (paymentType === "budpay") {
+      toast.warning("budpay is not configured yet")
+    } else {
+      toast.warning("Please select a payment type.");
     }
   };
 
@@ -536,6 +387,7 @@ const PaymentDetail = () => {
                           sessionStorage.removeItem("payto_agreement_response");
                         }}
                       />
+
                       <Form.Check
                         inline
                         label="Bank Transfer"
@@ -544,39 +396,48 @@ const PaymentDetail = () => {
                         type="radio"
                         checked={
                           paymentType === "bank_transfer" ||
-                          paymentType === "monova"
+                          paymentType === "monova" ||
+                          paymentType === "budpay"
                         }
                         onChange={() => {
                           setPaymentType("bank_transfer");
-                          // Reset selected gateway
                           sessionStorage.removeItem("payto_limit_data");
                           sessionStorage.removeItem("payto_agreement_response");
                           sessionStorage.removeItem("payid_data");
                           sessionStorage.removeItem("monova_payment_data");
+                          sessionStorage.removeItem("budpay_payment_data");
+                          sessionStorage.setItem("selected_payment_method", "bank_transfer");
                         }}
                       />
 
                       {(paymentType === "bank_transfer" ||
-                        paymentType === "monova") && (
+                        paymentType === "monova" ||
+                        paymentType === "budpay") && (
                           <Form.Select
                             className="ms-3 payment-select"
                             style={{ width: "200px" }}
-                            value={paymentType === "monova" ? "monova" : ""}
+                            value={paymentType === "monova" ? "monova" : paymentType === "budpay" ? "budpay" : ""}
                             onChange={(e) => {
                               const selectedGateway = e.target.value;
-
                               if (selectedGateway === "monova") {
                                 setPaymentType("monova");
-                                sessionStorage.setItem(
-                                  "selected_payment_method",
-                                  "monova"
-                                );
-                                // DO NOT open modal here
+                                sessionStorage.setItem("selected_payment_method", "monova");
+                                sessionStorage.removeItem("budpay_payment_data");
+                              } else if (selectedGateway === "budpay") {
+                                setPaymentType("budpay");
+                                sessionStorage.setItem("selected_payment_method", "budpay");
+                                sessionStorage.removeItem("monova_payment_data");
+                              } else {
+                                setPaymentType("bank_transfer");
+                                sessionStorage.setItem("selected_payment_method", "bank_transfer");
+                                sessionStorage.removeItem("monova_payment_data");
+                                sessionStorage.removeItem("budpay_payment_data");
                               }
                             }}
                           >
                             <option value="">Select Gateway</option>
                             <option value="monova">Monoova</option>
+                            <option value="budpay">BudPay</option>
                           </Form.Select>
                         )}
                     </div>
@@ -698,144 +559,6 @@ const PaymentDetail = () => {
           </div>
         </div>
 
-        <Modal
-          size="lg"
-          centered
-          show={modalShowPayTo}
-          onHide={() => setModalShowPayTo(false)}
-          className="profileupdate"
-        >
-          <Modal.Header closeButton className="payment-popup">
-            PayTo
-          </Modal.Header>
-          <Modal.Body>
-            <Form className="profile-form">
-              {/* PayID Type */}
-              <Row className="mb-3">
-                <FloatingLabel
-                  controlId="payid-type"
-                  as={Col}
-                  label="PayID Type"
-                  className="mb-3"
-                >
-                  <Form.Select
-                    value={payToForm.payIdType}
-                    onChange={(e) =>
-                      handlePayToFormChange("payIdType", e.target.value)
-                    }
-                    isInvalid={!!payToFormErrors.payIdType}
-                    disabled={payToForm.accountNumber || payToForm.bsb}
-                  >
-                    <option value="">Select PayID Type</option>
-                    <option value="EMAL">Email</option>
-                    <option value="TEL">Telephone Number</option>
-                    <option value="AUBN">Australian Business Number</option>
-                    <option value="ORGN">Organisation Identifier</option>
-                  </Form.Select>
-                  <Form.Control.Feedback type="invalid">
-                    {payToFormErrors.payIdType}
-                  </Form.Control.Feedback>
-                </FloatingLabel>
-              </Row>
-
-              {/* PayID */}
-              <Row className="mb-3">
-                <FloatingLabel
-                  controlId="payid"
-                  as={Col}
-                  label="PayID"
-                  className="mb-3"
-                >
-                  <Form.Control
-                    type="text"
-                    value={payToForm.payId}
-                    onChange={(e) =>
-                      handlePayToFormChange("payId", e.target.value)
-                    }
-                    isInvalid={!!payToFormErrors.payId}
-                    disabled={payToForm.accountNumber || payToForm.bsb}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {payToFormErrors.payId}
-                  </Form.Control.Feedback>
-                </FloatingLabel>
-              </Row>
-
-              {/* OR divider */}
-              <Row className="mb-3">
-                <span className="Ortext">OR</span>
-              </Row>
-
-              {/* BSB */}
-              <Row className="mb-3">
-                <FloatingLabel
-                  controlId="bsb"
-                  as={Col}
-                  label="BSB Number"
-                  className="mb-3"
-                >
-                  <Form.Control
-                    type="text"
-                    value={payToForm.bsb}
-                    onChange={(e) =>
-                      handlePayToFormChange("bsb", e.target.value)
-                    }
-                    isInvalid={!!payToFormErrors.bsb}
-                    disabled={payToForm.payIdType || payToForm.payId}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {payToFormErrors.bsb}
-                  </Form.Control.Feedback>
-                </FloatingLabel>
-              </Row>
-
-              {/* Account Number */}
-              <Row className="mb-3">
-                <FloatingLabel
-                  controlId="account-no"
-                  as={Col}
-                  label="Account Number"
-                  className="mb-3"
-                >
-                  <Form.Control
-                    type="text"
-                    value={payToForm.accountNumber}
-                    onChange={(e) =>
-                      handlePayToFormChange("accountNumber", e.target.value)
-                    }
-                    isInvalid={!!payToFormErrors.accountNumber}
-                    disabled={payToForm.payIdType || payToForm.payId}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {payToFormErrors.accountNumber}
-                  </Form.Control.Feedback>
-                </FloatingLabel>
-              </Row>
-
-              {/* Buttons */}
-              <Row className="mb-3">
-                <Col>
-                  <Button
-                    variant="light"
-                    className="cancel-btn float-start"
-                    onClick={() => setModalShowPayTo(false)}
-                  >
-                    Cancel
-                  </Button>
-                </Col>
-                <Col>
-                  <Button
-                    variant="primary"
-                    className="submit-btn float-end"
-                    onClick={handlePayToContinue}
-                  >
-                    Continue
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
-          </Modal.Body>
-        </Modal>
 
         {/* PayID Modal */}
         <Modal
@@ -930,119 +653,15 @@ const PaymentDetail = () => {
             Monoova
           </Modal.Header>
           <Modal.Body>
-            <Form className="profile-form">
-              <Row className="mb-3">
-                <FloatingLabel
-                  as={Col}
-                  controlId="monova-payment-method"
-                  label="Payment Method"
-                  className="mb-3"
-                >
-                  <Form.Select
-                    value={monovaForm.paymentMethod}
-                    onChange={(e) =>
-                      handleMonovaFormChange("paymentMethod", e.target.value)
-                    }
-                    isInvalid={!!monovaFormErrors.paymentMethod}
-                  >
-                    <option value="">Select Payment Method</option>
-                    {/* <option value="debit">Direct Debit</option> */}
-                    <option value="npp">NPP Credit Bank Account</option>
-                  </Form.Select>
-                  {monovaFormErrors.paymentMethod && (
-                    <Form.Control.Feedback type="invalid">
-                      {monovaFormErrors.paymentMethod}
-                    </Form.Control.Feedback>
-                  )}
-                </FloatingLabel>
-              </Row>
-              <Row className="mb-3">
-                <FloatingLabel
-                  as={Col}
-                  controlId="monova-bsb"
-                  label="BSB Number"
-                  className="mb-3"
-                >
-                  <Form.Control
-                    type="text"
-                    value={monovaForm.bsb}
-                    onChange={(e) =>
-                      handleMonovaFormChange("bsb", e.target.value)
-                    }
-                    isInvalid={!!monovaFormErrors.bsb}
-                  />
-                  {monovaFormErrors.bsb && (
-                    <Form.Control.Feedback type="invalid">
-                      {monovaFormErrors.bsb}
-                    </Form.Control.Feedback>
-                  )}
-                </FloatingLabel>
-              </Row>
-              {/* <Row className="mb-3">
-                <FloatingLabel
-                  as={Col}
-                  controlId="monova-account"
-                  label="Account Number"
-                  className="mb-3"
-                >
-                  <Form.Control
-                    type="text"
-                    value={monovaForm.accountNumber}
-                    onChange={(e) =>
-                      handleMonovaFormChange("accountNumber", e.target.value)
-                    }
-                    isInvalid={!!monovaFormErrors.accountNumber}
-                  />
-                  {monovaFormErrors.accountNumber && (
-                    <Form.Control.Feedback type="invalid">
-                      {monovaFormErrors.accountNumber}
-                    </Form.Control.Feedback>
-                  )}
-                </FloatingLabel>
-              </Row> */}
-              <Row className="mb-3">
-                <FloatingLabel
-                  as={Col}
-                  controlId="monova-name"
-                  label="Account Name"
-                  className="mb-3"
-                >
-                  <Form.Control
-                    type="text"
-                    value={monovaForm.accountName}
-                    onChange={(e) =>
-                      handleMonovaFormChange("accountName", e.target.value)
-                    }
-                    isInvalid={!!monovaFormErrors.accountName}
-                  />
-                  {monovaFormErrors.accountName && (
-                    <Form.Control.Feedback type="invalid">
-                      {monovaFormErrors.accountName}
-                    </Form.Control.Feedback>
-                  )}
-                </FloatingLabel>
-              </Row>
-              <Row className="mb-3">
-                <Col>
-                  <Button
-                    variant="light"
-                    className="cancel-btn float-start"
-                    onClick={CancelMonovaContinue}
-                  >
-                    Cancel
-                  </Button>
-                </Col>
-                <Col>
-                  <Button
-                    variant="primary"
-                    className="submit-btn float-end"
-                    onClick={handleMonovaContinue}
-                  >
-                    Continue
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
+            <MonovaForm
+              monovaForm={monovaForm}
+              monovaFormErrors={monovaFormErrors}
+              onChange={handleMonovaFormChange}
+              onContinue={handleMonovaContinue}
+              onCancel={CancelMonovaContinue}
+              readOnly={false}
+              showCopy={false}
+            />
           </Modal.Body>
         </Modal>
 
@@ -1057,358 +676,15 @@ const PaymentDetail = () => {
             Monoova
           </Modal.Header>
           <Modal.Body>
-            <Form className="profile-form">
-              <Row className="mb-3">
-                <FloatingLabel
-                  as={Col}
-                  controlId="monova-payment-method"
-                  label="Payment Method"
-                  className="mb-3"
-                >
-                  <Form.Select
-                    value={monovaForm.paymentMethod}
-                    onChange={(e) =>
-                      handleMonovaFormChange("paymentMethod", e.target.value)
-                    }
-                    isInvalid={!!monovaFormErrors.paymentMethod}
-                  >
-                    <option value="">Select Payment Method</option>
-                    {/* <option value="debit">Direct Debit</option> */}
-                    <option value="npp">NPP Credit Bank Account</option>
-                  </Form.Select>
-                  {monovaFormErrors.paymentMethod && (
-                    <Form.Control.Feedback type="invalid">
-                      {monovaFormErrors.paymentMethod}
-                    </Form.Control.Feedback>
-                  )}
-                </FloatingLabel>
-              </Row>
-              <Row className="mb-3">
-                <FloatingLabel
-                  as={Col}
-                  controlId="monova-name"
-                  label="Account Name"
-                  className="mb-3"
-                >
-                  <Form.Control
-                    type="text"
-                    readOnly
-                    value={monovaForm.accountName}
-                    onChange={(e) =>
-                      handleMonovaFormChange("accountName", e.target.value)
-                    }
-                    isInvalid={!!monovaFormErrors.accountName}
-                  />
-                  <span
-                    className="copyText"
-                    onClick={() => copyToClipboard(monovaForm.accountName)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <RiFileCopyLine />
-                  </span>
-                  {monovaFormErrors.accountName && (
-                    <Form.Control.Feedback type="invalid">
-                      {monovaFormErrors.accountName}
-                    </Form.Control.Feedback>
-                  )}
-                </FloatingLabel>
-              </Row>
-
-              <Row className="mb-3">
-                <FloatingLabel
-                  as={Col}
-                  controlId="monova-account"
-                  label="Account Number"
-                  className="mb-3"
-                >
-                  <Form.Control
-                    type="text"
-                    readOnly
-                    value={monovaForm.accountNumber}
-                    onChange={(e) =>
-                      handleMonovaFormChange("accountNumber", e.target.value)
-                    }
-                    isInvalid={!!monovaFormErrors.accountNumber}
-                  />
-                  <span
-                    className="copyText"
-                    onClick={() => copyToClipboard(monovaForm.accountNumber)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <RiFileCopyLine />
-                  </span>
-                  {monovaFormErrors.accountNumber && (
-                    <Form.Control.Feedback type="invalid">
-                      {monovaFormErrors.accountNumber}
-                    </Form.Control.Feedback>
-                  )}
-                </FloatingLabel>
-              </Row>
-
-              <Row className="mb-3">
-                <FloatingLabel
-                  as={Col}
-                  controlId="monova-bsb"
-                  label="BSB Number"
-                  className="mb-3"
-                >
-                  <Form.Control
-                    type="text"
-                    readOnly
-                    value={monovaForm.bsb}
-                    onChange={(e) =>
-                      handleMonovaFormChange("bsb", e.target.value)
-                    }
-                    isInvalid={!!monovaFormErrors.bsb}
-                  />
-                  <span
-                    className="copyText"
-                    onClick={() => copyToClipboard(monovaForm.bsb)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <RiFileCopyLine />
-                  </span>
-                  {monovaFormErrors.bsb && (
-                    <Form.Control.Feedback type="invalid">
-                      {monovaFormErrors.bsb}
-                    </Form.Control.Feedback>
-                  )}
-                </FloatingLabel>
-              </Row>
-
-              <Row className="mb-3">
-                <Col>
-                  <Button
-                    variant="light"
-                    className="cancel-btn float-start"
-                    onClick={CancelMonovaContinue}
-                  >
-                    Cancel
-                  </Button>
-                </Col>
-                <Col>
-                  <Button
-                    variant="primary"
-                    className="submit-btn float-end"
-                    onClick={handleMonovaContinue}
-                  >
-                    Continue
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
-          </Modal.Body>
-        </Modal>
-
-        {/* PayTo Limit Modal */}
-        <Modal
-          size="lg"
-          centered
-          show={modalShowPayToLimit}
-          onHide={() => setModalShowPayToLimit(false)}
-          className="profileupdate"
-        >
-          <Modal.Header closeButton className="payment-popup">
-            PayTo Limit Setup
-          </Modal.Header>
-          <Modal.Body>
-            <Form className="profile-form">
-              {payToLimitForm.payId && (
-                <Row className="mb-3">
-                  <FloatingLabel
-                    as={Col}
-                    controlId="payto-limit-payid"
-                    label="PayID"
-                    className="mb-3"
-                  >
-                    <Form.Control
-                      type="text"
-                      value={payToLimitForm.payId}
-                      readOnly
-                    />
-                  </FloatingLabel>
-                </Row>
-              )}
-
-              {(payToLimitForm.bsb || payToLimitForm.accountNumber) && (
-                <>
-                  <Row className="mb-3">
-                    <FloatingLabel
-                      as={Col}
-                      controlId="payto-limit-bsb"
-                      label="BSB Number"
-                      className="mb-3"
-                    >
-                      <Form.Control
-                        type="text"
-                        value={payToLimitForm.bsb}
-                        readOnly
-                      />
-                    </FloatingLabel>
-                  </Row>
-                  <Row className="mb-3">
-                    <FloatingLabel
-                      as={Col}
-                      controlId="payto-limit-account"
-                      label="Account Number"
-                      className="mb-3"
-                    >
-                      <Form.Control
-                        type="text"
-                        value={payToLimitForm.accountNumber}
-                        readOnly
-                      />
-                    </FloatingLabel>
-                  </Row>
-                </>
-              )}
-
-              <Row className="mb-3">
-                <FloatingLabel
-                  as={Col}
-                  controlId="amount-limit"
-                  label="Amount Per Transaction Limit"
-                  className="mb-3"
-                >
-                  <Form.Select
-                    value={payToLimitForm.amountLimit}
-                    onChange={(e) =>
-                      setPayToLimitForm({
-                        ...payToLimitForm,
-                        amountLimit: e.target.value,
-                      })
-                    }
-                  >
-                    <option value="">Select Limit</option>
-                    <option value="1000">Up to AUD 1k</option>
-                    <option value="5000">Up to AUD 5k</option>
-                    <option value="10000">Up to AUD 10k</option>
-                    <option value="30000">Up to AUD 30k</option>
-                  </Form.Select>
-                </FloatingLabel>
-              </Row>
-
-              <Row className="mb-3">
-                <FloatingLabel
-                  as={Col}
-                  controlId="start-date"
-                  label="Start Date"
-                  className="mb-3"
-                >
-                  <Form.Control
-                    type="date"
-                    value={payToLimitForm.startDate}
-                    readOnly
-                    style={{ backgroundColor: "#f8f9fa", color: "#6c757d" }}
-                  />
-                </FloatingLabel>
-              </Row>
-
-              <Row className="mb-3">
-                <Col>
-                  <Button
-                    variant="light"
-                    className="cancel-btn float-start"
-                    onClick={() => setModalShowPayToLimit(false)}
-                  >
-                    Cancel
-                  </Button>
-                </Col>
-                <Col>
-                  <Button
-                    variant="primary"
-                    className="submit-btn float-end"
-                    onClick={handlePayToLimitContinue}
-                  >
-                    Continue
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
-          </Modal.Body>
-        </Modal>
-
-        {/* PayTo Agreement Modal */}
-        <Modal
-          size="lg"
-          centered
-          show={modalShowPayToAgreement}
-          onHide={() => setModalShowPayToAgreement(false)}
-          className="profileupdate"
-        >
-          <Modal.Header closeButton className="payment-popup">
-            PayTo Agreement Details
-          </Modal.Header>
-          <Modal.Body>
-            <div className="agreement-details p-3">
-              <h5 className="mb-4">
-                Please review your PayTo agreement details:
-              </h5>
-
-              <div className="agreement-section mb-4">
-                <h6 className="text-primary">Payment Details</h6>
-                <hr />
-
-                {payToLimitForm.payId && (
-                  <div className="mb-2">
-                    <strong>PayID:</strong> {payToLimitForm.payId}
-                  </div>
-                )}
-
-                {payToForm.payIdType && (
-                  <div className="mb-2">
-                    <strong>PayID Type:</strong>{" "}
-                    {payToForm.payIdType === "EMAL"
-                      ? "Email"
-                      : payToForm.payIdType}
-                  </div>
-                )}
-
-                {payToLimitForm.bsb && payToLimitForm.accountNumber && (
-                  <>
-                    <div className="mb-2">
-                      <strong>BSB Number:</strong> {payToLimitForm.bsb}
-                    </div>
-                    <div className="mb-2">
-                      <strong>Account Number:</strong>{" "}
-                      {payToLimitForm.accountNumber}
-                    </div>
-                  </>
-                )}
-
-                <div className="mb-2">
-                  <strong>Maximum Amount:</strong>{" "}
-                  {formatAmountLimit(payToLimitForm.amountLimit)} per
-                  transaction
-                </div>
-
-                <div className="mb-2">
-                  <strong>Agreement Start Date:</strong>{" "}
-                  {formatDate(payToLimitForm.startDate)}
-                </div>
-              </div>
-            </div>
-
-            <Row className="mb-3">
-              <Col>
-                <Button
-                  variant="light"
-                  className="cancel-btn float-start"
-                  onClick={() => setModalShowPayToAgreement(false)}
-                >
-                  Back
-                </Button>
-              </Col>
-              <Col>
-                <Button
-                  variant="primary"
-                  className="submit-btn float-end"
-                  onClick={handlePayToAgreementContinue}
-                >
-                  Confirm & Continue
-                </Button>
-              </Col>
-            </Row>
+            <MonovaForm
+              monovaForm={monovaForm}
+              monovaFormErrors={monovaFormErrors}
+              onChange={handleMonovaFormChange}
+              onContinue={handleMonovaContinue}
+              onCancel={CancelMonovaContinue}
+              readOnly={true}
+              showCopy={true}
+            />
           </Modal.Body>
         </Modal>
       </div>
