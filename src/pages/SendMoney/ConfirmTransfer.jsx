@@ -53,25 +53,37 @@ const ConfirmTransfer = () => {
       try {
         setTransferData(JSON.parse(storedAmount));
       } catch (error) {
+        toast.error("Failed to load transfer data. Please try again.");
         console.error("Failed to parse transfer_data:", error);
+        return;
       }
     }
 
     if (storedReceiver) {
-      setReceiver(JSON.parse(storedReceiver));
+      try {
+        setReceiver(JSON.parse(storedReceiver));
+      } catch (error) {
+        toast.error("Failed to load receiver data. Please try again.");
+        console.error("Failed to parse receiver data:", error);
+        return;
+      }
     } else {
       navigate("/receivers-list");
+      return;
     }
 
     if (storedUser) {
       try {
         setSender(JSON.parse(storedUser));
       } catch (error) {
+        toast.error("Failed to load user data. Please log in again.");
         console.error("Failed to parse User data:", error);
+        return;
       }
     } else {
-      console.error("User data not found in session.");
+      toast.error("User data not found. Redirecting to dashboard.");
       navigate("/dashboard");
+      return;
     }
   }, [navigate]);
 
@@ -153,7 +165,7 @@ const ConfirmTransfer = () => {
         description: sessionStorage.getItem("final_transfer_reason")
       };
 
-      const response = await createMonovaPayment(payload);
+      const { data: response } = await createMonovaPayment(payload);
 
       if (response?.transactionId && response.transactionId !== 0) {
         sessionStorage.setItem("monova_transaction_id", `${response.transaction_prefix}${response.transactionId}`);

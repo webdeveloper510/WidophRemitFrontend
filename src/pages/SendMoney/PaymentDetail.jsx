@@ -179,7 +179,6 @@ const PaymentDetail = () => {
             reason: finalReason,
           },
         };
-
         const txResponse = await createTransaction(updatedTransferData);
 
         if (txResponse?.code === "200") {
@@ -235,7 +234,19 @@ const PaymentDetail = () => {
       }
 
       setPayIdData({ payId, transferId });
-      const txResponse = await createTransaction(transferData);
+
+      const finalReason = transferReason === "Other" ? otherReason : transferReason;
+      const updatedTransferData = transferData
+        ? {
+          ...transferData,
+          amount: {
+            ...transferData.amount,
+            reason: finalReason,
+          },
+        }
+        : null;
+      console.log(updatedTransferData);
+      const txResponse = await createTransaction(updatedTransferData);
 
       if (txResponse?.code === "200") {
         setModalShowPayId(true);
@@ -262,11 +273,18 @@ const PaymentDetail = () => {
 
     setReasonError("");
 
-    const finalReason =
-      transferReason === "Other" ? otherReason : transferReason;
+    const finalReason = transferReason === "Other" ? otherReason : transferReason;
     sessionStorage.setItem("final_transfer_reason", finalReason);
 
-    transferData.amount.reason = finalReason;
+    if (transferData) {
+      setTransferData(prev => ({
+        ...prev,
+        amount: {
+          ...prev.amount,
+          reason: finalReason,
+        },
+      }));
+    }
 
     if (paymentType === "payto") {
       try {
@@ -286,9 +304,12 @@ const PaymentDetail = () => {
       ) {
         const bankDetails = AutoMatcherRes.data;
 
-        monovaForm.accountName = bankDetails.bankAccountName;
-        monovaForm.accountNumber = bankDetails.bankAccountNumber;
-        monovaForm.bsb = bankDetails.bsb;
+        setMonovaForm(prev => ({
+          ...prev,
+          accountName: bankDetails.bankAccountName,
+          accountNumber: bankDetails.bankAccountNumber,
+          bsb: bankDetails.bsb,
+        }));
 
         setModalShowMonovaExisting(true);
       } else {
