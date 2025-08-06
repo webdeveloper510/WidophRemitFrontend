@@ -19,6 +19,7 @@ import {
   getPayID,
   GetAutoMatcher,
   createTransaction,
+  createAutoMatcher,
 } from "../../services/Api";
 import { toast } from "react-toastify";
 
@@ -48,6 +49,7 @@ const PaymentDetail = () => {
     accountName: `${userData.First_name || ""} ${userData.Last_name || ""}`,
     paymentMethod: "",
   });
+
 
   const reasonOptions = [
     "Family Support",
@@ -124,6 +126,11 @@ const PaymentDetail = () => {
     setModalShowMonovaExisting(false);
   };
 
+  const handleBudContinue = () => {
+    toast.info("no configured yet!")
+    return;
+  };
+
   const handleMonovaContinue = async () => {
     const errors = {};
     if (!monovaForm.paymentMethod)
@@ -136,13 +143,6 @@ const PaymentDetail = () => {
 
     if (!transferReason) {
       toast.error("Please select a transfer reason");
-      setModalShowMonova(false);
-      return;
-    }
-
-    // Check if "Other" is selected but no custom reason is provided
-    if (transferReason === "Other" && !otherReason.trim()) {
-      toast.error("Please specify the reason when selecting 'Other'");
       setModalShowMonova(false);
       return;
     }
@@ -167,11 +167,9 @@ const PaymentDetail = () => {
 
         sessionStorage.setItem("monova_form_data", JSON.stringify(temp));
 
-        // Use the final reason (either selected reason or custom "Other" reason)
         const finalReason =
           transferReason === "Other" ? otherReason : transferReason;
 
-        // Create a fresh copy of transferData and update the reason
         const updatedTransferData = {
           ...transferData,
           amount: {
@@ -245,7 +243,6 @@ const PaymentDetail = () => {
           },
         }
         : null;
-      console.log(updatedTransferData);
       const txResponse = await createTransaction(updatedTransferData);
 
       if (txResponse?.code === "200") {
@@ -267,7 +264,7 @@ const PaymentDetail = () => {
     }
 
     if (transferReason === "Other" && !otherReason.trim()) {
-      setReasonError("Please specify the reason when selecting 'Other'.");
+      toast.error("Please specify the reason when selecting 'Other'.");
       return;
     }
 
@@ -296,27 +293,45 @@ const PaymentDetail = () => {
     } else if (paymentType === "payid") {
       handleCreatePayId();
     } else if (paymentType === "monova") {
-      const AutoMatcherRes = await GetAutoMatcher();
-
-      if (
-        AutoMatcherRes?.code === "200" &&
-        AutoMatcherRes.data.bankAccountNumber
-      ) {
+      let AutoMatcherRes = await GetAutoMatcher();
+      let matcher = null;
+      const receiver = JSON.parse(sessionStorage.getItem("selected_receiver") || "null");
+      const monovaFormData = sessionStorage.getItem("monova_form_data");
+      let monovaFormParsed = {};
+      if (monovaFormData) {
+        try {
+          monovaFormParsed = JSON.parse(monovaFormData);
+        } catch { }
+      }
+      if (!AutoMatcherRes?.code || AutoMatcherRes?.code !== "200" || !AutoMatcherRes.data.bankAccountNumber) {
+        if (receiver) {
+          matcher = await createAutoMatcher({
+            akaNames: [
+              receiver.first_name,
+              `${receiver.first_name} ${receiver.last_name}`,
+              `${receiver.first_name} ${receiver.last_name} ${receiver.middle_name || ""}`.trim(),
+            ],
+            bankAccountName: `${receiver.first_name} ${receiver.last_name}`,
+            bsb: monovaFormParsed.bsbNumber || monovaFormParsed.bsb || "",
+          });
+          AutoMatcherRes = await GetAutoMatcher();
+        }
+      }
+      if (AutoMatcherRes?.code === "200" && AutoMatcherRes.data.bankAccountNumber) {
         const bankDetails = AutoMatcherRes.data;
-
         setMonovaForm(prev => ({
           ...prev,
           accountName: bankDetails.bankAccountName,
           accountNumber: bankDetails.bankAccountNumber,
           bsb: bankDetails.bsb,
         }));
-
+        sessionStorage.setItem("monova_automatcher", JSON.stringify(bankDetails));
         setModalShowMonovaExisting(true);
       } else {
-        setModalShowMonova(true);
+        toast.error("Some Error while creating Monoova automatcher Account")
       }
     } else if (paymentType === "budpay") {
-      toast.warning("budpay is not configured yet")
+      handleBudContinue();
     } else {
       toast.warning("Please select a payment type.");
     }

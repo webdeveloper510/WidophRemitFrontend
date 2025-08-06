@@ -15,8 +15,6 @@ import {
   verifyEmail,
   resendOtp,
   createTransaction,
-  createAutoMatcher,
-  GetAutoMatcher,
 } from "../../services/Api";
 import { toast } from "react-toastify";
 
@@ -68,7 +66,7 @@ const ConfirmTransfer = () => {
         return;
       }
     } else {
-      navigate("/receivers-list");
+      navigate("/send-money");
       return;
     }
 
@@ -124,41 +122,22 @@ const ConfirmTransfer = () => {
         return false;
       }
 
-      let matcher = await GetAutoMatcher();
-
-      if (
-        matcher?.code === "200" &&
-        matcher.data.bankAccountNumber
-      ) {
-        const bankInfo = matcher.data;
-        matcher.bankAccountName = bankInfo.bankAccountName;
-        matcher.bankAccountNumber = bankInfo.bankAccountNumber;
-        matcher.bsb = bankInfo.bsb;
+      // Use automatcher data from sessionStorage (set in PaymentDetail)
+      const matcherData = sessionStorage.getItem("monova_automatcher");
+      let matcher = null;
+      if (matcherData) {
+        matcher = JSON.parse(matcherData);
       } else {
-        toast.info("Monoova virtual account is being processed")
-        matcher = await createAutoMatcher({
-          akaNames: [
-            receiverData.first_name,
-            `${receiverData.first_name} ${receiverData.last_name}`,
-            `${receiverData.first_name} ${receiverData.last_name} ${receiverData.middle_name || ""
-              }`.trim(),
-          ],
-          bankAccountName: `${receiverData.first_name} ${receiverData.last_name}`,
-          bsb: monovaForm.bsbNumber,
-        });
-      }
-
-      if (!matcher?.data.bankAccountNumber) {
-        toast.error("Bank account matching failed.");
+        toast.error("Bank account matching not found. Please go back and select Monoova again.");
         return false;
       }
 
       // Prepare payment payload
       const payload = {
         amount: parseFloat(monovaForm?.amount || 0),
-        bsbNumber: matcher?.data.bsb,
-        accountNumber: matcher?.data.bankAccountNumber,
-        accountName: matcher?.data.bankAccountName,
+        bsbNumber: matcher.bsb,
+        accountNumber: matcher.bankAccountNumber,
+        accountName: matcher.bankAccountName,
         payment_mode: monovaForm?.payment_mode,
         to: temp.amount.to,
         from: temp.amount.from,
@@ -313,7 +292,10 @@ const ConfirmTransfer = () => {
         paymentSuccess = await handleMonovaPayment();
       } else if (currentPaymentMethod === "zai") {
         paymentSuccess = await handleZaiPayment();
-      } else {
+      }else if (currentPaymentMethod === "budpay"){
+        
+      }
+       else {
         toast.error("No valid payment method selected.");
         return;
       }
