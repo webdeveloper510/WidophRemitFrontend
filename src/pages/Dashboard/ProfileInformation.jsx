@@ -32,7 +32,7 @@ const ProfileInformation = () => {
   const stored = sessionStorage.getItem("collapsed");
   return stored === "true"; 
 });
-;
+
   const [kycStatus, setkycStatus] = useState("pending");
   const [PasswordChange, setPasswordChange] = useState(false);
   const [changingPassword, setchangingPassword] = useState(false);
@@ -112,6 +112,14 @@ const ProfileInformation = () => {
     if (charOnlyFields.includes(name)) {
       const valid = /^[A-Za-z\s]*$/.test(value);
       if (!valid) return;
+    }
+
+    // Password fields: disallow spaces anywhere
+    if (["currentPassword", "newPassword", "confirmPassword"].includes(name)) {
+      if (/\s/.test(value)) {
+        // Do not update state if space is present
+        return;
+      }
     }
 
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -352,9 +360,12 @@ const ProfileInformation = () => {
     if (!submitted) return false;
 
     if (PasswordChange) {
-      if (field === "currentPassword") return !formData.currentPassword;
-      if (field === "newPassword") return !formData.newPassword || formData.newPassword.length < 8;
-      if (field === "confirmPassword") return formData.confirmPassword !== formData.newPassword;
+      if (["currentPassword", "newPassword", "confirmPassword"].includes(field)) {
+        if (!formData[field]) return true;
+        if (/\s/.test(formData[field])) return true;
+        if (field === "newPassword" && formData.newPassword.length < 8) return true;
+        if (field === "confirmPassword" && formData.confirmPassword !== formData.newPassword) return true;
+      }
     }
 
     return !formData[field];
@@ -364,8 +375,12 @@ const ProfileInformation = () => {
   const hasPasswordErrors = () => {
     return (
       !formData.currentPassword ||
+      /\s/.test(formData.currentPassword) ||
       !formData.newPassword ||
+      /\s/.test(formData.newPassword) ||
       formData.newPassword.length < 8 ||
+      !formData.confirmPassword ||
+      /\s/.test(formData.confirmPassword) ||
       formData.confirmPassword !== formData.newPassword
     );
   };
@@ -759,7 +774,11 @@ const ProfileInformation = () => {
                                     {visibility.current ? <FaEyeSlash /> : <FaEye />}
                                   </span>
                                   <Form.Control.Feedback type="invalid">
-                                    Current password is required
+                                    {!formData.currentPassword
+                                      ? "Current password is required"
+                                      : /\s/.test(formData.currentPassword)
+                                      ? "Password cannot contain spaces"
+                                      : null}
                                   </Form.Control.Feedback>
                                 </FloatingLabel>
 
@@ -784,7 +803,13 @@ const ProfileInformation = () => {
                                     {visibility.new ? <FaEyeSlash /> : <FaEye />}
                                   </span>
                                   <Form.Control.Feedback type="invalid">
-                                    New password must be at least 8 characters
+                                    {!formData.newPassword
+                                      ? "New password is required"
+                                      : /\s/.test(formData.newPassword)
+                                      ? "Password cannot contain spaces"
+                                      : formData.newPassword.length < 8
+                                      ? "New password must be at least 8 characters"
+                                      : null}
                                   </Form.Control.Feedback>
                                 </FloatingLabel>
 
@@ -809,7 +834,13 @@ const ProfileInformation = () => {
                                     {visibility.confirm ? <FaEyeSlash /> : <FaEye />}
                                   </span>
                                   <Form.Control.Feedback type="invalid">
-                                    Passwords do not match
+                                    {!formData.confirmPassword
+                                      ? "Confirm password is required"
+                                      : /\s/.test(formData.confirmPassword)
+                                      ? "Password cannot contain spaces"
+                                      : formData.confirmPassword !== formData.newPassword
+                                      ? "Passwords do not match"
+                                      : null}
                                   </Form.Control.Feedback>
                                 </FloatingLabel>
 
