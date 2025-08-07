@@ -127,7 +127,7 @@ const PaymentDetail = () => {
   };
 
   const handleBudContinue = () => {
-    toast.info("no configured yet!")
+    toast.info("budPay not configured yet!")
     return;
   };
 
