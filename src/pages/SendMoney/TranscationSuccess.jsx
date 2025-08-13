@@ -15,12 +15,12 @@ const TransactionSuccess = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    if (location.state?.from !== "confirm-transfer") {
-      navigate("/send-money");
-      return;
-    }
-  }, [location])
+  // useEffect(() => {
+  //   if (location.state?.from !== "confirm-transfer") {
+  //     navigate("/send-money");
+  //     return;
+  //   }
+  // }, [location])
 
   useEffect(() => {
     const handleBeforeUnload = () => {
