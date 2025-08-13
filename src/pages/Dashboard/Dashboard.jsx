@@ -28,10 +28,9 @@ const Dashboard = () => {
   const [firstName, setFirstName] = useState("User");
   const [loading, setLoading] = useState(true);
   const [collapsed, setCollapsed] = useState(() => {
-  const stored = sessionStorage.getItem("collapsed");
-  return stored === "true"; 
-});
-;
+    const stored = sessionStorage.getItem("collapsed");
+    return stored === "true";
+  });
   const [Message, setMessage] = useState("");
   const navigate = useNavigate();
   const [kycStatus, setkycStatus] = useState("pending");
@@ -74,7 +73,8 @@ const Dashboard = () => {
           } else if (currentKycStatus === "declined") {
             setMessage("Your KYC was declined. Please resubmit.");
           } else if (currentKycStatus === "suspended") {
-            setMessage(`Your KYC has been ${currentKycStatus}, please contact admin for information.`);
+            sessionStorage.clear();
+            navigate("/login");
           }
         } else {
           sessionStorage.clear();

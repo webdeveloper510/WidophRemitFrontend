@@ -13,13 +13,14 @@ import {
 } from "react-bootstrap";
 import Back from "../../assets/images/back.png";
 import { RiFileCopyLine } from "react-icons/ri";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Await, useLocation, useNavigate } from "react-router-dom";
 import {
   createPayId,
   getPayID,
   GetAutoMatcher,
   createTransaction,
   createAutoMatcher,
+  GetBudRedirectUrl,
 } from "../../services/Api";
 import { toast } from "react-toastify";
 
@@ -126,9 +127,51 @@ const PaymentDetail = () => {
     setModalShowMonovaExisting(false);
   };
 
-  const handleBudContinue = () => {
-    toast.info("budPay not configured yet!")
-    return;
+  const handleBudContinue = async () => {
+    try {
+      const finalReason =
+        transferReason === "Other" ? otherReason : transferReason;
+      const transactionId = sessionStorage.getItem("transaction_id");
+
+      const res = await createTransaction({
+        amount: {
+          reason: finalReason,
+          send_amt: amount,
+          from: currency,
+          receive_method: "Bank transfer",
+          payout_partner:
+            JSON.parse(sessionStorage.getItem("selected_receiver")).bank_name ||
+            "",
+          send_currency:
+            JSON.parse(sessionStorage.getItem("transfer_data"))?.amount.from,
+          send_amount: amount,
+          receive_amount:
+            JSON.parse(sessionStorage.getItem("transfer_data"))?.amount
+              .exchange_amt || "",
+          receive_currency:
+            JSON.parse(sessionStorage.getItem("transfer_data"))?.amount.to || "",
+          exchange_rate:
+            JSON.parse(sessionStorage.getItem("transfer_data"))?.amount
+              .exchange_rate || "",
+        },
+        recipient_id: recipientId,
+        transaction_id: transactionId,
+      });
+
+      const urlRes = await GetBudRedirectUrl({
+        amount: amount,
+        transaction_id: res.data.transaction_id,
+      });
+
+      if (urlRes?.code === "200" && urlRes?.data?.data?.authorization_url) {
+        window.location.href = urlRes.data.data.authorization_url;
+      } else {
+        toast.error("Failed to get BudPay redirect URL.");
+      }
+    } catch (error) {
+      console.error("Error in handleBudContinue:", error);
+      toast.error("An unexpected error occurred. Please try again.");
+    }
   };
 
   const handleMonovaContinue = async () => {

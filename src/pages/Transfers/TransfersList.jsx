@@ -5,7 +5,7 @@ import { BsThreeDots } from "react-icons/bs";
 import Dropdown from "react-bootstrap/Dropdown";
 import TransferList from "../../assets/images/transfer-list-icon.png";
 import loaderlogo from "../../assets/images/logo.png";
-import { pendingTransactions, transactionHistory } from "../../services/Api";
+import { GetAllPaymentStatus, pendingTransactions, transactionHistory } from "../../services/Api";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
@@ -39,6 +39,7 @@ const TransfersList = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(15);
+  const [statusOptions, setstatusOptions] = useState([]);
 
   const fetchList = async () => {
     setLoading(true);
@@ -66,6 +67,21 @@ const TransfersList = () => {
   };
 
   useEffect(() => {
+    const fetchPaymentStatus = async () => {
+      try {
+        const response = await GetAllPaymentStatus();
+        if (response.code === "200") {
+          setstatusOptions(Object.values(response.data));
+          setSelectedStatus("All Transfer");
+        } else {
+          console.error("Failed to fetch payment status:", response.message);
+        }
+      } catch (error) {
+        console.error("Error fetching payment status:", error);
+      }
+    };
+
+    fetchPaymentStatus();
     fetchList();
   }, []);
 
@@ -80,6 +96,10 @@ const TransfersList = () => {
         .toLowerCase()
         .includes(filterText.toLowerCase());
 
+      if (selectedStatus === "All Transfer") {
+        return matchesText;
+      }
+      
       const matchesStatus = selectedStatus
         ? item.payment_status.toLowerCase().includes(selectedStatus.toLowerCase())
         : true;
@@ -87,7 +107,7 @@ const TransfersList = () => {
       return matchesText && matchesStatus;
     });
 
-    if (selectedStatus === "") {
+    if (selectedStatus === "All Transfer") {
       filtered = filtered.sort(
         (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
       );
@@ -95,17 +115,6 @@ const TransfersList = () => {
 
     return filtered;
   }, [list, filterText, selectedStatus]);
-
-
-  const statusOptions = [
-    "",
-    "Abandoned",
-    "Payment due",
-    "Waiting for approval",
-    "Cancelled",
-    "Completed",
-    "Expired",
-  ];
 
   const subHeaderComponent = (
     <div className="d-flex gap-3 mb-3 align-items-center">
@@ -116,7 +125,7 @@ const TransfersList = () => {
       >
         {statusOptions.map((status, index) => (
           <option key={index} value={status}>
-            {status || "All Transfers"}
+            {status || "All Transfer"}
           </option>
         ))}
       </select>

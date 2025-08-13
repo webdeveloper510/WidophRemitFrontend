@@ -1,4 +1,5 @@
 import Axios from "axios";
+import { Navigate } from "react-router-dom";
 
 const private_instance = Axios.create({
   baseURL: import.meta.env.VITE_APP_API_URI
@@ -16,8 +17,7 @@ let userCheckPromise = null;
 private_instance.interceptors.request.use(
   async (config) => {
     const token = sessionStorage.getItem("token");
-    const userDetails = sessionStorage.getItem("remi-user-dt");
-    if (token && userDetails) {
+    if (token && false) {
       if (isCheckingUser) {
         await userCheckPromise;
       } else {
@@ -32,11 +32,10 @@ private_instance.interceptors.request.use(
             return true;
           } else {
             if (data.data.is_digital_Id_verified === "suspended" || data.data.is_deleted) {
-              localStorage.setItem("is_suspended", true)
+              sessionStorage.clear();
+              Navigate("/login", { replace: true });
+              return false;
             }
-            sessionStorage.clear();
-            window.location.href = "/login";
-            return false;
           }
         }).catch((error) => {
           if (!error.response.status === 503) {
@@ -62,6 +61,7 @@ private_instance.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
 private_instance.interceptors.response.use(
   (response) => {
     return response;
@@ -176,6 +176,30 @@ export const GetAutoMatcher = async () => {
 
 export const verifyEmail = async (data) => {
   const response = await public_instance.post("/verify-email/", data)
+    .then(res => {
+      return res?.data
+    }).catch(error => {
+      return error.response
+    })
+  return response
+}
+
+export const GetAllPaymentStatus = async () => {
+  const response = await public_instance.get("/payment/payment-status-list/")
+    .then(res => {
+      return res?.data
+    }).catch(error => {
+      return error.response
+    })
+  return response
+}
+
+export const GetBudRedirectUrl = async (data) => {
+  const response = await public_instance.post("/budpay/payment/", data, {
+    headers: {
+      "Authorization": `Bearer ${sessionStorage.getItem("token")}`
+    }
+  })
     .then(res => {
       return res?.data
     }).catch(error => {
