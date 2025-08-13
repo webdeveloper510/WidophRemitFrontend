@@ -3,7 +3,7 @@ import AnimatedPage from "../../components/AnimatedPage";
 import processedImg from "../../assets/images/payment-processed-image.png";
 import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
-import { Col, Row, Button, Spinner } from "react-bootstrap";
+import { Col, Row, Button, Spinner, Alert } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
 import { paymentSummary } from "../../services/Api";
 import { clearSessionStorageData } from "../../utils/sessionUtils";
@@ -12,23 +12,24 @@ const TransactionSuccess = () => {
   const [transaction, setTransaction] = useState(null);
   const [status, setStatus] = useState("Loading...");
   const [loading, setLoading] = useState(true);
+  const [paymentMethod, setPaymentMethod] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const { search } = useLocation();
+  const queryParams = new URLSearchParams(search);
+  const transactionId = queryParams.get("reference");
+  const statusParam = queryParams.get("status");
 
-  // useEffect(() => {
-  //   if (location.state?.from !== "confirm-transfer") {
-  //     navigate("/send-money");
-  //     return;
-  //   }
-  // }, [location])
+  console.log("🚀 ~ TransactionSuccess ~ transactionId:", transactionId);
+  console.log("🚀 ~ TransactionSuccess ~ statusParam:", statusParam);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
-      sessionStorage.setItem('pageIsReloading', 'true');
+      sessionStorage.setItem("pageIsReloading", "true");
     };
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
 
@@ -45,23 +46,22 @@ const TransactionSuccess = () => {
     const handlePopState = (event) => {
       window.history.pushState(null, null, window.location.pathname);
       clearSessionStorageData();
-      navigate('/dashboard', { replace: true });
+      navigate("/dashboard", { replace: true });
     };
 
-    window.addEventListener('popstate', handlePopState);
+    window.addEventListener("popstate", handlePopState);
 
     return () => {
-      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener("popstate", handlePopState);
     };
   }, [navigate]);
 
-  // Check if page was reloaded and redirect to dashboard
   useEffect(() => {
     const checkIfReloaded = () => {
-      if (sessionStorage.getItem('pageIsReloading') === 'true') {
-        sessionStorage.removeItem('pageIsReloading');
+      if (sessionStorage.getItem("pageIsReloading") === "true") {
+        sessionStorage.removeItem("pageIsReloading");
         clearSessionStorageData();
-        navigate('/dashboard');
+        navigate("/dashboard");
       }
     };
     checkIfReloaded();
@@ -69,22 +69,56 @@ const TransactionSuccess = () => {
 
   useEffect(() => {
     const selectedMethod = sessionStorage.getItem("selected_payment_method");
-    const transaction_id = selectedMethod === "monova"
-      ? sessionStorage.getItem("monova_transaction_id")
-      : sessionStorage.getItem("transaction_id");
+    setPaymentMethod(selectedMethod);
+    let finalTransactionId = null;
+    let finalStatus = "Loading...";
 
-    const transferData = JSON.parse(sessionStorage.getItem("transfer_data") || "{}");
+    if (selectedMethod === "budpay") {
+      finalTransactionId = transactionId;
+      finalStatus =
+        statusParam === "success"
+          ? "Success"
+          : statusParam === "cancelled"
+          ? "Cancelled"
+          : statusParam;
+    } else if (selectedMethod === "monova") {
+
+      finalTransactionId = sessionStorage.getItem("monova_transaction_id");
+   
+    } else {
+
+      finalTransactionId = sessionStorage.getItem("transaction_id");
+    }
+
+    const transferData = JSON.parse(
+      sessionStorage.getItem("transfer_data") || "{}"
+    );
 
     setTransaction({
-      transaction_id: transaction_id,
+      transaction_id: finalTransactionId,
       final_amount: transferData.amount?.send_amt || "N/A",
-      status: "Success",
+      status: finalStatus,
     });
 
-    async function GetTransactionDetails() {
+    setStatus(finalStatus);
+    if (
+      selectedMethod === "monova" ||
+      (selectedMethod === "budpay" && statusParam === "success")
+    ) {
+      GetTransactionDetails(finalTransactionId);
+    } else {
+      setLoading(false);
+    }
+
+    async function GetTransactionDetails(txId) {
+      if (!txId) {
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       try {
-        const result = await paymentSummary(transaction_id);
+        const result = await paymentSummary(txId);
         if (result?.code === "200") {
           setStatus(result.data.payment_status);
         }
@@ -94,16 +128,17 @@ const TransactionSuccess = () => {
         setLoading(false);
       }
     }
-
-    GetTransactionDetails();
-  }, []);
-
+  }, [transactionId, statusParam]);
 
   const handleBackToDashboard = () => {
     clearSessionStorageData();
     navigate("/dashboard");
   };
 
+  const handleTryAgain = () => {
+    clearSessionStorageData();
+    navigate("/send-money");
+  };
   if (loading) {
     return (
       <AnimatedPage>
@@ -119,7 +154,111 @@ const TransactionSuccess = () => {
       </AnimatedPage>
     );
   }
+  if (
+    status === "Cancelled" ||
+    status === "cancelled" ||
+    status === "Failed" ||
+    status === "failed"
+  ) {
+    return (
+      <AnimatedPage>
+        <div className="page-title">
+          <div className="d-flex align-items-center">
+            <h1>Transaction Cancelled</h1>
+          </div>
+        </div>
 
+        <div className="page-content-section mt-3">
+          {transaction ? (
+            <div className="row">
+              <div className="col-md-12">
+                <Card className="receiver-card mt-4 bg-white border-danger">
+                  <Card.Body>
+                    <div className="row">
+                      <div className="col-md-6">
+                        <Alert variant="danger" className="mb-4">
+                          <Alert.Heading>Transaction Cancelled</Alert.Heading>
+                          <p>
+                            Your transaction has been cancelled or failed.
+                            Please try again.
+                          </p>
+                        </Alert>
+
+                        <div className="table-column">
+                          <h2>Details</h2>
+                          <Table striped bordered>
+                            <tbody>
+                              <tr>
+                                <td>Transfer ID</td>
+                                <td>{transaction.transaction_id || "N/A"}</td>
+                              </tr>
+                              <tr>
+                                <td>Transfer Amount</td>
+                                <td>
+                                  {transaction.final_amount
+                                    ? `${transaction.final_amount} AUD`
+                                    : "N/A"}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>Transfer Status</td>
+                                <td className="text-danger">
+                                  <strong>{status}</strong>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </Table>
+                        </div>
+                      </div>
+                      <div className="col-md-6 text-center">
+                        <div
+                          className="text-danger"
+                          style={{ fontSize: "100px" }}
+                        >
+                          ❌
+                        </div>
+                        <h3 className="text-danger mt-3">
+                          Transaction Cancelled
+                        </h3>
+                      </div>
+                    </div>
+                  </Card.Body>
+                </Card>
+
+                <Row className="mt-5">
+                  <Col>
+                    <Button
+                      variant="primary"
+                      className="me-3"
+                      onClick={handleTryAgain}
+                    >
+                      Try Again
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      className="float-end"
+                      onClick={handleBackToDashboard}
+                    >
+                      Go to Dashboard
+                    </Button>
+                  </Col>
+                </Row>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center text-danger">
+              <p>⚠️ Unable to load transaction details.</p>
+              <Button variant="secondary" onClick={handleBackToDashboard}>
+                Back to Dashboard
+              </Button>
+            </div>
+          )}
+        </div>
+      </AnimatedPage>
+    );
+  }
+
+  // Show success transaction UI
   return (
     <AnimatedPage>
       <div className="page-title">
@@ -146,7 +285,11 @@ const TransactionSuccess = () => {
                             </tr>
                             <tr>
                               <td>Transfer Amount</td>
-                              <td>{transaction.final_amount ? `${transaction.final_amount} AUD` : "N/A"}</td>
+                              <td>
+                                {transaction.final_amount
+                                  ? `${transaction.final_amount} AUD`
+                                  : "N/A"}
+                              </td>
                             </tr>
                             <tr>
                               <td>Transfer Status</td>
@@ -166,14 +309,31 @@ const TransactionSuccess = () => {
                         <h4>
                           <b>Thank you for choosing us,</b>
                         </h4>
-                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                        <p>
+                          Lorem Ipsum is simply dummy text of the printing and
+                          typesetting industry.
+                        </p>
                         <ul>
-                          <li>Lorem Ipsum is simply dummy. Lorem Ipsum is simply</li>
-                          <li>Lorem Ipsum is dummy text of the printing and. Lorem Ipsum is simply</li>
-                          <li>Lorem Ipsum is dummy text of the printing and typesetting industry.</li>
-                          <li>Lorem Ipsum is simply dummy text of the printing typesetting industry. Lorem Ipsum is simply.</li>
+                          <li>
+                            Lorem Ipsum is simply dummy. Lorem Ipsum is simply
+                          </li>
+                          <li>
+                            Lorem Ipsum is dummy text of the printing and. Lorem
+                            Ipsum is simply
+                          </li>
+                          <li>
+                            Lorem Ipsum is dummy text of the printing and
+                            typesetting industry.
+                          </li>
+                          <li>
+                            Lorem Ipsum is simply dummy text of the printing
+                            typesetting industry. Lorem Ipsum is simply.
+                          </li>
                         </ul>
-                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                        <p>
+                          Lorem Ipsum is simply dummy text of the printing and
+                          typesetting industry.
+                        </p>
                       </div>
                     </div>
                     <div className="col-md-6 text-center">
@@ -190,7 +350,11 @@ const TransactionSuccess = () => {
 
               <Row className="mt-5">
                 <Col>
-                  <Button variant="primary" className="float-end updateform" onClick={handleBackToDashboard}>
+                  <Button
+                    variant="primary"
+                    className="float-end updateform"
+                    onClick={handleBackToDashboard}
+                  >
                     Go to Dashboard
                   </Button>
                 </Col>
