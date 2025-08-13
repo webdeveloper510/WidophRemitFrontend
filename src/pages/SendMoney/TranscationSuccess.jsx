@@ -79,12 +79,12 @@ const TransactionSuccess = () => {
         statusParam === "success"
           ? "Success"
           : statusParam === "cancelled"
-          ? "Cancelled"
-          : statusParam;
+            ? "Cancelled"
+            : statusParam;
     } else if (selectedMethod === "monova") {
 
       finalTransactionId = sessionStorage.getItem("monova_transaction_id");
-   
+
     } else {
 
       finalTransactionId = sessionStorage.getItem("transaction_id");
@@ -104,6 +104,7 @@ const TransactionSuccess = () => {
     if (
       selectedMethod === "monova" ||
       (selectedMethod === "budpay" && statusParam === "success")
+      || selectedMethod === "payid"
     ) {
       GetTransactionDetails(finalTransactionId);
     } else {
