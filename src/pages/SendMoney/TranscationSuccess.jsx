@@ -14,14 +14,10 @@ const TransactionSuccess = () => {
   const [loading, setLoading] = useState(true);
   const [paymentMethod, setPaymentMethod] = useState(null);
   const navigate = useNavigate();
-  const location = useLocation();
   const { search } = useLocation();
   const queryParams = new URLSearchParams(search);
-  const transactionId = queryParams.get("reference");
+  const transactionId = queryParams.get("transaction_id");
   const statusParam = queryParams.get("status");
-
-  console.log("🚀 ~ TransactionSuccess ~ transactionId:", transactionId);
-  console.log("🚀 ~ TransactionSuccess ~ statusParam:", statusParam);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
