@@ -4,10 +4,10 @@ import DataTable from "react-data-table-component";
 import { BsThreeDots } from "react-icons/bs";
 import Dropdown from "react-bootstrap/Dropdown";
 import TransferList from "../../assets/images/transfer-list-icon.png";
-import loaderlogo from "../../assets/images/logo.png";
 import { GetAllPaymentStatus, pendingTransactions, transactionHistory } from "../../services/Api";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Loader from "../../components/Loader";
 
 const customStyles = {
   headCells: {
@@ -252,14 +252,7 @@ const TransfersList = () => {
 
   ];
 
-  if (loading) {
-    return (
-      <div className="loader-wrapper">
-        <img src={loaderlogo} alt="Logo" className="loader-logo" />
-        <div className="spinner"></div>
-      </div>
-    );
-  }
+ if (loading) return <Loader />;
 
   return (
     <AnimatedPage>

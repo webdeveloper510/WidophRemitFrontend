@@ -5,12 +5,11 @@ import { BsThreeDots } from "react-icons/bs";
 import Dropdown from "react-bootstrap/Dropdown";
 import RecentReceiver from "../../assets/images/icons1.png";
 import AddReceiver from "../../assets/images/add-receiver.png";
-import loaderlogo from "../../assets/images/logo.png";
-
 import { deleteRecipient, recipientList } from "../../services/Api";
 import { Button, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import Loader from "../../components/Loader";
 
 const customStyles = {
   headCells: {
@@ -136,14 +135,7 @@ const Receivers = () => {
     },
   ];
 
-  if (loading) {
-    return (
-      <div className="loader-wrapper">
-        <img src={loaderlogo} alt="Logo" className="loader-logo" />
-        <div className="spinner"></div>
-      </div>
-    );
-  }
+  if (loading) return <Loader />;
 
   return (
     <>

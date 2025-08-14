@@ -9,8 +9,8 @@ import Col from "react-bootstrap/Col";
 import Table from "react-bootstrap/Table";
 import DownloadIcon from "../../assets/images/download.png";
 import Button from "react-bootstrap/Button";
-import loaderlogo from "../../assets/images/logo.png";
 import { paymentSummary } from "../../services/Api";
+import Loader from "../../components/Loader";
 
 const TransferDetails = () => {
   const { id } = useParams();
@@ -48,14 +48,7 @@ const TransferDetails = () => {
     link.remove();
   };
 
-  if (loading) {
-    return (
-      <div className="loader-wrapper">
-        <img src={loaderlogo} alt="Logo" className="loader-logo" />
-        <div className="spinner"></div>
-      </div>
-    );
-  }
+  if (loading) return <Loader />;
 
   if (error) return <div className="text-center mt-5 text-danger">{error}</div>;
 

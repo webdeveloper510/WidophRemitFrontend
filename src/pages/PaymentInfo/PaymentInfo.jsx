@@ -4,9 +4,9 @@ import Card from "react-bootstrap/Card";
 import AnimatedPage from "../../components/AnimatedPage";
 import PayID from "../../assets/images/payid.png";
 import PayTo from "../../assets/images/payto.png";
-import loaderlogo from "../../assets/images/logo.png";
 import { useState, useEffect } from "react";
 import { getAgreementList, GetAutoMatcher, getPayID } from "../../services/Api";
+import Loader from "../../components/Loader";
 
 
 
@@ -14,7 +14,6 @@ const PaymentInfo = () => {
   const [payIdDetail, setPayIdDetail] = useState(null);
   const [payToDetail, setPayToDetail] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [Loader, setLoader] = useState(true);
   const [AutoMatcherData, setAutoMatcherData] = useState(null);
 
   useEffect(() => {
@@ -53,37 +52,9 @@ const PaymentInfo = () => {
         setLoading(false);
       }
     })();
-    const timer = setTimeout(() => setLoader(false), 500);
-    return () => clearTimeout(timer);
   }, []);
 
-  if (loading) {
-    return (
-      <div className="loader-wrapper">
-        <img src={loaderlogo} alt="Logo" className="loader-logo" />
-        <div className="spinner"></div>
-      </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="loader-wrapper">
-        <img src={loaderlogo} alt="Logo" className="loader-logo" />
-        <div className="spinner"></div>
-      </div>
-    );
-  }
-
-
-  if (Loader) {
-    return (
-      <div className="loader-wrapper">
-        <img src={loaderlogo} alt="Logo" className="loader-logo" />
-        <div className="spinner"></div>
-      </div>
-    );
-  }
+  if (loading) return <Loader />;
 
   return (
     <AnimatedPage>

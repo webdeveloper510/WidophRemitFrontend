@@ -9,8 +9,6 @@ import * as Yup from "yup";
 import { commaRemover } from "../../hooks/hook";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import loaderlogo from "../../assets/images/logo.png"
-
 import {
   createTransaction,
   exchangeRate,
@@ -18,6 +16,7 @@ import {
 } from "../../services/Api";
 import { useLocation } from "react-router-dom";
 import { clearSessionStorageData } from "../../utils/sessionUtils";
+import Loader from "../../components/Loader";
 
 const SendMoney = () => {
 
@@ -365,14 +364,7 @@ const SendMoney = () => {
   };
 
 
-  if (loading) {
-    return (
-      <div className="loader-wrapper">
-        <img src={loaderlogo} alt="Logo" className="loader-logo" />
-        <div className="spinner"></div>
-      </div>
-    );
-  }
+  if (loading) return <Loader />;
 
   return (
     <AnimatedPage>
