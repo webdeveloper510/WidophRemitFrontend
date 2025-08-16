@@ -125,10 +125,7 @@ const TransferDetails = () => {
                         {(() => {
                           const blockedStatuses = [
                             "abandoned",
-                            "partially done",
                             "expired",
-                            "payment due",
-                            "cancelled",
                           ];
 
                           const status = transactionData?.payment_status?.toLowerCase();
@@ -188,7 +185,8 @@ const TransferDetails = () => {
                       <tbody>
                         <tr>
                           <th>Payment Mode</th>
-                          <td>{transactionData?.send_method === "zai_payid_per_user" ? "PayID" : "Bank Transfer"}</td>
+                          <td>{transactionData?.send_method === "zai_payid_per_user" ? "PayID" :
+                            transactionData?.send_method === "monoova_payin_per_user" ? "Monoova" : "BudPay"}</td>
                         </tr>
                         <tr>
                           <th>Customer ID</th>

@@ -144,7 +144,7 @@ const AddReceiver = () => {
           postcode: values.post_code,
           state: values.state,
           country: values.country,
-          country_code: countryCode,
+          country_code: values.countryCode,
           address: values.address,
           swift_code: values.swift_code
         };
@@ -383,13 +383,16 @@ const AddReceiver = () => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         style={{
-                          maxWidth: "110px",
+                          maxWidth: "140px",
                           borderTopRightRadius: 0,
                           borderBottomRightRadius: 0,
                         }}
                       >
-                        <option value="61">+61 (AU)</option>
-                        <option value="64">+64 (NZ)</option>
+                        {allCountries.map((country) => (
+                          <option key={country.dialCode || country.code} value={country.dialCode}>
+                            {country.dialCode ? `+${country.dialCode}` : ''} {country.code ? `(${country.code})` : ''}
+                          </option>
+                        ))}
                       </Form.Select>
 
                       <Form.Control

@@ -23,6 +23,7 @@ const UpdateReceiver = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
   const [apiError, setApiError] = useState("");
+  const [Code, setCode] = useState("")
 
   const countryList = [
     { name: "Australia", code: "AU", dialCode: "61" },
@@ -86,10 +87,10 @@ const UpdateReceiver = () => {
             const phoneNumber = parsePhoneNumberFromString(value);
             if (!phoneNumber) return false;
             const nationalNumber = phoneNumber.nationalNumber || "";
-            return nationalNumber.length >= 8 && nationalNumber.length <= 10;
+            return nationalNumber.length - Code.length >= 8 && nationalNumber.length - Code.length <= 10;
           }
         ),
-        
+
       country: Yup.string().required("Country is required"),
       state: Yup.string().required("State is required"),
       city: Yup.string().required("City is required"),
@@ -126,7 +127,7 @@ const UpdateReceiver = () => {
           postcode: values.post_code,
           state: values.state,
           country: values.country,
-          country_code: countryCode,
+          country_code: values.countryCode,
           address: values.address,
           swift_code: values.swift_code
         };
@@ -183,9 +184,10 @@ const UpdateReceiver = () => {
             city: recipient.city || "",
             post_code: recipient.postcode || "",
             address: recipient.address || "",
-            swift_code: recipient.swift_code || ""
+            swift_code: recipient.swift_code || "",
+            countryCode: recipient.country_code || ""
           };
-
+          setCode(recipient.country_code);
           setValues(initialValues);
         } else {
           console.warn("Non-200 response code:", response.code);
@@ -347,7 +349,7 @@ const UpdateReceiver = () => {
                   <PhoneInput
                     international
                     defaultCountry="AU"
-                    countries={['AU', 'NZ']}
+                    countries={allCountries.map(c => c.code)}
                     countryCallingCodeEditable={false}
                     value={values.mobile}
                     onChange={(val) => {

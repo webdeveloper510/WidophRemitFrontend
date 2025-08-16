@@ -99,7 +99,7 @@ const TransfersList = () => {
       if (selectedStatus === "All Transfer") {
         return matchesText;
       }
-      
+
       const matchesStatus = selectedStatus
         ? item.payment_status.toLowerCase().includes(selectedStatus.toLowerCase())
         : true;
@@ -218,7 +218,7 @@ const TransfersList = () => {
       cell: (row) => {
         const status = row.payment_status?.toLowerCase();
 
-        const isDownloadAllowed = !["abandoned", "payment due", "expired", "cancelled"].includes(status);
+        const isDownloadAllowed = !["abandoned", "expired"].includes(status);
 
         return (
           <div className="send-again-btn">
@@ -252,7 +252,7 @@ const TransfersList = () => {
 
   ];
 
- if (loading) return <Loader />;
+  if (loading) return <Loader />;
 
   return (
     <AnimatedPage>
