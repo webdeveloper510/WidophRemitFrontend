@@ -82,9 +82,8 @@ const UpdateReceiver = () => {
           "valid-length",
           "Mobile number must be between 8 and 10 digits",
           (value) => {
-            console.log(value);
             if (!value) return false;
-            return values.mobile.length - values.countryCode.length >= 8 && values.countryCode.length - 1 <= 10;
+            return value.length >= 8 && value.length <= 10;
           }
         ),
 
@@ -100,15 +99,12 @@ const UpdateReceiver = () => {
       swift_code: Yup.string().required("Swift code is required"),
     }),
 
+
     onSubmit: async (values) => {
       setIsLoading(true);
       setApiError("");
 
       try {
-        const selectedCountry = countryList.find(
-          (country) => country.name === values.country
-        );
-
         const payload = {
           account_type: "individual",
           bank_name: values.bank_name,
