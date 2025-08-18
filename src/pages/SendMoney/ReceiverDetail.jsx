@@ -109,9 +109,8 @@ const ReceiverDetail = () => {
 
       try {
 
-        const fullPhone = `+${values.countryCode}${values.mobile}`;
+        const fullPhone = `${values.countryCode}${values.mobile}`;
         let parsedMobile = fullPhone;
-
         try {
           const parsed = parsePhoneNumber(fullPhone);
           parsedMobile = parsed.number;
@@ -152,7 +151,7 @@ const ReceiverDetail = () => {
             email: values.email,
             mobile: parsedMobile,
             country: values.country,
-            country_code: countryCode,
+            country_code: values.countryCode,
             first_name: values.first_name,
             last_name: values.last_name,
             address: values.address,
@@ -184,16 +183,6 @@ const ReceiverDetail = () => {
       }
     },
   });
-
-  const handleCustomChange = (e) => {
-    const { name, value } = e.target;
-    handleChange(e);
-
-    if (name === "countryCode") {
-      // Update country based on country code selection if needed
-      // This logic can be expanded based on your requirements
-    }
-  };
 
   return (
     <AnimatedPage>
