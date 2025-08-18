@@ -391,14 +391,12 @@ const ReceiverDetail = () => {
                         <div className="d-flex align-items-stretch p-0">
                           <Form.Select
                             name="countryCode"
-                            value={values.countryCode}
+                            value={`${values.countryCode}-${values.country}`}
                             onChange={(e) => {
-                              const selectedDialCode = e.target.value;
-                              setFieldValue("countryCode", selectedDialCode);
-                              const foundCountry = allCountries.find(c => c.dial_code === selectedDialCode);
-                              if (foundCountry) {
-                                setFieldValue("country", foundCountry.name);
-                              }
+                              const selectedValue = e.target.value;
+                              const [dialCode, countryName] = selectedValue.split("-");
+                              setFieldValue("countryCode", dialCode);
+                              setFieldValue("country", countryName);
                             }}
                             onBlur={handleBlur}
                             style={{
@@ -408,7 +406,7 @@ const ReceiverDetail = () => {
                             }}
                           >
                             {allCountries.map((country) => (
-                              <option key={uuidv4()} value={country.dial_code}>
+                              <option key={uuidv4()} value={`${country.dial_code}-${country.name}`}>
                                 {country.dial_code ? `${country.flag} ${country.dial_code}` : ''} {country.code ? `(${country.code})` : ''}
                               </option>
                             ))}
