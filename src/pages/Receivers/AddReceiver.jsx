@@ -11,6 +11,8 @@ import * as Yup from "yup";
 import { createRecipient } from "../../services/Api";
 import { parsePhoneNumber } from "libphonenumber-js";
 import allCountries from "../../utils/AllCountries";
+import { v4 as uuidv4 } from 'uuid';
+
 
 const isAlphaOnly = (value) => /^[A-Za-z\s]*$/.test(value);
 
@@ -387,7 +389,7 @@ const AddReceiver = () => {
                         }}
                       >
                         {allCountries.map((country) => (
-                          <option key={country.dialCode || country.code} value={country.dialCode}>
+                          <option key={uuidv4()} value={country.dialCode}>
                             {country.dialCode ? `+${country.dialCode}` : ''} {country.code ? `(${country.code})` : ''}
                           </option>
                         ))}
