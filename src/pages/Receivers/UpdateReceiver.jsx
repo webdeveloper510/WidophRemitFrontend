@@ -6,14 +6,13 @@ import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import { Form, FloatingLabel, Col, Row, Alert } from "react-bootstrap";
 import "react-phone-number-input/style.css";
-import PhoneInput from "react-phone-number-input";
 import Select from "react-select";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { getUserRecipient, updateUserRecipient } from "../../services/Api";
 import { toast } from "react-toastify";
 import allCountries from "../../utils/AllCountries";
-import { parsePhoneNumberFromString } from "libphonenumber-js";
+import { v4 as uuidv4 } from 'uuid';
 
 
 const UpdateReceiver = () => {
@@ -23,7 +22,6 @@ const UpdateReceiver = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
   const [apiError, setApiError] = useState("");
-  const [Code, setCode] = useState("")
 
   const countryList = [
     { name: "Australia", code: "AU", dialCode: "61" },
@@ -57,7 +55,8 @@ const UpdateReceiver = () => {
       city: "",
       post_code: "",
       address: "",
-      swift_code: ""
+      swift_code: "",
+      countryCode: ""
     },
     validationSchema: Yup.object({
       bank_name: Yup.string().required("Bank name is required"),
@@ -83,11 +82,9 @@ const UpdateReceiver = () => {
           "valid-length",
           "Mobile number must be between 8 and 10 digits",
           (value) => {
+            console.log(value);
             if (!value) return false;
-            const phoneNumber = parsePhoneNumberFromString(value);
-            if (!phoneNumber) return false;
-            const nationalNumber = phoneNumber.nationalNumber || "";
-            return nationalNumber.length - Code.length >= 8 && nationalNumber.length - Code.length <= 10;
+            return values.mobile.length - values.countryCode.length >= 8 && values.countryCode.length - 1 <= 10;
           }
         ),
 
@@ -111,7 +108,6 @@ const UpdateReceiver = () => {
         const selectedCountry = countryList.find(
           (country) => country.name === values.country
         );
-        const countryCode = selectedCountry ? selectedCountry.code : "";
 
         const payload = {
           account_type: "individual",
@@ -122,7 +118,7 @@ const UpdateReceiver = () => {
           middle_name: values.middle_name,
           last_name: values.last_name,
           email: values.email,
-          mobile: values.mobile,
+          mobile: `${values.countryCode}${values.mobile}`,
           city: values.city,
           postcode: values.post_code,
           state: values.state,
@@ -133,7 +129,6 @@ const UpdateReceiver = () => {
         };
 
         const response = await updateUserRecipient(id, payload);
-
         if (Number(response.code) === 200) {
           toast.success("Receiver updated successfully");
           navigate("/receivers");
@@ -166,7 +161,6 @@ const UpdateReceiver = () => {
         const response = await getUserRecipient(id);
         if (Number(response.code) === 200) {
           const recipient = response.data;
-
           const initialValues = {
             bank_name: recipient.bank_name || "",
             account_number: recipient.account_number || "",
@@ -175,10 +169,8 @@ const UpdateReceiver = () => {
             last_name: recipient.last_name || "",
             email: recipient.email || "",
             mobile:
-              "+" +
               recipient.mobile
-                ?.replace(/[^\d]/g, "")
-                .replace(/^(\d{10,15}).*/, "$1") || "",
+                .slice(recipient.country_code.length + 1) || "",
             country: recipient.country || "",
             state: recipient.state || "",
             city: recipient.city || "",
@@ -187,7 +179,7 @@ const UpdateReceiver = () => {
             swift_code: recipient.swift_code || "",
             countryCode: recipient.country_code || ""
           };
-          setCode(recipient.country_code);
+
           setValues(initialValues);
         } else {
           console.warn("Non-200 response code:", response.code);
@@ -344,27 +336,62 @@ const UpdateReceiver = () => {
                 </FloatingLabel>
               </Row>
 
-              <Col className="col-4 mb-3">
-                <FloatingLabel label="Mobile *" className="mobileinput">
-                  <PhoneInput
-                    international
-                    defaultCountry="AU"
-                    countries={allCountries.map(c => c.code)}
-                    countryCallingCodeEditable={false}
-                    value={values.mobile}
-                    onChange={(val) => {
-                      setFieldValue("mobile", val)
-                    }}
-                    onBlur={() => formik.setFieldTouched("mobile", true)}
-                  />
+              <Row className="mb-3 mobile_numbero">
+                <Col>
+                  <FloatingLabel
+                    label={
+                      <span>
+                        Mobile Number{" "}<span style={{ color: "red" }}>*</span>
+                      </span>
+                    }
+                    className="mb-3"
+                  >``
 
+                    <div className="d-flex align-items-stretch p-0">
+                      <Form.Select
+                        name="countryCode"
+                        value={values.countryCode}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        style={{
+                          maxWidth: "140px",
+                          borderTopRightRadius: 0,
+                          borderBottomRightRadius: 0,
+                        }}
+                      >
+                        {allCountries.map((country) => (
+                          <option key={uuidv4()} value={country.dialCode}>
+                            {country.dialCode ? `+${country.dialCode}` : ''} {country.code ? `(${country.code})` : ''}
+                          </option>
+                        ))}
+                      </Form.Select>
+
+                      <Form.Control
+                        type="text"
+                        name="phone"
+                        placeholder="Enter mobile number"
+                        value={values.mobile}
+                        onChange={(e) => {
+                          const numericValue = e.target.value.replace(/\D/g, "");
+                          setFieldValue("mobile", numericValue);
+                        }}
+                        onBlur={handleBlur}
+                        isInvalid={touched.phone && errors.phone}
+                        style={{
+                          borderTopLeftRadius: 0,
+                          borderBottomLeftRadius: 0,
+                        }}
+                      />
+
+                    </div>
+                  </FloatingLabel>
                   {touched.mobile && errors.mobile && (
-                    <div className="text-danger small mt-1">
+                    <div className="invalid-feedback d-block">
                       {errors.mobile}
                     </div>
                   )}
-                </FloatingLabel>
-              </Col>
+                </Col>
+              </Row>
             </Card.Body>
           </Card>
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AnimatedPage from "../../components/AnimatedPage";
 import Back from "../../assets/images/back.png";
@@ -6,10 +6,8 @@ import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import { Form, FloatingLabel, Col, Row, Alert } from "react-bootstrap";
 import Select from "react-select";
-import { getNames } from "country-list";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import Bank_list from "../../utils/Bank_list";
 import { createRecipient } from "../../services/Api";
 import { parsePhoneNumber } from "libphonenumber-js";
 import allCountries from "../../utils/AllCountries";
