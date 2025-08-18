@@ -12,8 +12,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { parsePhoneNumber } from "libphonenumber-js";
 import allCountries from "../../utils/AllCountries";
 import { v4 as uuidv4 } from 'uuid';
-
-
 const ReceiverDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -23,24 +21,11 @@ const ReceiverDetail = () => {
     value: country.name,
     label: country.name,
   }));
-  
+
   useEffect(() => {
     if (location?.state?.from !== "receivers-list")
       navigate("/send-money")
   }, [location])
-
-  const countryList = [
-    { name: "Australia", code: "AU", dialCode: "61" },
-    { name: "Brazil", code: "BR", dialCode: "55" },
-    { name: "China", code: "CN", dialCode: "86" },
-    { name: "Ghana", code: "GH", dialCode: "233" },
-    { name: "Kenya", code: "KE", dialCode: "254" },
-    { name: "New Zealand", code: "NZ", dialCode: "64" },
-    { name: "Nigeria", code: "NG", dialCode: "234" },
-    { name: "Philippines", code: "PH", dialCode: "63" },
-    { name: "Thailand", code: "TH", dialCode: "66" },
-    { name: "Vietnam", code: "VN", dialCode: "84" },
-  ];
 
   const initialValues = {
     bank_name: "",
@@ -50,8 +35,8 @@ const ReceiverDetail = () => {
     last_name: "",
     email: "",
     mobile: "",
-    countryCode: "61", // default for Australia
-    country: "",
+    countryCode: "+61",
+    country: "Australia",
     building_no: "",
     street_name: "",
     state: "",
@@ -123,12 +108,7 @@ const ReceiverDetail = () => {
       setApiError("");
 
       try {
-        const selectedCountry = countryList.find(
-          (country) => country.name === values.country
-        );
-        const countryCode = selectedCountry ? selectedCountry.code : "";
 
-        // Format mobile number with country code
         const fullPhone = `+${values.countryCode}${values.mobile}`;
         let parsedMobile = fullPhone;
 
@@ -423,7 +403,14 @@ const ReceiverDetail = () => {
                           <Form.Select
                             name="countryCode"
                             value={values.countryCode}
-                            onChange={handleCustomChange}
+                            onChange={(e) => {
+                              const selectedDialCode = e.target.value;
+                              setFieldValue("countryCode", selectedDialCode);
+                              const foundCountry = allCountries.find(c => c.dial_code === selectedDialCode);
+                              if (foundCountry) {
+                                setFieldValue("country", foundCountry.name);
+                              }
+                            }}
                             onBlur={handleBlur}
                             style={{
                               maxWidth: "110px",
@@ -432,8 +419,8 @@ const ReceiverDetail = () => {
                             }}
                           >
                             {allCountries.map((country) => (
-                              <option key={uuidv4()} value={country.dialCode}>
-                                {country.dialCode ? `+${country.dialCode}` : ''} {country.code ? `(${country.code})` : ''}
+                              <option key={uuidv4()} value={country.dial_code}>
+                                {country.dial_code ? `${country.flag} ${country.dial_code}` : ''} {country.code ? `(${country.code})` : ''}
                               </option>
                             ))}
                           </Form.Select>
@@ -483,7 +470,13 @@ const ReceiverDetail = () => {
                           options={countryOptions}
                           name="country"
                           value={countryOptions.find(opt => opt.value === values.country)}
-                          onChange={(option) => setFieldValue("country", option.value)}
+                          onChange={(option) => {
+                            setFieldValue("country", option.value);
+                            const foundCountry = allCountries.find(c => c.name === option.value);
+                            if (foundCountry) {
+                              setFieldValue("countryCode", foundCountry.dial_code);
+                            }
+                          }}
                           onBlur={() => setFieldValue("country", values.country)}
                         />
 

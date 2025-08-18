@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import  {useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AnimatedPage from "../../components/AnimatedPage";
 import Back from "../../assets/images/back.png";
@@ -13,33 +13,16 @@ import { parsePhoneNumber } from "libphonenumber-js";
 import allCountries from "../../utils/AllCountries";
 import { v4 as uuidv4 } from 'uuid';
 
-
 const isAlphaOnly = (value) => /^[A-Za-z\s]*$/.test(value);
-
-
 const AddReceiver = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
 
-
-
-  const countryList = [
-    { name: "Australia", code: "AU", dialCode: "61" },
-    { name: "Brazil", code: "BR", dialCode: "55" },
-    { name: "China", code: "CN", dialCode: "86" },
-    { name: "Ghana", code: "GH", dialCode: "233" },
-    { name: "Kenya", code: "KE", dialCode: "254" },
-    { name: "New Zealand", code: "NZ", dialCode: "64" },
-    { name: "Nigeria", code: "NG", dialCode: "234" },
-    { name: "Philippines", code: "PH", dialCode: "63" },
-    { name: "Thailand", code: "TH", dialCode: "66" },
-    { name: "Vietnam", code: "VN", dialCode: "84" },
-  ];
-
   const countryOptions = allCountries.map((country) => ({
     value: country.name,
     label: country.name,
+    dialCode: country.dial_code,
   }));
 
   const initialValues = {
@@ -50,8 +33,8 @@ const AddReceiver = () => {
     last_name: "",
     email: "",
     phone: "",
-    countryCode: "61", // default for Australia
-    country: "",
+    countryCode: "+61",
+    country: "Australia",
     building_no: "",
     street_name: "",
     state: "",
@@ -111,13 +94,7 @@ const AddReceiver = () => {
       setApiError("");
 
       try {
-        const selectedCountry = countryList.find(
-          (country) => country.name === values.country
-        );
-        const countryCode = selectedCountry ? selectedCountry.code : "";
-
-        // Format phone number similar to signup
-        const fullPhone = `+${values.countryCode}${values.phone}`;
+        const fullPhone = `${values.countryCode}${values.phone}`;
         let parsedMobile = fullPhone;
 
         try {
@@ -200,6 +177,7 @@ const AddReceiver = () => {
             <Card.Body>
               <Card.Title>Bank Information</Card.Title>
               <Row className="mb-3">
+                {/* ...existing code... */}
                 <FloatingLabel
                   as={Col}
                   controlId="bankName"
@@ -223,12 +201,11 @@ const AddReceiver = () => {
                     onBlur={handleBlur}
                     isInvalid={touched.bank_name && errors.bank_name}
                   />
-
                   <Form.Control.Feedback type="invalid">
                     {errors.bank_name}
                   </Form.Control.Feedback>
                 </FloatingLabel>
-
+                {/* ...existing code... */}
                 <FloatingLabel
                   as={Col}
                   controlId="accountNumber"
@@ -251,6 +228,7 @@ const AddReceiver = () => {
                     {errors.account_number}
                   </Form.Control.Feedback>
                 </FloatingLabel>
+                {/* ...existing code... */}
                 <FloatingLabel
                   as={Col}
                   controlId="accountNumber"
@@ -282,6 +260,7 @@ const AddReceiver = () => {
             <Card.Body>
               <Card.Title>Recipient Details</Card.Title>
               <Row className="mb-3">
+                {/* ...existing code... */}
                 <FloatingLabel
                   as={Col}
                   controlId="firstName"
@@ -306,12 +285,11 @@ const AddReceiver = () => {
                     onBlur={handleBlur}
                     isInvalid={touched.first_name && errors.first_name}
                   />
-
                   <Form.Control.Feedback type="invalid">
                     {errors.first_name}
                   </Form.Control.Feedback>
                 </FloatingLabel>
-
+                {/* ...existing code... */}
                 <FloatingLabel
                   as={Col}
                   controlId="middleName"
@@ -330,9 +308,8 @@ const AddReceiver = () => {
                     }}
                     onBlur={handleBlur}
                   />
-
                 </FloatingLabel>
-
+                {/* ...existing code... */}
                 <FloatingLabel
                   as={Col}
                   controlId="lastName"
@@ -357,7 +334,6 @@ const AddReceiver = () => {
                     onBlur={handleBlur}
                     isInvalid={touched.last_name && errors.last_name}
                   />
-
                   <Form.Control.Feedback type="invalid">
                     {errors.last_name}
                   </Form.Control.Feedback>
@@ -375,22 +351,29 @@ const AddReceiver = () => {
                     }
                     className="mb-3"
                   >
-
                     <div className="d-flex align-items-stretch p-0">
                       <Form.Select
                         name="countryCode"
                         value={values.countryCode}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                          const selectedDialCode = e.target.value;
+                          setFieldValue("countryCode", selectedDialCode);
+                          // Find country by dial code and update country field
+                          const foundCountry = allCountries.find(c => c.dial_code === selectedDialCode);
+                          if (foundCountry) {
+                            setFieldValue("country", foundCountry.name);
+                          }
+                        }}
                         onBlur={handleBlur}
                         style={{
                           maxWidth: "140px",
-                          borderTopRightRadius: 0,
+                          borderTopRightRadius: 0,  
                           borderBottomRightRadius: 0,
                         }}
                       >
                         {allCountries.map((country) => (
-                          <option key={uuidv4()} value={country.dialCode}>
-                            {country.dialCode ? `+${country.dialCode}` : ''} {country.code ? `(${country.code})` : ''}
+                          <option key={uuidv4()} value={country.dial_code}>
+                            {country.dial_code ? `${country.flag} ${country.dial_code}` : ''} {country.code ? `(${country.code})` : ''}
                           </option>
                         ))}
                       </Form.Select>
@@ -411,7 +394,6 @@ const AddReceiver = () => {
                           borderBottomLeftRadius: 0,
                         }}
                       />
-
                     </div>
                   </FloatingLabel>
                   {touched.phone && errors.phone && (
@@ -434,15 +416,19 @@ const AddReceiver = () => {
                     <label>
                       Country <span style={{ color: "red" }}>*</span>
                     </label>
-
                     <Select
                       options={countryOptions}
                       name="country"
                       value={countryOptions.find(opt => opt.value === values.country)}
-                      onChange={(option) => setFieldValue("country", option.value)}
+                      onChange={(option) => {
+                        setFieldValue("country", option.value);
+                        const foundCountry = allCountries.find(c => c.name === option.value);
+                        if (foundCountry) {
+                          setFieldValue("countryCode", foundCountry.dial_code);
+                        }
+                      }}
                       onBlur={() => setFieldValue("country", values.country)}
                     />
-
                     {touched.country && errors.country && (
                       <div className="text-danger small mt-1">
                         {errors.country}
@@ -450,7 +436,7 @@ const AddReceiver = () => {
                     )}
                   </div>
                 </Col>
-
+                {/* ...existing code... */}
                 <Col>
                   <FloatingLabel
                     as={Col}
@@ -478,7 +464,7 @@ const AddReceiver = () => {
                   </FloatingLabel>
                 </Col>
               </Row>
-
+              {/* ...existing code... */}
               <Row className="mb-3">
                 <FloatingLabel
                   as={Col}
@@ -503,7 +489,7 @@ const AddReceiver = () => {
                     {errors.city}
                   </Form.Control.Feedback>
                 </FloatingLabel>
-
+                {/* ...existing code... */}
                 <FloatingLabel
                   as={Col}
                   controlId="post_code"
@@ -527,7 +513,7 @@ const AddReceiver = () => {
                     {errors.post_code}
                   </Form.Control.Feedback>
                 </FloatingLabel>
-
+                {/* ...existing code... */}
                 <FloatingLabel
                   as={Col}
                   controlId="state"
@@ -552,7 +538,7 @@ const AddReceiver = () => {
                   </Form.Control.Feedback>
                 </FloatingLabel>
               </Row>
-
+              {/* ...existing code... */}
               <Row className="mb-3">
                 <Col>
                   <Button
