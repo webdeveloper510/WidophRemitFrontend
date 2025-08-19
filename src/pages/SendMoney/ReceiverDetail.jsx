@@ -400,7 +400,7 @@ const ReceiverDetail = () => {
                             }}
                             onBlur={handleBlur}
                             style={{
-                              maxWidth: "110px",
+                              maxWidth: "140px",
                               borderTopRightRadius: 0,
                               borderBottomRightRadius: 0,
                             }}
@@ -484,7 +484,7 @@ const ReceiverDetail = () => {
                             <span style={{ color: "red" }}> *</span>
                           </span>
                         }
-                        className="mb-3"
+                        className="mb-3 textarea-label"
                       >
                         <Form.Control
                           as="textarea"

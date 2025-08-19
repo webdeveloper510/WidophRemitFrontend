@@ -667,7 +667,7 @@ const ProfileInformation = () => {
                                       <span style={{ color: "red" }}>*</span>
                                     </span>
                                   }
-                                  className="mb-3"
+                                  className="mb-3 textarea-label"
                                 >
                                   <Form.Control
                                     name="address"

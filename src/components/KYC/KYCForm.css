@@ -318,4 +318,6 @@ css-13cymwt-control .css-t3ipsp-control,
 .outer_kycaddress label {
     height: 33px !important;
     line-height: 33px;
+    top: -3px ! IMPORTANT;
+    background: #fffcf5 !important;
 }

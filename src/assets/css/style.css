@@ -280,6 +280,7 @@ div#basic-navbar-nav a {
     background: transparent !important;
     height: 30px !important;
     top: -1px;
+    left: -18px;
 }
 /* .receiverslist-table
   .sc-dKKIkQ.kqXKaa.rdt_TableBody
