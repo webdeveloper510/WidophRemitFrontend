@@ -93,9 +93,9 @@ const VirtualAccountDetail = () => {
                         </td>
                         <td>
                             <span
-                                className=""
+                                className="copyText"
                                 onClick={() => copyToClipboard(monovaform.accountNumber)}
-                                style={{ cursor: "pointer" }}
+                                style={{ cursor: "pointer", position:'relative',top:'0',right:'0'}}
                             >
                                 <RiFileCopyLine />
                             </span>
@@ -108,9 +108,9 @@ const VirtualAccountDetail = () => {
                         </td>
                         <td>
                             <span
-                                className=""
+                                className="copyText"
                                 onClick={() => copyToClipboard(monovaform.accountName)}
-                                style={{ cursor: "pointer" }}
+                                style={{ cursor: "pointer", position:'relative',top:'0',right:'0'}}
                             >
                                 <RiFileCopyLine />
                             </span>
@@ -123,9 +123,9 @@ const VirtualAccountDetail = () => {
                         </td>
                         <td>
                             <span
-                                className=""
+                                className="copyText"
                                 onClick={() => copyToClipboard(monovaform.bsbNumber)}
-                                style={{ cursor: "pointer" }}
+                                style={{ cursor: "pointer", position:'relative',top:'0',right:'0'}}
                             >
                                 <RiFileCopyLine />
                             </span>
