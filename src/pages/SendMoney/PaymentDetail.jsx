@@ -176,12 +176,11 @@ const PaymentDetail = () => {
 
   const handleMonovaContinue = async () => {
     const errors = {};
-    if (!monovaForm.paymentMethod)
-      errors.paymentMethod = "Please select payment method.";
+    // if (!monovaForm.paymentMethod)
+    //   errors.paymentMethod = "Please select payment method.";
     if (!monovaForm.bsb) errors.bsb = "BSB is required.";
     if (!monovaForm.accountName)
       errors.accountName = "Account name is required.";
-
     if (!transferReason) {
       toast.error("Please select a transfer reason");
       setModalShowMonova(false);
@@ -191,6 +190,7 @@ const PaymentDetail = () => {
     setMonovaFormErrors(errors);
 
     if (Object.keys(errors).length === 0) {
+      let res;
       try {
         if (modalShowMonova) {
           try {
@@ -200,10 +200,10 @@ const PaymentDetail = () => {
               toast.error("Receiver information is incomplete.");
               return;
             }
-
+ 
             toast.info("Creating bank matcher...");
 
-            const res = await createAutoMatcher({
+            res = await createAutoMatcher({
               akaNames: [
                 receiver.first_name,
                 `${receiver.first_name} ${receiver.last_name}`,
@@ -233,13 +233,12 @@ const PaymentDetail = () => {
         const temp = {
           amount: amount,
           bsbNumber: monovaForm.bsb,
-          accountNumber: monovaForm.accountNumber,
-          accountName: monovaForm.accountName,
+          accountNumber: modalShowMonova ? res.data.bankAccountNumber : monovaForm.accountNumber,
+          accountName: modalShowMonova ? res.data.bankAccountName : monovaForm.accountName,
           payment_mode: monovaForm.paymentMethod,
         };
 
         sessionStorage.setItem("monova_form_data", JSON.stringify(temp));
-
         const finalReason = transferReason === "Other" ? otherReason : transferReason;
 
         const updatedTransferData = {
@@ -255,7 +254,7 @@ const PaymentDetail = () => {
 
           if (txResponse?.code === "200") {
             setModalShowMonova(false);
-            navigate("/confirm-transfer", { state: { from: "Payment-Detail" } });
+            navigate("/virtual-account-detail", { state: { from: "Payment-Detail" } });
           } else {
             toast.error(txResponse?.message || "Transaction creation failed.");
           }
@@ -394,12 +393,12 @@ const PaymentDetail = () => {
       }
       else if (AutoMatcherRes?.code === "200" && AutoMatcherRes.data.bankAccountNumber) {
         const bankDetails = AutoMatcherRes.data;
-        setMonovaForm(prev => ({
-          ...prev,
+        setMonovaForm({
+          paymentMethod: "",
           accountName: bankDetails.bankAccountName,
           accountNumber: bankDetails.bankAccountNumber,
           bsb: bankDetails.bsb,
-        }));
+        });
         sessionStorage.setItem("monova_automatcher", JSON.stringify(bankDetails));
         setModalShowMonovaExisting(true);
       } else {

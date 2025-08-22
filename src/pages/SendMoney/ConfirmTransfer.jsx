@@ -292,10 +292,10 @@ const ConfirmTransfer = () => {
         paymentSuccess = await handleMonovaPayment();
       } else if (currentPaymentMethod === "zai") {
         paymentSuccess = await handleZaiPayment();
-      }else if (currentPaymentMethod === "budpay"){
-        
+      } else if (currentPaymentMethod === "budpay") {
+
       }
-       else {
+      else {
         toast.error("No valid payment method selected.");
         return;
       }
@@ -345,10 +345,19 @@ const ConfirmTransfer = () => {
         <div className="d-flex align-items-center">
           <Button
             variant="link"
-            onClick={() =>
-              navigate("/payment-detail", {
-                state: { from: "/confirm-transfer" },
-              })
+            onClick={() => {
+              const currentPaymentMethod = sessionStorage.getItem(
+                "selected_payment_method"
+              );
+              if (currentPaymentMethod === 'monova')
+                navigate("/virtual-account-detail", {
+                  state: { from: "/confirm-transfer" },
+                })
+              else
+                navigate("/payment-detail", {
+                  state: { from: "/confirm-transfer" },
+                })
+            }
             }
             className="p-0 border-0 bg-transparent"
           >
@@ -444,10 +453,19 @@ const ConfirmTransfer = () => {
                 <Button
                   variant="light"
                   className="cancel-btn float-start"
-                  onClick={() =>
-                    navigate("/payment-detail", {
-                      state: { from: "/confirm-transfer" },
-                    })
+                  onClick={() => {
+                    const currentPaymentMethod = sessionStorage.getItem(
+                      "selected_payment_method"
+                    );
+                    if (currentPaymentMethod === 'monova')
+                      navigate("/virtual-account-detail", {
+                        state: { from: "/confirm-transfer" },
+                      })
+                    else
+                      navigate("/payment-detail", {
+                        state: { from: "/confirm-transfer" },
+                      })
+                  }
                   }
                 >
                   Back

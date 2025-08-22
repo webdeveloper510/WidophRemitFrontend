@@ -31,6 +31,7 @@ import ExchangeRatePage from "../ExchangeRatePage";
 import KYCForm from "../components/KYC/KYCForm";
 import Emailverify from "../components/Emailverify";
 import BudPaySuccess from "../pages/BudPay/BudPaySuccess"
+import VirtualAccountDetail from "../pages/SendMoney/VirtualAccountDetail";
 
 const AppRoutes = () => {
   return (
@@ -81,6 +82,7 @@ const AppRoutes = () => {
         <Route path="/update-receiver/:id" element={<UpdateReceiver />} />
         <Route path="monoova" element={<MonoovaPaymentGateway />} />
         <Route path="/budpay-success" element={<BudPaySuccess/>}></Route>
+        <Route path="/virtual-account-detail" element={<VirtualAccountDetail/>}></Route>
         {/* Transaction Success - Special Protection */}
         <Route
           path="/transaction-success"

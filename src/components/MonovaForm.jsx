@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Form, FloatingLabel, Col, Row, Button } from "react-bootstrap";
 import { RiFileCopyLine } from "react-icons/ri";
 
@@ -10,9 +10,9 @@ const MonovaForm = ({
   onCancel,
   readOnly = false,
   showCopy = false,
-}) => (
-  <Form className="profile-form">
-    <Row className="mb-3">
+}) => {
+  return <Form className="profile-form">
+    {/* <Row className="mb-3">
       <FloatingLabel
         as={Col}
         controlId="monova-payment-method"
@@ -25,7 +25,7 @@ const MonovaForm = ({
           isInvalid={!!monovaFormErrors.paymentMethod}
         >
           <option value="">Select Payment Method</option>
-          {/* <option value="debit">Direct Debit</option> */}
+          <option value="debit">Direct Debit</option>
           <option value="npp">NPP Credit Bank Account</option>
         </Form.Select>
         {monovaFormErrors.paymentMethod && (
@@ -34,7 +34,7 @@ const MonovaForm = ({
           </Form.Control.Feedback>
         )}
       </FloatingLabel>
-    </Row>
+    </Row> */}
     <Row className="mb-3">
       <FloatingLabel
         as={Col}
@@ -149,6 +149,6 @@ const MonovaForm = ({
       </Col>
     </Row>
   </Form>
-);
+}
 
 export default MonovaForm;
