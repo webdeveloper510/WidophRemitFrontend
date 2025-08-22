@@ -177,8 +177,6 @@ const PaymentDetail = () => {
   const handleMonovaContinue = async (formData = null) => {
     const currentForm = modalShowMonova ? monovaForm : formData;
     const errors = {};
-    console.log(currentForm);
-    // Validation using currentForm instead of monovaForm
     if (!currentForm.bsb) errors.bsb = "BSB is required.";
     if (!currentForm.accountName) errors.accountName = "Account name is required.";
     if (!transferReason) {
