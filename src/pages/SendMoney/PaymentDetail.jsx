@@ -174,104 +174,101 @@ const PaymentDetail = () => {
     }
   };
 
-const handleMonovaContinue = async (formData = null) => {
-  // Use passed formData if available, otherwise use current state
-  const currentForm = formData || monovaForm;
-  
-  console.log("MM", currentForm);
-  const errors = {};
-  
-  // Validation using currentForm instead of monovaForm
-  if (!currentForm.bsb) errors.bsb = "BSB is required.";
-  if (!currentForm.accountName) errors.accountName = "Account name is required.";
-  if (!transferReason) {
-    toast.error("Please select a transfer reason");
-    setModalShowMonova(false);
-    return;
-  }
-
-  setMonovaFormErrors(errors);
-
-  if (Object.keys(errors).length === 0) {
-    let res;
-    try {
-      if (modalShowMonova) {
-        try {
-          const receiver = JSON.parse(sessionStorage.getItem("selected_receiver") || "null");
-
-          if (!receiver || !receiver.first_name || !receiver.last_name) {
-            toast.error("Receiver information is incomplete.");
-            return;
-          }
-
-          toast.info("Creating bank matcher...");
-
-          res = await createAutoMatcher({
-            akaNames: [
-              receiver.first_name,
-              `${receiver.first_name} ${receiver.last_name}`,
-              `${receiver.first_name} ${receiver.last_name} ${receiver.middle_name || ""}`.trim(),
-            ],
-            bankAccountName: `${receiver.first_name} ${receiver.last_name}`,
-            bsb: currentForm.bsbNumber || currentForm.bsb || "",
-          });
-
-          if (!res?.data) {
-            toast.error("Failed to create automatcher.");
-            return;
-          }
-
-          sessionStorage.setItem("monova_automatcher", JSON.stringify(res.data));
-          toast.success("Automatcher created successfully.");
-        } catch (automatcherErr) {
-          console.error("Automatcher creation failed:", automatcherErr);
-          toast.error("Failed to create automatcher. Please try again.");
-          return;
-        }
-      }
-
-      sessionStorage.setItem("monova_payment_data", JSON.stringify(currentForm));
-      sessionStorage.setItem("selected_payment_method", "monova");
-
-      const temp = {
-        amount: amount,
-        bsbNumber: currentForm.bsb,
-        accountNumber: modalShowMonova ? res.data.bankAccountNumber : currentForm.accountNumber,
-        accountName: modalShowMonova ? res.data.bankAccountName : currentForm.accountName,
-        payment_mode: currentForm.paymentMethod,
-      };
-
-      sessionStorage.setItem("monova_form_data", JSON.stringify(temp));
-      const finalReason = transferReason === "Other" ? otherReason : transferReason;
-
-      const updatedTransferData = {
-        ...transferData,
-        amount: {
-          ...transferData.amount,
-          reason: finalReason,
-        },
-      };
-
-      try {
-        const txResponse = await createTransaction(updatedTransferData);
-
-        if (txResponse?.code === "200") {
-          setModalShowMonova(false);
-          navigate("/virtual-account-detail", { state: { from: "Payment-Detail" } });
-        } else {
-          toast.error(txResponse?.message || "Transaction creation failed.");
-        }
-      } catch (txErr) {
-        console.error("Transaction creation failed:", txErr);
-        toast.error("Failed to create transaction. Please try again.");
-      }
-
-    } catch (err) {
-      console.error("Unexpected error during Monova flow:", err);
-      toast.error("An unexpected error occurred. Please try again.");
+  const handleMonovaContinue = async (formData = null) => {
+    const currentForm = modalShowMonova ? monovaForm : formData;
+    const errors = {};
+    console.log(currentForm);
+    // Validation using currentForm instead of monovaForm
+    if (!currentForm.bsb) errors.bsb = "BSB is required.";
+    if (!currentForm.accountName) errors.accountName = "Account name is required.";
+    if (!transferReason) {
+      toast.error("Please select a transfer reason");
+      setModalShowMonova(false);
+      return;
     }
-  }
-};
+
+    setMonovaFormErrors(errors);
+
+    if (Object.keys(errors).length === 0) {
+      let res;
+      try {
+        if (modalShowMonova) {
+          try {
+            const receiver = JSON.parse(sessionStorage.getItem("selected_receiver") || "null");
+
+            if (!receiver || !receiver.first_name || !receiver.last_name) {
+              toast.error("Receiver information is incomplete.");
+              return;
+            }
+
+            toast.info("Creating bank matcher...");
+
+            res = await createAutoMatcher({
+              akaNames: [
+                receiver.first_name,
+                `${receiver.first_name} ${receiver.last_name}`,
+                `${receiver.first_name} ${receiver.last_name} ${receiver.middle_name || ""}`.trim(),
+              ],
+              bankAccountName: `${receiver.first_name} ${receiver.last_name}`,
+              bsb: currentForm.bsbNumber || currentForm.bsb || "",
+            });
+
+            if (!res?.data) {
+              toast.error("Failed to create automatcher.");
+              return;
+            }
+
+            sessionStorage.setItem("monova_automatcher", JSON.stringify(res.data));
+            toast.success("Automatcher created successfully.");
+          } catch (automatcherErr) {
+            console.error("Automatcher creation failed:", automatcherErr);
+            toast.error("Failed to create automatcher. Please try again.");
+            return;
+          }
+        }
+
+        sessionStorage.setItem("monova_payment_data", JSON.stringify(currentForm));
+        sessionStorage.setItem("selected_payment_method", "monova");
+
+        const temp = {
+          amount: amount,
+          bsbNumber: currentForm.bsb,
+          accountNumber: modalShowMonova ? res.data.bankAccountNumber : currentForm.accountNumber,
+          accountName: modalShowMonova ? res.data.bankAccountName : currentForm.accountName,
+          payment_mode: currentForm.paymentMethod,
+        };
+
+        sessionStorage.setItem("monova_form_data", JSON.stringify(temp));
+        const finalReason = transferReason === "Other" ? otherReason : transferReason;
+
+        const updatedTransferData = {
+          ...transferData,
+          amount: {
+            ...transferData.amount,
+            reason: finalReason,
+          },
+        };
+
+        try {
+          const txResponse = await createTransaction(updatedTransferData);
+
+          if (txResponse?.code === "200") {
+            setModalShowMonova(false);
+            navigate("/virtual-account-detail", { state: { from: "Payment-Detail" } });
+          } else {
+            toast.error(txResponse?.message || "Transaction creation failed.");
+          }
+        } catch (txErr) {
+          console.error("Transaction creation failed:", txErr);
+          toast.error("Failed to create transaction. Please try again.");
+        }
+
+      } catch (err) {
+        console.error("Unexpected error during Monova flow:", err);
+        toast.error("An unexpected error occurred. Please try again.");
+      }
+    }
+  };
 
   const copyToClipboard = (text) => {
     navigator.clipboard
@@ -397,16 +394,16 @@ const handleMonovaContinue = async (formData = null) => {
       else if (AutoMatcherRes?.code === "200" && AutoMatcherRes.data.bankAccountNumber) {
         const bankDetails = AutoMatcherRes.data;
         const updatedMonovaForm = {
-        paymentMethod: "",
-        accountName: bankDetails.bankAccountName,
-        accountNumber: bankDetails.bankAccountNumber,
-        bsb: bankDetails.bsb,
-      };
-              setMonovaForm(updatedMonovaForm);
+          paymentMethod: "",
+          accountName: bankDetails.bankAccountName,
+          accountNumber: bankDetails.bankAccountNumber,
+          bsb: bankDetails.bsb,
+        };
+        setMonovaForm(updatedMonovaForm);
 
         sessionStorage.setItem("monova_automatcher", JSON.stringify(bankDetails));
         // setModalShowMonovaExisting(true);
-      await handleMonovaContinue(updatedMonovaForm);
+        await handleMonovaContinue(updatedMonovaForm);
       } else {
         toast.error("Some Error while creating Monoova automatcher Account")
       }
