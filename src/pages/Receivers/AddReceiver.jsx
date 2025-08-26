@@ -1,4 +1,4 @@
-import  {useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AnimatedPage from "../../components/AnimatedPage";
 import Back from "../../assets/images/back.png";
@@ -33,6 +33,7 @@ const AddReceiver = () => {
     last_name: "",
     email: "",
     phone: "",
+    company_name: "",
     countryCode: "+61",
     country: "Australia",
     building_no: "",
@@ -60,7 +61,9 @@ const AddReceiver = () => {
       .required("Last name is required")
       .matches(/^[A-Za-z\s]+$/, "Only letters allowed"),
 
-    email: Yup.string().email("Invalid email"),
+    email: Yup.string().required(
+      "email is Required"
+    ).email("Please enter a valid email address"),
 
     phone: Yup.string()
       .required("Mobile number is required")
@@ -76,6 +79,7 @@ const AddReceiver = () => {
 
     address: Yup.string().required("Address is required"),
     swift_code: Yup.string().required("Swift code is required"),
+    company_name: Yup.string().required("company name is required")
   });
 
   const {
@@ -123,7 +127,9 @@ const AddReceiver = () => {
           country: values.country,
           country_code: values.countryCode,
           address: values.address,
-          swift_code: values.swift_code
+          swift_code: values.swift_code,
+          email: values.email,
+          company_name: values.company_name
         };
 
         const response = await createRecipient(payload);
@@ -211,7 +217,7 @@ const AddReceiver = () => {
                   controlId="accountNumber"
                   label={
                     <span>
-                      Account Number
+                      IBAN/Account Number
                       <span style={{ color: "red" }}> *</span>
                     </span>
                   }
@@ -234,7 +240,7 @@ const AddReceiver = () => {
                   controlId="accountNumber"
                   label={
                     <span>
-                      Swift Number
+                      BIC/BSC/Swift Number
                       <span style={{ color: "red" }}> *</span>
                     </span>
                   }
@@ -340,6 +346,65 @@ const AddReceiver = () => {
                 </FloatingLabel>
               </Row>
 
+              <Row className="mb-3">
+                {/* ...existing code... */}
+                <FloatingLabel
+                  as={Col}
+                  controlId="CompanyName"
+                  label={
+                    <span>
+                      Company Name
+                      <span style={{ color: "red" }}> *</span>
+                    </span>
+                  }
+                  className="mb-3"
+                >
+                  <Form.Control
+                    type="text"
+                    name="company_name"
+                    value={values.company_name}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (isAlphaOnly(value)) {
+                        handleChange(e);
+                      }
+                    }}
+                    onBlur={handleBlur}
+                    isInvalid={touched.company_name && errors.company_name}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.company_name}
+                  </Form.Control.Feedback>
+                </FloatingLabel>
+
+                <FloatingLabel
+                  as={Col}
+                  controlId="Email"
+                  label={
+                    <span>
+                      Email
+                      <span style={{ color: "red" }}> *</span>
+                    </span>
+                  }
+                  className="mb-3"
+                >
+                  <Form.Control
+                    type="email"
+                    name="email"
+                    value={values.email}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      handleChange(e);
+                    }}
+                    onBlur={handleBlur}
+                    isInvalid={touched.email && errors.email}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.email}
+                  </Form.Control.Feedback>
+                </FloatingLabel>
+              </Row>
+
               {/* Phone Number - Updated to match Signup style */}
               <Row className="mb-3 mobile_numbero">
                 <Col>
@@ -364,7 +429,7 @@ const AddReceiver = () => {
                         onBlur={handleBlur}
                         style={{
                           maxWidth: "140px",
-                          borderTopRightRadius: 0,  
+                          borderTopRightRadius: 0,
                           borderBottomRightRadius: 0,
                         }}
                       >
@@ -502,7 +567,11 @@ const AddReceiver = () => {
                     type="number"
                     name="post_code"
                     value={values.post_code}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      if (e.target.value.length <= 12) {
+                        handleChange(e);
+                      }
+                    }}
                     onBlur={handleBlur}
                     isInvalid={touched.post_code && errors.post_code}
                   />

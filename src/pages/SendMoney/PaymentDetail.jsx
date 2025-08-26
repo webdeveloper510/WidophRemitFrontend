@@ -23,6 +23,7 @@ import {
   GetBudRedirectUrl,
 } from "../../services/Api";
 import { toast } from "react-toastify";
+import { FaWhatsapp } from "react-icons/fa6";
 
 const PaymentDetail = () => {
   const location = useLocation();
@@ -548,7 +549,7 @@ const PaymentDetail = () => {
                           >
                             <option value="">Select Gateway</option>
                             <option value="monova">Monoova</option>
-                            <option value="budpay">BudPay</option>
+                            {/* <option value="budpay">BudPay</option> */}
                           </Form.Select>
                         )}
                     </div>
@@ -723,9 +724,16 @@ const PaymentDetail = () => {
                 </FloatingLabel>
               </Row>
               <p className="m-4">
-                Use your PayID to transfer funds from your online banking
-                platform. Include the transaction ID in the reference field.
+                Use your PayID to transfer funds from your online banking platform.
+                Include the transaction ID in the reference field.
+                <br />
+                <small className="text-muted">
+                  For any queries, please feel free to contact us at <span>
+                    <a href="tel:+61480001611">+61480001611</a>
+                  </span>.
+                </small>
               </p>
+
               <Row className="mb-3">
                 <Col>
                   <Button

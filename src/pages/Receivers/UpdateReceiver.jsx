@@ -43,7 +43,8 @@ const UpdateReceiver = () => {
       post_code: "",
       address: "",
       swift_code: "",
-      countryCode: ""
+      countryCode: "",
+      company_name: ""
     },
     validationSchema: Yup.object({
       bank_name: Yup.string().required("Bank name is required"),
@@ -61,7 +62,7 @@ const UpdateReceiver = () => {
         .required("Last name is required")
         .matches(/^[A-Za-z\s]+$/, "Only letters allowed"),
 
-      email: Yup.string().email("Invalid email"),
+      email: Yup.string().required("email is required").email("Invalid email"),
 
       mobile: Yup.string()
         .required("Mobile number is required")
@@ -84,6 +85,7 @@ const UpdateReceiver = () => {
 
       address: Yup.string().required("Address is required"),
       swift_code: Yup.string().required("Swift code is required"),
+      company_name: Yup.string().required("Company name required")
     }),
 
 
@@ -108,7 +110,8 @@ const UpdateReceiver = () => {
           country: values.country,
           country_code: values.countryCode,
           address: values.address,
-          swift_code: values.swift_code
+          swift_code: values.swift_code,
+          company_name: values.company_name
         };
 
         const response = await updateUserRecipient(id, payload);
@@ -160,7 +163,8 @@ const UpdateReceiver = () => {
             post_code: recipient.postcode || "",
             address: recipient.address || "",
             swift_code: recipient.swift_code || "",
-            countryCode: recipient.country_code || ""
+            countryCode: recipient.country_code || "",
+            company_name: recipient.company_name || ""
           };
 
           setValues(initialValues);
@@ -224,7 +228,7 @@ const UpdateReceiver = () => {
                   </Form.Control.Feedback>
                 </FloatingLabel>
 
-                <FloatingLabel as={Col} label="Account Number *">
+                <FloatingLabel as={Col} label="IBAN/Account Number*">
                   <Form.Control
                     type="text"
                     name="account_number"
@@ -238,7 +242,7 @@ const UpdateReceiver = () => {
                   </Form.Control.Feedback>
                 </FloatingLabel>
 
-                <FloatingLabel as={Col} label="Swift Number *">
+                <FloatingLabel as={Col} label="BIC/BSC/Swift Number *">
                   <Form.Control
                     type="text"
                     name="swift_code"
@@ -315,6 +319,61 @@ const UpdateReceiver = () => {
 
                   <Form.Control.Feedback type="invalid">
                     {errors.last_name}
+                  </Form.Control.Feedback>
+                </FloatingLabel>
+              </Row>
+
+              <Row className="mb-3">
+                {/* ...existing code... */}
+                <FloatingLabel
+                  as={Col}
+                  controlId="CompanyName"
+                  label={
+                    <span>
+                      Company Name
+                      <span style={{ color: "red" }}> *</span>
+                    </span>
+                  }
+                  className="mb-3"
+                >
+                  <Form.Control
+                    type="text"
+                    name="company_name"
+                    value={values.company_name}
+                    onChange={(e) => {
+                      handleChange(e);
+                    }}
+                    onBlur={handleBlur}
+                    isInvalid={touched.company_name && errors.company_name}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.company_name}
+                  </Form.Control.Feedback>
+                </FloatingLabel>
+
+                <FloatingLabel
+                  as={Col}
+                  controlId="Email"
+                  label={
+                    <span>
+                      Email
+                      <span style={{ color: "red" }}> *</span>
+                    </span>
+                  }
+                  className="mb-3"
+                >
+                  <Form.Control
+                    type="email"
+                    name="email"
+                    value={values.email}
+                    onChange={(e) => {
+                      handleChange(e);
+                    }}
+                    onBlur={handleBlur}
+                    isInvalid={touched.email && errors.email}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.email}
                   </Form.Control.Feedback>
                 </FloatingLabel>
               </Row>
@@ -453,7 +512,11 @@ const UpdateReceiver = () => {
                     type="text"
                     name="post_code"
                     value={values.post_code}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      if (e.target.value.length <= 12) {
+                        handleChange(e);
+                      }
+                    }}
                     onBlur={handleBlur}
                     isInvalid={touched.post_code && errors.post_code}
                   />
