@@ -117,7 +117,6 @@ const AddReceiver = () => {
           bank_identifier: "",
           first_name: values.first_name,
           last_name: values.last_name,
-          email: values.email,
           mobile: parsedMobile,
           building: values.building_no,
           street: values.street_name,
