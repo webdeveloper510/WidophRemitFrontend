@@ -35,6 +35,7 @@ const MonovaForm = ({
         )}
       </FloatingLabel>
     </Row> */}
+    <Row><p>Enter the details below to create your Virtual Auto-Matcher account.</p></Row>
     <Row className="mb-3">
       <FloatingLabel
         as={Col}

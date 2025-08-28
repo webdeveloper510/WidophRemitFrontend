@@ -9,9 +9,12 @@ const VirtualAccountDetail = () => {
     const [monovaform, setmonovaform] = useState(JSON.parse(sessionStorage.getItem("monova_form_data")));
     const [PaymentMethod, setPaymentMethod] = useState(JSON.parse(sessionStorage.getItem("monova_form_data")).payment_mode);
     const [paymemtError, setpaymemtError] = useState("")
+    const [payload, setpaylaod] = useState({})
     const navigate = useNavigate();
     const location = useLocation();
-
+    useEffect(() => {
+        setpaylaod(JSON.parse(sessionStorage.getItem("payload"))?.amount || {});
+    }, [])
     const copyToClipboard = (text) => {
         navigator.clipboard
             .writeText(text)
@@ -95,7 +98,7 @@ const VirtualAccountDetail = () => {
                             <span
                                 className="copyText"
                                 onClick={() => copyToClipboard(monovaform.accountNumber)}
-                                style={{ cursor: "pointer", position:'relative',top:'0',right:'0'}}
+                                style={{ cursor: "pointer", position: 'relative', top: '0', right: '0' }}
                             >
                                 <RiFileCopyLine />
                             </span>
@@ -110,7 +113,7 @@ const VirtualAccountDetail = () => {
                             <span
                                 className="copyText"
                                 onClick={() => copyToClipboard(monovaform.accountName)}
-                                style={{ cursor: "pointer", position:'relative',top:'0',right:'0'}}
+                                style={{ cursor: "pointer", position: 'relative', top: '0', right: '0' }}
                             >
                                 <RiFileCopyLine />
                             </span>
@@ -125,7 +128,7 @@ const VirtualAccountDetail = () => {
                             <span
                                 className="copyText"
                                 onClick={() => copyToClipboard(monovaform.bsbNumber)}
-                                style={{ cursor: "pointer", position:'relative',top:'0',right:'0'}}
+                                style={{ cursor: "pointer", position: 'relative', top: '0', right: '0' }}
                             >
                                 <RiFileCopyLine />
                             </span>
@@ -133,7 +136,23 @@ const VirtualAccountDetail = () => {
                     </tr>
                 </tbody>
             </Table>
-
+            <br />
+            
+            <p>
+                You’re almost done,
+                Please complete the payment steps here on the Widoph Remit portal first.
+                <br />
+                After that, continue with the following steps in your banking app:
+            </p>
+            <ul>
+                <li>Log in to your banking portal or app.
+                </li>
+                <li>Initiate a payment of {payload.send_currency} {" "}
+                    {payload.send_amount}   to your Virtual Auto-Matcher Account using above mentioned details.
+                </li>
+                <li>Enter your Transaction ID: {sessionStorage.getItem("transaction_id")} in the payment reference field.</li>
+                <li>Once we receive the funds, your transfer will automatically move to the next stage.</li>
+            </ul>
             <Row className="mt-5">
                 <Col>
                     <Button
@@ -158,6 +177,8 @@ const VirtualAccountDetail = () => {
                     </Button>
                 </Col>
             </Row>
+
+
         </AnimatedPage>
     )
 }
