@@ -10,7 +10,6 @@ import * as Yup from "yup";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-
 import LoginImage from "../../assets/images/login-image.png";
 import { resetPassword } from "../../services/Api";
 
@@ -36,8 +35,12 @@ const ResetPassword = () => {
       .length(6, "OTP must be of 6 digits")
       .required("OTP is required"),
     password: Yup.string()
-      .min(8, "Password must be at least 8 characters")
-      .required("Password is required"),
+      .required("Password is required")                          
+      .min(8, "Password must be at least 8 characters long")
+      .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+      .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .matches(/[0-9]/, "Password must contain at least one number")
+      .matches(/[!@#$%^&*(),.?":{}|<>]/, "Password must contain at least one special character"),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password")], "Passwords did not match")
       .required("Confirm Password is required"),

@@ -14,7 +14,6 @@ import { toast } from "react-toastify";
 import allCountries from "../../utils/AllCountries";
 import { v4 as uuidv4 } from 'uuid';
 
-
 const UpdateReceiver = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -47,45 +46,68 @@ const UpdateReceiver = () => {
       company_name: ""
     },
     validationSchema: Yup.object({
-      bank_name: Yup.string().required("Bank name is required"),
-
+      bank_name: Yup.string()
+        .required("Bank name is required")
+        .max(40, "Bank name is too big")
+        .matches(
+          /^[A-Za-z!@#\$%&'*+\-/=?^_`{|}~ ]+$/,
+          "Bank name can only contain letters and allowed special characters"
+        ),
       account_number: Yup.string()
         .required("Account number is required")
-        .min(8, "Minimum 8 digits")
-        .matches(/^[0-9]+$/, "Only numbers allowed"),
+        .min(8, "Minimum 8 characters")
+        .max(30, "Maximum 30 characters")
+        .matches(/^[a-zA-Z0-9 -]+$/, "Only letters, numbers, spaces, and hyphens are allowed"),
 
       first_name: Yup.string()
         .required("First name is required")
-        .matches(/^[A-Za-z\s]+$/, "Only letters allowed"),
+        .max(30, "First name cannot exceed 30 characters")
+        .matches(/^[a-zA-Z0-9 -]+$/, "Only letters, numbers, spaces, and hyphens are allowed"),
+
+      middle_name: Yup.string()
+        .max(30, "Middle name cannot exceed 30 characters")
+        .matches(/^[a-zA-Z0-9 -]*$/, "Only letters, numbers, spaces, and hyphens are allowed"),
 
       last_name: Yup.string()
         .required("Last name is required")
-        .matches(/^[A-Za-z\s]+$/, "Only letters allowed"),
+        .max(30, "Last name cannot exceed 30 characters")
+        .matches(/^[a-zA-Z0-9 -]+$/, "Only letters, numbers, spaces, and hyphens are allowed"),
 
-      email: Yup.string().required("email is required").email("Invalid email"),
+      email: Yup.string().required("email is required!")
+        .email("Please enter a valid email address"),
 
       mobile: Yup.string()
         .required("Mobile number is required")
-        .test(
-          "valid-length",
-          "Mobile number must be between 8 and 10 digits",
-          (value) => {
-            if (!value) return false;
-            return value.length >= 8 && value.length <= 10;
-          }
-        ),
+        .matches(/^\d{8,10}$/, "Mobile number must be between 8 and 10 digits"),
 
-      country: Yup.string().required("Country is required"),
-      state: Yup.string().required("State is required"),
-      city: Yup.string().required("City is required"),
+      country: Yup.string()
+        .required("Country is required"),
+
+      state: Yup.string()
+        .required("State is required")
+        .max(30, "State cannot exceed 30 characters")
+        .matches(/^[a-zA-Z -]+$/, "Only letters, spaces, and hyphens are allowed"),
+
+      city: Yup.string()
+        .required("City is required")
+        .max(35, "City cannot exceed 35 characters")
+        .matches(/^[a-zA-Z -]+$/, "Only letters, spaces, and hyphens are allowed"),
+
 
       post_code: Yup.string()
         .required("Postal code is required")
-        .matches(/^[0-9]+$/, "Only numbers allowed"),
+        .max(9, "Postal code cannot exceed 9 digits")
+        .matches(/^\d+$/, "Only numbers are allowed"),
 
-      address: Yup.string().required("Address is required"),
-      swift_code: Yup.string().required("Swift code is required"),
-      company_name: Yup.string().required("Company name required")
+      address: Yup.string()
+        .required("Address is required"),
+
+      swift_code: Yup.string()
+        .required("Swift code is required")
+        .max(15, "Swift code cannot exceed 15 characters")
+        .matches(/^[a-zA-Z0-9 -]+$/, "Only letters, numbers, spaces, and hyphens are allowed"),
+
+      company_name: Yup.string().required("Company name is required")
     }),
 
 
@@ -219,7 +241,11 @@ const UpdateReceiver = () => {
                     type="text"
                     name="bank_name"
                     value={values.bank_name}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^[A-Za-z!@#\$%&'*+\-/=?^_`{|}~ ]+$/.test(value) || !value)
+                        handleChange(e);
+                    }}
                     onBlur={handleBlur}
                     isInvalid={touched.bank_name && errors.bank_name}
                   />
@@ -233,7 +259,11 @@ const UpdateReceiver = () => {
                     type="text"
                     name="account_number"
                     value={values.account_number}
-                    onChange={() => { handleChange }}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (!value || /^[a-zA-Z0-9 -]+$/.test(value))
+                        handleChange(e)
+                    }}
                     onBlur={handleBlur}
                     isInvalid={touched.account_number && errors.account_number}
                   />
@@ -247,7 +277,11 @@ const UpdateReceiver = () => {
                     type="text"
                     name="swift_code"
                     value={values.swift_code}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (!value || /^[a-zA-Z0-9 -]+$/.test(value))
+                        handleChange(e)
+                    }}
                     onBlur={handleBlur}
                     isInvalid={touched.swift_code && errors.swift_code}
                   />
@@ -268,11 +302,10 @@ const UpdateReceiver = () => {
                     type="text"
                     name="first_name"
                     value={values.first_name}
-                    onChange={(e) => {
+                     onChange={(e) => {
                       const value = e.target.value;
-                      if (/^[A-Za-z\s]*$/.test(value)) {
+                      if ((/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 30) || !value)
                         handleChange(e);
-                      }
                     }}
                     onBlur={handleBlur}
                     isInvalid={touched.first_name && errors.first_name}
@@ -288,11 +321,10 @@ const UpdateReceiver = () => {
                     type="text"
                     name="middle_name"
                     value={values.middle_name}
-                    onChange={(e) => {
+                     onChange={(e) => {
                       const value = e.target.value;
-                      if (/^[A-Za-z\s]*$/.test(value)) {
+                      if ((/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 30) || !value)
                         handleChange(e);
-                      }
                     }}
                     onBlur={handleBlur}
                     isInvalid={touched.middle_name && errors.middle_name}
@@ -307,11 +339,10 @@ const UpdateReceiver = () => {
                     type="text"
                     name="last_name"
                     value={values.last_name}
-                    onChange={(e) => {
+                     onChange={(e) => {
                       const value = e.target.value;
-                      if (/^[A-Za-z\s]*$/.test(value)) {
+                      if ((/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 30) || !value)
                         handleChange(e);
-                      }
                     }}
                     onBlur={handleBlur}
                     isInvalid={touched.last_name && errors.last_name}
@@ -498,7 +529,12 @@ const UpdateReceiver = () => {
                     type="text"
                     name="city"
                     value={values.city}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if ((/^[a-zA-Z -]+$/.test(value) && value.length <= 35) || !value)
+                        handleChange(e)
+                    }
+                    }
                     onBlur={handleBlur}
                     isInvalid={touched.city && errors.city}
                   />
@@ -513,7 +549,8 @@ const UpdateReceiver = () => {
                     name="post_code"
                     value={values.post_code}
                     onChange={(e) => {
-                      if (e.target.value.length <= 12) {
+                      const value = e.target.value;
+                      if (value.length <= 9 && /^\d+$/.test(value) || !value) {
                         handleChange(e);
                       }
                     }}
@@ -530,7 +567,12 @@ const UpdateReceiver = () => {
                     type="text"
                     name="state"
                     value={values.state}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if ((/^[a-zA-Z -]+$/.test(value) && value.length <= 30) || !value)
+                        handleChange(e)
+                    }
+                    }
                     onBlur={handleBlur}
                     isInvalid={touched.state && errors.state}
                   />

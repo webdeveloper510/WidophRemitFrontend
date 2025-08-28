@@ -29,9 +29,9 @@ const ProfileInformation = () => {
   const [rawMobile, setRawMobile] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [collapsed, setCollapsed] = useState(() => {
-  const stored = sessionStorage.getItem("collapsed");
-  return stored === "true"; 
-});
+    const stored = sessionStorage.getItem("collapsed");
+    return stored === "true";
+  });
 
   const [kycStatus, setkycStatus] = useState("pending");
   const [PasswordChange, setPasswordChange] = useState(false);
@@ -39,21 +39,17 @@ const ProfileInformation = () => {
   const [otp, setOtp] = useState("");
   const [user, setuser] = useState({});
   const [otpPurpose, setOtpPurpose] = useState("");
-
   const navigate = useNavigate();
-
-  // Country options - only Australia and New Zealand
   const countryOptions = [
     { value: "Australia", label: "Australia" },
     { value: "New Zealand", label: "New Zealand" }
   ];
 
-  // Country of Birth dropdown options (all countries)
   const countryOfBirthOptions = getNames().map((country) => ({
     value: country,
     label: country,
   }));
-
+  
   const [visibility, setVisibility] = useState({
     current: false,
     new: false,
@@ -79,8 +75,6 @@ const ProfileInformation = () => {
     newPassword: "",
     confirmPassword: "",
   });
-
-
 
   const handleResendOtp = async () => {
     try {
@@ -108,16 +102,8 @@ const ProfileInformation = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    const charOnlyFields = ["firstName", "middleName", "lastName", "occupation"];
-    if (charOnlyFields.includes(name)) {
-      const valid = /^[A-Za-z\s]*$/.test(value);
-      if (!valid) return;
-    }
-
-    // Password fields: disallow spaces anywhere
     if (["currentPassword", "newPassword", "confirmPassword"].includes(name)) {
       if (/\s/.test(value)) {
-        // Do not update state if space is present
         return;
       }
     }
@@ -195,9 +181,9 @@ const ProfileInformation = () => {
       if (response?.code === "200") {
         if (otpPurpose === "password") {
           setchangingPassword(true);
-          handleUpdateProfile(); // it already handles password logic
+          handleUpdateProfile(); 
         } else if (otpPurpose === "profile") {
-          updateProfileAfterOtp(); // define separately
+          updateProfileAfterOtp();
         }
       } else {
         toast.error(response?.message || "Invalid OTP");
@@ -250,8 +236,6 @@ const ProfileInformation = () => {
         setmodalShowOtp(false);
       });
   };
-
-
 
   const requiredFields = [
     "firstName",
@@ -316,7 +300,6 @@ const ProfileInformation = () => {
 
     const missingFields = requiredFields.filter((field) => !formData[field]);
     if (missingFields.length > 0) return;
-
     const fullMobile = `+${countryCode}${rawMobile}`;
     const { email, mobile, ...rest } = formData;
 
@@ -363,7 +346,13 @@ const ProfileInformation = () => {
       if (["currentPassword", "newPassword", "confirmPassword"].includes(field)) {
         if (!formData[field]) return true;
         if (/\s/.test(formData[field])) return true;
-        if (field === "newPassword" && formData.newPassword.length < 8) return true;
+        if (field === "newPassword") {
+          if (formData.newPassword.length < 8) return true;
+          if (!/[a-z]/.test(formData.newPassword)) return true;
+          if (!/[A-Z]/.test(formData.newPassword)) return true;
+          if (!/[0-9]/.test(formData.newPassword)) return true;
+          if (!/[!@#$%^&*(),.?":{}|<>]/.test(formData.newPassword)) return true;
+        }
         if (field === "confirmPassword" && formData.confirmPassword !== formData.newPassword) return true;
       }
     }
@@ -371,20 +360,26 @@ const ProfileInformation = () => {
     return !formData[field];
   };
 
-
   const hasPasswordErrors = () => {
+    const small = /[a-z]/;
+    const capital = /[A-Z]/;
+    const number = /[0-9]/;
+    const special = /[!@#$%^&*(),.?":{}|<>]/;
     return (
       !formData.currentPassword ||
       /\s/.test(formData.currentPassword) ||
       !formData.newPassword ||
       /\s/.test(formData.newPassword) ||
       formData.newPassword.length < 8 ||
+      !small.test(formData.newPassword) ||
+      !capital.test(formData.newPassword) ||
+      !number.test(formData.newPassword) ||
+      !special.test(formData.newPassword) ||
       !formData.confirmPassword ||
       /\s/.test(formData.confirmPassword) ||
       formData.confirmPassword !== formData.newPassword
     );
   };
-
 
   return (
     <>
@@ -426,7 +421,11 @@ const ProfileInformation = () => {
                                 <Form.Control
                                   name="firstName"
                                   value={formData.firstName}
-                                  onChange={handleChange}
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    if ((/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 30) || !value)
+                                      handleChange(e)
+                                  }}
                                   required
                                   isInvalid={getInvalid("firstName")}
                                 />
@@ -442,7 +441,11 @@ const ProfileInformation = () => {
                                 <Form.Control
                                   name="middleName"
                                   value={formData.middleName}
-                                  onChange={handleChange}
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    if ((/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 30) || !value)
+                                      handleChange(e)
+                                  }}
                                 />
                               </FloatingLabel>
                               <FloatingLabel
@@ -458,7 +461,11 @@ const ProfileInformation = () => {
                                 <Form.Control
                                   name="lastName"
                                   value={formData.lastName}
-                                  onChange={handleChange}
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    if ((/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 30) || !value)
+                                      handleChange(e)
+                                  }}
                                   required
                                   isInvalid={getInvalid("lastName")}
                                 />
@@ -697,7 +704,12 @@ const ProfileInformation = () => {
                                 <Form.Control
                                   name="city"
                                   value={formData.city}
-                                  onChange={handleChange}
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    if ((/^[a-zA-Z -]+$/.test(value) && value.length <= 35) || !value)
+                                      handleChange(e)
+                                  }
+                                  }
                                   required
                                   isInvalid={getInvalid("city")}
                                 />
@@ -716,9 +728,13 @@ const ProfileInformation = () => {
                               >
                                 <Form.Control
                                   name="zip"
-                                  type="number"
+                                  type="text"
                                   value={formData.zip}
-                                  onChange={handleChange}
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    if ((/^\d+$/.test(value) && value.length <= 9) || !value)
+                                      handleChange(e)
+                                  }}
                                   required
                                   isInvalid={getInvalid("zip")}
                                 />
@@ -737,7 +753,12 @@ const ProfileInformation = () => {
                                 <Form.Control
                                   name="state"
                                   value={formData.state}
-                                  onChange={handleChange}
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    if ((/^[a-zA-Z -]+$/.test(value) && value.length <= 30) || !value)
+                                      handleChange(e)
+                                  }
+                                  }
                                   required
                                   isInvalid={getInvalid("state")}
                                 />
@@ -777,8 +798,8 @@ const ProfileInformation = () => {
                                     {!formData.currentPassword
                                       ? "Current password is required"
                                       : /\s/.test(formData.currentPassword)
-                                      ? "Password cannot contain spaces"
-                                      : null}
+                                        ? "Password cannot contain spaces"
+                                        : null}
                                   </Form.Control.Feedback>
                                 </FloatingLabel>
 
@@ -806,10 +827,18 @@ const ProfileInformation = () => {
                                     {!formData.newPassword
                                       ? "New password is required"
                                       : /\s/.test(formData.newPassword)
-                                      ? "Password cannot contain spaces"
-                                      : formData.newPassword.length < 8
-                                      ? "New password must be at least 8 characters"
-                                      : null}
+                                        ? "Password cannot contain spaces"
+                                        : formData.newPassword.length < 8
+                                          ? "New password must be at least 8 characters"
+                                          : !/[a-z]/.test(formData.newPassword)
+                                            ? "Password must contain a lowercase letter"
+                                            : !/[A-Z]/.test(formData.newPassword)
+                                              ? "Password must contain an uppercase letter"
+                                              : !/[0-9]/.test(formData.newPassword)
+                                                ? "Password must contain a number"
+                                                : !/[!@#$%^&*(),.?":{}|<>]/.test(formData.newPassword)
+                                                  ? "Password must contain a special character"
+                                                  : null}
                                   </Form.Control.Feedback>
                                 </FloatingLabel>
 
@@ -837,10 +866,10 @@ const ProfileInformation = () => {
                                     {!formData.confirmPassword
                                       ? "Confirm password is required"
                                       : /\s/.test(formData.confirmPassword)
-                                      ? "Password cannot contain spaces"
-                                      : formData.confirmPassword !== formData.newPassword
-                                      ? "Passwords do not match"
-                                      : null}
+                                        ? "Password cannot contain spaces"
+                                        : formData.confirmPassword !== formData.newPassword
+                                          ? "Passwords do not match"
+                                          : null}
                                   </Form.Control.Feedback>
                                 </FloatingLabel>
 

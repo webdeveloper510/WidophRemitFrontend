@@ -255,11 +255,31 @@ const KYCForm = () => {
     }));
     const newErrors = {};
 
-    if (!formData.firstName.trim())
+    // First name
+    if (!formData.firstName.trim()) {
       newErrors.firstName = "First name is required";
+    } else if (formData.firstName.length > 30) {
+      newErrors.first_name = "First name cannot exceed 30 characters";
+    } else if (!/^[a-zA-Z0-9 -]+$/.test(formData.firstName)) {
+      newErrors.firstName = "Only letters, numbers, spaces, and hyphens are allowed";
+    }
 
-    if (!formData.lastName.trim())
+    // Middle name (optional)
+    if (formData.middleName && formData.middleName.length > 30) {
+      newErrors.middleName = "Middle name cannot exceed 30 characters";
+    } else if (formData.middleName && !/^[a-zA-Z0-9 -]*$/.test(formData.middleName)) {
+      newErrors.middleName = "Only letters, numbers, spaces, and hyphens are allowed";
+    }
+
+    // Last name
+    if (!formData.lastName.trim()) {
       newErrors.lastName = "Last name is required";
+    } else if (formData.lastName.length > 30) {
+      newErrors.lastName = "Last name cannot exceed 30 characters";
+    } else if (!/^[a-zA-Z0-9 -]+$/.test(formData.lastName)) {
+      newErrors.lastName = "Only letters, numbers, spaces, and hyphens are allowed";
+    }
+
 
     if (!formData.email.trim())
       newErrors.email = "Email is required";
@@ -312,9 +332,31 @@ const KYCForm = () => {
     if (!(formData.address || "").trim()) newErrors.address = "Address is required";
     // if (!(formData.buildingNo || "").trim()) newErrors.buildingNo = "Building No. is required";
     // if (!(formData.streetName || "").trim()) newErrors.streetName = "Street Name is required";
-    if (!(formData.city || "").trim()) newErrors.city = "City is required";
-    if (!(formData.zip || "").trim()) newErrors.zip = "Zip/Postal code is required";
-    if (!(formData.state || "").trim()) newErrors.state = "State is required";
+    if (!(formData.city || "").trim()) {
+      newErrors.city = "City is required";
+    } else if (formData.city.length > 35) {
+      newErrors.city = "City cannot exceed 35 characters";
+    } else if (!/^[a-zA-Z -]+$/.test(formData.city)) {
+      newErrors.city = "Only letters, spaces, and hyphens are allowed";
+    }
+
+    // Zip/Postal code
+    if (!(formData.zip || "").trim()) {
+      newErrors.zip = "Zip/Postal code is required";
+    } else if (formData.zip.length > 9) {
+      newErrors.zip = "Zip/Postal code cannot exceed 9 digits";
+    } else if (!/^\d+$/.test(formData.zip)) {
+      newErrors.zip = "Only numbers are allowed";
+    }
+
+    // State
+    if (!(formData.state || "").trim()) {
+      newErrors.state = "State is required";
+    } else if (formData.state.length > 30) {
+      newErrors.state = "State cannot exceed 30 characters";
+    } else if (!/^[a-zA-Z -]+$/.test(formData.state)) {
+      newErrors.state = "Only letters, spaces, and hyphens are allowed";
+    }
     setErrors((prev) => ({ ...prev, ...newErrors }));
     return Object.keys(newErrors).length === 0;
   };
@@ -523,9 +565,8 @@ const KYCForm = () => {
                           value={formData.firstName}
                           onChange={(e) => {
                             const value = e.target.value;
-                            if (/^[A-Za-z\s]*$/.test(value)) {  // Allow only letters and spaces
+                            if ((/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 30) || !value)
                               handleInputChange("firstName", value);
-                            }
                           }}
                           isInvalid={touched.firstName && errors.firstName}
                           disabled={isLoading}
@@ -551,9 +592,8 @@ const KYCForm = () => {
                           value={formData.middleName}
                           onChange={(e) => {
                             const value = e.target.value;
-                            if (/^[A-Za-z\s]*$/.test(value)) {
+                            if ((/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 30) || !value)
                               handleInputChange("middleName", value);
-                            }
                           }}
                           disabled={isLoading}
                         />
@@ -573,9 +613,8 @@ const KYCForm = () => {
                           value={formData.lastName}
                           onChange={(e) => {
                             const value = e.target.value;
-                            if (/^[A-Za-z\s]*$/.test(value)) {
+                            if ((/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 30) || !value)
                               handleInputChange("lastName", value);
-                            }
                           }}
                           isInvalid={touched.lastName && errors.lastName}
                           disabled={isLoading}
@@ -818,8 +857,11 @@ const KYCForm = () => {
                         <Form.Control
                           type="text"
                           value={formData.city}
-                          onChange={(e) =>
-                            handleInputChange("city", e.target.value)
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if ((/^[a-zA-Z -]+$/.test(value) && value.length <= 35) || !value)
+                              handleInputChange("city", e.target.value)
+                          }
                           }
                           isInvalid={touched.city && errors.city}
                           disabled={isLoading}
@@ -842,10 +884,13 @@ const KYCForm = () => {
                         className="mb-3"
                       >
                         <Form.Control
-                          type="number"
+                          type="text"
                           value={formData.zip}
-                          onChange={(e) =>
-                            handleInputChange("zip", e.target.value)
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if ((/^\d+$/.test(value) && value.length <= 9) || !value)
+                              handleInputChange("zip", e.target.value)
+                          }
                           }
                           isInvalid={touched.zip && errors.zip}
                           disabled={isLoading}
@@ -870,8 +915,11 @@ const KYCForm = () => {
                         <Form.Control
                           type="text"
                           value={formData.state}
-                          onChange={(e) =>
-                            handleInputChange("state", e.target.value)
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if ((/^[a-zA-Z -]+$/.test(value) && value.length <= 30) || !value)
+                              handleInputChange("state", e.target.value)
+                          }
                           }
                           isInvalid={touched.state && errors.state}
                           disabled={isLoading}
