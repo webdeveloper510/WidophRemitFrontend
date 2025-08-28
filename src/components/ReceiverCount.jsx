@@ -3,7 +3,7 @@ import stats1 from "../assets/images/info1.png";
 
 const ReceiverCount = ({ receiversCount }) => {
     return (
-        <div className="col-md-4 mb-2 custom-width" style={{ paddingRight: 0 }}>
+        <div className="col-md-4 mb-2 custom-width">
             <div className="bg-white p-3 border-r stats-box">
                 <img src={stats1} alt="stats" className="dashboard-info-img" />
                 <div className="d-flex flex-column stats-row">
