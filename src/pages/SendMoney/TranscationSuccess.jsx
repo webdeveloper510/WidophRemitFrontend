@@ -327,7 +327,7 @@ const TransactionSuccess = () => {
                         </Table>
                       </div>
 
-                      <div className="processing-info-text mt-5">
+                      <div className="mt-5">
                         {paymentMethod === "payid" && <>
                           <h4>
                             Next Step: Complete Your PayID Transfer
@@ -384,9 +384,6 @@ const TransactionSuccess = () => {
                           For any assistance with the transfers, please contact us at  <a href="tel:+61480001611">+61480001611</a>
                           <br /> We value your association with us.
                         </p>
-                          <ol>
-                            <li>dsfgdgdf</li>
-                          </ol>
                       </div>
                     </div>
                     <div className="col-md-6 text-center">
