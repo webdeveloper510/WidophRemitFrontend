@@ -218,7 +218,7 @@ const PaymentDetail = () => {
             }
 
             sessionStorage.setItem("monova_automatcher", JSON.stringify(res.data));
-            toast.success("Automatcher created successfully.");
+            toast.success("Your Auto-Matcher account has been successfully created.");
           } catch (automatcherErr) {
             console.error("Automatcher creation failed:", automatcherErr);
             toast.error("Failed to create automatcher. Please try again.");

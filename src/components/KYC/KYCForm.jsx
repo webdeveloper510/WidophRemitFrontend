@@ -265,7 +265,7 @@ const KYCForm = () => {
     }
 
     // Middle name (optional)
-    if (formData.middleName && formData.middleName.length > 30) {
+    if (formData.middleName.trim() && formData.middleName.length > 30) {
       newErrors.middleName = "Middle name cannot exceed 30 characters";
     } else if (formData.middleName && !/^[a-zA-Z0-9 -]*$/.test(formData.middleName)) {
       newErrors.middleName = "Only letters, numbers, spaces, and hyphens are allowed";
@@ -306,7 +306,7 @@ const KYCForm = () => {
       }
     }
 
-    if (!formData.countryOfBirth)
+    if (!formData.countryOfBirth.trim())
       newErrors.countryOfBirth = "Country of birth is required";
 
     if (!formData.occupation.trim())
@@ -328,7 +328,7 @@ const KYCForm = () => {
       state: true,
     }));
     const newErrors = {};
-    if (!formData.country) newErrors.country = "Country is required";
+    if (!(formData.country || "").trim()) newErrors.country = "Country is required";
     if (!(formData.address || "").trim()) newErrors.address = "Address is required";
     // if (!(formData.buildingNo || "").trim()) newErrors.buildingNo = "Building No. is required";
     // if (!(formData.streetName || "").trim()) newErrors.streetName = "Street Name is required";

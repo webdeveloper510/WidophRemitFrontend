@@ -46,29 +46,29 @@ const AddReceiver = () => {
   };
 
   const validationSchema = Yup.object({
-    bank_name: Yup.string()
+    bank_name: Yup.string().trim()
       .required("Bank name is required")
       .max(40, "Bank name is too big")
       .matches(
         /^[A-Za-z!@#\$%&'*+\-/=?^_`{|}~ ]+$/,
         "Bank name can only contain letters and allowed special characters"
       ),
-    account_number: Yup.string()
+    account_number: Yup.string().trim()
       .required("Account number is required")
       .min(8, "Minimum 8 characters")
       .max(30, "Maximum 30 characters")
       .matches(/^[a-zA-Z0-9 -]+$/, "Only letters, numbers, spaces, and hyphens are allowed"),
 
-    first_name: Yup.string()
+    first_name: Yup.string().trim()
       .required("First name is required")
       .max(30, "First name cannot exceed 30 characters")
       .matches(/^[a-zA-Z0-9 -]+$/, "Only letters, numbers, spaces, and hyphens are allowed"),
 
-    middle_name: Yup.string()
+    middle_name: Yup.string().trim()
       .max(30, "Middle name cannot exceed 30 characters")
       .matches(/^[a-zA-Z0-9 -]*$/, "Only letters, numbers, spaces, and hyphens are allowed"),
 
-    last_name: Yup.string()
+    last_name: Yup.string().trim()
       .required("Last name is required")
       .max(30, "Last name cannot exceed 30 characters")
       .matches(/^[a-zA-Z0-9 -]+$/, "Only letters, numbers, spaces, and hyphens are allowed"),
@@ -77,18 +77,18 @@ const AddReceiver = () => {
       "email is Required"
     ).email("Please enter a valid email address"),
 
-    phone: Yup.string()
+    phone: Yup.string().trim()
       .required("Mobile number is required")
       .matches(/^\d{8,10}$/, "Mobile number must be between 8 and 10 digits"),
 
     country: Yup.string().required("Country is required"),
 
-    state: Yup.string()
+    state: Yup.string().trim()
       .required("State is required")
       .max(30, "State cannot exceed 30 characters")
       .matches(/^[a-zA-Z -]+$/, "Only letters, spaces, and hyphens are allowed"),
 
-    city: Yup.string()
+    city: Yup.string().trim()
       .required("City is required")
       .max(35, "City cannot exceed 35 characters")
       .matches(/^[a-zA-Z -]+$/, "Only letters, spaces, and hyphens are allowed"),
@@ -100,12 +100,13 @@ const AddReceiver = () => {
       .matches(/^\d+$/, "Only numbers are allowed"),
 
 
-    address: Yup.string().required("Address is required"),
+    address: Yup.string().trim().required("Address is required"),
     swift_code: Yup.string()
+      .trim()
       .required("Swift code is required")
       .max(15, "Swift code cannot exceed 15 characters")
       .matches(/^[a-zA-Z0-9 -]+$/, "Only letters, numbers, spaces, and hyphens are allowed"),
-    company_name: Yup.string().required("company name is required")
+    company_name: Yup.string().trim().required("company name is required")
   });
 
   const {
@@ -142,7 +143,7 @@ const AddReceiver = () => {
           account_number: values.account_number,
           bank_identifier: "",
           first_name: values.first_name,
-          middle_name:values.middle_name,
+          middle_name: values.middle_name,
           last_name: values.last_name,
           mobile: parsedMobile,
           building: values.building_no,
@@ -226,7 +227,7 @@ const AddReceiver = () => {
                     value={values.bank_name}
                     onChange={(e) => {
                       const value = e.target.value;
-                      if (/^[A-Za-z!@#\$%&'*+\-/=?^_`{|}~ ]+$/.test(value) || !value)
+                      if ((/^[A-Za-z!@#\$%&'*+\-/=?^_`{|}~ ]+$/.test(value) && value.length <= 40) || !value)
                         handleChange(e);
                     }}
                     onBlur={handleBlur}
@@ -253,7 +254,7 @@ const AddReceiver = () => {
                     value={values.account_number}
                     onChange={(e) => {
                       const value = e.target.value;
-                      if (!value || /^[a-zA-Z0-9 -]+$/.test(value))
+                      if (!value || (/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 30))
                         handleChange(e)
                     }}
                     onBlur={handleBlur}
@@ -280,7 +281,7 @@ const AddReceiver = () => {
                     value={values.swift_code}
                     onChange={(e) => {
                       const value = e.target.value;
-                      if (!value || /^[a-zA-Z0-9 -]+$/.test(value))
+                      if (!value || (/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 15))
                         handleChange(e)
                     }}
                     onBlur={handleBlur}
@@ -477,7 +478,8 @@ const AddReceiver = () => {
                         value={values.phone}
                         onChange={(e) => {
                           const numericValue = e.target.value.replace(/\D/g, "");
-                          setFieldValue("phone", numericValue);
+                          if (numericValue.length <= 10 || !numericValue)
+                            setFieldValue("phone", numericValue);
                         }}
                         onBlur={handleBlur}
                         isInvalid={touched.phone && errors.phone}

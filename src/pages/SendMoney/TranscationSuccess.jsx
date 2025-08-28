@@ -5,19 +5,50 @@ import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
 import { Col, Row, Button, Spinner, Alert } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
-import { paymentSummary } from "../../services/Api";
+import { GetAutoMatcher, getPayID, paymentSummary } from "../../services/Api";
 import { clearSessionStorageData } from "../../utils/sessionUtils";
 
 const TransactionSuccess = () => {
   const [transaction, setTransaction] = useState(null);
+  const [payIdDetail, setPayIdDetail] = useState(null);
   const [status, setStatus] = useState("Loading...");
   const [loading, setLoading] = useState(true);
+  const [payload, setpaylaod] = useState({})
   const [paymentMethod, setPaymentMethod] = useState(null);
   const navigate = useNavigate();
   const { search } = useLocation();
   const queryParams = new URLSearchParams(search);
   const transactionId = queryParams.get("transaction_id");
   const statusParam = queryParams.get("status");
+  const [AutoMatcherData, setAutoMatcherData] = useState({});
+
+
+  useEffect(() => {
+
+    (async () => {
+      const payIdRes = await getPayID();
+      if (payIdRes.code === "200" && payIdRes.data?.payid) {
+        setPayIdDetail(payIdRes.data);
+      }
+    })()
+
+    const getAutomatcher = async () => {
+      const AutoMatcherRes = await GetAutoMatcher();
+      if (
+        AutoMatcherRes?.code === "200" &&
+        AutoMatcherRes.data.bankAccountNumber
+      ) {
+        setAutoMatcherData({
+          bankAccountName: AutoMatcherRes.data.bankAccountName,
+          bankAccountNumber: AutoMatcherRes.data.bankAccountNumber,
+          bsb: AutoMatcherRes.data.bsb
+        })
+      }
+    }
+
+    getAutomatcher()
+    setpaylaod(JSON.parse(sessionStorage.getItem("payload"))?.amount || {})
+  }, [])
 
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -296,40 +327,62 @@ const TransactionSuccess = () => {
                         </Table>
                       </div>
 
-                      <div className="mt-4 mb-4">
-                        {/* <Button variant="success" className="download-button">
-                          VIEW RECEIPT
-                        </Button> */}
-                      </div>
-
-                      <div className="processing-info-text mt-5">
-                        <h4>
-                          <b>Thank you for choosing us,</b>
-                        </h4>
+                      <div className="mt-5">
+                        {paymentMethod === "payid" && <>
+                          <h4>
+                            Next Step: Complete Your PayID Transfer
+                          </h4>
+                          <p>
+                            To ensure timely processing of your transfer, please follow these steps:
+                          </p>
+                          <ul>
+                            <li>
+                              Log in to your banking portal or app.
+                            </li>
+                            <li>
+                              Initiate a payment of {payload.send_currency} {" "}
+                              {payload.send_amount}  to PayID: {payIdDetail.payid || ""}
+                            </li>
+                            <li>
+                              Enter your transaction ID {transaction.transaction_id} in the payment reference field.
+                            </li>
+                            <li>
+                              Once we receive the funds in our system,
+                              your transfer will continue to the next stage automatically.
+                            </li>
+                          </ul>
+                        </>
+                        }
+                        {
+                          paymentMethod === "monova" &&
+                          <>
+                            <h4>
+                              Next Step: Complete Your Monoova Transfer
+                            </h4>
+                            <p>
+                              To ensure timely processing of your transfer, please follow these steps:
+                            </p>
+                            <ul>
+                              <li>Log in to your banking portal or app.</li>
+                              <li> Initiate a payment of {payload.send_currency} {" "}
+                                {payload.send_amount} to your Virtual Auto-Matcher Account using the details below:
+                              </li>
+                              <ul>
+                                <li>Account Name: {AutoMatcherData.bankAccountName}
+                                </li>
+                                <li>Account Number: {AutoMatcherData.bankAccountNumber}
+                                </li>
+                                <li>BSB Number: {AutoMatcherData.bsb}
+                                </li>
+                              </ul>
+                              <li>Enter your Transaction ID: {transaction.transaction_id} in the payment reference field.</li>
+                              <li>Once we receive the funds, your transfer will automatically move to the next stage.</li>
+                            </ul>
+                          </>
+                        }
                         <p>
-                          Lorem Ipsum is simply dummy text of the printing and
-                          typesetting industry.
-                        </p>
-                        <ul>
-                          <li>
-                            Lorem Ipsum is simply dummy. Lorem Ipsum is simply
-                          </li>
-                          <li>
-                            Lorem Ipsum is dummy text of the printing and. Lorem
-                            Ipsum is simply
-                          </li>
-                          <li>
-                            Lorem Ipsum is dummy text of the printing and
-                            typesetting industry.
-                          </li>
-                          <li>
-                            Lorem Ipsum is simply dummy text of the printing
-                            typesetting industry. Lorem Ipsum is simply.
-                          </li>
-                        </ul>
-                        <p>
-                          Lorem Ipsum is simply dummy text of the printing and
-                          typesetting industry.
+                          For any assistance with the transfers, please contact us at  <a href="tel:+61480001611">+61480001611</a>
+                          <br /> We value your association with us.
                         </p>
                       </div>
                     </div>
