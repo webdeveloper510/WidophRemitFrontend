@@ -19,7 +19,6 @@ import { clearSessionStorageData } from "../../utils/sessionUtils";
 import Loader from "../../components/Loader";
 
 const SendMoney = () => {
-
   useEffect(() => {
     clearSessionStorageData();
 
@@ -41,7 +40,6 @@ const SendMoney = () => {
   const [isConverting, setIsConverting] = useState(false);
   const [loading, setLoading] = useState(true);
 
-
   const amtSchema = Yup.object().shape({
     send_amt: Yup.string()
       .required("Send amount is required")
@@ -56,18 +54,23 @@ const SendMoney = () => {
     receive_method: Yup.string().required("Please select a receive method"),
   });
 
-
   const updateTempExchangeData = (updatedValues) => {
-    sessionStorage.setItem("temp_exchange_data", JSON.stringify({
-      exchange_rate: exch_rate,
-      send_amount: commaRemover(updatedValues.send_amt || updatedValues.send_amount || ""),
-      send_currency: updatedValues.from || "AUD",
-      receive_amount: commaRemover(updatedValues.exchange_amt || updatedValues.receive_amount || ""),
-      receive_currency: updatedValues.to || "NGN",
-      method: updatedValues.receive_method || "Bank transfer",
-    }));
+    sessionStorage.setItem(
+      "temp_exchange_data",
+      JSON.stringify({
+        exchange_rate: exch_rate,
+        send_amount: commaRemover(
+          updatedValues.send_amt || updatedValues.send_amount || ""
+        ),
+        send_currency: updatedValues.from || "AUD",
+        receive_amount: commaRemover(
+          updatedValues.exchange_amt || updatedValues.receive_amount || ""
+        ),
+        receive_currency: updatedValues.to || "NGN",
+        method: updatedValues.receive_method || "Bank transfer",
+      })
+    );
   };
-
 
   const initialValues = {
     send_amt: "",
@@ -147,13 +150,11 @@ const SendMoney = () => {
 
         sessionStorage.setItem("transfer_data", JSON.stringify(local));
 
-
-        navigate("/receivers-list",
-          {
-            state: {
-              from: "send-money"
-            }
-          });
+        navigate("/receivers-list", {
+          state: {
+            from: "send-money",
+          },
+        });
       } else if (trans_res.code === "400") {
         toast.error(trans_res.message, {
           autoClose: 2000,
@@ -236,7 +237,6 @@ const SendMoney = () => {
     [values.from, values.to, isConverting, setFieldValue]
   );
 
-
   useEffect(() => {
     const loadInitialData = async () => {
       try {
@@ -253,7 +253,6 @@ const SendMoney = () => {
         const webData = sessionStorage.getItem("web_exchange_data");
         const tempData = sessionStorage.getItem("temp_exchange_data");
 
-
         if (webData) {
           sessionStorage.removeItem("web_exchange_data");
           sessionStorage.removeItem("from_root");
@@ -268,15 +267,20 @@ const SendMoney = () => {
             setFieldValue("exchange_amt", parsedData.receive_amount || "");
             setFieldValue("from", parsedData.send_currency || "AUD");
             setFieldValue("to", parsedData.receive_currency || "NGN");
-            setFieldValue("receive_method", parsedData.method || "Bank transfer");
+            setFieldValue(
+              "receive_method",
+              parsedData.method || "Bank transfer"
+            );
 
             if (parsedData.exchange_rate) {
               setExchRate(parsedData.exchange_rate);
             } else {
-              await getExchangeRate(parsedData.send_currency, parsedData.receive_currency);
+              await getExchangeRate(
+                parsedData.send_currency,
+                parsedData.receive_currency
+              );
             }
             updateTempExchangeData(parsedData);
-
           } else {
             await getExchangeRate(initialValues.from, initialValues.to);
           }
@@ -287,11 +291,13 @@ const SendMoney = () => {
           setFieldValue("from", parsedData.send_currency || "AUD");
           setFieldValue("to", parsedData.receive_currency || "NGN");
           setFieldValue("receive_method", parsedData.method || "Bank transfer");
-          await getExchangeRate(parsedData.send_currency, parsedData.receive_currency);
+          await getExchangeRate(
+            parsedData.send_currency,
+            parsedData.receive_currency
+          );
         } else {
           await getExchangeRate(initialValues.from, initialValues.to);
         }
-
       } catch (error) {
         console.error("Error loading initial data:", error);
       }
@@ -314,14 +320,12 @@ const SendMoney = () => {
     }
   };
 
-
   const handleAmountChange = (e) => {
     const { name, value } = e.target;
     const regex = /^\d*\.?\d{0,2}$/;
 
     if (value === "" || regex.test(value)) {
       setFieldValue(name, value);
-
 
       if (name === "send_amt" && value === "") {
         setFieldValue("exchange_amt", "");
@@ -343,7 +347,6 @@ const SendMoney = () => {
     }
   };
 
-
   const handleAmountBlur = (e) => {
     const { name, value } = e.target;
     if (value && !isConverting) {
@@ -362,7 +365,6 @@ const SendMoney = () => {
     const updated = { ...values, [name]: value };
     updateTempExchangeData(updated);
   };
-
 
   if (loading) return <Loader />;
 
@@ -405,7 +407,7 @@ const SendMoney = () => {
                         name="from"
                         value={values.from}
                         onChange={handleTypeChange}
-                      //disabled={isConverting}
+                        //disabled={isConverting}
                       >
                         {curr_in.map((curr) => (
                           <option key={curr} value={curr}>
@@ -425,7 +427,7 @@ const SendMoney = () => {
                         name="to"
                         value={values.to}
                         onChange={handleTypeChange}
-                      //disabled={isConverting}
+                        //disabled={isConverting}
                       >
                         {curr_out.map((curr) => (
                           <option key={curr} value={curr}>
@@ -478,6 +480,25 @@ const SendMoney = () => {
                         {errors.exchange_amt}
                       </Form.Control.Feedback>
                     </FloatingLabel>
+                  </Row>
+
+                  <Row className="mb-3">
+                    <Col xs={6} className="ms-auto">
+                      <ul className="total-payment">
+                        <li>
+                          Fee
+                          <label>
+                            <b className="">00.00 GBP</b>
+                          </label>
+                        </li>
+                        <li>
+                          Total to pay
+                          <label>
+                            <b className="">501.99 GBP</b>
+                          </label>
+                        </li>
+                      </ul>
+                    </Col>
                   </Row>
 
                   <Row className="mb-3">

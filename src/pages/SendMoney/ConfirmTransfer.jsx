@@ -37,10 +37,11 @@ const ConfirmTransfer = () => {
       navigate("/send-money");
       return;
     }
-  }, [location])
+  }, [location]);
 
-  const fullName = `${sender?.First_name || ""} ${sender?.Last_name || ""
-    }`.trim();
+  const fullName = `${sender?.First_name || ""} ${
+    sender?.Last_name || ""
+  }`.trim();
 
   useEffect(() => {
     const storedAmount = sessionStorage.getItem("transfer_data");
@@ -128,7 +129,9 @@ const ConfirmTransfer = () => {
       if (matcherData) {
         matcher = JSON.parse(matcherData);
       } else {
-        toast.error("Bank account matching not found. Please go back and select Monoova again.");
+        toast.error(
+          "Bank account matching not found. Please go back and select Monoova again."
+        );
         return false;
       }
 
@@ -141,13 +144,16 @@ const ConfirmTransfer = () => {
         payment_mode: monovaForm?.payment_mode,
         to: temp.amount.to,
         from: temp.amount.from,
-        description: sessionStorage.getItem("final_transfer_reason")
+        description: sessionStorage.getItem("final_transfer_reason"),
       };
 
       const { data: response } = await createMonovaPayment(payload);
 
       if (response?.transactionId && response.transactionId !== 0) {
-        sessionStorage.setItem("monova_transaction_id", sessionStorage.getItem("transaction_id"));
+        sessionStorage.setItem(
+          "monova_transaction_id",
+          sessionStorage.getItem("transaction_id")
+        );
         sessionStorage.setItem(
           "monova_payment_response",
           JSON.stringify(response)
@@ -293,9 +299,7 @@ const ConfirmTransfer = () => {
       } else if (currentPaymentMethod === "zai") {
         paymentSuccess = await handleZaiPayment();
       } else if (currentPaymentMethod === "budpay") {
-
-      }
-      else {
+      } else {
         toast.error("No valid payment method selected.");
         return;
       }
@@ -305,8 +309,8 @@ const ConfirmTransfer = () => {
         setIsProcessingPayment(false);
         navigate("/transaction-success", {
           state: {
-            from: "confirm-transfer"
-          }
+            from: "confirm-transfer",
+          },
         });
       } else {
         setIsProcessingPayment(false);
@@ -349,16 +353,15 @@ const ConfirmTransfer = () => {
               const currentPaymentMethod = sessionStorage.getItem(
                 "selected_payment_method"
               );
-              if (currentPaymentMethod === 'monova')
+              if (currentPaymentMethod === "monova")
                 navigate("/virtual-account-detail", {
                   state: { from: "/confirm-transfer" },
-                })
+                });
               else
                 navigate("/payment-detail", {
                   state: { from: "/confirm-transfer" },
-                })
-            }
-            }
+                });
+            }}
             className="p-0 border-0 bg-transparent"
           >
             <img src={Back} alt="Back" />
@@ -410,6 +413,18 @@ const ConfirmTransfer = () => {
                                 : "N/A"}
                             </td>
                           </tr>
+                          <tr>
+                            <td>Fee</td>
+                            <td>
+                              <b>00.00 GBP</b>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Total to pay</td>
+                            <td>
+                              <b>501.99 GBP</b>
+                            </td>
+                          </tr>
                         </tbody>
                       </Table>
                     </div>
@@ -457,16 +472,15 @@ const ConfirmTransfer = () => {
                     const currentPaymentMethod = sessionStorage.getItem(
                       "selected_payment_method"
                     );
-                    if (currentPaymentMethod === 'monova')
+                    if (currentPaymentMethod === "monova")
                       navigate("/virtual-account-detail", {
                         state: { from: "/confirm-transfer" },
-                      })
+                      });
                     else
                       navigate("/payment-detail", {
                         state: { from: "/confirm-transfer" },
-                      })
-                  }
-                  }
+                      });
+                  }}
                 >
                   Back
                 </Button>

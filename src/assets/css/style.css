@@ -277,11 +277,53 @@ div#basic-navbar-nav a {
 
 /*********** dashbaord css ********/
 .textarea-label label {
-    background: transparent !important;
-    height: 30px !important;
-    top: -1px;
-    left: -18px;
+  background: transparent !important;
+  height: 30px !important;
+  top: -1px;
+  left: -18px;
 }
+ul.total-payment {
+  width: 100%;
+  padding: 0;
+}
+ul.total-payment li {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #e0e3b7;
+  padding: 7px 0px;
+  color: #434800;
+}
+ul.total-payment li:last-child {
+  border-bottom: 0px;
+}
+ul.total-payment li label {
+  font-size: 13px;
+  margin-bottom: 5px;
+  display: block;
+  color: #434800;
+}
+
+.skeleton {
+  display: inline-block;
+  background-color: rgba(0, 0, 0, 0.11);
+  height: 1.2em;
+  border-radius: 4px;
+  width: 80px; /* adjust width for placeholder */
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-color: rgba(0, 0, 0, 0.11);
+  }
+  50% {
+    background-color: rgba(0, 0, 0, 0.25);
+  }
+  100% {
+    background-color: rgba(0, 0, 0, 0.11);
+  }
+}
+
 /* .receiverslist-table
   .sc-dKKIkQ.kqXKaa.rdt_TableBody
   .rdt_TableRow:nth-child(1)
@@ -430,12 +472,12 @@ span.status-badge.review {
   color: #434800;
 }
 .add_receipent_row {
-    width: 50%;
-    display: flex;
-    justify-content: end;
+  width: 50%;
+  display: flex;
+  justify-content: end;
 }
 .add_receipent_row a {
-    text-decoration: none;
+  text-decoration: none;
 }
 /*************** trsnafer details css ****************/
 .banktransfer-select {
@@ -549,7 +591,7 @@ span.status-badge.review {
 
 /************** profile information css **********/
 input.PassowrdWidth.form-control {
-    padding-right: 57px;
+  padding-right: 57px;
 }
 .bg-white {
   background: #fff !important;
@@ -1141,13 +1183,13 @@ li.nav-item.mb-2.bg-light.text-dark.rounded {
   margin-top: 40px;
 }
 .mobile_numbero.row label {
-    position: absolute;
-    top: -21px;
-    font-size: 14px;
-    background: #fff;
-    height: 30px;
-    padding: 0;
-    left: 18px;
+  position: absolute;
+  top: -21px;
+  font-size: 14px;
+  background: #fff;
+  height: 30px;
+  padding: 0;
+  left: 18px;
 }
 .exchange-form label {
   background: transparent !important;
