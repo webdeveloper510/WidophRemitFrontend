@@ -105,11 +105,10 @@ const ReceiverDetail = () => {
       .required("Address is required"),
 
     swift_code: Yup.string().trim()
-      .required("Swift code is required")
       .max(15, "Swift code cannot exceed 15 characters")
       .matches(/^[a-zA-Z0-9 -]+$/, "Only letters, numbers, spaces, and hyphens are allowed"),
 
-    company_name: Yup.string().trim().required("Company name is required")
+    company_name: Yup.string()
   });
 
   const {
@@ -298,7 +297,6 @@ const ReceiverDetail = () => {
                       label={
                         <span>
                           BIC/BSC/Swift Number
-                          <span style={{ color: "red" }}> *</span>
                         </span>
                       }
                     >
@@ -417,7 +415,6 @@ const ReceiverDetail = () => {
                       label={
                         <span>
                           Company Name
-                          <span style={{ color: "red" }}> *</span>
                         </span>
                       }
                       className="mb-3"

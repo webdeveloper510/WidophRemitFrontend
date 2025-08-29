@@ -156,15 +156,9 @@ const OtpVerification = () => {
               OTP <br />
               Verification
               <span className="exchange_rate optTagLine">
-                Please enter the code sent to your phone
+                Please enter the verifcation code to Continue
               </span>
             </div>
-
-            {userData && (
-              <div className="mb-3 text-muted small">
-                Code sent to: {userData.mobile}
-              </div>
-            )}
 
             {isProcessing && (
               <div className="mb-3 text-info small">
