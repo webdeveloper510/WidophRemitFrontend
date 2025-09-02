@@ -12,6 +12,7 @@ import { createRecipient } from "../../services/Api";
 import { parsePhoneNumber } from "libphonenumber-js";
 import allCountries from "../../utils/AllCountries";
 import { v4 as uuidv4 } from 'uuid';
+import { CountrySelector } from "../../components/CountrySelector";
 
 const isAlphaOnly = (value) => /^[A-Za-z\s]*$/.test(value);
 const AddReceiver = () => {
@@ -444,9 +445,8 @@ const AddReceiver = () => {
                     }
                     className="mb-3"
                   >
-                    <div className="d-flex align-items-stretch p-0">
-                      <Form.Select
-                        name="countryCode"
+                    <div className="d-flex align-items-stretch">
+                      <CountrySelector
                         value={`${values.countryCode}-${values.country}`}
                         onChange={(e) => {
                           const selectedValue = e.target.value;
@@ -455,18 +455,9 @@ const AddReceiver = () => {
                           setFieldValue("country", countryName);
                         }}
                         onBlur={handleBlur}
-                        style={{
-                          maxWidth: "140px",
-                          borderTopRightRadius: 0,
-                          borderBottomRightRadius: 0,
-                        }}
-                      >
-                        {allCountries.map((country) => (
-                          <option key={uuidv4()} value={`${country.dial_code}-${country.name}`}>
-                            {country.dial_code ? `${country.flag} ${country.dial_code}` : ''} {country.code ? `(${country.code})` : ''}
-                          </option>
-                        ))}
-                      </Form.Select>
+                        countries={allCountries}
+                        name="countryCode"
+                      />
 
                       <Form.Control
                         type="text"
