@@ -44,7 +44,7 @@ const AddReceiver = () => {
     address: "",
     swift_code: ""
   };
-console.log(allCountries);
+  console.log(allCountries);
 
   const validationSchema = Yup.object({
     bank_name: Yup.string().trim()
@@ -464,10 +464,17 @@ console.log(allCountries);
                       >
                         {allCountries.map((country) => (
                           <option key={uuidv4()} value={`${country.dial_code}-${country.name}`}>
-                            <span className="flag">{country.flag}</span> {country.dial_code} ({country.code})
+                            <span
+                              style={{
+                                fontFamily:
+                                  '"Segoe UI Emoji", "Twemoji Mozilla", "Noto Color Emoji", "Apple Color Emoji", sans-serif',
+                              }}
+                            >
+                              {country.flag}
+                            </span>{" "}
+                            {country.dial_code} ({country.code})
                           </option>
-
-                        ))}
+                          ))}
                       </Form.Select>
 
                       <Form.Control
