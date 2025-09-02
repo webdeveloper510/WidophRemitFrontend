@@ -39,9 +39,8 @@ const ConfirmTransfer = () => {
     }
   }, [location]);
 
-  const fullName = `${sender?.First_name || ""} ${
-    sender?.Last_name || ""
-  }`.trim();
+  const fullName = `${sender?.First_name || ""} ${sender?.Last_name || ""
+    }`.trim();
 
   useEffect(() => {
     const storedAmount = sessionStorage.getItem("transfer_data");
@@ -532,7 +531,16 @@ const ConfirmTransfer = () => {
                   onChange={setOtp}
                   numInputs={6}
                   renderSeparator={<span>-</span>}
-                  renderInput={(props) => <input {...props} />}
+                  renderInput={(props) => (
+                    <input
+                      {...props}
+                      onKeyPress={(e) => {
+                        if (!/[0-9]/.test(e.key)) {
+                          e.preventDefault();
+                        }
+                      }}
+                    />
+                  )}
                 />
               </Col>
               <Button

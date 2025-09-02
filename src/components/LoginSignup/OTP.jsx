@@ -184,7 +184,16 @@ const OtpVerification = () => {
                     onChange={setOtp}
                     numInputs={6}
                     separator={<span style={{ margin: "0 6px" }}>-</span>}
-                    renderInput={(props) => <input {...props} />}
+                    renderInput={(props) => (
+                      <input
+                        {...props}
+                        onKeyPress={(e) => {
+                          if (!/[0-9]/.test(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
+                      />
+                    )}
                     inputStyle={{
                       width: "3rem",
                       height: "3rem",
@@ -195,6 +204,8 @@ const OtpVerification = () => {
                     }}
                     disabled={isProcessing}
                   />
+
+
                 </Col>
               </Row>
 

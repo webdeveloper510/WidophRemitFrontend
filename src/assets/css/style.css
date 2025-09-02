@@ -51,6 +51,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Lufga-bold";
   src: url("Lufga-Bold.woff2") format("woff2"),
@@ -77,23 +78,28 @@
   font-style: normal;
   font-display: swap;
 }
+
 :root {
   --body-font: "Lufga-regular";
 }
+
 * {
   font-family: var(--body-font);
 }
+
 body {
   margin: 0;
   font-family: var(--body-font);
   background: #fffcf5;
 }
+
 h4.logo {
   background: rgb(255 252 245 / 20%);
   padding: 20px;
   border-radius: 20px;
   margin: 0px 15px;
 }
+
 ul.nav li a svg {
   font-size: 22px;
 }
@@ -101,18 +107,18 @@ ul.nav li a svg {
 ul.nav li.rounded a svg {
   fill: #1e96dd;
 }
+
 ul.nav li a {
   color: rgb(255 255 255 / 60%);
   padding: 18px;
 }
+
 ul.nav li {
   border-top-left-radius: 40px !important;
   border-bottom-left-radius: 40px !important;
-  background: linear-gradient(
-    to right,
-    rgb(255 255 255 / 10%) 0%,
-    rgb(30 150 221 / 10%) 100%
-  );
+  background: linear-gradient(to right,
+      rgb(255 255 255 / 10%) 0%,
+      rgb(30 150 221 / 10%) 100%);
   position: relative;
 }
 
@@ -122,6 +128,7 @@ ul.nav li.rounded:before {
   right: 0px;
   top: -29px;
 }
+
 ul.nav li.rounded:after {
   position: absolute;
   content: url("../../assets/images/bottom-curve.png");
@@ -139,6 +146,7 @@ li.rounded {
   border-bottom-left-radius: 40px !important;
   position: relative;
 }
+
 .sidebar {
   transition: all 0.1s ease-in-out;
   width: 255px;
@@ -155,6 +163,7 @@ li.rounded {
   margin-top: 0;
   min-height: 600px;
 }
+
 ul.nav.flex-column li a span,
 ul.nav.flex-column li button span {
   display: block;
@@ -164,21 +173,26 @@ ul.nav.flex-column li button span {
 .collapse-sidebar ul.nav.flex-column li button span {
   display: none;
 }
+
 .mr-3 {
   margin-right: 20px;
 }
+
 .collapse-sidebar {
   width: 114px;
   padding-right: 1rem !important;
   padding-left: 1rem !important;
 }
+
 .collapse-sidebar h4.logo {
   margin: 0px !important;
 }
+
 .nav-link {
   color: #000;
   transition: background-color 0.2s;
 }
+
 .collapse-sidebar ul.nav.flex-column {
   padding-right: 1rem !important;
 }
@@ -186,48 +200,60 @@ ul.nav.flex-column li button span {
 .collapse-sidebar ul.nav.flex-column li {
   border-radius: 40px !important;
 }
+
 .collapse-sidebar li.logout-row {
   width: 58%;
 }
+
 .nav-link.active {
   background-color: #ced4da;
   color: #000;
 }
+
 ul.nav li.rounded a {
   color: #434800;
 }
+
 .nav-link:hover {
   color: #fff;
 }
+
 li.logout-row {
   position: absolute !important;
   bottom: 22px;
   width: 93%;
 }
+
 .logout-btn {
   width: 100%;
   color: rgb(255 255 255 / 60%) !important;
 }
+
 .logout-btn:hover {
   color: #fff !important;
 }
+
 .logout-btn svg {
   font-size: 22px;
 }
+
 nav.navbar.menus a {
   color: #434800;
   font-weight: 600;
   font-size: 17px;
 }
+
 .toggle-btn {
   padding: 0px;
   position: absolute;
   left: -60px;
 }
+
 .toggle-btn:focus,
 .toggle-btn:active {
   border: none !important;
 }
+
 /* .toggle-btn {
   background: #1e96dd;
   border-radius: 30px;
@@ -243,9 +269,11 @@ ul.nav.flex-column {
   padding-left: 1rem !important;
   margin-top: 40px;
 }
+
 div#basic-navbar-nav a {
   color: rgb(67 72 0 / 70%);
 }
+
 .right-side-content {
   position: relative;
 }
@@ -256,18 +284,22 @@ div#basic-navbar-nav a {
   background: #fff;
   padding: 10px 20px !important;
 }
+
 .logged_user h5 {
   margin: 0;
   color: #1f1e30;
   font-weight: 600;
 }
+
 .logged_user span {
   color: #1e96dd;
   font-weight: 600;
 }
+
 #dropdown-basic::after {
   display: none;
 }
+
 .page-title h1 {
   color: #434800;
   font-weight: 900;
@@ -282,10 +314,12 @@ div#basic-navbar-nav a {
   top: -1px;
   left: -18px;
 }
+
 ul.total-payment {
   width: 100%;
   padding: 0;
 }
+
 ul.total-payment li {
   display: flex;
   justify-content: space-between;
@@ -293,9 +327,11 @@ ul.total-payment li {
   padding: 7px 0px;
   color: #434800;
 }
+
 ul.total-payment li:last-child {
   border-bottom: 0px;
 }
+
 ul.total-payment li label {
   font-size: 13px;
   margin-bottom: 5px;
@@ -308,7 +344,8 @@ ul.total-payment li label {
   background-color: rgba(0, 0, 0, 0.11);
   height: 1.2em;
   border-radius: 4px;
-  width: 80px; /* adjust width for placeholder */
+  width: 80px;
+  /* adjust width for placeholder */
   animation: shimmer 2s ease-in-out infinite;
 }
 
@@ -316,9 +353,11 @@ ul.total-payment li label {
   0% {
     background-color: rgba(0, 0, 0, 0.11);
   }
+
   50% {
     background-color: rgba(0, 0, 0, 0.25);
   }
+
   100% {
     background-color: rgba(0, 0, 0, 0.11);
   }
@@ -334,14 +373,17 @@ ul.total-payment li label {
 .gQArdZ {
   overflow: inherit !important;
 }
+
 .recievers-list {
   text-align: center;
 }
+
 .payment-select,
 .paymentoptions {
   padding: 5px 8px !important;
   margin-right: 30px;
 }
+
 .selectcountry label {
   position: absolute;
   top: 0px;
@@ -352,17 +394,21 @@ ul.total-payment li label {
   line-height: 43px;
   z-index: 9;
 }
+
 .customHeight {
   height: 100%;
 }
-.form-floating > :disabled ~ label {
+
+.form-floating> :disabled~label {
   color: #9cb417;
   font-weight: 400;
 }
+
 .scroll-table-body .rdt_TableBody {
   /* max-height: 600px; */
   overflow-y: auto;
 }
+
 .send-again-btn button,
 .send-again-btn button:hover {
   background: transparent;
@@ -370,9 +416,11 @@ ul.total-payment li label {
   line-height: 10px;
   border-radius: 14px;
 }
+
 .send-again-btn button svg {
   color: #434800;
 }
+
 .dashbaord-bg-image {
   background: url("../images/info-banner.png");
   background-size: cover;
@@ -380,17 +428,21 @@ ul.total-payment li label {
   background-position: 100%;
   border-radius: 30px;
 }
+
 .dashbaord-bg-image h2 {
   color: #fff;
   font-weight: bold;
 }
+
 .dashbaord-bg-image h2 span {
   color: rgb(255 255 255 / 60%);
 }
+
 .border-r {
   border-radius: 30px;
   box-shadow: 3.19px 3.19px 199.16px 0px rgba(0, 0, 0, 0.25);
 }
+
 .table-container {
   background: #fff;
   border-radius: 16px;
@@ -425,19 +477,25 @@ ul.total-payment li label {
   transition: all 0.2s ease;
   position: relative;
 }
+
 .send-again-btn .dropdown-menu {
   position: absolute !important;
-  z-index: 1050; /* above table rows */
-  top: 100%; /* position below the button */
-  right: 0; /* align end */
+  z-index: 1050;
+  /* above table rows */
+  top: 100%;
+  /* position below the button */
+  right: 0;
+  /* align end */
   will-change: transform;
 }
+
 /* .send-again-btn:hover {
   background-color: #dbeeff;
 } */
 .receiver-card.card {
   border-radius: 30px;
 }
+
 /* .stats-row {
   margin-left: 30px;
 } */
@@ -445,44 +503,55 @@ ul.total-payment li label {
   color: rgb(67 72 0 / 70%);
   font-size: 16px;
 }
+
 .stats-row h4 {
   font-size: 28px;
   color: #434800;
 }
+
 .stats-box {
   display: flex;
   align-items: center;
   justify-content: start;
 }
+
 .receiver-card .h5 {
   color: #434800;
   font-size: 30px;
   font-weight: 600;
 }
+
 img.dashboard-info-img {
   margin-right: 11px;
 }
+
 span.status-badge.pending {
   color: #da982f;
 }
+
 span.status-badge.processing {
   color: #9cb417;
 }
+
 span.status-badge.review {
   color: #434800;
 }
+
 .add_receipent_row {
   width: 50%;
   display: flex;
   justify-content: end;
 }
+
 .add_receipent_row a {
   text-decoration: none;
 }
+
 /*************** trsnafer details css ****************/
 .banktransfer-select {
   padding: 5px 8px;
 }
+
 .stripe1 {
   background: #cfda2f;
   border-radius: 10px;
@@ -496,15 +565,18 @@ span.status-badge.review {
   color: #434800;
   font-weight: 800;
 }
+
 .stripe1 h2 span {
   font-weight: 400;
   color: #7c994a;
   margin-left: 10px;
   font-size: 20px;
 }
+
 .stripe1 h2 span b {
   color: #434800;
 }
+
 .stripe2 {
   background: #da982f;
   border-radius: 10px;
@@ -514,10 +586,12 @@ span.status-badge.review {
   justify-content: center;
   padding: 20px 20px !important;
 }
+
 .stripe2 h2,
 .stripe3 h2 {
   font-weight: 800;
 }
+
 .stripe3 {
   background: #1e96dd;
   border-radius: 10px;
@@ -535,10 +609,12 @@ span.status-badge.review {
   float: left;
   width: 100%;
 }
+
 .table-column {
   border-radius: 10px;
   border: 1px solid rgb(67 72 0 / 23%);
 }
+
 .table-column h2 {
   padding: 15px 15px;
   margin: 0;
@@ -550,6 +626,7 @@ span.status-badge.review {
 .table-column table tr {
   border: 1px solid #e0e3b7;
 }
+
 .table-column table tr th,
 .table-column table tr td {
   padding: 10px 15px;
@@ -559,6 +636,7 @@ span.status-badge.review {
 .table-column table tr:last-child {
   border-bottom: none !important;
 }
+
 .table-column table {
   margin-bottom: 0px;
 }
@@ -566,15 +644,18 @@ span.status-badge.review {
 .box {
   color: #434800;
 }
+
 .box h3 {
   font-size: 18px;
   font-weight: 600;
 }
+
 .box span {
   margin-bottom: 5px;
   width: 100%;
   float: left;
 }
+
 .receiver-card {
   background: #fffcf5 !important;
 }
@@ -593,29 +674,34 @@ span.status-badge.review {
 input.PassowrdWidth.form-control {
   padding-right: 57px;
 }
+
 .bg-white {
   background: #fff !important;
   padding: 10px 20px;
 }
+
 .bg-white .card-title.h5 {
   font-size: 20px;
   margin-bottom: 25px;
 }
+
 form.profile-form input,
 form.profile-form textarea {
   border: 1px solid #e0e3b7;
   resize: none;
   border-radius: 10px;
 }
+
 .form-floating label {
   padding: 15px 20px;
   color: #9cb417;
   font-weight: 400;
 }
-.form-floating > .form-control-plaintext ~ label,
-.form-floating > .form-control:focus ~ label,
-.form-floating > .form-control:not(:placeholder-shown) ~ label,
-.form-floating > .form-select ~ label {
+
+.form-floating>.form-control-plaintext~label,
+.form-floating>.form-control:focus~label,
+.form-floating>.form-control:not(:placeholder-shown)~label,
+.form-floating>.form-select~label {
   transform: scale(0.85) translateY(-1.5rem) translateX(2.15rem) !important;
   background: #fff;
   height: 43px;
@@ -623,19 +709,23 @@ form.profile-form textarea {
   line-height: 43px;
   z-index: 0 !important;
 }
-.form-floating > .form-control-plaintext:-webkit-autofill,
-.form-floating > .form-control:-webkit-autofill {
+
+.form-floating>.form-control-plaintext:-webkit-autofill,
+.form-floating>.form-control:-webkit-autofill {
   padding-top: 0.625rem !important;
   padding-bottom: 0.625rem;
 }
-.form-floating > .form-control {
+
+.form-floating>.form-control {
   padding-top: 0.625rem !important;
 }
+
 .form-control:focus {
   box-shadow: none;
   border: 1px solid #e0e3b7;
   background: transparent !important;
 }
+
 .PhoneInput {
   border: 1px solid #e0e3b7;
   resize: none;
@@ -645,13 +735,16 @@ form.profile-form textarea {
   line-height: 1.25;
   padding: 1rem 0.75rem;
 }
+
 .PhoneInput input {
   border: none !important;
   border-radius: 0 !important;
 }
+
 .mobileinput {
   position: relative;
 }
+
 .mobileinput label {
   position: absolute;
   top: -23px;
@@ -662,50 +755,62 @@ form.profile-form textarea {
   left: 34px;
   font-size: 14px;
 }
+
 .PhoneInput input:focus {
   border: none !important;
   outline: none;
 }
+
 .passowrdinput {
   padding-right: 60px !important;
 }
+
 span.password-eye {
   position: absolute;
   top: 14px;
   right: 37px;
 }
+
 .login-form-wrapper label.form-label {
   color: #434800;
   font-size: 14px;
 }
+
 .login-form-wrapper label.form-label span {
   color: red;
 }
+
 .updateform {
   background: #2499db;
   border: none;
   padding: 10px 45px;
   text-transform: uppercase;
 }
+
 .profileupdate .modal-body {
   text-align: center;
 }
+
 .profileupdate .modal-body h4 {
   color: #434800;
   font-weight: 700;
   font-size: 30px;
 }
+
 .PopupButton.modal-footer {
   justify-content: center;
 }
+
 .PopupButton.modal-footer button {
   background: #2499db;
   border: none;
   padding: 10px 45px;
 }
+
 .profileupdate .modal-header {
   border: none;
 }
+
 .profileupdate button.btn-close {
   position: absolute;
   right: -8px;
@@ -717,43 +822,53 @@ span.password-eye {
   padding: 9px !important;
   background-size: 18px;
 }
+
 .profileupdate .btn-close:hover {
   opacity: 1;
 }
+
 span.Ortext {
   color: #1e96dd;
   font-weight: 900;
 }
-.form-floating > .form-select {
+
+.form-floating>.form-select {
   padding-top: 0.625rem;
 }
+
 span.copyText {
   position: absolute;
   top: 15px;
   right: 34px;
   color: #cfda2f;
 }
+
 img.clipped-img {
   width: 75%;
   margin: 0 auto;
   float: right;
 }
+
 .collapse-sidebar .logout-row button.logout-btn {
   padding: 0px;
 }
+
 form.profile-form .mb-3 {
   margin-bottom: 1.3rem !important;
 }
+
 /************************** resend otp popup css **********************/
 .optTagLine {
   margin-left: 20px;
 }
+
 a.resendOTP {
   color: #9cb417;
   margin: 30px 0px 5px !important;
   float: left;
   width: 100%;
 }
+
 .inputBoxStyle input {
   width: 3rem !important;
   height: 3rem;
@@ -764,26 +879,50 @@ a.resendOTP {
   font-size: 17px;
   color: #434800;
 }
+
 .inputBoxStyle input:first-child {
   margin-left: 0;
 }
+
 img.processing-vector {
   position: absolute;
   bottom: 0;
   right: 50px;
 }
+
 .processing-info-text {
   color: #434800;
 }
-.processing-info-text ul {
+
+/* Outer ul styling */
+.processing-info-text>ul {
   padding-left: 15px;
 }
-.processing-info-text ul li {
+
+.processing-info-text>ul>li {
   color: #434800;
   font-weight: 600;
   line-height: 30px;
-  list-style: auto;
+  list-style-type: decimal;
+  /* number outer list */
 }
+
+/* Nested ul styling */
+.processing-info-text ul ul {
+  list-style-type: disc;
+  /* use bullets for inner lists */
+  margin-left: 20px;
+  /* indent inner list */
+  padding-left: 0;
+}
+
+.processing-info-text ul ul li {
+  font-weight: normal;
+  /* optional: make nested items lighter */
+  line-height: 24px;
+  color: #434800;
+}
+
 /************** send money css ************************/
 
 .exchangerate {
@@ -817,6 +956,7 @@ img.processing-vector {
   background-image: url("../images/arm-right.png");
   background-position: left;
 }
+
 button.cancel-btn {
   text-transform: uppercase;
   color: #434800;
@@ -839,9 +979,11 @@ button.submit-btn {
   border-radius: 10px;
   padding-left: 40px;
 }
+
 .payment-options input {
   border: 1px solid #e0e3b7;
 }
+
 .payment-options .form-check-input:checked {
   background-color: #cfda2f;
   border: 1px solid #e0e3b7;
@@ -879,12 +1021,14 @@ button.submit-btn {
   background-position: bottom;
   background-size: contain;
 }
+
 span.divider {
   width: 1px;
   height: 101px;
   background: rgb(67 72 0 / 10%);
   margin: 0px 20px;
 }
+
 .payment-popup {
   background: #1e96dd;
   padding: 30px;
@@ -904,9 +1048,11 @@ span.divider {
   font-weight: 600;
   font-size: 20px;
 }
+
 .payment-types label {
   color: rgb(67 72 0 / 70%);
 }
+
 .payment-types p {
   color: #434800;
 }
@@ -916,9 +1062,11 @@ span.divider {
 .incomplete {
   color: #2499db;
 }
+
 .complete {
   color: #9cb417;
 }
+
 .cancelled {
   color: #fd6063;
 }
@@ -933,6 +1081,7 @@ span.divider {
   background-repeat: no-repeat;
   padding-right: 40px;
 }
+
 .filter-select {
   border: 1px solid rgb(67 72 0 / 23%);
   border-radius: 22px;
@@ -944,11 +1093,13 @@ nav.sc-dTUlgT.jWqsSS.rdt_Pagination {
   border-radius: 15px;
   color: #fff;
 }
+
 nav.sc-dTUlgT.jWqsSS.rdt_Pagination button {
   background: rgb(47 50 0 / 70%);
   border-radius: 10px;
   margin: 0px 6px;
 }
+
 .fAPQyl {
   background-color: #cfda2f !important;
   fill: #434800;
@@ -962,12 +1113,15 @@ footer.footer ul li a {
   text-decoration: none;
   font-size: 16px;
 }
+
 footer.footer {
   color: #434800;
 }
+
 footer.footer ul li svg {
   margin-right: 5px;
 }
+
 footer.footer ul li {
   display: flex;
   align-items: center;
@@ -978,16 +1132,19 @@ footer.footer h6 {
   font-weight: 700;
   color: #191c1f;
 }
+
 .sitelinks a {
   color: #434800;
   line-height: 30px;
   text-decoration: none;
   font-size: 16px;
 }
+
 footer.footer button {
   background: #434800;
   border: none;
 }
+
 .social-icons a {
   color: #434800;
   border: 1px solid rgb(67 72 0 / 10%);
@@ -1002,6 +1159,7 @@ footer.footer button {
   background: #434800;
   color: #fff;
 }
+
 /************ login css *****************/
 .login {
   background-color: #2499db;
@@ -1013,6 +1171,7 @@ footer.footer button {
   color: #fff;
   text-decoration: none;
 }
+
 .signup {
   font-size: 16px;
   font-weight: 600;
@@ -1022,47 +1181,59 @@ footer.footer button {
   color: #fff;
   text-decoration: none;
 }
+
 .top-navbar .dropdown-item {
   width: 220px;
   white-space: pre-wrap;
 }
+
 .top-navbar .nav-link:hover,
 .top-navbar .nav-link:focus {
   color: #212529;
 }
+
 .top-navbar .dropdown-menu.show a {
   border-bottom: 1px solid #c4c4c4 !important;
   padding: 10px;
 }
+
 .top-navbar .dropdown-menu.show a:last-child {
   border-bottom: none !important;
 }
+
 .login-header a {
   color: #434800;
   text-decoration: none;
   margin-left: 10px;
 }
+
 .login-header svg {
   color: #434800;
 }
+
 .login-header a:hover svg {
   color: #fff !important;
 }
+
 .top-strip {
   background-color: #cadb00;
   font-size: 14px;
 }
+
 .login-header span svg,
 .login-header span svg a {
   font-size: 16px;
 }
+
 .logo-strip {
-  background-color: #fefdf7; /* Light background as in image */
+  background-color: #fefdf7;
+  /* Light background as in image */
 }
 
 .logo-img {
   max-height: 45px;
 }
+
 .login-container {
   display: flex;
   justify-content: center;
@@ -1110,16 +1281,20 @@ footer.footer button {
   color: #9cb417 !important;
   text-decoration: none;
 }
+
 .form-box {
   padding-right: 70px;
 }
+
 li.nav-item.mb-2.bg-light.text-dark.rounded {
   background: #fff;
 }
+
 /************ signup ************************/
 .custom-password {
   position: relative;
 }
+
 .login-form-wrapper {
   /* background-color: #fefdf7; */
   padding-right: 50px;
@@ -1141,6 +1316,7 @@ li.nav-item.mb-2.bg-light.text-dark.rounded {
 .custom-signin-btn:hover {
   background-color: #b5c900;
 }
+
 .exchange-title {
   font-size: 35px;
   font-weight: 700;
@@ -1151,6 +1327,7 @@ li.nav-item.mb-2.bg-light.text-dark.rounded {
   padding-left: 10px;
   position: relative;
 }
+
 .exchange-title:before {
   position: absolute;
   content: "";
@@ -1159,6 +1336,7 @@ li.nav-item.mb-2.bg-light.text-dark.rounded {
   left: 0;
   top: 8px;
 }
+
 .exchange_rate {
   font-size: 14px;
   margin-top: 5px;
@@ -1167,10 +1345,12 @@ li.nav-item.mb-2.bg-light.text-dark.rounded {
   float: right;
   font-weight: 600;
 }
+
 .exchange-form {
   width: 100%;
   margin-top: 50px;
 }
+
 .login-page {
   width: 100%;
 }
@@ -1178,10 +1358,12 @@ li.nav-item.mb-2.bg-light.text-dark.rounded {
 .mobile_numbero input.form-control {
   padding: 1rem 0.75rem;
 }
+
 .mb-3.mobile_numbero.row {
   position: relative;
   margin-top: 40px;
 }
+
 .mobile_numbero.row label {
   position: absolute;
   top: -21px;
@@ -1191,9 +1373,11 @@ li.nav-item.mb-2.bg-light.text-dark.rounded {
   padding: 0;
   left: 18px;
 }
+
 .exchange-form label {
   background: transparent !important;
 }
+
 .form-control,
 .form-select {
   padding: 1rem 0.75rem;
@@ -1213,6 +1397,7 @@ li.nav-item.mb-2.bg-light.text-dark.rounded {
   justify-content: center;
   align-items: center;
 }
+
 .loader-logo {
   width: auto;
   margin-bottom: 20px;
@@ -1232,14 +1417,17 @@ li.nav-item.mb-2.bg-light.text-dark.rounded {
     transform: rotate(360deg);
   }
 }
+
 span.status-badge.in.progress {
   font-size: 14px;
   background: transparent;
 }
+
 .form-control:readonly {
   background-color: var(--bs-secondary-bg);
   opacity: 1;
 }
+
 .react-select__control.css-13cymwt-control,
 .css-b62m3t-container,
 .css-13cymwt-control,
@@ -1252,9 +1440,11 @@ span.status-badge.in.progress {
   resize: none;
   border-radius: 10px;
 }
+
 .kyc-country {
   position: relative;
 }
+
 .kyc-country label {
   position: absolute;
   z-index: 9;
@@ -1265,6 +1455,7 @@ span.status-badge.in.progress {
   left: 10px;
   font-size: 14px;
 }
+
 /*************** responsive css ****************/
 
 @media screen and (max-width: 1500px) {

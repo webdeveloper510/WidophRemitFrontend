@@ -49,7 +49,7 @@ const ProfileInformation = () => {
     value: country,
     label: country,
   }));
-  
+
   const [visibility, setVisibility] = useState({
     current: false,
     new: false,
@@ -181,7 +181,7 @@ const ProfileInformation = () => {
       if (response?.code === "200") {
         if (otpPurpose === "password") {
           setchangingPassword(true);
-          handleUpdateProfile(); 
+          handleUpdateProfile();
         } else if (otpPurpose === "profile") {
           updateProfileAfterOtp();
         }
@@ -1023,7 +1023,16 @@ const ProfileInformation = () => {
                   onChange={setOtp}
                   numInputs={6}
                   renderSeparator={<span>-</span>}
-                  renderInput={(props) => <input {...props} />}
+                  renderInput={(props) => (
+                    <input
+                      {...props}
+                      onKeyPress={(e) => {
+                        if (!/[0-9]/.test(e.key)) {
+                          e.preventDefault();
+                        }
+                      }}
+                    />
+                  )}
                 />
               </Col>
               <Button
