@@ -44,6 +44,7 @@ const AddReceiver = () => {
     address: "",
     swift_code: ""
   };
+console.log(allCountries);
 
   const validationSchema = Yup.object({
     bank_name: Yup.string().trim()
