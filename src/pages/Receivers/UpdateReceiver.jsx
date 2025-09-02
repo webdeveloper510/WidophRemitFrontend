@@ -13,6 +13,7 @@ import { getUserRecipient, updateUserRecipient } from "../../services/Api";
 import { toast } from "react-toastify";
 import allCountries from "../../utils/AllCountries";
 import { v4 as uuidv4 } from 'uuid';
+import { CountrySelector } from "../../components/CountrySelector";
 
 const UpdateReceiver = () => {
   const navigate = useNavigate();
@@ -419,8 +420,7 @@ const UpdateReceiver = () => {
                   >
 
                     <div className="d-flex align-items-stretch p-0">
-                      <Form.Select
-                        name="countryCode"
+                      <CountrySelector
                         value={`${values.countryCode}-${values.country}`}
                         onChange={(e) => {
                           const selectedValue = e.target.value;
@@ -429,18 +429,9 @@ const UpdateReceiver = () => {
                           setFieldValue("country", countryName);
                         }}
                         onBlur={handleBlur}
-                        style={{
-                          maxWidth: "140px",
-                          borderTopRightRadius: 0,
-                          borderBottomRightRadius: 0,
-                        }}
-                      >
-                        {allCountries.map((country) => (
-                          <option key={uuidv4()} value={`${country.dial_code}-${country.name}`}>
-                            {country.dial_code ? `${country.flag} ${country.dial_code}` : ''} {country.code ? `(${country.code})` : ''}
-                          </option>
-                        ))}
-                      </Form.Select>
+                        countries={allCountries}
+                        name="countryCode"
+                      />
 
                       <Form.Control
                         type="text"
