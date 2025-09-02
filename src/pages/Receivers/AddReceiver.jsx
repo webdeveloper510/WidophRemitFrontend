@@ -54,7 +54,7 @@ const AddReceiver = () => {
         "Bank name can only contain letters and allowed special characters"
       ),
     account_number: Yup.string().trim()
-      .required("Account number is required")
+      .required("IBAN/Account Number is required")
       .min(8, "Minimum 8 characters")
       .max(30, "Maximum 30 characters")
       .matches(/^[a-zA-Z0-9 -]+$/, "Only letters, numbers, spaces, and hyphens are allowed"),
@@ -463,8 +463,9 @@ const AddReceiver = () => {
                       >
                         {allCountries.map((country) => (
                           <option key={uuidv4()} value={`${country.dial_code}-${country.name}`}>
-                            {country.dial_code ? `${country.flag} ${country.dial_code}` : ''} {country.code ? `(${country.code})` : ''}
+                            <span className="flag">{country.flag}</span> {country.dial_code} ({country.code})
                           </option>
+
                         ))}
                       </Form.Select>
 
