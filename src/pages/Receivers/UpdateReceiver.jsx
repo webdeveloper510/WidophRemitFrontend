@@ -129,7 +129,9 @@ const UpdateReceiver = () => {
           postcode: values.post_code,
           state: values.state,
           country: values.country,
-          country_code: values.countryCode,
+          country_code: allCountries.find((c) => {
+            return c.name === values.country && c.dial_code === values.countryCode
+          }).code,
           address: values.address,
           swift_code: values.swift_code,
           company_name: values.company_name
@@ -177,14 +179,18 @@ const UpdateReceiver = () => {
             email: recipient.email || "",
             mobile:
               recipient.mobile
-                .slice(recipient.country_code.length) || "",
+                .slice(allCountries.find((c) => {
+                  return c.name === recipient.country
+                }).dial_code.length) || "",
             country: recipient.country || "",
             state: recipient.state || "",
             city: recipient.city || "",
             post_code: recipient.postcode || "",
             address: recipient.address || "",
             swift_code: recipient.swift_code || "",
-            countryCode: recipient.country_code || "",
+            countryCode: allCountries.find((c) => {
+              return c.name === recipient.country
+            }).dial_code,
             company_name: recipient.company_name || ""
           };
 

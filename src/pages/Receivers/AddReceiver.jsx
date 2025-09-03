@@ -151,7 +151,9 @@ const AddReceiver = () => {
           postcode: values.post_code,
           state: values.state,
           country: values.country,
-          country_code: values.countryCode,
+          country_code: allCountries.find((c) => {
+            return c.name === values.country && c.dial_code === values.countryCode
+          }).code,
           address: values.address,
           swift_code: values.swift_code,
           email: values.email,
