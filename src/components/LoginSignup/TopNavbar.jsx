@@ -7,7 +7,7 @@ import {
   Navbar,
   NavDropdown,
 } from "react-bootstrap";
-import logo from "../../assets/images/login-logo.png"; // Make sure this path is correct
+import logo from "../../assets/images/login-logo.png"; 
 import {
   FaFacebookF,
   FaInstagram,

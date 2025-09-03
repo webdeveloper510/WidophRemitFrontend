@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import AnimatedPage from "../../components/AnimatedPage";
 import Card from "react-bootstrap/Card";
-import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import { Form, FloatingLabel, Col } from "react-bootstrap";
 import Row from "react-bootstrap/Row";

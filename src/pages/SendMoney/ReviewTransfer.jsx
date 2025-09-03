@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AnimatedPage from "../../components/AnimatedPage";
 import Back from "../../assets/images/back.png";
 import Card from "react-bootstrap/Card";
@@ -7,7 +7,6 @@ import { Col, Row, Button } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   createTransaction,
-  userProfile,
   recipientList,
 } from "../../services/Api";
 import { toast } from "react-toastify";

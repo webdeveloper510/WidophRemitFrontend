@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom"; // <-- Import here
+import { useLocation } from "react-router-dom"; 
 import footerlogo from "../../src/assets/images/footer-logo.png";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import {
@@ -14,7 +14,7 @@ import {
 
 const Footer = () => {
   const location = useLocation();
-  const isKYC = location.pathname === "/kyc"; // true if /kyc
+  const isKYC = location.pathname === "/kyc";
 
   return (
     <footer

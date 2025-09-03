@@ -11,7 +11,6 @@ import { createRecipient } from "../../services/Api";
 import { useLocation, useNavigate } from "react-router-dom";
 import { parsePhoneNumber } from "libphonenumber-js";
 import allCountries from "../../utils/AllCountries";
-import { v4 as uuidv4 } from 'uuid';
 import { CountrySelector } from "../../components/CountrySelector";
 const ReceiverDetail = () => {
   const location = useLocation();

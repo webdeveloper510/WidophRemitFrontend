@@ -11,7 +11,6 @@ import * as Yup from "yup";
 import { createRecipient } from "../../services/Api";
 import { parsePhoneNumber } from "libphonenumber-js";
 import allCountries from "../../utils/AllCountries";
-import { v4 as uuidv4 } from 'uuid';
 import { CountrySelector } from "../../components/CountrySelector";
 
 const isAlphaOnly = (value) => /^[A-Za-z\s]*$/.test(value);

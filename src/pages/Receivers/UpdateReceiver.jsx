@@ -12,7 +12,6 @@ import * as Yup from "yup";
 import { getUserRecipient, updateUserRecipient } from "../../services/Api";
 import { toast } from "react-toastify";
 import allCountries from "../../utils/AllCountries";
-import { v4 as uuidv4 } from 'uuid';
 import { CountrySelector } from "../../components/CountrySelector";
 
 const UpdateReceiver = () => {
@@ -236,7 +235,10 @@ const UpdateReceiver = () => {
             <Card.Body>
               <Card.Title>Bank Information</Card.Title>
               <Row className="mb-3">
-                <FloatingLabel as={Col} label="Bank Name *">
+                <FloatingLabel as={Col} label={<span>
+                  Bank Name
+                  <span style={{ color: "red" }}> *</span>
+                </span>}>
                   <Form.Control
                     type="text"
                     name="bank_name"
@@ -254,7 +256,10 @@ const UpdateReceiver = () => {
                   </Form.Control.Feedback>
                 </FloatingLabel>
 
-                <FloatingLabel as={Col} label="IBAN/Account Number*">
+                <FloatingLabel as={Col} label={<span>
+                  IBAN/Account Number
+                  <span style={{ color: "red" }}> *</span>
+                </span>}>
                   <Form.Control
                     type="text"
                     name="account_number"
@@ -297,7 +302,10 @@ const UpdateReceiver = () => {
             <Card.Body>
               <Card.Title>Recipient Details</Card.Title>
               <Row className="mb-3">
-                <FloatingLabel as={Col} label="First Name *">
+                <FloatingLabel as={Col} label={<span>
+                  First Name
+                  <span style={{ color: "red" }}> *</span>
+                </span>}>
                   <Form.Control
                     type="text"
                     name="first_name"
@@ -334,7 +342,10 @@ const UpdateReceiver = () => {
                   </Form.Control.Feedback>
                 </FloatingLabel>
 
-                <FloatingLabel as={Col} label="Last Name *">
+                <FloatingLabel as={Col} label={<span>
+                  Last Name
+                  <span style={{ color: "red" }}> *</span>
+                </span>}>
                   <Form.Control
                     type="text"
                     name="last_name"
@@ -496,7 +507,10 @@ const UpdateReceiver = () => {
                 </Col>
 
                 <Col>
-                  <FloatingLabel label="Address *" className="mb-3">
+                  <FloatingLabel label={<span>
+                    Address
+                    <span style={{ color: "red" }}> *</span>
+                  </span>} className="mb-3">
                     <Form.Control
                       as="textarea"
                       rows={2}
@@ -514,7 +528,10 @@ const UpdateReceiver = () => {
               </Row>
 
               <Row className="mb-3">
-                <FloatingLabel as={Col} label="City *">
+                <FloatingLabel as={Col} label={<span>
+                  City
+                  <span style={{ color: "red" }}> *</span>
+                </span>}>
                   <Form.Control
                     type="text"
                     name="city"
@@ -533,7 +550,10 @@ const UpdateReceiver = () => {
                   </Form.Control.Feedback>
                 </FloatingLabel>
 
-                <FloatingLabel as={Col} label="Zip/Postal Code *">
+                <FloatingLabel as={Col} label={<span>
+                  Zip/Postal Code
+                  <span style={{ color: "red" }}> *</span>
+                </span>}>
                   <Form.Control
                     type="text"
                     name="post_code"
@@ -552,7 +572,10 @@ const UpdateReceiver = () => {
                   </Form.Control.Feedback>
                 </FloatingLabel>
 
-                <FloatingLabel as={Col} label="State *">
+                <FloatingLabel as={Col} label={<span>
+                  State
+                  <span style={{ color: "red" }}> *</span>
+                </span>}>
                   <Form.Control
                     type="text"
                     name="state"
@@ -598,7 +621,7 @@ const UpdateReceiver = () => {
           </Card>
         </Form>
       </div>
-    </AnimatedPage>
+    </AnimatedPage >
   );
 };
 

@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import { Form, FloatingLabel, Col, Row, Button } from "react-bootstrap";
 import { RiFileCopyLine } from "react-icons/ri";
 

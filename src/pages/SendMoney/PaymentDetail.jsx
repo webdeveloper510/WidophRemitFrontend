@@ -13,7 +13,7 @@ import {
 } from "react-bootstrap";
 import Back from "../../assets/images/back.png";
 import { RiFileCopyLine } from "react-icons/ri";
-import { Await, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   createPayId,
   getPayID,
@@ -23,7 +23,6 @@ import {
   GetBudRedirectUrl,
 } from "../../services/Api";
 import { toast } from "react-toastify";
-import { FaWhatsapp } from "react-icons/fa6";
 
 const PaymentDetail = () => {
   const location = useLocation();

@@ -1,4 +1,3 @@
-import React from "react";
 import { Navigate, Route, Routes } from "react-router";
 import ProtectedRoute from "./protectedRoutes";
 import PublicRoute from "./publicRoutes";

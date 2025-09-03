@@ -1,19 +1,14 @@
-
 import { useEffect, useState } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import { userProfile } from '../services/Api';
 import loaderlogo from "../assets/images/logo.png"
-
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(true);
   const [verified, setVerified] = useState(false);
   const [redirectTo, setRedirectTo] = useState(null);
-  const location = useLocation();
-  const pathname = location.pathname;
-
 
   useEffect(() => {
     const fetchAndVerifyUser = async () => {
