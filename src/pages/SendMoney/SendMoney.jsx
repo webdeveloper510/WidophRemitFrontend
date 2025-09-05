@@ -36,6 +36,8 @@ const SendMoney = () => {
   const [curr_in, setCurrIn] = useState([]);
   const [curr_out, setCurrOut] = useState([]);
   const [exch_rate, setExchRate] = useState();
+  const [fees, setfees] = useState(0.00);
+  const [TotalAmount, setTotalAmount] = useState(0.00);
   const [defaultExchange, setDefaultExchange] = useState();
   const [isConverting, setIsConverting] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -68,6 +70,8 @@ const SendMoney = () => {
         ),
         receive_currency: updatedValues.to || "NGN",
         method: updatedValues.receive_method || "Bank transfer",
+        fees: updatedValues.fees,
+        TotalAmount: updatedValues.TotalAmount
       })
     );
   };
@@ -108,6 +112,9 @@ const SendMoney = () => {
         direction: "from",
       });
 
+      setfees(exch_data.incoming_fixed)
+      setTotalAmount(exch_data.final_incoming)
+
       let payload = {
         amount: {
           send_amount: commaRemover(values.send_amt),
@@ -146,8 +153,18 @@ const SendMoney = () => {
           exchange_amt: commaRemover(exch_data.amount),
           exchange_rate: exch_rate,
           defaultExchange: defaultExchange,
+          TotalAmount: exch_data.final_incoming,
+          fees: exch_data.incoming_fixed
         };
 
+        let tempData = JSON.parse(sessionStorage.getItem("temp_exchange_data"));
+        tempData = {
+          ...tempData,
+          fees,
+          TotalAmount
+        }
+        sessionStorage.removeItem("temp_exchange_data")
+        sessionStorage.setItem("temp_exchange_data", JSON.stringify(tempData));
         sessionStorage.setItem("transfer_data", JSON.stringify(local));
 
         navigate("/receivers-list", {
@@ -219,6 +236,8 @@ const SendMoney = () => {
       setIsConverting(true);
       try {
         const response = await exchangeRate(payload);
+        setfees(response.incoming_fixed)
+        setTotalAmount(response.final_incoming)
         if (response) {
           if (dir === "from") {
             setFieldValue("exchange_amt", response.amount);
@@ -291,6 +310,8 @@ const SendMoney = () => {
           setFieldValue("from", parsedData.send_currency || "AUD");
           setFieldValue("to", parsedData.receive_currency || "NGN");
           setFieldValue("receive_method", parsedData.method || "Bank transfer");
+          setTotalAmount(parsedData.TotalAmount);
+          setfees(parsedData.fees);
           await getExchangeRate(
             parsedData.send_currency,
             parsedData.receive_currency
@@ -407,7 +428,7 @@ const SendMoney = () => {
                         name="from"
                         value={values.from}
                         onChange={handleTypeChange}
-                        //disabled={isConverting}
+                      //disabled={isConverting}
                       >
                         {curr_in.map((curr) => (
                           <option key={curr} value={curr}>
@@ -427,7 +448,7 @@ const SendMoney = () => {
                         name="to"
                         value={values.to}
                         onChange={handleTypeChange}
-                        //disabled={isConverting}
+                      //disabled={isConverting}
                       >
                         {curr_out.map((curr) => (
                           <option key={curr} value={curr}>
@@ -449,7 +470,11 @@ const SendMoney = () => {
                         type="text"
                         name="send_amt"
                         value={values.send_amt}
-                        onChange={handleAmountChange}
+                        onChange={(e) => {
+                          if (e.target.value[0] == 0) return
+                          if (e.target.value <= 15000)
+                            handleAmountChange(e)
+                        }}
                         onBlur={handleAmountBlur}
                         //disabled={isConverting}
                         isInvalid={touched.send_amt && !!errors.send_amt}
@@ -488,13 +513,13 @@ const SendMoney = () => {
                         <li>
                           Fee
                           <label>
-                            <b className="">00.00 GBP</b>
+                            <b className="">{values.send_amt ? fees : "0.00"} {values.from}</b>
                           </label>
                         </li>
                         <li>
                           Total to pay
                           <label>
-                            <b className="">501.99 GBP</b>
+                            <b className="">{values.send_amt ? TotalAmount : "0.00"} {values.from}</b>
                           </label>
                         </li>
                       </ul>

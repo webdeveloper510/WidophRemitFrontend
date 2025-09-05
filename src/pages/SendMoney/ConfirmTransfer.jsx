@@ -341,7 +341,6 @@ const ConfirmTransfer = () => {
   };
 
   const isLoading = isLoadingMonova || isLoadingZai || isLoadingPayID;
-
   return (
     <AnimatedPage>
       <div className="page-title">
@@ -415,13 +414,13 @@ const ConfirmTransfer = () => {
                           <tr>
                             <td>Fee</td>
                             <td>
-                              <b>00.00 GBP</b>
+                              <b>{`${transferData?.amount?.fees} ${transferData?.amount?.from}`}</b>
                             </td>
                           </tr>
                           <tr>
                             <td>Total to pay</td>
                             <td>
-                              <b>501.99 GBP</b>
+                              <b>{`${transferData?.amount?.TotalAmount} ${transferData?.amount?.from}`}</b>
                             </td>
                           </tr>
                         </tbody>

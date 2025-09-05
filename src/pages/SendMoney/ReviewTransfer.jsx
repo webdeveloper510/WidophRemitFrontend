@@ -97,9 +97,8 @@ const ReviewTransfer = () => {
         const user = JSON.parse(storedUser);
 
         setSender({
-          fullName: `${user.First_name || ""} ${user.Middle_name || ""} ${
-            user.Last_name || ""
-          }`.trim(),
+          fullName: `${user.First_name || ""} ${user.Middle_name || ""} ${user.Last_name || ""
+            }`.trim(),
           email: user.email || "N/A",
           phone: user.mobile || "N/A",
         });
@@ -114,12 +113,10 @@ const ReviewTransfer = () => {
     }
   };
 
-  const fullName = `${list?.First_name || list?.first_name || ""} ${
-    list?.Last_name || list?.last_name || ""
-  }`.trim();
+  const fullName = `${list?.First_name || list?.first_name || ""} ${list?.Last_name || list?.last_name || ""
+    }`.trim();
   const receiverFullName = receiver
-    ? `${receiver.first_name || ""} ${receiver.middle_name || ""} ${
-        receiver.last_name || ""
+    ? `${receiver.first_name || ""} ${receiver.middle_name || ""} ${receiver.last_name || ""
       }`.trim()
     : "";
 
@@ -219,9 +216,8 @@ const ReviewTransfer = () => {
                             <td>Sending Amount</td>
                             <td>
                               {transferData?.send_amt
-                                ? `${transferData.send_amt} ${
-                                    transferData.from || "AUD"
-                                  }`
+                                ? `${transferData.send_amt} ${transferData.from || "AUD"
+                                }`
                                 : "N/A"}
                             </td>
                           </tr>
@@ -229,9 +225,8 @@ const ReviewTransfer = () => {
                             <td>Amount Exchanged</td>
                             <td>
                               {transferData?.exchange_amt
-                                ? `${transferData.exchange_amt} ${
-                                    transferData.to || "NGN"
-                                  }`
+                                ? `${transferData.exchange_amt} ${transferData.to || "NGN"
+                                }`
                                 : "N/A"}
                             </td>
                           </tr>
@@ -239,9 +234,8 @@ const ReviewTransfer = () => {
                             <td>Total To Receiver</td>
                             <td>
                               {transferData?.exchange_amt
-                                ? `${transferData.exchange_amt} ${
-                                    transferData.to || "NGN"
-                                  }`
+                                ? `${transferData.exchange_amt} ${transferData.to || "NGN"
+                                }`
                                 : "N/A"}
                             </td>
                           </tr>
@@ -249,22 +243,21 @@ const ReviewTransfer = () => {
                             <td>Exchange Rate</td>
                             <td>
                               {transferData?.exchange_rate
-                                ? `1 ${transferData.from || "AUD"} = ${
-                                    transferData.exchange_rate
-                                  } ${transferData.to || "NGN"}`
+                                ? `1 ${transferData.from || "AUD"} = ${transferData.exchange_rate
+                                } ${transferData.to || "NGN"}`
                                 : "N/A"}
                             </td>
                           </tr>
                           <tr>
                             <td>Fee</td>
                             <td>
-                              <b>00.00 GBP</b>
+                              <b>{`${transferData?.fees} ${transferData?.from}`}</b>
                             </td>
                           </tr>
                           <tr>
                             <td>Total to pay</td>
                             <td>
-                              <b>501.99 GBP</b>
+                              <b>{`${transferData?.TotalAmount} ${transferData?.from}`}</b>
                             </td>
                           </tr>
                         </tbody>
