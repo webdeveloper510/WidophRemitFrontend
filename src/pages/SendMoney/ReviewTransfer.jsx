@@ -251,7 +251,7 @@ const ReviewTransfer = () => {
                           <tr>
                             <td>Fee</td>
                             <td>
-                              <b>{`${transferData?.fees} ${transferData?.from}`}</b>
+                              {`${transferData?.fees} ${transferData?.from}`}
                             </td>
                           </tr>
                           <tr>

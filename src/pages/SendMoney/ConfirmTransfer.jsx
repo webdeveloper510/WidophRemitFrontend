@@ -414,7 +414,7 @@ const ConfirmTransfer = () => {
                           <tr>
                             <td>Fee</td>
                             <td>
-                              <b>{`${transferData?.amount?.fees} ${transferData?.amount?.from}`}</b>
+                              {`${transferData?.amount?.fees} ${transferData?.amount?.from}`}
                             </td>
                           </tr>
                           <tr>

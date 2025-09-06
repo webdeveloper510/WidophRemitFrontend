@@ -84,7 +84,7 @@ const TransferDetails = () => {
                   </Row>
                   <Row>
                     <Col className="p-4 stripe2 text-white">
-                      <span>Amount Paid</span>
+                      <span>Amount</span>
                       <h2>
                         {transactionData?.send_amount}{" "}
                         {transactionData?.send_currency}
@@ -94,6 +94,23 @@ const TransferDetails = () => {
                       <span>Amount Received</span>
                       <h2>
                         {transactionData?.receive_amount}{" "}
+                        {transactionData?.receive_currency}
+                      </h2>
+                    </Col>
+                  </Row>
+                  <br />
+                  <Row>
+                    <Col className="p-4 stripe2 text-white">
+                      <span>Fees Paid</span>
+                      <h2>
+                        {transactionData?.fee_amount}{" "}
+                        {transactionData?.send_currency}
+                      </h2>
+                    </Col>
+                    <Col className="p-4 stripe3 text-white">
+                      <span>Total Amount paid</span>
+                      <h2>
+                        {transactionData?.fee_total_amount}{" "}
                         {transactionData?.receive_currency}
                       </h2>
                     </Col>
