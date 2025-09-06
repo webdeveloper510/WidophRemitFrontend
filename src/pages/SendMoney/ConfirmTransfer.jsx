@@ -136,7 +136,7 @@ const ConfirmTransfer = () => {
 
       // Prepare payment payload
       const payload = {
-        amount: parseFloat(monovaForm?.amount || 0),
+        amount: JSON.parse(sessionStorage.getItem("payload")).amount.fee_total_amount,
         bsbNumber: matcher.bsb,
         accountNumber: matcher.bankAccountNumber,
         accountName: matcher.bankAccountName,
