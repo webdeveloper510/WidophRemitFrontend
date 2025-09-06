@@ -21,6 +21,10 @@ const TransactionSuccess = () => {
   const transactionId = queryParams.get("transaction_id");
   const statusParam = queryParams.get("status");
   const [AutoMatcherData, setAutoMatcherData] = useState({});
+  const [Fees, setFees] = useState("");
+  const [TotalAmount, setTotalAmount] = useState("");
+
+
 
 
   useEffect(() => {
@@ -149,6 +153,8 @@ const TransactionSuccess = () => {
         const result = await paymentSummary(txId);
         if (result?.code === "200") {
           setStatus(result.data.payment_status);
+          setFees(result.data.fee_amount);
+          setTotalAmount(result.data.fee_total_amount)
         }
       } catch (err) {
         console.error(err);
@@ -167,6 +173,8 @@ const TransactionSuccess = () => {
     clearSessionStorageData();
     navigate("/send-money");
   };
+
+  let OutCurr = JSON.parse(sessionStorage.getItem("payload")).amount.send_currency;
   if (loading) {
     return (
       <AnimatedPage>
@@ -220,11 +228,28 @@ const TransactionSuccess = () => {
                                 <td>Transfer ID</td>
                                 <td>{transaction.transaction_id || "N/A"}</td>
                               </tr>
+
                               <tr>
                                 <td>Transfer Amount</td>
                                 <td>
                                   {transaction.final_amount
-                                    ? `${transaction.final_amount} AUD`
+                                    ? `${transaction.final_amount} ${OutCurr}`
+                                    : "N/A"}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>Fee Amount</td>
+                                <td>
+                                  {transaction.fee_amount
+                                    ? `${transaction.fee_amount} ${OutCurr}`
+                                    : "N/A"}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>Total Amount</td>
+                                <td>
+                                  {transaction.fee_total_amount
+                                    ? `${transaction.fee_total_amount} ${OutCurr}`
                                     : "N/A"}
                                 </td>
                               </tr>
@@ -315,8 +340,20 @@ const TransactionSuccess = () => {
                               <td>Transfer Amount</td>
                               <td>
                                 {transaction.final_amount
-                                  ? `${transaction.final_amount} AUD`
+                                  ? `${transaction.final_amount} ${OutCurr}`
                                   : "N/A"}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Fee Amount</td>
+                              <td>
+                                {` ${Fees || "N/A"} ${OutCurr}`}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Total Amount</td>
+                              <td>
+                                {`${TotalAmount || "N/A"} ${OutCurr}`}
                               </td>
                             </tr>
                             <tr>
@@ -341,7 +378,7 @@ const TransactionSuccess = () => {
                             </li>
                             <li>
                               Initiate a payment of {payload.send_currency} {" "}
-                              {payload.send_amount}  to PayID: {payIdDetail.payid || ""}
+                              {TotalAmount}  to PayID: {payIdDetail.payid || ""}
                             </li>
                             <li>
                               Enter your transaction ID {transaction.transaction_id} in the payment reference field.
@@ -365,7 +402,7 @@ const TransactionSuccess = () => {
                             <ul>
                               <li>Log in to your banking portal or app.</li>
                               <li> Initiate a payment of {payload.send_currency} {" "}
-                                {payload.send_amount} to your Virtual Auto-Matcher Account using the details below:
+                                {TotalAmount} to your Virtual Auto-Matcher Account using the details below:
                               </li>
                               <ul>
                                 <li>Account Name: {AutoMatcherData.bankAccountName}

@@ -21,7 +21,6 @@ import Loader from "../../components/Loader";
 const SendMoney = () => {
   useEffect(() => {
     clearSessionStorageData();
-
     const webData = sessionStorage.getItem("web_exchange_data");
     const tempData = sessionStorage.getItem("temp_exchange_data");
     if (!webData && !(tempData && location.state?.backFromReceivers === true)) {
@@ -125,6 +124,8 @@ const SendMoney = () => {
           payout_partner: "",
           reason: "none",
           exchange_rate: exch_rate,
+          fee_total_amount: TotalAmount,
+          fee_amount: fees
         },
       };
 
@@ -257,16 +258,26 @@ const SendMoney = () => {
   );
 
   useEffect(() => {
+    const navigationEntries = window.performance.getEntriesByType('navigation');
+    const isReload =
+      (navigationEntries.length && navigationEntries[0].type === 'reload') ||
+      (performance && performance.navigation && performance.navigation.type === 1);
+
+    if (isReload && location.state?.backFromReceivers) {
+      navigate(location.pathname, {
+        replace: true,
+        state: { ...location.state, backFromReceivers: false }
+      });
+    }
+  }, []);
+
+  useEffect(() => {
     const loadInitialData = async () => {
       try {
         const currencyRes = await getCurrencies();
         if (currencyRes?.code === "200") {
-          setCurrOut(
-            currencyRes?.data?.payout_currencies?.map((cr) => cr.currency)
-          );
-          setCurrIn(
-            currencyRes?.data?.payin_currencies?.map((cr) => cr.currency)
-          );
+          setCurrOut(currencyRes?.data?.payout_currencies?.map(cr => cr.currency))
+          setCurrIn(currencyRes?.data?.payin_currencies?.map(cr => cr.currency))
         }
 
         const webData = sessionStorage.getItem("web_exchange_data");
@@ -290,6 +301,8 @@ const SendMoney = () => {
               "receive_method",
               parsedData.method || "Bank transfer"
             );
+            setfees(parsedData.fees);
+            setTotalAmount(parsedData.TotalAmount)
 
             if (parsedData.exchange_rate) {
               setExchRate(parsedData.exchange_rate);
