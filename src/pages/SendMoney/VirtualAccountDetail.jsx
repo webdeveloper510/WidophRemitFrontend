@@ -73,6 +73,8 @@ const VirtualAccountDetail = () => {
                         onChange={(e) => {
                             setPaymentMethod(e.target.value);
                             setpaymemtError("");
+                            const temp = { ...monovaform, payment_mode: e.target.value }
+                            sessionStorage.setItem("monova_form_data", JSON.stringify(temp))
                         }}
                         isInvalid={!!paymemtError}
                     >
@@ -137,7 +139,7 @@ const VirtualAccountDetail = () => {
                 </tbody>
             </Table>
             <br />
-            
+
             <p>
                 You’re almost done,
                 Please complete the payment steps here on the Widoph Remit portal first.

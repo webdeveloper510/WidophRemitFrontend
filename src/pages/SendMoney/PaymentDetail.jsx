@@ -233,10 +233,13 @@ const PaymentDetail = () => {
           bsbNumber: currentForm.bsb,
           accountNumber: modalShowMonova ? res.data.bankAccountNumber : currentForm.accountNumber,
           accountName: modalShowMonova ? res.data.bankAccountName : currentForm.accountName,
-          payment_mode: currentForm.paymentMethod,
         };
 
-        sessionStorage.setItem("monova_form_data", JSON.stringify(temp));
+        const monoovaformdata = JSON.parse(sessionStorage.getItem("monova_form_data"))
+        sessionStorage.setItem("monova_form_data", JSON.stringify({
+          ...monoovaformdata,
+          temp
+        }));
         const finalReason = transferReason === "Other" ? otherReason : transferReason;
 
         const updatedTransferData = {

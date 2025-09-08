@@ -202,8 +202,8 @@ const TransferDetails = () => {
                       <tbody>
                         <tr>
                           <th>Payment Mode</th>
-                          <td>{transactionData?.send_method === "zai_payid_per_user" ? "PayID" :
-                            transactionData?.send_method === "monoova_payin_per_user" ? "Monoova" : "BudPay"}</td>
+                          <td>{transactionData?.send_method === "" ? "N/A" : transactionData?.send_method === "zai_payid_per_user" ? "PayID" :
+                            transactionData?.send_method === "monoova_payin_per_user" ? "Monoova" : "wrong send method"}</td>
                         </tr>
                         <tr>
                           <th>Customer ID</th>
