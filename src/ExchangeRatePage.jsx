@@ -13,8 +13,8 @@ const ExchangeRatePage = () => {
         receive_amount: queryParams.get("receive_amount"),
         receive_currency: queryParams.get("receive_currency"),
         method: queryParams.get("method"),
-        fees: queryParams.get("fees"),
-        TotalAmount: queryParams.get("total")
+        fees: queryParams.get("incoming_fixed"),
+        TotalAmount: queryParams.get("final_incoming")
     };
 
     useEffect(() => {
