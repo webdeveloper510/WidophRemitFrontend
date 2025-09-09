@@ -238,7 +238,7 @@ const PaymentDetail = () => {
         const monoovaformdata = JSON.parse(sessionStorage.getItem("monova_form_data"))
         sessionStorage.setItem("monova_form_data", JSON.stringify({
           ...monoovaformdata,
-          temp
+          ...temp
         }));
         const finalReason = transferReason === "Other" ? otherReason : transferReason;
 
