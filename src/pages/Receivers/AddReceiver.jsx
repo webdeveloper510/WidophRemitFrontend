@@ -196,7 +196,7 @@ const AddReceiver = () => {
           swift_code: values.swift_code,
           email: values.email,
           company_name: values.company_name,
-          code:
+          bank_code:
             (
               bankNames.find((bank) => bank.bank_name === values.bank_name) ||
               {}
