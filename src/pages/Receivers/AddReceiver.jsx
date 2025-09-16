@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AnimatedPage from "../../components/AnimatedPage";
 import Back from "../../assets/images/back.png";
@@ -8,7 +8,7 @@ import { Form, FloatingLabel, Col, Row, Alert } from "react-bootstrap";
 import Select from "react-select";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { createRecipient } from "../../services/Api";
+import { createRecipient, GetBudpayBanks } from "../../services/Api";
 import { parsePhoneNumber } from "libphonenumber-js";
 import allCountries from "../../utils/AllCountries";
 import { CountrySelector } from "../../components/CountrySelector";
@@ -19,6 +19,7 @@ const AddReceiver = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [bankNames, setbankNames] = useState([]);
 
   const countryOptions = allCountries.map((country) => ({
     value: country.name,
@@ -46,48 +47,22 @@ const AddReceiver = () => {
     swift_code: "",
   };
 
-  const bankNames = [
-    {
-      bank_name: "ABSA BANK",
-      bank_code: "ABS",
-      logo: "",
-    },
-    {
-      bank_name: "ACCESS BANK",
-      bank_code: "ACB",
-      logo: "",
-    },
-    {
-      bank_name: "ADB",
-      bank_code: "ADB",
-      logo: "",
-    },
-    {
-      bank_name: "African Investment Bank",
-      bank_code: "AIB",
-      logo: "",
-    },
-    {
-      bank_name: "AIRTELTIGO MONEY",
-      bank_code: "AIR",
-      logo: "",
-    },
-    {
-      bank_name: "Amalgamated Bank Limited",
-      bank_code: "ABL",
-      logo: "",
-    },
-  ];
+  useEffect(() => {
+    (async () => {
+      const banks = await GetBudpayBanks();
+      setbankNames(banks.data);
+    })();
+  }, []);
 
   const validationSchema = Yup.object({
     bank_name: Yup.string()
       .trim()
       .required("Bank name is required")
-      .max(40, "Bank name is too big")
-      .matches(
-        /^[A-Za-z!@#\$%&'*+\-/=?^_`{|}~ ]+$/,
-        "Bank name can only contain letters and allowed special characters"
-      ),
+      .max(40, "Bank name is too big"),
+    // .matches(
+    //   /^[A-Za-z!@#\$%&'*+\-/=?^_`{|}~ ]+$/,
+    //   "Bank name can only contain letters and allowed special characters"
+    // ),
     account_number: Yup.string()
       .trim()
       .required("IBAN/Account Number is required")

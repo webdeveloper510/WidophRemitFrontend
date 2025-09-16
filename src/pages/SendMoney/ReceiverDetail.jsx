@@ -18,6 +18,7 @@ const ReceiverDetail = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [bankNames, setbankNames] = useState([]);
 
   const countryOptions = allCountries.map((country) => ({
     value: country.name,
@@ -28,38 +29,12 @@ const ReceiverDetail = () => {
     if (location?.state?.from !== "receivers-list") navigate("/send-money");
   }, [location]);
 
-  const bankNames = [
-    {
-      bank_name: "ABSA BANK",
-      bank_code: "ABS",
-      logo: "",
-    },
-    {
-      bank_name: "ACCESS BANK",
-      bank_code: "ACB",
-      logo: "",
-    },
-    {
-      bank_name: "ADB",
-      bank_code: "ADB",
-      logo: "",
-    },
-    {
-      bank_name: "African Investment Bank",
-      bank_code: "AIB",
-      logo: "",
-    },
-    {
-      bank_name: "AIRTELTIGO MONEY",
-      bank_code: "AIR",
-      logo: "",
-    },
-    {
-      bank_name: "Amalgamated Bank Limited",
-      bank_code: "ABL",
-      logo: "",
-    },
-  ];
+  useEffect(() => {
+    (async () => {
+      const banks = await GetBudpayBanks();
+      setbankNames(banks.data);
+    })();
+  }, []);
 
   const initialValues = {
     bank_name: "",
@@ -85,11 +60,11 @@ const ReceiverDetail = () => {
     bank_name: Yup.string()
       .trim()
       .required("Bank name is required")
-      .max(40, "Bank name is too big")
-      .matches(
-        /^[A-Za-z!@#\$%&'*+\-/=?^_`{|}~ ]+$/,
-        "Bank name can only contain letters and allowed special characters"
-      ),
+      .max(40, "Bank name is too big"),
+    // .matches(
+    //   /^[A-Za-z!@#\$%&'*+\-/=?^_`{|}~ ]+$/,
+    //   "Bank name can only contain letters and allowed special characters"
+    // ),
     account_number: Yup.string()
       .trim()
       .required("IBAN/Account Number is required")

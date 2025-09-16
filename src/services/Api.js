@@ -204,6 +204,16 @@ export const GetAllPaymentStatus = async () => {
   return response
 }
 
+export const GetBudpayBanks = async () => {
+  const response = await public_instance.get("/payment/budpay-bank-list/NGN")
+    .then(res => {
+      return res?.data
+    }).catch(error => {
+      return error.response
+    })
+  return response
+}
+
 export const GetBudRedirectUrl = async (data) => {
   const response = await public_instance.post("/budpay/payment/", data, {
     headers: {
