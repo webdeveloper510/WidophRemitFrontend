@@ -69,20 +69,30 @@ private_instance.interceptors.response.use(
   (error) => {
     const res = error?.response;
 
-    if (
-      res?.status === 401 &&
-      (res?.data?.code === "token_not_valid" ||
-        res?.data?.detail?.includes("token not valid"))
-    ) {
-      console.warn("⛔ Token is invalid or expired. Logging out...");
-      sessionStorage.clear();
-      localStorage.removeItem("token");
-      window.location.href = "/login";
+    if (res) {
+      if (
+        res.status === 401 &&
+        (res.data?.code === "token_not_valid" ||
+          res.data?.detail?.includes("token not valid"))
+      ) {
+        console.warn("⛔ Token is invalid or expired. Logging out...");
+        sessionStorage.clear();
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      }
+
+      if (res.status === 503) {
+        console.warn("🚨 Service Unavailable. Clearing session and redirecting to login.");
+        sessionStorage.clear();
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      }
     }
 
     return Promise.reject(error);
   }
 );
+
 export const userRegisterCheck = async (data) => {
   const response = await public_instance.post("/register-check/", data).then(res => {
     return res?.data

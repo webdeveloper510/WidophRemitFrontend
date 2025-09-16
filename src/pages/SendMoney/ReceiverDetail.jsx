@@ -17,15 +17,49 @@ const ReceiverDetail = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
   const countryOptions = allCountries.map((country) => ({
     value: country.name,
     label: country.name,
   }));
 
   useEffect(() => {
-    if (location?.state?.from !== "receivers-list")
-      navigate("/send-money")
-  }, [location])
+    if (location?.state?.from !== "receivers-list") navigate("/send-money");
+  }, [location]);
+
+  const bankNames = [
+    {
+      bank_name: "ABSA BANK",
+      bank_code: "ABS",
+      logo: "",
+    },
+    {
+      bank_name: "ACCESS BANK",
+      bank_code: "ACB",
+      logo: "",
+    },
+    {
+      bank_name: "ADB",
+      bank_code: "ADB",
+      logo: "",
+    },
+    {
+      bank_name: "African Investment Bank",
+      bank_code: "AIB",
+      logo: "",
+    },
+    {
+      bank_name: "AIRTELTIGO MONEY",
+      bank_code: "AIR",
+      logo: "",
+    },
+    {
+      bank_name: "Amalgamated Bank Limited",
+      bank_code: "ABL",
+      logo: "",
+    },
+  ];
 
   const initialValues = {
     bank_name: "",
@@ -44,71 +78,98 @@ const ReceiverDetail = () => {
     post_code: "",
     address: "",
     swift_code: "",
-    company_name: ""
+    company_name: "",
   };
 
   const validationSchema = Yup.object({
-    bank_name: Yup.string().trim()
+    bank_name: Yup.string()
+      .trim()
       .required("Bank name is required")
       .max(40, "Bank name is too big")
       .matches(
         /^[A-Za-z!@#\$%&'*+\-/=?^_`{|}~ ]+$/,
         "Bank name can only contain letters and allowed special characters"
       ),
-    account_number: Yup.string().trim()
+    account_number: Yup.string()
+      .trim()
       .required("IBAN/Account Number is required")
       .min(8, "Minimum 8 characters")
       .max(30, "Maximum 30 characters")
-      .matches(/^[a-zA-Z0-9 -]+$/, "Only letters, numbers, spaces, and hyphens are allowed"),
+      .matches(
+        /^[a-zA-Z0-9 -]+$/,
+        "Only letters, numbers, spaces, and hyphens are allowed"
+      ),
 
-    first_name: Yup.string().trim()
+    first_name: Yup.string()
+      .trim()
       .required("First name is required")
       .max(30, "First name cannot exceed 30 characters")
-      .matches(/^[a-zA-Z0-9 -]+$/, "Only letters, numbers, spaces, and hyphens are allowed"),
+      .matches(
+        /^[a-zA-Z0-9 -]+$/,
+        "Only letters, numbers, spaces, and hyphens are allowed"
+      ),
 
-    middle_name: Yup.string().trim()
+    middle_name: Yup.string()
+      .trim()
       .max(30, "Middle name cannot exceed 30 characters")
-      .matches(/^[a-zA-Z0-9 -]*$/, "Only letters, numbers, spaces, and hyphens are allowed"),
+      .matches(
+        /^[a-zA-Z0-9 -]*$/,
+        "Only letters, numbers, spaces, and hyphens are allowed"
+      ),
 
-    last_name: Yup.string().trim()
+    last_name: Yup.string()
+      .trim()
       .required("Last name is required")
       .max(30, "Last name cannot exceed 30 characters")
-      .matches(/^[a-zA-Z0-9 -]+$/, "Only letters, numbers, spaces, and hyphens are allowed"),
+      .matches(
+        /^[a-zA-Z0-9 -]+$/,
+        "Only letters, numbers, spaces, and hyphens are allowed"
+      ),
 
-    email: Yup.string().required("email is required!")
+    email: Yup.string()
+      .required("email is required!")
       .email("Please enter a valid email address"),
 
     mobile: Yup.string()
       .required("Mobile number is required")
       .matches(/^\d{8,10}$/, "Mobile number must be between 8 and 10 digits"),
 
-    country: Yup.string().trim()
-      .required("Country is required"),
+    country: Yup.string().trim().required("Country is required"),
 
-    state: Yup.string().trim()
+    state: Yup.string()
+      .trim()
       .required("State is required")
       .max(30, "State cannot exceed 30 characters")
-      .matches(/^[a-zA-Z -]+$/, "Only letters, spaces, and hyphens are allowed"),
+      .matches(
+        /^[a-zA-Z -]+$/,
+        "Only letters, spaces, and hyphens are allowed"
+      ),
 
     city: Yup.string()
       .required("City is required")
       .max(35, "City cannot exceed 35 characters")
-      .matches(/^[a-zA-Z -]+$/, "Only letters, spaces, and hyphens are allowed"),
+      .matches(
+        /^[a-zA-Z -]+$/,
+        "Only letters, spaces, and hyphens are allowed"
+      ),
 
-
-    post_code: Yup.string().trim()
+    post_code: Yup.string()
+      .trim()
       .required("Postal code is required")
       .max(9, "Postal code cannot exceed 9 digits")
       .matches(/^\d+$/, "Only numbers are allowed"),
 
-    address: Yup.string().trim()
-      .required("Address is required"),
+    address: Yup.string().trim().required("Address is required"),
 
-    swift_code: Yup.string().trim()
+    swift_code: Yup.string()
+      .trim()
       .max(15, "Swift code cannot exceed 15 characters")
-      .matches(/^[a-zA-Z0-9 -]+$/, "Only letters, numbers, spaces, and hyphens are allowed"),
+      .matches(
+        /^[a-zA-Z0-9 -]+$/,
+        "Only letters, numbers, spaces, and hyphens are allowed"
+      ),
 
-    company_name: Yup.string()
+    company_name: Yup.string(),
   });
 
   const {
@@ -127,7 +188,6 @@ const ReceiverDetail = () => {
       setApiError("");
 
       try {
-
         const fullPhone = `${values.countryCode}${values.mobile}`;
         let parsedMobile = fullPhone;
         try {
@@ -156,11 +216,18 @@ const ReceiverDetail = () => {
           state: values.state,
           country: values.country,
           country_code: allCountries.find((c) => {
-            return c.name === values.country && c.dial_code === values.countryCode
+            return (
+              c.name === values.country && c.dial_code === values.countryCode
+            );
           }).code,
           address: values.address,
           swift_code: values.swift_code,
-          company_name: values.company_name
+          company_name: values.company_name,
+          code:
+            (
+              bankNames.find((bank) => bank.bank_name === values.bank_name) ||
+              {}
+            ).bank_code || "",
         };
 
         const response = await createRecipient(payload);
@@ -192,8 +259,8 @@ const ReceiverDetail = () => {
           );
           navigate("/review-transfer", {
             state: {
-              from: "receivers-list"
-            }
+              from: "receivers-list",
+            },
           });
         } else {
           setApiError(response.message || "Failed to create receiver.");
@@ -207,17 +274,25 @@ const ReceiverDetail = () => {
     },
   });
 
+  const filteredSuggestions = values.bank_name
+    ? bankNames.filter((bank) =>
+        bank.bank_name.toLowerCase().includes(values.bank_name.toLowerCase())
+      )
+    : [];
+
   return (
     <AnimatedPage>
       <div className="page-title">
         <div className="d-flex align-items-center">
           <Button
             variant="link"
-            onClick={() => navigate("/receivers-list", {
-              state: {
-                from: "receiver-add"
-              }
-            })}
+            onClick={() =>
+              navigate("/receivers-list", {
+                state: {
+                  from: "receiver-add",
+                },
+              })
+            }
             className="p-0 border-0 bg-transparent"
           >
             <img src={Back} alt="Back" />
@@ -237,7 +312,7 @@ const ReceiverDetail = () => {
                 <Card.Body>
                   <Card.Title>Bank Information</Card.Title>
                   <Row className="mb-3">
-                    <FloatingLabel
+                    {/* <FloatingLabel
                       as={Col}
                       controlId="floatingBankName"
                       label={
@@ -262,7 +337,87 @@ const ReceiverDetail = () => {
                       <Form.Control.Feedback type="invalid">
                         {errors.bank_name}
                       </Form.Control.Feedback>
-                    </FloatingLabel>
+                    </FloatingLabel> */}
+                    <Col style={{ position: "relative" }}>
+                      <FloatingLabel
+                        as={Col}
+                        controlId="bankName"
+                        label={
+                          <span>
+                            Bank Name<span style={{ color: "red" }}> *</span>
+                          </span>
+                        }
+                      >
+                        <Form.Control
+                          type="text"
+                          name="bank_name"
+                          autoComplete="off"
+                          value={values.bank_name}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (
+                              (/^[A-Za-z!@#\$%&'*+\-/=?^_`{|}~ ]+$/.test(
+                                value
+                              ) &&
+                                value.length <= 40) ||
+                              !value
+                            ) {
+                              handleChange(e);
+                              setShowSuggestions(true);
+                            }
+                          }}
+                          onBlur={(e) => {
+                            handleBlur(e);
+                            setTimeout(() => setShowSuggestions(false), 200);
+                          }}
+                          onFocus={() => {
+                            if (values.bank_name) setShowSuggestions(true);
+                          }}
+                          isInvalid={touched.bank_name && errors.bank_name}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.bank_name}
+                        </Form.Control.Feedback>
+                      </FloatingLabel>
+
+                      {/* Suggestions Dropdown */}
+                      {showSuggestions && filteredSuggestions.length > 0 && (
+                        <div
+                          className="suggestions-dropdown"
+                          style={{
+                            position: "absolute",
+                            top: "calc(100% + 2px)",
+                            zIndex: 1000,
+                            backgroundColor: "#fff",
+                            border: "1px solid #ccc",
+                            borderTop: "none",
+                            borderRadius: "0 0 .25rem .25rem",
+                            maxHeight: "200px",
+                            overflowY: "auto",
+                            width: "90%",
+                            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                          }}
+                        >
+                          {filteredSuggestions.map((bank, index) => (
+                            <div
+                              key={index}
+                              onClick={() => {
+                                setFieldValue("bank_name", bank.bank_name);
+                                setShowSuggestions(false);
+                              }}
+                              style={{
+                                padding: "8px 12px",
+                                cursor: "pointer",
+                                borderBottom: "1px solid #eee",
+                              }}
+                              onMouseDown={(e) => e.preventDefault()}
+                            >
+                              {bank.bank_name}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </Col>
 
                     <FloatingLabel
                       as={Col}
@@ -280,8 +435,12 @@ const ReceiverDetail = () => {
                         value={values.account_number}
                         onChange={(e) => {
                           const value = e.target.value;
-                          if (!value || (/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 30))
-                            handleChange(e)
+                          if (
+                            !value ||
+                            (/^[a-zA-Z0-9 -]+$/.test(value) &&
+                              value.length <= 30)
+                          )
+                            handleChange(e);
                         }}
                         onBlur={handleBlur}
                         isInvalid={
@@ -296,11 +455,7 @@ const ReceiverDetail = () => {
                     <FloatingLabel
                       as={Col}
                       controlId="floatingAccountNumber"
-                      label={
-                        <span>
-                          BIC/BSC/Swift Number
-                        </span>
-                      }
+                      label={<span>BIC/BSC/Swift Number</span>}
                     >
                       <Form.Control
                         type="text"
@@ -308,13 +463,15 @@ const ReceiverDetail = () => {
                         value={values.swift_code}
                         onChange={(e) => {
                           const value = e.target.value;
-                          if (!value || (/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 15))
-                            handleChange(e)
+                          if (
+                            !value ||
+                            (/^[a-zA-Z0-9 -]+$/.test(value) &&
+                              value.length <= 15)
+                          )
+                            handleChange(e);
                         }}
                         onBlur={handleBlur}
-                        isInvalid={
-                          touched.swift_code && errors.swift_code
-                        }
+                        isInvalid={touched.swift_code && errors.swift_code}
                       />
                       <Form.Control.Feedback type="invalid">
                         {errors.swift_code}
@@ -346,7 +503,11 @@ const ReceiverDetail = () => {
                         value={values.first_name}
                         onChange={(e) => {
                           const value = e.target.value;
-                          if ((/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 30) || !value)
+                          if (
+                            (/^[a-zA-Z0-9 -]+$/.test(value) &&
+                              value.length <= 30) ||
+                            !value
+                          )
                             handleChange(e);
                         }}
                         onBlur={handleBlur}
@@ -370,12 +531,15 @@ const ReceiverDetail = () => {
                         value={values.middle_name}
                         onChange={(e) => {
                           const value = e.target.value;
-                          if ((/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 30) || !value)
+                          if (
+                            (/^[a-zA-Z0-9 -]+$/.test(value) &&
+                              value.length <= 30) ||
+                            !value
+                          )
                             handleChange(e);
                         }}
                         onBlur={handleBlur}
                       />
-
                     </FloatingLabel>
 
                     <FloatingLabel
@@ -395,7 +559,11 @@ const ReceiverDetail = () => {
                         value={values.last_name}
                         onChange={(e) => {
                           const value = e.target.value;
-                          if ((/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 30) || !value)
+                          if (
+                            (/^[a-zA-Z0-9 -]+$/.test(value) &&
+                              value.length <= 30) ||
+                            !value
+                          )
                             handleChange(e);
                         }}
                         onBlur={handleBlur}
@@ -408,17 +576,12 @@ const ReceiverDetail = () => {
                     </FloatingLabel>
                   </Row>
 
-
                   <Row className="mb-3">
                     {/* ...existing code... */}
                     <FloatingLabel
                       as={Col}
                       controlId="CompanyName"
-                      label={
-                        <span>
-                          Company Name
-                        </span>
-                      }
+                      label={<span>Company Name</span>}
                       className="mb-3"
                     >
                       <Form.Control
@@ -467,16 +630,21 @@ const ReceiverDetail = () => {
                   <Row className="mb-3 mobile_numbero">
                     <Col>
                       <FloatingLabel
-                        label={<span>Mobile Number <span style={{ color: "red" }}> *</span></span>}
+                        label={
+                          <span>
+                            Mobile Number{" "}
+                            <span style={{ color: "red" }}> *</span>
+                          </span>
+                        }
                         className="mb-3"
                       >
                         <div className="d-flex align-items-stretch p-0">
-
                           <CountrySelector
                             value={`${values.countryCode}-${values.country}`}
                             onChange={(e) => {
                               const selectedValue = e.target.value;
-                              const [dialCode, countryName] = selectedValue.split("-");
+                              const [dialCode, countryName] =
+                                selectedValue.split("-");
                               setFieldValue("countryCode", dialCode);
                               setFieldValue("country", countryName);
                             }}
@@ -491,7 +659,10 @@ const ReceiverDetail = () => {
                             placeholder="Enter mobile number"
                             value={values.mobile}
                             onChange={(e) => {
-                              const numericValue = e.target.value.replace(/\D/g, "");
+                              const numericValue = e.target.value.replace(
+                                /\D/g,
+                                ""
+                              );
                               if (numericValue.length <= 10 || !numericValue)
                                 setFieldValue("mobile", numericValue);
                             }}
@@ -511,7 +682,6 @@ const ReceiverDetail = () => {
                       )}
                     </Col>
                   </Row>
-
                 </Card.Body>
               </Card>
 
@@ -530,15 +700,24 @@ const ReceiverDetail = () => {
                         <Select
                           options={countryOptions}
                           name="country"
-                          value={countryOptions.find(opt => opt.value === values.country)}
+                          value={countryOptions.find(
+                            (opt) => opt.value === values.country
+                          )}
                           onChange={(option) => {
                             setFieldValue("country", option.value);
-                            const foundCountry = allCountries.find(c => c.name === option.value);
+                            const foundCountry = allCountries.find(
+                              (c) => c.name === option.value
+                            );
                             if (foundCountry) {
-                              setFieldValue("countryCode", foundCountry.dial_code);
+                              setFieldValue(
+                                "countryCode",
+                                foundCountry.dial_code
+                              );
                             }
                           }}
-                          onBlur={() => setFieldValue("country", values.country)}
+                          onBlur={() =>
+                            setFieldValue("country", values.country)
+                          }
                         />
 
                         {touched.country && errors.country && (
@@ -594,10 +773,13 @@ const ReceiverDetail = () => {
                         value={values.city}
                         onChange={(e) => {
                           const value = e.target.value;
-                          if ((/^[a-zA-Z -]+$/.test(value) && value.length <= 35) || !value)
-                            handleChange(e)
-                        }
-                        }
+                          if (
+                            (/^[a-zA-Z -]+$/.test(value) &&
+                              value.length <= 35) ||
+                            !value
+                          )
+                            handleChange(e);
+                        }}
                         onBlur={handleBlur}
                         isInvalid={touched.city && errors.city}
                       />
@@ -623,7 +805,10 @@ const ReceiverDetail = () => {
                         value={values.post_code}
                         onChange={(e) => {
                           const value = e.target.value;
-                          if (value.length <= 9 && /^\d+$/.test(value) || !value) {
+                          if (
+                            (value.length <= 9 && /^\d+$/.test(value)) ||
+                            !value
+                          ) {
                             handleChange(e);
                           }
                         }}
@@ -652,10 +837,13 @@ const ReceiverDetail = () => {
                         value={values.state}
                         onChange={(e) => {
                           const value = e.target.value;
-                          if ((/^[a-zA-Z -]+$/.test(value) && value.length <= 30) || !value)
-                            handleChange(e)
-                        }
-                        }
+                          if (
+                            (/^[a-zA-Z -]+$/.test(value) &&
+                              value.length <= 30) ||
+                            !value
+                          )
+                            handleChange(e);
+                        }}
                         onBlur={handleBlur}
                         isInvalid={touched.state && errors.state}
                       />
@@ -671,11 +859,13 @@ const ReceiverDetail = () => {
                         variant="light"
                         className="cancel-btn float-start"
                         disabled={isLoading}
-                        onClick={() => navigate("/receivers-list", {
-                          state: {
-                            from: "receiver-add"
-                          }
-                        })}
+                        onClick={() =>
+                          navigate("/receivers-list", {
+                            state: {
+                              from: "receiver-add",
+                            },
+                          })
+                        }
                       >
                         Back
                       </Button>
