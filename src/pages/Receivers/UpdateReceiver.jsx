@@ -47,7 +47,19 @@ const UpdateReceiver = () => {
           };
         }),
       ];
-      setbankNames(all);
+      const uniqueBanks = Object.values(
+      all.reduce((acc, bank) => {
+        acc[bank.bank_code] = bank; // overwrite if duplicate
+        return acc;
+      }, {})
+    );
+
+    // ✅ Sort lexicographically (case-insensitive, trimmed)
+    uniqueBanks.sort((a, b) =>
+      a.bank_name.trim().toLowerCase().localeCompare(b.bank_name.trim().toLowerCase())
+    );
+
+    setbankNames(uniqueBanks);
     })();
   }, []);
 

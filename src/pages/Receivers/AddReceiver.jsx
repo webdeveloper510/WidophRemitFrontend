@@ -51,23 +51,36 @@ const AddReceiver = () => {
     swift_code: "",
   };
 
-  useEffect(() => {
-    (async () => {
-      const banks = await GetBudpayBanks();
-      setbankNames(banks.data);
-      const res = await GetFlutterBanks();
-      const all = [
-        ...banks.data,
-        ...res.data.data.map((bank) => {
-          return {
-            bank_code: bank.code,
-            bank_name: bank.name,
-          };
-        }),
-      ];
-      setbankNames(all);
-    })();
-  }, []);
+useEffect(() => {
+  (async () => {
+    const banks = await GetBudpayBanks();
+    const flutter = await GetFlutterBanks();
+
+    const all = [
+      ...banks.data,
+      ...flutter.data.data.map((bank) => ({
+        bank_code: bank.code,
+        bank_name: bank.name,
+      })),
+    ];
+
+    // ✅ Remove duplicates by bank_code
+    const uniqueBanks = Object.values(
+      all.reduce((acc, bank) => {
+        acc[bank.bank_code] = bank; // overwrite if duplicate
+        return acc;
+      }, {})
+    );
+
+    // ✅ Sort lexicographically (case-insensitive, trimmed)
+    uniqueBanks.sort((a, b) =>
+      a.bank_name.trim().toLowerCase().localeCompare(b.bank_name.trim().toLowerCase())
+    );
+
+    setbankNames(uniqueBanks);
+  })();
+}, []);
+
 
   const validationSchema = Yup.object({
     bank_name: Yup.string().trim().required("Bank name is required"),

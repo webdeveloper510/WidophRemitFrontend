@@ -240,9 +240,7 @@ const TransactionSuccess = () => {
                               <tr>
                                 <td>Fee Amount</td>
                                 <td>
-                                  {transaction.fee_amount
-                                    ? `${transaction.fee_amount} ${OutCurr}`
-                                    : "N/A"}
+                                  {typeof transaction.fee_amount === "number" ? `${JSON.parse(sessionStorage.getItem('payload')).amount.fee_amount} ${OutCurr}` : "N/A"}
                                 </td>
                               </tr>
                               <tr>
@@ -347,7 +345,7 @@ const TransactionSuccess = () => {
                             <tr>
                               <td>Fee Amount</td>
                               <td>
-                                {` ${Fees || "N/A"} ${OutCurr}`}
+                                {` ${JSON.parse(sessionStorage.getItem('payload')).amount.fee_amount || "N/A"} ${OutCurr}`}
                               </td>
                             </tr>
                             <tr>
