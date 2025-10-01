@@ -7,7 +7,11 @@ import { Form, FloatingLabel, Col, Alert, Row } from "react-bootstrap";
 import Select from "react-select";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { createRecipient } from "../../services/Api";
+import {
+  createRecipient,
+  GetBudpayBanks,
+  GetFlutterBanks,
+} from "../../services/Api";
 import { useLocation, useNavigate } from "react-router-dom";
 import { parsePhoneNumber } from "libphonenumber-js";
 import allCountries from "../../utils/AllCountries";
@@ -33,6 +37,17 @@ const ReceiverDetail = () => {
     (async () => {
       const banks = await GetBudpayBanks();
       setbankNames(banks.data);
+      const res = await GetFlutterBanks();
+      const all = [
+        ...banks.data,
+        ...res.data.data.map((bank) => {
+          return {
+            bank_code: bank.code,
+            bank_name: bank.name,
+          };
+        }),
+      ];
+      setbankNames(all);
     })();
   }, []);
 
@@ -57,10 +72,7 @@ const ReceiverDetail = () => {
   };
 
   const validationSchema = Yup.object({
-    bank_name: Yup.string()
-      .trim()
-      .required("Bank name is required")
-      .max(40, "Bank name is too big"),
+    bank_name: Yup.string().trim().required("Bank name is required"),
     // .matches(
     //   /^[A-Za-z!@#\$%&'*+\-/=?^_`{|}~ ]+$/,
     //   "Bank name can only contain letters and allowed special characters"
