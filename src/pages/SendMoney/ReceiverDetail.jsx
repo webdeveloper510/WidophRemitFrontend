@@ -227,10 +227,12 @@ const ReceiverDetail = () => {
           company_name: values.company_name,
           bank_code:
             (
-              bankNames.find((bank) => bank.bank_name === values.bank_name) ||
+              bankNames.find((bank) => bank.bank_name.trim().toLowerCase() === values.bank_name.trim().toLowerCase()) ||
               {}
             ).bank_code || "",
         };
+        
+        // console.log('bank_code',bankNames.find((bank) => bank.bank_name.trim().toLowerCase() === values.bank_name.trim().toLowerCase()));
 
         const response = await createRecipient(payload);
 

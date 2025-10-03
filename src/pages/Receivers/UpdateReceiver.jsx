@@ -13,6 +13,7 @@ import {
   GetBudpayBanks,
   getUserRecipient,
   updateUserRecipient,
+  GetFlutterBanks,
 } from "../../services/Api";
 import { toast } from "react-toastify";
 import allCountries from "../../utils/AllCountries";
