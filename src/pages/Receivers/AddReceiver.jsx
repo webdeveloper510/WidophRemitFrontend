@@ -12,6 +12,7 @@ import {
   createRecipient,
   GetBudpayBanks,
   GetFlutterBanks,
+  GetSamsaraBanks,
 } from "../../services/Api";
 import { parsePhoneNumber } from "libphonenumber-js";
 import allCountries from "../../utils/AllCountries";
@@ -51,36 +52,43 @@ const AddReceiver = () => {
     swift_code: "",
   };
 
-useEffect(() => {
-  (async () => {
-    const banks = await GetBudpayBanks();
-    const flutter = await GetFlutterBanks();
+  useEffect(() => {
+    (async () => {
+      const SamsaraBanks = await GetSamsaraBanks();
+      const banks = await GetBudpayBanks();
+      const flutter = await GetFlutterBanks();
 
-    const all = [
-      ...banks.data,
-      ...flutter.data.data.map((bank) => ({
-        bank_code: bank.code,
-        bank_name: bank.name,
-      })),
-    ];
+      const all = [
+        ...banks.data,
+        ...SamsaraBanks.data.locationDetail.map((bank) => ({
+          bank_code: bank.locationId,
+          bank_name: bank.locationName,
+        })),
+        ...flutter.data.data.map((bank) => ({
+          bank_code: bank.code,
+          bank_name: bank.name,
+        })),
+      ];
 
-    // ✅ Remove duplicates by bank_code
-    const uniqueBanks = Object.values(
-      all.reduce((acc, bank) => {
-        acc[bank.bank_code] = bank; // overwrite if duplicate
-        return acc;
-      }, {})
-    );
+      // ✅ Remove duplicates by bank_code
+      const uniqueBanks = Object.values(
+        all.reduce((acc, bank) => {
+          acc[bank.bank_code] = bank; // overwrite if duplicate
+          return acc;
+        }, {})
+      );
 
-    // ✅ Sort lexicographically (case-insensitive, trimmed)
-    uniqueBanks.sort((a, b) =>
-      a.bank_name.trim().toLowerCase().localeCompare(b.bank_name.trim().toLowerCase())
-    );
+      // ✅ Sort lexicographically (case-insensitive, trimmed)
+      uniqueBanks.sort((a, b) =>
+        a.bank_name
+          .trim()
+          .toLowerCase()
+          .localeCompare(b.bank_name.trim().toLowerCase())
+      );
 
-    setbankNames(uniqueBanks);
-  })();
-}, []);
-
+      setbankNames(uniqueBanks);
+    })();
+  }, []);
 
   const validationSchema = Yup.object({
     bank_name: Yup.string().trim().required("Bank name is required"),

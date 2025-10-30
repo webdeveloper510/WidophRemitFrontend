@@ -11,6 +11,7 @@ import {
   createRecipient,
   GetBudpayBanks,
   GetFlutterBanks,
+  GetSamsaraBanks,
 } from "../../services/Api";
 import { useLocation, useNavigate } from "react-router-dom";
 import { parsePhoneNumber } from "libphonenumber-js";
@@ -35,11 +36,16 @@ const ReceiverDetail = () => {
 
   useEffect(() => {
     (async () => {
+      const SamsaraBanks = await GetSamsaraBanks();
       const banks = await GetBudpayBanks();
       setbankNames(banks.data);
       const res = await GetFlutterBanks();
       const all = [
         ...banks.data,
+        ...SamsaraBanks.data.locationDetail.map((bank) => ({
+          bank_code: bank.locationId,
+          bank_name: bank.locationName,
+        })),
         ...res.data.data.map((bank) => {
           return {
             bank_code: bank.code,
@@ -227,11 +233,14 @@ const ReceiverDetail = () => {
           company_name: values.company_name,
           bank_code:
             (
-              bankNames.find((bank) => bank.bank_name.trim().toLowerCase() === values.bank_name.trim().toLowerCase()) ||
-              {}
+              bankNames.find(
+                (bank) =>
+                  bank.bank_name.trim().toLowerCase() ===
+                  values.bank_name.trim().toLowerCase()
+              ) || {}
             ).bank_code || "",
         };
-        
+
         // console.log('bank_code',bankNames.find((bank) => bank.bank_name.trim().toLowerCase() === values.bank_name.trim().toLowerCase()));
 
         const response = await createRecipient(payload);

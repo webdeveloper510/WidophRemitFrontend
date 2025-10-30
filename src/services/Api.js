@@ -257,6 +257,22 @@ export const GetFlutterBanks = async () => {
   return response;
 };
 
+export const GetSamsaraBanks = async () => {
+  const response = await public_instance
+    .get("payment/samsara-bank-list/", {
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    })
+    .then((res) => {
+      return res?.data;
+    })
+    .catch((error) => {
+      return error.response;
+    });
+  return response;
+};
+
 export const GetBudRedirectUrl = async (data) => {
   const response = await public_instance
     .post("/budpay/payment/", data, {
