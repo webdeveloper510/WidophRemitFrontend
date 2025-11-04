@@ -51,7 +51,6 @@ const PaymentDetail = () => {
     paymentMethod: "",
   });
 
-
   const reasonOptions = [
     "Family Support",
     "Education",
@@ -64,7 +63,8 @@ const PaymentDetail = () => {
   ];
 
   const comingFromConfirmTransferOrReviewTransfer =
-    location.state?.from === "/confirm-transfer" || location.state?.from === "/review-transfer";
+    location.state?.from === "/confirm-transfer" ||
+    location.state?.from === "/review-transfer";
 
   useEffect(() => {
     if (!comingFromConfirmTransferOrReviewTransfer) {
@@ -73,8 +73,12 @@ const PaymentDetail = () => {
   }, [comingFromConfirmTransferOrReviewTransfer, navigate]);
 
   useEffect(() => {
-    const storedTransferData = JSON.parse(sessionStorage.getItem("transfer_data") || "null");
-    const receiver = JSON.parse(sessionStorage.getItem("selected_receiver") || "null");
+    const storedTransferData = JSON.parse(
+      sessionStorage.getItem("transfer_data") || "null"
+    );
+    const receiver = JSON.parse(
+      sessionStorage.getItem("selected_receiver") || "null"
+    );
     const txnId = sessionStorage.getItem("transaction_id") || "";
     const reason = sessionStorage.getItem("transfer_reason") || "";
     const other = sessionStorage.getItem("other_reason") || "";
@@ -118,8 +122,9 @@ const PaymentDetail = () => {
     setMonovaForm({
       bsb: "",
       accountNumber: "",
-      accountName: `${JSON.parse(sessionStorage.getItem("user_data")).First_name
-        } ${JSON.parse(sessionStorage.getItem("user_data")).Last_name}`,
+      accountName: `${
+        JSON.parse(sessionStorage.getItem("user_data")).First_name
+      } ${JSON.parse(sessionStorage.getItem("user_data")).Last_name}`,
       paymentMethod: "",
     });
     setMonovaFormErrors({});
@@ -142,14 +147,15 @@ const PaymentDetail = () => {
           payout_partner:
             JSON.parse(sessionStorage.getItem("selected_receiver")).bank_name ||
             "",
-          send_currency:
-            JSON.parse(sessionStorage.getItem("transfer_data"))?.amount.from,
+          send_currency: JSON.parse(sessionStorage.getItem("transfer_data"))
+            ?.amount.from,
           send_amount: amount,
           receive_amount:
             JSON.parse(sessionStorage.getItem("transfer_data"))?.amount
               .exchange_amt || "",
           receive_currency:
-            JSON.parse(sessionStorage.getItem("transfer_data"))?.amount.to || "",
+            JSON.parse(sessionStorage.getItem("transfer_data"))?.amount.to ||
+            "",
           exchange_rate:
             JSON.parse(sessionStorage.getItem("transfer_data"))?.amount
               .exchange_rate || "",
@@ -178,7 +184,8 @@ const PaymentDetail = () => {
     const currentForm = modalShowMonova ? monovaForm : formData;
     const errors = {};
     if (!currentForm.bsb) errors.bsb = "BSB is required.";
-    if (!currentForm.accountName) errors.accountName = "Account name is required.";
+    if (!currentForm.accountName)
+      errors.accountName = "Account name is required.";
     if (!transferReason) {
       toast.error("Please select a transfer reason");
       setModalShowMonova(false);
@@ -192,7 +199,9 @@ const PaymentDetail = () => {
       try {
         if (modalShowMonova) {
           try {
-            const receiver = JSON.parse(sessionStorage.getItem("selected_receiver") || "null");
+            const receiver = JSON.parse(
+              sessionStorage.getItem("selected_receiver") || "null"
+            );
 
             if (!receiver || !receiver.first_name || !receiver.last_name) {
               toast.error("Receiver information is incomplete.");
@@ -205,7 +214,9 @@ const PaymentDetail = () => {
               akaNames: [
                 receiver.first_name,
                 `${receiver.first_name} ${receiver.last_name}`,
-                `${receiver.first_name} ${receiver.last_name} ${receiver.middle_name || ""}`.trim(),
+                `${receiver.first_name} ${receiver.last_name} ${
+                  receiver.middle_name || ""
+                }`.trim(),
               ],
               bankAccountName: `${receiver.first_name} ${receiver.last_name}`,
               bsb: currentForm.bsbNumber || currentForm.bsb || "",
@@ -216,8 +227,13 @@ const PaymentDetail = () => {
               return;
             }
 
-            sessionStorage.setItem("monova_automatcher", JSON.stringify(res.data));
-            toast.success("Your Auto-Matcher account has been successfully created.");
+            sessionStorage.setItem(
+              "monova_automatcher",
+              JSON.stringify(res.data)
+            );
+            toast.success(
+              "Your Auto-Matcher account has been successfully created."
+            );
           } catch (automatcherErr) {
             console.error("Automatcher creation failed:", automatcherErr);
             toast.error("Failed to create automatcher. Please try again.");
@@ -225,22 +241,35 @@ const PaymentDetail = () => {
           }
         }
 
-        sessionStorage.setItem("monova_payment_data", JSON.stringify(currentForm));
+        sessionStorage.setItem(
+          "monova_payment_data",
+          JSON.stringify(currentForm)
+        );
         sessionStorage.setItem("selected_payment_method", "monova");
 
         const temp = {
           amount: amount,
           bsbNumber: currentForm.bsb,
-          accountNumber: modalShowMonova ? res.data.bankAccountNumber : currentForm.accountNumber,
-          accountName: modalShowMonova ? res.data.bankAccountName : currentForm.accountName,
+          accountNumber: modalShowMonova
+            ? res.data.bankAccountNumber
+            : currentForm.accountNumber,
+          accountName: modalShowMonova
+            ? res.data.bankAccountName
+            : currentForm.accountName,
         };
 
-        const monoovaformdata = JSON.parse(sessionStorage.getItem("monova_form_data"))
-        sessionStorage.setItem("monova_form_data", JSON.stringify({
-          ...monoovaformdata,
-          ...temp
-        }));
-        const finalReason = transferReason === "Other" ? otherReason : transferReason;
+        const monoovaformdata = JSON.parse(
+          sessionStorage.getItem("monova_form_data")
+        );
+        sessionStorage.setItem(
+          "monova_form_data",
+          JSON.stringify({
+            ...monoovaformdata,
+            ...temp,
+          })
+        );
+        const finalReason =
+          transferReason === "Other" ? otherReason : transferReason;
 
         const updatedTransferData = {
           ...transferData,
@@ -255,7 +284,9 @@ const PaymentDetail = () => {
 
           if (txResponse?.code === "200") {
             setModalShowMonova(false);
-            navigate("/virtual-account-detail", { state: { from: "Payment-Detail" } });
+            navigate("/virtual-account-detail", {
+              state: { from: "Payment-Detail" },
+            });
           } else {
             toast.error(txResponse?.message || "Transaction creation failed.");
           }
@@ -263,7 +294,6 @@ const PaymentDetail = () => {
           console.error("Transaction creation failed:", txErr);
           toast.error("Failed to create transaction. Please try again.");
         }
-
       } catch (err) {
         console.error("Unexpected error during Monova flow:", err);
         toast.error("An unexpected error occurred. Please try again.");
@@ -313,15 +343,16 @@ const PaymentDetail = () => {
 
       setPayIdData({ payId, transferId });
 
-      const finalReason = transferReason === "Other" ? otherReason : transferReason;
+      const finalReason =
+        transferReason === "Other" ? otherReason : transferReason;
       const updatedTransferData = transferData
         ? {
-          ...transferData,
-          amount: {
-            ...transferData.amount,
-            reason: finalReason,
-          },
-        }
+            ...transferData,
+            amount: {
+              ...transferData.amount,
+              reason: finalReason,
+            },
+          }
         : null;
       const txResponse = await createTransaction(updatedTransferData);
 
@@ -350,11 +381,12 @@ const PaymentDetail = () => {
 
     setReasonError("");
 
-    const finalReason = transferReason === "Other" ? otherReason : transferReason;
+    const finalReason =
+      transferReason === "Other" ? otherReason : transferReason;
     sessionStorage.setItem("final_transfer_reason", finalReason);
 
     if (transferData) {
-      setTransferData(prev => ({
+      setTransferData((prev) => ({
         ...prev,
         amount: {
           ...prev.amount,
@@ -375,24 +407,34 @@ const PaymentDetail = () => {
     } else if (paymentType === "monova") {
       let AutoMatcherRes = await GetAutoMatcher();
       let matcher = null;
-      const receiver = JSON.parse(sessionStorage.getItem("selected_receiver") || "null");
+      const receiver = JSON.parse(
+        sessionStorage.getItem("selected_receiver") || "null"
+      );
       const monovaFormData = sessionStorage.getItem("monova_form_data");
       let monovaFormParsed = {};
       if (monovaFormData) {
         try {
           monovaFormParsed = JSON.parse(monovaFormData);
-        } catch { }
+        } catch {}
       }
-      if (!AutoMatcherRes?.code || AutoMatcherRes?.code !== "200" || !AutoMatcherRes.data.bankAccountNumber) {
+      if (
+        !AutoMatcherRes?.code ||
+        AutoMatcherRes?.code !== "200" ||
+        !AutoMatcherRes.data.bankAccountNumber
+      ) {
         setMonovaForm({
           bsb: "",
           accountNumber: "",
-          accountName: `${userData.First_name || ""} ${userData.Last_name || ""}`,
+          accountName: `${userData.First_name || ""} ${
+            userData.Last_name || ""
+          }`,
           paymentMethod: "",
         });
         setModalShowMonova(true);
-      }
-      else if (AutoMatcherRes?.code === "200" && AutoMatcherRes.data.bankAccountNumber) {
+      } else if (
+        AutoMatcherRes?.code === "200" &&
+        AutoMatcherRes.data.bankAccountNumber
+      ) {
         const bankDetails = AutoMatcherRes.data;
         const updatedMonovaForm = {
           paymentMethod: "",
@@ -402,11 +444,14 @@ const PaymentDetail = () => {
         };
         setMonovaForm(updatedMonovaForm);
 
-        sessionStorage.setItem("monova_automatcher", JSON.stringify(bankDetails));
+        sessionStorage.setItem(
+          "monova_automatcher",
+          JSON.stringify(bankDetails)
+        );
         // setModalShowMonovaExisting(true);
         await handleMonovaContinue(updatedMonovaForm);
       } else {
-        toast.error("Some Error while creating Monoova automatcher Account")
+        toast.error("Some Error while creating Monoova automatcher Account");
       }
     } else if (paymentType === "budpay") {
       handleBudContinue();
@@ -422,11 +467,13 @@ const PaymentDetail = () => {
           <Button
             variant="link"
             className="p-0 border-0 bg-transparent"
-            onClick={() => navigate("/review-transfer", {
-              state: {
-                from: "Payment-Detail"
-              }
-            })}
+            onClick={() =>
+              navigate("/review-transfer", {
+                state: {
+                  from: "Payment-Detail",
+                },
+              })
+            }
           >
             <img src={Back} alt="Back" />
           </Button>
@@ -514,46 +561,51 @@ const PaymentDetail = () => {
                           paymentType === "budpay"
                         }
                         onChange={() => {
-                          setPaymentType("bank_transfer");
+                          setPaymentType("monova");
                           sessionStorage.removeItem("payto_limit_data");
                           sessionStorage.removeItem("payto_agreement_response");
                           sessionStorage.removeItem("payid_data");
                           sessionStorage.removeItem("monova_payment_data");
                           sessionStorage.removeItem("budpay_payment_data");
-                          sessionStorage.setItem("selected_payment_method", "bank_transfer");
+                          sessionStorage.setItem(
+                            "selected_payment_method",
+                            "monova"
+                          );
                         }}
                       />
 
-                      {(paymentType === "bank_transfer" ||
-                        paymentType === "monova" ||
-                        paymentType === "budpay") && (
-                          <Form.Select
-                            className="ms-3 payment-select"
-                            style={{ width: "200px" }}
-                            value={paymentType === "monova" ? "monova" : paymentType === "budpay" ? "budpay" : ""}
-                            onChange={(e) => {
-                              const selectedGateway = e.target.value;
-                              if (selectedGateway === "monova") {
-                                setPaymentType("monova");
-                                sessionStorage.setItem("selected_payment_method", "monova");
-                                sessionStorage.removeItem("budpay_payment_data");
-                              } else if (selectedGateway === "budpay") {
-                                setPaymentType("budpay");
-                                sessionStorage.setItem("selected_payment_method", "budpay");
-                                sessionStorage.removeItem("monova_payment_data");
-                              } else {
-                                setPaymentType("bank_transfer");
-                                sessionStorage.setItem("selected_payment_method", "bank_transfer");
-                                sessionStorage.removeItem("monova_payment_data");
-                                sessionStorage.removeItem("budpay_payment_data");
-                              }
-                            }}
-                          >
-                            <option value="">Select Gateway</option>
-                            <option value="monova">Monoova</option>
-                            {/* <option value="budpay">BudPay</option> */}
-                          </Form.Select>
-                        )}
+                      {
+                        // (paymentType === "bank_transfer" ||
+                        //   paymentType === "monova" ||
+                        //   paymentType === "budpay") && (
+                        //     <Form.Select
+                        //       className="ms-3 payment-select"
+                        //       style={{ width: "200px" }}
+                        //       value={paymentType === "monova" ? "monova" : paymentType === "budpay" ? "budpay" : ""}
+                        //       onChange={(e) => {
+                        //         const selectedGateway = e.target.value;
+                        //         if (selectedGateway === "monova") {
+                        //           setPaymentType("monova");
+                        //           sessionStorage.setItem("selected_payment_method", "monova");
+                        //           sessionStorage.removeItem("budpay_payment_data");
+                        //         } else if (selectedGateway === "budpay") {
+                        //           setPaymentType("budpay");
+                        //           sessionStorage.setItem("selected_payment_method", "budpay");
+                        //           sessionStorage.removeItem("monova_payment_data");
+                        //         } else {
+                        //           setPaymentType("bank_transfer");
+                        //           sessionStorage.setItem("selected_payment_method", "bank_transfer");
+                        //           sessionStorage.removeItem("monova_payment_data");
+                        //           sessionStorage.removeItem("budpay_payment_data");
+                        //         }
+                        //       }}
+                        //     >
+                        //       <option value="">Select Gateway</option>
+                        //       <option value="monova">Monoova</option>
+                        //       {/* <option value="budpay">BudPay</option> */}
+                        //     </Form.Select>
+                        //   )
+                      }
                     </div>
                   </Row>
                   <Row className="mt-5">
@@ -612,21 +664,30 @@ const PaymentDetail = () => {
                           onChange={(e) => {
                             setOtherReason(e.target.value);
                             setReasonError("");
-                            sessionStorage.setItem("other_reason", e.target.value);
+                            sessionStorage.setItem(
+                              "other_reason",
+                              e.target.value
+                            );
                           }}
                           onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
+                            if (e.key === "Enter") {
                               e.preventDefault(); // Prevent form submission
                             }
                           }}
                           placeholder="Enter your reason here"
-                          isInvalid={transferReason === "Other" && !otherReason.trim() && !!reasonError}
+                          isInvalid={
+                            transferReason === "Other" &&
+                            !otherReason.trim() &&
+                            !!reasonError
+                          }
                         />
-                        {transferReason === "Other" && !otherReason.trim() && reasonError && (
-                          <Form.Control.Feedback type="invalid">
-                            Please specify the reason when selecting 'Other'.
-                          </Form.Control.Feedback>
-                        )}
+                        {transferReason === "Other" &&
+                          !otherReason.trim() &&
+                          reasonError && (
+                            <Form.Control.Feedback type="invalid">
+                              Please specify the reason when selecting 'Other'.
+                            </Form.Control.Feedback>
+                          )}
                       </FloatingLabel>
                     </Row>
                   )}
@@ -636,11 +697,13 @@ const PaymentDetail = () => {
                       <Button
                         variant="light"
                         className="cancel-btn float-start"
-                        onClick={() => navigate("/review-transfer", {
-                          state: {
-                            from: "Payment-Detail"
-                          }
-                        })}
+                        onClick={() =>
+                          navigate("/review-transfer", {
+                            state: {
+                              from: "Payment-Detail",
+                            },
+                          })
+                        }
                       >
                         Back
                       </Button>
@@ -672,7 +735,6 @@ const PaymentDetail = () => {
             </Card>
           </div>
         </div>
-
 
         {/* PayID Modal */}
         <Modal
@@ -726,13 +788,15 @@ const PaymentDetail = () => {
                 </FloatingLabel>
               </Row>
               <p className="m-4">
-                Use your PayID to transfer funds from your online banking platform.
-                Include the transaction ID in the reference field.
+                Use your PayID to transfer funds from your online banking
+                platform. Include the transaction ID in the reference field.
                 <br />
                 <small className="text-muted">
-                  For any queries, please feel free to contact us at <span>
+                  For any queries, please feel free to contact us at{" "}
+                  <span>
                     <a href="tel:+61480001611">+61480001611</a>
-                  </span>.
+                  </span>
+                  .
                 </small>
               </p>
 
@@ -751,7 +815,9 @@ const PaymentDetail = () => {
                     variant="primary"
                     className="submit-btn float-end"
                     onClick={() => {
-                      navigate("/confirm-transfer", { state: { from: "Payment-Detail" } });
+                      navigate("/confirm-transfer", {
+                        state: { from: "Payment-Detail" },
+                      });
                     }}
                   >
                     Continue
