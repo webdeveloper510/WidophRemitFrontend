@@ -136,16 +136,26 @@ const TransferDetails = () => {
                             <span>Transfer Id</span>
                             <h3>{transactionData?.transaction_id}</h3>
                           </Col>
+                          {transactionData?.send_method ===
+                            "monoova_payin_per_user" && (
+                            <Col className="p-3 box">
+                              <span>Refrence Id</span>
+                              <h3>
+                                {
+                                  transactionData?.monoovaWebhookTransaction[0]
+                                    ?.transaction_id
+                                }
+                              </h3>
+                            </Col>
+                          )}
                         </Row>
 
                         {/* ✅ Conditional Download Button */}
                         {(() => {
-                          const blockedStatuses = [
-                            "abandoned",
-                            "expired",
-                          ];
+                          const blockedStatuses = ["abandoned", "expired"];
 
-                          const status = transactionData?.payment_status?.toLowerCase();
+                          const status =
+                            transactionData?.payment_status?.toLowerCase();
 
                           if (!blockedStatuses.includes(status)) {
                             return (
@@ -154,9 +164,15 @@ const TransferDetails = () => {
                                   <Button
                                     variant="success"
                                     className="float-end download-button"
-                                    onClick={() => handleDownloadReceipt(transactionData?.id)}
+                                    onClick={() =>
+                                      handleDownloadReceipt(transactionData?.id)
+                                    }
                                   >
-                                    <img src={DownloadIcon} alt="Download Receipt" /> Download Receipt
+                                    <img
+                                      src={DownloadIcon}
+                                      alt="Download Receipt"
+                                    />{" "}
+                                    Download Receipt
                                   </Button>
                                 </Col>
                               </Row>
@@ -165,7 +181,6 @@ const TransferDetails = () => {
 
                           return null; // Optional fallback
                         })()}
-
                       </Container>
                     </Card.Body>
                   </Card>
@@ -202,8 +217,17 @@ const TransferDetails = () => {
                       <tbody>
                         <tr>
                           <th>Payment Mode</th>
-                          <td>{transactionData?.send_method === "" ? "N/A" : transactionData?.send_method === "zai_payid_per_user" ? "PayID" :
-                            transactionData?.send_method === "monoova_payin_per_user" ? "Monoova" : "wrong send method"}</td>
+                          <td>
+                            {transactionData?.send_method === ""
+                              ? "N/A"
+                              : transactionData?.send_method ===
+                                "zai_payid_per_user"
+                              ? "PayID"
+                              : transactionData?.send_method ===
+                                "monoova_payin_per_user"
+                              ? "Monoova"
+                              : "wrong send method"}
+                          </td>
                         </tr>
                         <tr>
                           <th>Customer ID</th>
@@ -216,7 +240,8 @@ const TransferDetails = () => {
                         <tr>
                           <th>PayID</th>
                           <td>
-                            {transactionData?.send_method_details?.payid || "N/A"}
+                            {transactionData?.send_method_details?.payid ||
+                              "N/A"}
                           </td>
                         </tr>
                       </tbody>

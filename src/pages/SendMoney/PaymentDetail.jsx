@@ -256,6 +256,9 @@ const PaymentDetail = () => {
           accountName: modalShowMonova
             ? res.data.bankAccountName
             : currentForm.accountName,
+          clientUniqueId: modalShowMonova
+            ? res?.data?.clientUniqueId
+            : currentForm.clientUniqueId,
         };
 
         const monoovaformdata = JSON.parse(
@@ -441,6 +444,7 @@ const PaymentDetail = () => {
           accountName: bankDetails.bankAccountName,
           accountNumber: bankDetails.bankAccountNumber,
           bsb: bankDetails.bsb,
+          clientUniqueId: bankDetails.clientUniqueId,
         };
         setMonovaForm(updatedMonovaForm);
 

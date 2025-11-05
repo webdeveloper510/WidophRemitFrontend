@@ -8,8 +8,6 @@ import { useState, useEffect } from "react";
 import { getAgreementList, GetAutoMatcher, getPayID } from "../../services/Api";
 import Loader from "../../components/Loader";
 
-
-
 const PaymentInfo = () => {
   const [payIdDetail, setPayIdDetail] = useState(null);
   const [payToDetail, setPayToDetail] = useState(null);
@@ -22,7 +20,7 @@ const PaymentInfo = () => {
         const [payIdRes, agreementRes, AutoMatcherRes] = await Promise.all([
           getPayID(),
           getAgreementList(),
-          GetAutoMatcher()
+          GetAutoMatcher(),
         ]);
 
         if (payIdRes.code === "200" && payIdRes.data?.payid) {
@@ -36,8 +34,9 @@ const PaymentInfo = () => {
           setAutoMatcherData({
             bankAccountName: AutoMatcherRes.data.bankAccountName,
             bankAccountNumber: AutoMatcherRes.data.bankAccountNumber,
-            bsb: AutoMatcherRes.data.bsb
-          })
+            bsb: AutoMatcherRes.data.bsb,
+            clientUniqueId: AutoMatcherRes.data.clientUniqueId,
+          });
         }
 
         if (
@@ -102,9 +101,14 @@ const PaymentInfo = () => {
                     <Col>
                       <label>Bank Account Number</label>
                       <p>{AutoMatcherData.bankAccountNumber || "—"}</p>
-                    </Col><Col>
+                    </Col>
+                    <Col>
                       <label>BSB Number</label>
                       <p>{AutoMatcherData.bsb || "—"}</p>
+                    </Col>
+                    <Col>
+                      <label>Refrence ID</label>
+                      <p>{AutoMatcherData.clientUniqueId}</p>
                     </Col>
                   </Row>
                 </Card.Body>
@@ -112,7 +116,6 @@ const PaymentInfo = () => {
             </div>
           </div>
         )}
-
 
         {/* Pay To Card */}
         {payToDetail && (
