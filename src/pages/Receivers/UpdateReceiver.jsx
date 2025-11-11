@@ -404,7 +404,6 @@ const UpdateReceiver = () => {
                     </div>
                   )}
                 </Col>
-
                 <FloatingLabel
                   as={Col}
                   label={
@@ -433,7 +432,6 @@ const UpdateReceiver = () => {
                     {errors.account_number}
                   </Form.Control.Feedback>
                 </FloatingLabel>
-
                 <FloatingLabel as={Col} label="BIC/BSC/Swift Number">
                   <Form.Control
                     type="text"
