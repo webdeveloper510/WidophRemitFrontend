@@ -13,7 +13,7 @@ const TransactionSuccess = () => {
   const [payIdDetail, setPayIdDetail] = useState(null);
   const [status, setStatus] = useState("Loading...");
   const [loading, setLoading] = useState(true);
-  const [payload, setpaylaod] = useState({})
+  const [payload, setpaylaod] = useState({});
   const [paymentMethod, setPaymentMethod] = useState(null);
   const navigate = useNavigate();
   const { search } = useLocation();
@@ -23,18 +23,16 @@ const TransactionSuccess = () => {
   const [AutoMatcherData, setAutoMatcherData] = useState({});
   const [Fees, setFees] = useState("");
   const [TotalAmount, setTotalAmount] = useState("");
-
-
-
+  const [monoovaGeneratedTransactionId, setMonoovaGeneratedTransactionId] =
+    useState("");
 
   useEffect(() => {
-
     (async () => {
       const payIdRes = await getPayID();
       if (payIdRes.code === "200" && payIdRes.data?.payid) {
         setPayIdDetail(payIdRes.data);
       }
-    })()
+    })();
 
     const getAutomatcher = async () => {
       const AutoMatcherRes = await GetAutoMatcher();
@@ -45,14 +43,14 @@ const TransactionSuccess = () => {
         setAutoMatcherData({
           bankAccountName: AutoMatcherRes.data.bankAccountName,
           bankAccountNumber: AutoMatcherRes.data.bankAccountNumber,
-          bsb: AutoMatcherRes.data.bsb
-        })
+          bsb: AutoMatcherRes.data.bsb,
+        });
       }
-    }
+    };
 
-    getAutomatcher()
-    setpaylaod(JSON.parse(sessionStorage.getItem("payload"))?.amount || {})
-  }, [])
+    getAutomatcher();
+    setpaylaod(JSON.parse(sessionStorage.getItem("payload"))?.amount || {});
+  }, []);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -110,14 +108,15 @@ const TransactionSuccess = () => {
         statusParam === "success"
           ? "Success"
           : statusParam === "cancelled"
-            ? "Cancelled"
-            : statusParam;
+          ? "Cancelled"
+          : statusParam;
     } else if (selectedMethod === "monova") {
-
+      setMonoovaGeneratedTransactionId(
+        JSON.parse(sessionStorage.getItem("monova_payment_response"))
+          ?.transactionId
+      );
       finalTransactionId = sessionStorage.getItem("monova_transaction_id");
-
     } else {
-
       finalTransactionId = sessionStorage.getItem("transaction_id");
     }
 
@@ -134,8 +133,8 @@ const TransactionSuccess = () => {
     setStatus(finalStatus);
     if (
       selectedMethod === "monova" ||
-      (selectedMethod === "budpay" && statusParam === "success")
-      || selectedMethod === "payid"
+      (selectedMethod === "budpay" && statusParam === "success") ||
+      selectedMethod === "payid"
     ) {
       GetTransactionDetails(finalTransactionId);
     } else {
@@ -154,7 +153,7 @@ const TransactionSuccess = () => {
         if (result?.code === "200") {
           setStatus(result.data.payment_status);
           setFees(result.data.fee_amount);
-          setTotalAmount(result.data.fee_total_amount)
+          setTotalAmount(result.data.fee_total_amount);
         }
       } catch (err) {
         console.error(err);
@@ -174,7 +173,8 @@ const TransactionSuccess = () => {
     navigate("/send-money");
   };
 
-  let OutCurr = JSON.parse(sessionStorage.getItem("payload")).amount.send_currency;
+  let OutCurr = JSON.parse(sessionStorage.getItem("payload")).amount
+    .send_currency;
   if (loading) {
     return (
       <AnimatedPage>
@@ -240,7 +240,13 @@ const TransactionSuccess = () => {
                               <tr>
                                 <td>Fee Amount</td>
                                 <td>
-                                  {typeof transaction.fee_amount === "number" ? `${JSON.parse(sessionStorage.getItem('payload')).amount.fee_amount} ${OutCurr}` : "N/A"}
+                                  {typeof transaction.fee_amount === "number"
+                                    ? `${
+                                        JSON.parse(
+                                          sessionStorage.getItem("payload")
+                                        ).amount.fee_amount
+                                      } ${OutCurr}`
+                                    : "N/A"}
                                 </td>
                               </tr>
                               <tr>
@@ -345,14 +351,15 @@ const TransactionSuccess = () => {
                             <tr>
                               <td>Fee Amount</td>
                               <td>
-                                {` ${JSON.parse(sessionStorage.getItem('payload')).amount.fee_amount || "N/A"} ${OutCurr}`}
+                                {` ${
+                                  JSON.parse(sessionStorage.getItem("payload"))
+                                    .amount.fee_amount || "N/A"
+                                } ${OutCurr}`}
                               </td>
                             </tr>
                             <tr>
                               <td>Total Amount</td>
-                              <td>
-                                {`${TotalAmount || "N/A"} ${OutCurr}`}
-                              </td>
+                              <td>{`${TotalAmount || "N/A"} ${OutCurr}`}</td>
                             </tr>
                             <tr>
                               <td>Transfer Status</td>
@@ -363,61 +370,87 @@ const TransactionSuccess = () => {
                       </div>
 
                       <div className="processing-info-text mt-5">
-                        {paymentMethod === "payid" && <>
-                          <h4>
-                            Next Step: Complete Your PayID Transfer
-                          </h4>
-                          <p>
-                            To ensure timely processing of your transfer, please follow these steps:
-                          </p>
-                          <ul>
-                            <li>
-                              Log in to your banking portal or app.
-                            </li>
-                            <li>
-                              Initiate a payment of {payload.send_currency} {" "}
-                              {TotalAmount}  to PayID: {payIdDetail.payid || ""}
-                            </li>
-                            <li>
-                              Enter your transaction ID {transaction.transaction_id} in the payment reference field.
-                            </li>
-                            <li>
-                              Once we receive the funds in our system,
-                              your transfer will continue to the next stage automatically.
-                            </li>
-                          </ul>
-                        </>
-                        }
-                        {
-                          paymentMethod === "monova" &&
+                        {paymentMethod === "payid" && (
                           <>
-                            <h4>
-                              Next Step: Complete Your Monoova Transfer
-                            </h4>
+                            <h4>Next Step: Complete Your PayID Transfer</h4>
                             <p>
-                              To ensure timely processing of your transfer, please follow these steps:
+                              To ensure timely processing of your transfer,
+                              please follow these steps:
                             </p>
                             <ul>
                               <li>Log in to your banking portal or app.</li>
-                              <li> Initiate a payment of {payload.send_currency} {" "}
-                                {TotalAmount} to your Virtual Auto-Matcher Account using the details below:
+                              <li>
+                                Initiate a payment of {payload.send_currency}{" "}
+                                {TotalAmount} to PayID:{" "}
+                                {payIdDetail.payid || ""}
                               </li>
-                              <ul>
-                                <li>Account Name: {AutoMatcherData.bankAccountName}
-                                </li>
-                                <li>Account Number: {AutoMatcherData.bankAccountNumber}
-                                </li>
-                                <li>BSB Number: {AutoMatcherData.bsb}
-                                </li>
-                              </ul>
-                              <li>Enter your Transaction ID: {transaction.transaction_id} in the payment reference field.</li>
-                              <li>Once we receive the funds, your transfer will automatically move to the next stage.</li>
+                              <li>
+                                Enter your transaction ID{" "}
+                                {transaction.transaction_id} in the payment
+                                reference field.
+                              </li>
+                              <li>
+                                Once we receive the funds in our system, your
+                                transfer will continue to the next stage
+                                automatically.
+                              </li>
                             </ul>
                           </>
-                        }
+                        )}
+                        {paymentMethod === "monova" && (
+                          <>
+                            <h4>Next Step: Complete Your Monoova Transfer</h4>
+                            <p>
+                              To ensure timely processing of your transfer,
+                              please follow these steps:
+                            </p>
+                            <ul>
+                              <li>Log in to your banking portal or app.</li>
+                              <li>
+                                {" "}
+                                Initiate a payment of {
+                                  payload.send_currency
+                                }{" "}
+                                {TotalAmount} to your Virtual Auto-Matcher
+                                Account using the details below:
+                              </li>
+                              <ul>
+                                <li>
+                                  Account Name:{" "}
+                                  {AutoMatcherData.bankAccountName}
+                                </li>
+                                <li>
+                                  Account Number:{" "}
+                                  {AutoMatcherData.bankAccountNumber}
+                                </li>
+                                <li>BSB Number: {AutoMatcherData.bsb}</li>
+                              </ul>
+                              <li>
+                                Enter your Transaction ID:{" "}
+                                {monoovaGeneratedTransactionId} in the payment
+                                reference field.
+                              </li>
+                              <li>
+                                Once we receive the funds, your transfer will
+                                automatically move to the next stage.
+                              </li>
+                            </ul>
+                          </>
+                        )}
                         <p>
-                          For any assistance with the transfers, please contact us at  <a href="tel:+61480001611">+61480001611</a>
-                          <br /> We value your association with us.
+                          For any assistance with the transfers, please contact
+                          us at{"  "}
+                          <a
+                            href="https://wa.me/61480001611"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: "#25D366", fontWeight: 500 }}
+                          >
+                            WhatsApp
+                          </a>
+                          .
+                          <br />
+                          We value your association with us.
                         </p>
                       </div>
                     </div>

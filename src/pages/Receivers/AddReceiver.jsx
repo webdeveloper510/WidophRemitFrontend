@@ -100,7 +100,7 @@ const AddReceiver = () => {
       .trim()
       .required("IBAN/Account Number is required")
       .min(8, "Minimum 8 characters")
-      .max(30, "Maximum 30 characters")
+      .max(10, "Maximum 10 characters")
       .matches(
         /^[a-zA-Z0-9 -]+$/,
         "Only letters, numbers, spaces, and hyphens are allowed"
@@ -169,7 +169,7 @@ const AddReceiver = () => {
     address: Yup.string().trim().required("Address is required"),
     swift_code: Yup.string()
       .trim()
-      .max(15, "Swift code cannot exceed 15 characters")
+      .max(12, "Swift code cannot exceed 12 characters")
       .matches(
         /^[a-zA-Z0-9 -]+$/,
         "Only letters, numbers, spaces, and hyphens are allowed"
@@ -391,7 +391,7 @@ const AddReceiver = () => {
                       const value = e.target.value;
                       if (
                         !value ||
-                        (/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 30)
+                        (/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 10)
                       )
                         handleChange(e);
                     }}
@@ -416,7 +416,7 @@ const AddReceiver = () => {
                       const value = e.target.value;
                       if (
                         !value ||
-                        (/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 15)
+                        (/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 12)
                       )
                         handleChange(e);
                     }}
