@@ -28,6 +28,7 @@ const UpdateReceiver = () => {
   const [apiError, setApiError] = useState("");
   console.log("error",apiError)
   const [showSuggestions, setShowSuggestions] = useState(false);
+  console.log("ss",showSuggestions)
   const [bankNames, setbankNames] = useState([]);
 
   const countryOptions = allCountries.map((country) => ({
