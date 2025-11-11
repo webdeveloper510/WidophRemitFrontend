@@ -23,10 +23,10 @@ import { CountrySelector } from "../../components/CountrySelector";
 const UpdateReceiver = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
   const [apiError, setApiError] = useState("");
+  console.log("error",apiError)
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [bankNames, setbankNames] = useState([]);
 
@@ -57,7 +57,7 @@ const UpdateReceiver = () => {
       ];
       const uniqueBanks = Object.values(
         all.reduce((acc, bank) => {
-          acc[bank.bank_code] = bank; // overwrite if duplicate
+          acc[bank.bank_code] = bank;
           return acc;
         }, {})
       );
