@@ -455,7 +455,7 @@ const PaymentDetail = () => {
         // setModalShowMonovaExisting(true);
         await handleMonovaContinue(updatedMonovaForm);
       } else {
-        toast.error("Some Error while creating Monoova automatcher Account");
+        toast.error("Some Error while creating account number.");
       }
     } else if (paymentType === "budpay") {
       handleBudContinue();
@@ -841,7 +841,7 @@ const PaymentDetail = () => {
           className="profileupdate"
         >
           <Modal.Header closeButton className="payment-popup">
-            Monoova
+            Account Number
           </Modal.Header>
           <Modal.Body>
             <MonovaForm
@@ -864,7 +864,7 @@ const PaymentDetail = () => {
           className="profileupdate"
         >
           <Modal.Header closeButton className="payment-popup">
-            Monoova
+            Account Number
           </Modal.Header>
           <Modal.Body>
             <MonovaForm
