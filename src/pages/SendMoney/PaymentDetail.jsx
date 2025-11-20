@@ -841,7 +841,7 @@ const PaymentDetail = () => {
           className="profileupdate"
         >
           <Modal.Header closeButton className="payment-popup">
-            Account Number
+            Bank transfer
           </Modal.Header>
           <Modal.Body>
             <MonovaForm
@@ -864,7 +864,7 @@ const PaymentDetail = () => {
           className="profileupdate"
         >
           <Modal.Header closeButton className="payment-popup">
-            Account Number
+            Bank transfer
           </Modal.Header>
           <Modal.Body>
             <MonovaForm
