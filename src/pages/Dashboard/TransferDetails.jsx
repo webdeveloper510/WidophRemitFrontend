@@ -225,7 +225,7 @@ const TransferDetails = () => {
                               ? "PayID"
                               : transactionData?.send_method ===
                                 "monoova_payin_per_user"
-                              ? "Monoova"
+                              ? "Bank transfer"
                               : "wrong send method"}
                           </td>
                         </tr>

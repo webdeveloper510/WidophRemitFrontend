@@ -63,7 +63,7 @@ const VirtualAccountDetail = () => {
           >
             <img src={Back} alt="Back" />
           </Button>
-          <h1>Monoova Virtual Account Detail</h1>
+          <h1>Bank transfer account Detail</h1>
         </div>
       </div>
 

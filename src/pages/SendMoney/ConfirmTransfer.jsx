@@ -178,12 +178,12 @@ const ConfirmTransfer = () => {
         return true;
       } else {
         toast.error(
-          response?.statusDescription || "Monova payment creation failed."
+          response?.statusDescription || "payment creation failed."
         );
         return false;
       }
     } catch (err) {
-      console.error("Monova payment error:", err);
+      console.error("payment error:", err);
       return false;
     } finally {
       setIsLoadingMonova(false);
