@@ -426,7 +426,7 @@ const PaymentDetail = () => {
         !AutoMatcherRes.data.bankAccountNumber
       ) {
         setMonovaForm({
-          bsb: "",
+          bsb: "257-480",
           accountNumber: "",
           accountName: `${userData.First_name || ""} ${
             userData.Last_name || ""
