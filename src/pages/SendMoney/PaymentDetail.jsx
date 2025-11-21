@@ -183,7 +183,7 @@ const PaymentDetail = () => {
   const handleMonovaContinue = async (formData = null) => {
     const currentForm = modalShowMonova ? monovaForm : formData;
     const errors = {};
-    if (!currentForm.bsb) errors.bsb = "BSB is required.";
+    // if (!currentForm.bsb) errors.bsb = "BSB is required.";
     if (!currentForm.accountName)
       errors.accountName = "Account name is required.";
     if (!transferReason) {
@@ -232,11 +232,11 @@ const PaymentDetail = () => {
               JSON.stringify(res.data)
             );
             toast.success(
-              "Your Auto-Matcher account has been successfully created."
+              "Your account number account has been successfully created."
             );
           } catch (automatcherErr) {
             console.error("Automatcher creation failed:", automatcherErr);
-            toast.error("Failed to create automatcher. Please try again.");
+            toast.error("Failed to create account number. Please try again.");
             return;
           }
         }
