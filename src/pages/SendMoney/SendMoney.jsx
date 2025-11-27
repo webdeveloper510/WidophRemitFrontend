@@ -47,7 +47,8 @@ const SendMoney = () => {
       .test("min-amount", "Amount must be between $100 and $15000", (value) => {
         if (!value) return false;
         const amount = Number(commaRemover(value));
-        return amount >= 100 && amount <= 15000;
+        // return amount >= 100 && amount <= 15000;
+        return amount <= 15000;
       }),
     exchange_amt: Yup.string().required("Exchange amount is required"),
     from: Yup.string().required("Source currency is required"),
