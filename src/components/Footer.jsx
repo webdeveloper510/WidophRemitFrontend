@@ -136,14 +136,14 @@ const Footer = () => {
           style={{ fontSize: "14px" }}
         >
           <Col md="auto">
-            © Copyright Widoph Remit 2025. All Rights Reserved
+            © Copyright Widoph Remit 2026. All Rights Reserved
           </Col>
           <Col md="auto">
             <a href="https://widophremit.com/widophremit-terms-and-conditions/">
               Terms
             </a>
             &nbsp; | &nbsp;
-            <a href="https://widophremit.com/widoph-remit-privacy-policy/">
+            <a href="https://widophremit.com/privacy-policy/">
               Privacy
             </a>
             &nbsp; | &nbsp;
