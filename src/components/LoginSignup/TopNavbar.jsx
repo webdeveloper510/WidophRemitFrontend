@@ -40,7 +40,7 @@ const TopNavbar = () => {
               </span>
               <span className="d-flex flex-wrap align-items-center">
                 <FaWhatsapp />
-                <a href="tel:+61480001611">+61480001611</a>
+                <a href="https://api.whatsapp.com/send/?phone=61480001611&text&type=phone_number&app_absent=0">+61480001611</a>
               </span>
             </Col>
             <Col
@@ -75,7 +75,7 @@ const TopNavbar = () => {
 
       {/* Logo Section */}
       <Container className="d-flex justify-content-between align-items-center pt-3 pb-3">
-        <Navbar.Brand href="https://widophremit.com/homepage-elementor/">
+        <Navbar.Brand href="https://widophremit.com/">
           <img src={logo} alt="WidophRemit" className="logo-img" height="40" />
         </Navbar.Brand>
 
@@ -84,12 +84,12 @@ const TopNavbar = () => {
             Home
           </Nav.Link>
 
-          <Nav.Link
+          {/* <Nav.Link
             href="https://widophremit.com/notify-me/"
             className="text-dark"
           >
             International Money Transfer
-          </Nav.Link>
+          </Nav.Link> */}
 
           {/* How To Dropdown (on hover) */}
           <NavDropdown
@@ -155,7 +155,7 @@ const TopNavbar = () => {
             </NavDropdown.Item>
           </NavDropdown>
 
-          <Nav.Link href="/sr" className="text-dark">
+          <Nav.Link href="https://widophremit.com/community-responsibility/" className="text-dark">
             SR
           </Nav.Link>
         </Nav>

@@ -59,11 +59,11 @@ const Footer = () => {
                 <li>
                   <a href="https://widophremit.com/">Home</a>
                 </li>
-                <li>
+                {/* <li>
                   <a href="https://widophremit.com/notify-me/">
                     International Money Transfer
                   </a>
-                </li>
+                </li> */}
                 <li>
                   <a href="https://widophremit.com/blog/">Blog</a>
                 </li>
@@ -97,7 +97,7 @@ const Footer = () => {
                 <a href="tel:02 8001 6495"> 02 8001 6495, 0480 001 611</a>
               </li>
               <li>
-                <FaWhatsapp /> <a href="tel:+61480001611">+61480001611</a>
+                <FaWhatsapp /> <a href="https://api.whatsapp.com/send/?phone=61480001611&text&type=phone_number&app_absent=0">+61480001611</a>
               </li>
             </ul>
           </Col>
