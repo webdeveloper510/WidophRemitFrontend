@@ -17,6 +17,7 @@ import "./KYCForm.css";
 import { useNavigate } from "react-router-dom";
 import {
   getVeriffStatus,
+  kycAddressList,
   updateProfile,
   userProfile,
 } from "../../services/Api";
@@ -55,7 +56,19 @@ const KYCForm = () => {
     zip: "",
     state: "",
   });
+  const [countryOptions, setCountryOptions] = useState([]);
 
+  useEffect(() => {
+    kycAddressList().then((res) => {
+      const formatted = res.data.map((item) => ({
+        label: item.country,
+        value: item.country,
+        dialCode: item.dial_code.slice(1),
+      }));
+
+      setCountryOptions(formatted);
+    });
+  }, []);
   useEffect(() => {
     if (activeKey === "step2" && !idVerified && !verifyingID) {
       handleVeriffClick();
@@ -73,59 +86,53 @@ const KYCForm = () => {
     return mobile.replace(/^\+\d{2}/, "");
   };
 
-
   useEffect(() => {
     const fetchAndVerifyUser = async () => {
       const token = sessionStorage.getItem("token");
       if (!token) {
-        navigate('/login');
+        navigate("/login");
         return;
       }
 
       try {
         const res = await userProfile();
-        if (res?.code === '200') {
+        if (res?.code === "200") {
           const userData = res.data;
           setcustomer_id(userData.customer_id);
-          setFormData((prev) => (
-            {
-              ...prev,
-              firstName: userData.First_name || "",
-              middleName: userData.Middle_name || "",
-              lastName: userData.Last_name || "",
-              countryOfBirth: userData.Country_of_birth || "",
-              dob: userData.Date_of_birth || "",
-              email: userData.email || "",
-              occupation: userData.occupation || "",
-              buildingNo: userData.building || "",
-              streetName: userData.street || "",
-              zip: userData.postcode || "",
-              city: userData.city || "",
-              address: userData.address,
-              state: userData.state,
-              country: userData.country || "",
-              phone: extractPhoneNumber(userData.mobile),
-              countryCode: userData.mobile.substring(1, 3)
-            }
-
-          ))
-
+          setFormData((prev) => ({
+            ...prev,
+            firstName: userData.First_name || "",
+            middleName: userData.Middle_name || "",
+            lastName: userData.Last_name || "",
+            countryOfBirth: userData.Country_of_birth || "",
+            dob: userData.Date_of_birth || "",
+            email: userData.email || "",
+            occupation: userData.occupation || "",
+            buildingNo: userData.building || "",
+            streetName: userData.street || "",
+            zip: userData.postcode || "",
+            city: userData.city || "",
+            address: userData.address,
+            state: userData.state,
+            country: userData.country || "",
+            phone: extractPhoneNumber(userData.mobile),
+            countryCode: userData.mobile.substring(1, 3),
+          }));
         }
       } catch (error) {
         console.error("Profile fetch error:", error);
       }
-    }
+    };
     fetchAndVerifyUser();
-  }, [])
-
+  }, []);
 
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
 
-  const countryOptions = getNames().map((country) => ({
-    value: country,
-    label: country,
-  }));
+  // const countryOptions = getNames().map((country) => ({
+  //   value: country,
+  //   label: country,
+  // }));
 
   const handleVeriffClick = () => {
     setVerifyingID(true);
@@ -155,11 +162,15 @@ const KYCForm = () => {
                 setVerifyingID(true);
 
                 let intervalCleared = false;
-                toast.info("Checking your ID verification status... Please wait.");
+                toast.info(
+                  "Checking your ID verification status... Please wait.",
+                );
 
                 const interval = setInterval(async () => {
                   try {
-                    const res = await getVeriffStatus({ session_id: response.verification.id });
+                    const res = await getVeriffStatus({
+                      session_id: response.verification.id,
+                    });
 
                     if (res?.data?.status === "approved") {
                       clearInterval(interval);
@@ -167,29 +178,31 @@ const KYCForm = () => {
                       setVerifyingID(false);
                       setIdVerified(true);
                       setActiveKey("step3");
-                    }
-
-                    else if (res?.data?.status === "declined") {
+                    } else if (res?.data?.status === "declined") {
                       clearInterval(interval);
                       intervalCleared = true;
                       setVerifyingID(false);
-                      setVeriffMessage("Verification declined. Please try again.");
-                    }
-
-                    else if (res?.data?.status === "success" && res?.data?.verification === null) {
+                      setVeriffMessage(
+                        "Verification declined. Please try again.",
+                      );
+                    } else if (
+                      res?.data?.status === "success" &&
+                      res?.data?.verification === null
+                    ) {
                       clearInterval(interval);
                       intervalCleared = true;
                       setVerifyingID(false);
                       setIdVerified(true);
                       setActiveKey("step3");
                     }
-
                   } catch (err) {
                     console.error("Veriff status check error", err);
                     clearInterval(interval);
                     intervalCleared = true;
                     setVerifyingID(false);
-                    setVeriffMessage("Error checking verification status. Please try again later.");
+                    setVeriffMessage(
+                      "Error checking verification status. Please try again later.",
+                    );
                   }
                 }, 5000);
 
@@ -230,7 +243,6 @@ const KYCForm = () => {
     });
   };
 
-
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
@@ -261,14 +273,19 @@ const KYCForm = () => {
     } else if (formData.firstName.length > 30) {
       newErrors.first_name = "First name cannot exceed 30 characters";
     } else if (!/^[a-zA-Z0-9 -]+$/.test(formData.firstName)) {
-      newErrors.firstName = "Only letters, numbers, spaces, and hyphens are allowed";
+      newErrors.firstName =
+        "Only letters, numbers, spaces, and hyphens are allowed";
     }
 
     // Middle name (optional)
     if (formData.middleName.trim() && formData.middleName.length > 30) {
       newErrors.middleName = "Middle name cannot exceed 30 characters";
-    } else if (formData.middleName && !/^[a-zA-Z0-9 -]*$/.test(formData.middleName)) {
-      newErrors.middleName = "Only letters, numbers, spaces, and hyphens are allowed";
+    } else if (
+      formData.middleName &&
+      !/^[a-zA-Z0-9 -]*$/.test(formData.middleName)
+    ) {
+      newErrors.middleName =
+        "Only letters, numbers, spaces, and hyphens are allowed";
     }
 
     // Last name
@@ -277,21 +294,13 @@ const KYCForm = () => {
     } else if (formData.lastName.length > 30) {
       newErrors.lastName = "Last name cannot exceed 30 characters";
     } else if (!/^[a-zA-Z0-9 -]+$/.test(formData.lastName)) {
-      newErrors.lastName = "Only letters, numbers, spaces, and hyphens are allowed";
+      newErrors.lastName =
+        "Only letters, numbers, spaces, and hyphens are allowed";
     }
 
-
-    if (!formData.email.trim())
-      newErrors.email = "Email is required";
+    if (!formData.email.trim()) newErrors.email = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(formData.email))
       newErrors.email = "Email format is invalid";
-
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Mobile number is required";
-    } else if (!/^\d{8,10}$/.test(formData.phone)) {
-      newErrors.phone = "Mobile number must be between 8 and 10 digits";
-    }
-
 
     if (!formData.dob) {
       newErrors.dob = "Date of birth is required";
@@ -312,6 +321,8 @@ const KYCForm = () => {
     if (!formData.occupation.trim())
       newErrors.occupation = "Occupation is required";
 
+    console.log(newErrors);
+
     setErrors((prev) => ({ ...prev, ...newErrors }));
     return Object.keys(newErrors).length === 0;
   };
@@ -328,8 +339,10 @@ const KYCForm = () => {
       state: true,
     }));
     const newErrors = {};
-    if (!(formData.country || "").trim()) newErrors.country = "Country is required";
-    if (!(formData.address || "").trim()) newErrors.address = "Address is required";
+    if (!(formData.country || "").trim())
+      newErrors.country = "Country is required";
+    if (!(formData.address || "").trim())
+      newErrors.address = "Address is required";
     // if (!(formData.buildingNo || "").trim()) newErrors.buildingNo = "Building No. is required";
     // if (!(formData.streetName || "").trim()) newErrors.streetName = "Street Name is required";
     if (!(formData.city || "").trim()) {
@@ -396,11 +409,11 @@ const KYCForm = () => {
         setActiveKey("step2");
       } else if (response && response.code === "400") {
         setApiError(
-          response.message || "Invalid input. Please check the form fields."
+          response.message || "Invalid input. Please check the form fields.",
         );
       } else {
         setApiError(
-          response?.message || "An error occurred while updating profile."
+          response?.message || "An error occurred while updating profile.",
         );
       }
     } catch (error) {
@@ -425,7 +438,7 @@ const KYCForm = () => {
     } else if (activeKey === "step2") {
       if (!idVerified) {
         alert(
-          "Please verify your ID first by clicking 'VERIFY YOUR ID' button."
+          "Please verify your ID first by clicking 'VERIFY YOUR ID' button.",
         );
         return;
       }
@@ -469,8 +482,6 @@ const KYCForm = () => {
     }
   }, [activeKey, navigate]);
 
-
-
   return (
     <>
       {/* <TopNavbar /> */}
@@ -499,8 +510,9 @@ const KYCForm = () => {
                     <Nav.Item key={num} className="step-wrapper">
                       <div className="step-connector">
                         <div
-                          className={`step-dot ${isCompleted ? "completed" : ""
-                            } ${isActive ? "active" : ""}`}
+                          className={`step-dot ${
+                            isCompleted ? "completed" : ""
+                          } ${isActive ? "active" : ""}`}
                         >
                           {isCompleted ? "●" : ""}
                         </div>
@@ -565,7 +577,11 @@ const KYCForm = () => {
                           value={formData.firstName}
                           onChange={(e) => {
                             const value = e.target.value;
-                            if ((/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 30) || !value)
+                            if (
+                              (/^[a-zA-Z0-9 -]+$/.test(value) &&
+                                value.length <= 30) ||
+                              !value
+                            )
                               handleInputChange("firstName", value);
                           }}
                           isInvalid={touched.firstName && errors.firstName}
@@ -580,11 +596,7 @@ const KYCForm = () => {
                       </FloatingLabel>
                       <FloatingLabel
                         as={Col}
-                        label={
-                          <span>
-                            Middle Name
-                          </span>
-                        }
+                        label={<span>Middle Name</span>}
                         className="mb-3"
                       >
                         <Form.Control
@@ -592,12 +604,15 @@ const KYCForm = () => {
                           value={formData.middleName}
                           onChange={(e) => {
                             const value = e.target.value;
-                            if ((/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 30) || !value)
+                            if (
+                              (/^[a-zA-Z0-9 -]+$/.test(value) &&
+                                value.length <= 30) ||
+                              !value
+                            )
                               handleInputChange("middleName", value);
                           }}
                           disabled={isLoading}
                         />
-
                       </FloatingLabel>
                       <FloatingLabel
                         as={Col}
@@ -613,7 +628,11 @@ const KYCForm = () => {
                           value={formData.lastName}
                           onChange={(e) => {
                             const value = e.target.value;
-                            if ((/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 30) || !value)
+                            if (
+                              (/^[a-zA-Z0-9 -]+$/.test(value) &&
+                                value.length <= 30) ||
+                              !value
+                            )
                               handleInputChange("lastName", value);
                           }}
                           isInvalid={touched.lastName && errors.lastName}
@@ -698,27 +717,35 @@ const KYCForm = () => {
                       >
                         <Form.Control
                           type="date"
-                          max={new Date(
-                            new Date().setFullYear(new Date().getFullYear() - 18)
-                          )
-                            .toISOString()
-                            .split("T")[0]}
+                          max={
+                            new Date(
+                              new Date().setFullYear(
+                                new Date().getFullYear() - 18,
+                              ),
+                            )
+                              .toISOString()
+                              .split("T")[0]
+                          }
                           value={formData.dob}
-                          onChange={(e) => handleInputChange("dob", e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange("dob", e.target.value)
+                          }
                           isInvalid={touched.dob && errors.dob}
                           disabled={isLoading}
                         />
                         {touched.dob && errors.dob && (
-                          <div className="text-danger mt-1 small">{errors.dob}</div>
+                          <div className="text-danger mt-1 small">
+                            {errors.dob}
+                          </div>
                         )}
                       </FloatingLabel>
-
 
                       <Col className="mb-3">
                         <div className="floating-label-wrapper kyc-country">
                           <label
-                            className={`floating-label ${formData.countryOfBirth ? "filled" : ""
-                              }`}
+                            className={`floating-label ${
+                              formData.countryOfBirth ? "filled" : ""
+                            }`}
                           >
                             Country of Birth
                             <span style={{ color: "red" }}>*</span>
@@ -727,12 +754,12 @@ const KYCForm = () => {
                             options={countryOptions}
                             value={countryOptions.find(
                               (option) =>
-                                option.value === formData.countryOfBirth
+                                option.value === formData.countryOfBirth,
                             )}
                             onChange={(selectedOption) =>
                               handleInputChange(
                                 "countryOfBirth",
-                                selectedOption?.value || ""
+                                selectedOption?.value || "",
                               )
                             }
                             placeholder=""
@@ -805,8 +832,11 @@ const KYCForm = () => {
                           disabled={isLoading}
                         >
                           <option value="">Select Country</option>
-                          <option value="Australia">Australia</option>
-                          <option value="New Zealand">New Zealand</option>
+                          {countryOptions.map((country) => (
+                            <option value={country.value}>
+                              {country.value}
+                            </option>
+                          ))}
                         </Form.Select>
                         {touched.country && errors.country && (
                           <div className="text-danger mt-1 small">
@@ -859,10 +889,13 @@ const KYCForm = () => {
                           value={formData.city}
                           onChange={(e) => {
                             const value = e.target.value;
-                            if ((/^[a-zA-Z -]+$/.test(value) && value.length <= 35) || !value)
-                              handleInputChange("city", e.target.value)
-                          }
-                          }
+                            if (
+                              (/^[a-zA-Z -]+$/.test(value) &&
+                                value.length <= 35) ||
+                              !value
+                            )
+                              handleInputChange("city", e.target.value);
+                          }}
                           isInvalid={touched.city && errors.city}
                           disabled={isLoading}
                         />
@@ -888,10 +921,12 @@ const KYCForm = () => {
                           value={formData.zip}
                           onChange={(e) => {
                             const value = e.target.value;
-                            if ((/^\d+$/.test(value) && value.length <= 9) || !value)
-                              handleInputChange("zip", e.target.value)
-                          }
-                          }
+                            if (
+                              (/^\d+$/.test(value) && value.length <= 9) ||
+                              !value
+                            )
+                              handleInputChange("zip", e.target.value);
+                          }}
                           isInvalid={touched.zip && errors.zip}
                           disabled={isLoading}
                         />
@@ -917,10 +952,13 @@ const KYCForm = () => {
                           value={formData.state}
                           onChange={(e) => {
                             const value = e.target.value;
-                            if ((/^[a-zA-Z -]+$/.test(value) && value.length <= 30) || !value)
-                              handleInputChange("state", e.target.value)
-                          }
-                          }
+                            if (
+                              (/^[a-zA-Z -]+$/.test(value) &&
+                                value.length <= 30) ||
+                              !value
+                            )
+                              handleInputChange("state", e.target.value);
+                          }}
                           isInvalid={touched.state && errors.state}
                           disabled={isLoading}
                         />
@@ -962,7 +1000,11 @@ const KYCForm = () => {
                         </Button>
                         {isLoading && (
                           <p className="text-info mb-3">
-                            <Spinner animation="border" size="sm" className="me-2" />
+                            <Spinner
+                              animation="border"
+                              size="sm"
+                              className="me-2"
+                            />
                             Verifying your details...
                           </p>
                         )}
@@ -1022,11 +1064,7 @@ const KYCForm = () => {
                         Skip
                       </Button>
                     </div>
-                    {VeriffMessage &&
-                      <p>
-                        {VeriffMessage}
-                      </p>
-                    }
+                    {VeriffMessage && <p>{VeriffMessage}</p>}
                   </div>
                 </Tab.Pane>
 
@@ -1052,12 +1090,11 @@ const KYCForm = () => {
                     </>
                   </div>
                 </Tab.Pane>
-
               </Tab.Content>
             </Col>
           </Row>
         </Tab.Container>
-      </Container >
+      </Container>
       <Footer />
     </>
   );

@@ -70,7 +70,7 @@ private_instance.interceptors.request.use(
   (error) => {
     console.error("Request error:", error);
     return Promise.reject(error);
-  }
+  },
 );
 
 private_instance.interceptors.response.use(
@@ -94,7 +94,7 @@ private_instance.interceptors.response.use(
 
       if (res.status === 503) {
         console.warn(
-          "🚨 Service Unavailable. Clearing session and redirecting to login."
+          "🚨 Service Unavailable. Clearing session and redirecting to login.",
         );
         sessionStorage.clear();
         localStorage.removeItem("token");
@@ -103,7 +103,7 @@ private_instance.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export const userRegisterCheck = async (data) => {
@@ -167,7 +167,7 @@ export const createMonovaPayment = async (data) => {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
-      }
+      },
     );
     return response.data;
   } catch (error) {
@@ -184,7 +184,7 @@ export const createAutoMatcher = async (data) => {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
-      }
+      },
     );
     return response.data;
   } catch (error) {
@@ -337,7 +337,7 @@ export const sendEmail = async () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
-      }
+      },
     )
     .then((res) => {
       return res?.data;
@@ -387,7 +387,7 @@ export const userProfile = async () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
-      }
+      },
     );
 
     return response.data;
@@ -421,7 +421,7 @@ export const paymentSummary = async (data) => {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
-      }
+      },
     )
     .then((res) => {
       return res?.data;
@@ -489,7 +489,7 @@ export const getCardData = async (id) => {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
-      }
+      },
     )
     .then((res) => {
       return res?.data;
@@ -773,7 +773,7 @@ export const getAgreementList = async (amount) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
-      }
+      },
     )
     .then((res) => {
       return res?.data;
@@ -895,7 +895,7 @@ export const getPayID = async () => {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
-      }
+      },
     )
     .then((res) => {
       return res?.data;
@@ -915,7 +915,7 @@ export const getDiscountedPrice = async (data) => {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
-      }
+      },
     )
     .then((res) => {
       return res?.data;
@@ -935,7 +935,7 @@ export const getReferral = async () => {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
-      }
+      },
     )
     .then((res) => {
       return res?.data;
@@ -1075,7 +1075,7 @@ export const fetchAccountUsage = async () => {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
-      }
+      },
     )
     .then((res) => {
       return res?.data;
@@ -1125,6 +1125,18 @@ export const getTestimonials = async () => {
 export const getCustomerTypes = async () => {
   const response = await public_instance
     .get(`/payment/customer-types/`)
+    .then((res) => {
+      return res?.data;
+    })
+    .catch((err) => {
+      err?.response?.data;
+    });
+  return response;
+};
+
+export const kycAddressList = async () => {
+  const response = await public_instance
+    .get(`/kyc-address-list/`)
     .then((res) => {
       return res?.data;
     })

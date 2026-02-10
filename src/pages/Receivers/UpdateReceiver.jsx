@@ -15,6 +15,7 @@ import {
   updateUserRecipient,
   GetFlutterBanks,
   GetSamsaraBanks,
+  kycAddressList,
 } from "../../services/Api";
 import { toast } from "react-toastify";
 import allCountries from "../../utils/AllCountries";
@@ -26,15 +27,26 @@ const UpdateReceiver = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
   const [apiError, setApiError] = useState("");
-  console.log("error",apiError)
   const [showSuggestions, setShowSuggestions] = useState(false);
-  console.log("ss",showSuggestions)
   const [bankNames, setbankNames] = useState([]);
+  const [countryOptions, setCountryOptions] = useState([]);
 
-  const countryOptions = allCountries.map((country) => ({
-    value: country.name,
-    label: country.name,
-  }));
+  useEffect(() => {
+    kycAddressList().then((res) => {
+      const formatted = res.data.map((item) => ({
+        label: item.country,
+        value: item.country,
+        dialCode: item.dial_code,
+      }));
+
+      setCountryOptions(formatted);
+    });
+  }, []);
+
+  // const countryOptions = allCountries.map((country) => ({
+  //   value: country.name,
+  //   label: country.name,
+  // }));
 
   useEffect(() => {
     (async () => {
@@ -60,7 +72,7 @@ const UpdateReceiver = () => {
         all.reduce((acc, bank) => {
           acc[bank.bank_code] = bank;
           return acc;
-        }, {})
+        }, {}),
       );
 
       // ✅ Sort lexicographically (case-insensitive, trimmed)
@@ -68,7 +80,7 @@ const UpdateReceiver = () => {
         a.bank_name
           .trim()
           .toLowerCase()
-          .localeCompare(b.bank_name.trim().toLowerCase())
+          .localeCompare(b.bank_name.trim().toLowerCase()),
       );
 
       setbankNames(uniqueBanks);
@@ -106,7 +118,7 @@ const UpdateReceiver = () => {
         .max(10, "Maximum 10 characters")
         .matches(
           /^[a-zA-Z0-9 -]+$/,
-          "Only letters, numbers, spaces, and hyphens are allowed"
+          "Only letters, numbers, spaces, and hyphens are allowed",
         ),
 
       first_name: Yup.string()
@@ -115,7 +127,7 @@ const UpdateReceiver = () => {
         .max(30, "First name cannot exceed 30 characters")
         .matches(
           /^[a-zA-Z0-9 -]+$/,
-          "Only letters, numbers, spaces, and hyphens are allowed"
+          "Only letters, numbers, spaces, and hyphens are allowed",
         ),
 
       middle_name: Yup.string()
@@ -123,7 +135,7 @@ const UpdateReceiver = () => {
         .max(30, "Middle name cannot exceed 30 characters")
         .matches(
           /^[a-zA-Z0-9 -]*$/,
-          "Only letters, numbers, spaces, and hyphens are allowed"
+          "Only letters, numbers, spaces, and hyphens are allowed",
         ),
 
       last_name: Yup.string()
@@ -132,7 +144,7 @@ const UpdateReceiver = () => {
         .max(30, "Last name cannot exceed 30 characters")
         .matches(
           /^[a-zA-Z0-9 -]+$/,
-          "Only letters, numbers, spaces, and hyphens are allowed"
+          "Only letters, numbers, spaces, and hyphens are allowed",
         ),
 
       email: Yup.string()
@@ -151,7 +163,7 @@ const UpdateReceiver = () => {
         .max(30, "State cannot exceed 30 characters")
         .matches(
           /^[a-zA-Z -]+$/,
-          "Only letters, spaces, and hyphens are allowed"
+          "Only letters, spaces, and hyphens are allowed",
         ),
 
       city: Yup.string()
@@ -160,7 +172,7 @@ const UpdateReceiver = () => {
         .max(35, "City cannot exceed 35 characters")
         .matches(
           /^[a-zA-Z -]+$/,
-          "Only letters, spaces, and hyphens are allowed"
+          "Only letters, spaces, and hyphens are allowed",
         ),
 
       post_code: Yup.string()
@@ -176,7 +188,7 @@ const UpdateReceiver = () => {
         .max(12, "Swift code cannot exceed 15 characters")
         .matches(
           /^[a-zA-Z0-9 -]+$/,
-          "Only letters, numbers, spaces, and hyphens are allowed"
+          "Only letters, numbers, spaces, and hyphens are allowed",
         ),
 
       company_name: Yup.string(),
@@ -245,7 +257,7 @@ const UpdateReceiver = () => {
 
   const filteredSuggestions = values.bank_name
     ? bankNames.filter((bank) =>
-        bank.bank_name.toLowerCase().includes(values.bank_name.toLowerCase())
+        bank.bank_name.toLowerCase().includes(values.bank_name.toLowerCase()),
       )
     : [];
 
@@ -266,7 +278,7 @@ const UpdateReceiver = () => {
               recipient.mobile.slice(
                 allCountries.find((c) => {
                   return c.name === recipient.country;
-                }).dial_code.length
+                }).dial_code.length,
               ) || "",
             country: recipient.country || "",
             state: recipient.state || "",
@@ -617,7 +629,11 @@ const UpdateReceiver = () => {
                           setFieldValue("country", countryName);
                         }}
                         onBlur={handleBlur}
-                        countries={allCountries}
+                        countries={allCountries.filter((country) => {
+                          return countryOptions.find(
+                            (c) => c.value === country.name,
+                          );
+                        })}
                         name="countryCode"
                       />
 
@@ -629,7 +645,7 @@ const UpdateReceiver = () => {
                         onChange={(e) => {
                           const numericValue = e.target.value.replace(
                             /\D/g,
-                            ""
+                            "",
                           );
                           if (numericValue.length <= 10 || !numericValue)
                             setFieldValue("mobile", numericValue);
@@ -663,18 +679,20 @@ const UpdateReceiver = () => {
                       Country <span style={{ color: "red" }}>*</span>
                     </label>
                     <Select
-                      options={countryOptions}
+                      options={countryOptions.filter((c) =>
+                        allCountries.find((a) => a.name === c.value),
+                      )}
                       name="country"
                       value={countryOptions.find(
-                        (opt) => opt.value === values.country
+                        (opt) => opt.value === values.country,
                       )}
                       onChange={(option) => {
                         setFieldValue("country", option.value);
-                        const foundCountry = allCountries.find(
-                          (c) => c.name === option.value
+                        const foundCountry = countryOptions.find(
+                          (c) => c.value === option.value,
                         );
                         if (foundCountry) {
-                          setFieldValue("countryCode", foundCountry.dial_code);
+                          setFieldValue("countryCode", foundCountry.dialCode);
                         }
                       }}
                     />

@@ -1,13 +1,6 @@
 import { useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Nav,
-  Navbar,
-  NavDropdown,
-} from "react-bootstrap";
-import logo from "../../assets/images/login-logo.png"; 
+import { Container, Row, Col, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import logo from "../../assets/images/login-logo.png";
 import {
   FaFacebookF,
   FaInstagram,
@@ -40,7 +33,9 @@ const TopNavbar = () => {
               </span>
               <span className="d-flex flex-wrap align-items-center">
                 <FaWhatsapp />
-                <a href="https://api.whatsapp.com/send/?phone=61480001611&text&type=phone_number&app_absent=0">+61480001611</a>
+                <a href="https://api.whatsapp.com/send/?phone=61480001611&text&type=phone_number&app_absent=0">
+                  +61480001611
+                </a>
               </span>
             </Col>
             <Col
@@ -80,7 +75,7 @@ const TopNavbar = () => {
         </Navbar.Brand>
 
         <Nav className="mx-auto gap-3 align-items-center">
-          <Nav.Link href="/" className="fw-bold text-dark">
+          <Nav.Link href="https://widophremit.com/" className="text-dark">
             Home
           </Nav.Link>
 
@@ -155,7 +150,10 @@ const TopNavbar = () => {
             </NavDropdown.Item>
           </NavDropdown>
 
-          <Nav.Link href="https://widophremit.com/community-responsibility/" className="text-dark">
+          <Nav.Link
+            href="https://widophremit.com/community-responsibility/"
+            className="text-dark"
+          >
             SR
           </Nav.Link>
         </Nav>

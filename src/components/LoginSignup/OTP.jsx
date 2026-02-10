@@ -1,11 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Form,
-  Button,
-} from "react-bootstrap";
+import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import OtpInput from "react-otp-input";
 import { toast } from "react-toastify";
 import {
@@ -47,8 +41,7 @@ const OtpVerification = () => {
         toast.error("Missing login data. Please login again.");
         navigate("/login");
       }
-    }
-    else {
+    } else {
       toast.error("Invalid access. Please start again.");
       navigate("/login");
     }
@@ -84,8 +77,7 @@ const OtpVerification = () => {
           sessionStorage.setItem("token", response.access_token);
 
           try {
-            if (from === "signup")
-              await sendEmail();
+            if (from === "signup") await sendEmail();
           } catch {
             toast.error("Email send error.");
           }
@@ -117,7 +109,7 @@ const OtpVerification = () => {
 
   const handleResendOtp = async () => {
     setIsProcessing(true);
-    setOtp("")
+    setOtp("");
 
     try {
       const payload = {
@@ -127,8 +119,9 @@ const OtpVerification = () => {
       let response;
 
       if (from === "signup") {
-        response = await registerOtpResend({ mobile: JSON.parse(sessionStorage.getItem("signupData")).mobile })
-
+        response = await registerOtpResend({
+          mobile: JSON.parse(sessionStorage.getItem("signupData")).mobile,
+        });
       } else {
         response = await resendOtp(payload);
       }
@@ -146,7 +139,6 @@ const OtpVerification = () => {
     }
   };
 
-
   return (
     <Container className="login-form-wrappe">
       <Row>
@@ -156,7 +148,7 @@ const OtpVerification = () => {
               OTP <br />
               Verification
               <span className="exchange_rate optTagLine">
-                Please enter the verifcation code to Continue
+                Please enter the verification code to Continue
               </span>
             </div>
 
@@ -204,8 +196,6 @@ const OtpVerification = () => {
                     }}
                     disabled={isProcessing}
                   />
-
-
                 </Col>
               </Row>
 

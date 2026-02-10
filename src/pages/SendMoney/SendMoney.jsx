@@ -35,8 +35,8 @@ const SendMoney = () => {
   const [curr_in, setCurrIn] = useState([]);
   const [curr_out, setCurrOut] = useState([]);
   const [exch_rate, setExchRate] = useState();
-  const [fees, setfees] = useState(0.00);
-  const [TotalAmount, setTotalAmount] = useState(0.00);
+  const [fees, setfees] = useState(0.0);
+  const [TotalAmount, setTotalAmount] = useState(0.0);
   const [defaultExchange, setDefaultExchange] = useState();
   const [isConverting, setIsConverting] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -60,19 +60,15 @@ const SendMoney = () => {
     sessionStorage.setItem(
       "temp_exchange_data",
       JSON.stringify({
-        exchange_rate: exch_rate,
-        send_amount: commaRemover(
-          updatedValues.send_amt || updatedValues.send_amount || ""
-        ),
+        exchange_rate: exch_rate || "",
+        send_amount: commaRemover(updatedValues.send_amt || ""),
         send_currency: updatedValues.from || "AUD",
-        receive_amount: commaRemover(
-          updatedValues.exchange_amt || updatedValues.receive_amount || ""
-        ),
+        receive_amount: commaRemover(updatedValues.exchange_amt || ""),
         receive_currency: updatedValues.to || "NGN",
         method: updatedValues.receive_method || "Bank transfer",
-        fees: updatedValues.fees,
-        TotalAmount: updatedValues.TotalAmount
-      })
+        fees: updatedValues.fees ?? 0,
+        TotalAmount: updatedValues.TotalAmount ?? 0,
+      }),
     );
   };
 
@@ -112,8 +108,8 @@ const SendMoney = () => {
         direction: "from",
       });
 
-      setfees(exch_data.incoming_fixed)
-      setTotalAmount(exch_data.final_incoming)
+      setfees(exch_data.incoming_fixed);
+      setTotalAmount(exch_data.final_incoming);
 
       let payload = {
         amount: {
@@ -126,7 +122,7 @@ const SendMoney = () => {
           reason: "none",
           exchange_rate: exch_rate,
           fee_total_amount: TotalAmount,
-          fee_amount: fees
+          fee_amount: fees,
         },
       };
 
@@ -142,7 +138,7 @@ const SendMoney = () => {
       if (trans_res.code === "200") {
         sessionStorage.setItem(
           "transaction_id",
-          trans_res?.data.transaction_id
+          trans_res?.data.transaction_id,
         );
 
         if (sessionStorage.getItem("transfer_data")) {
@@ -156,16 +152,16 @@ const SendMoney = () => {
           exchange_rate: exch_rate,
           defaultExchange: defaultExchange,
           TotalAmount: exch_data.final_incoming,
-          fees: exch_data.incoming_fixed
+          fees: exch_data.incoming_fixed,
         };
 
         let tempData = JSON.parse(sessionStorage.getItem("temp_exchange_data"));
         tempData = {
           ...tempData,
           fees,
-          TotalAmount
-        }
-        sessionStorage.removeItem("temp_exchange_data")
+          TotalAmount,
+        };
+        sessionStorage.removeItem("temp_exchange_data");
         sessionStorage.setItem("temp_exchange_data", JSON.stringify(tempData));
         sessionStorage.setItem("transfer_data", JSON.stringify(local));
 
@@ -214,7 +210,7 @@ const SendMoney = () => {
         setIsConverting(false);
       }
     },
-    [isConverting]
+    [isConverting],
   );
 
   const debouncedConversion = useCallback(
@@ -238,8 +234,8 @@ const SendMoney = () => {
       setIsConverting(true);
       try {
         const response = await exchangeRate(payload);
-        setfees(response.incoming_fixed)
-        setTotalAmount(response.final_incoming)
+        setfees(response.incoming_fixed);
+        setTotalAmount(response.final_incoming);
         if (response) {
           if (dir === "from") {
             setFieldValue("exchange_amt", response.amount);
@@ -255,19 +251,21 @@ const SendMoney = () => {
         setIsConverting(false);
       }
     }, 500),
-    [values.from, values.to, isConverting, setFieldValue]
+    [values.from, values.to, isConverting, setFieldValue],
   );
 
   useEffect(() => {
-    const navigationEntries = window.performance.getEntriesByType('navigation');
+    const navigationEntries = window.performance.getEntriesByType("navigation");
     const isReload =
-      (navigationEntries.length && navigationEntries[0].type === 'reload') ||
-      (performance && performance.navigation && performance.navigation.type === 1);
+      (navigationEntries.length && navigationEntries[0].type === "reload") ||
+      (performance &&
+        performance.navigation &&
+        performance.navigation.type === 1);
 
     if (isReload && location.state?.backFromReceivers) {
       navigate(location.pathname, {
         replace: true,
-        state: { ...location.state, backFromReceivers: false }
+        state: { ...location.state, backFromReceivers: false },
       });
     }
   }, []);
@@ -277,8 +275,12 @@ const SendMoney = () => {
       try {
         const currencyRes = await getCurrencies();
         if (currencyRes?.code === "200") {
-          setCurrOut(currencyRes?.data?.payout_currencies?.map(cr => cr.currency))
-          setCurrIn(currencyRes?.data?.payin_currencies?.map(cr => cr.currency))
+          setCurrOut(
+            currencyRes?.data?.payout_currencies?.map((cr) => cr.currency),
+          );
+          setCurrIn(
+            currencyRes?.data?.payin_currencies?.map((cr) => cr.currency),
+          );
         }
 
         const webData = sessionStorage.getItem("web_exchange_data");
@@ -300,17 +302,17 @@ const SendMoney = () => {
             setFieldValue("to", parsedData.receive_currency || "NGN");
             setFieldValue(
               "receive_method",
-              parsedData.method || "Bank transfer"
+              parsedData.method || "Bank transfer",
             );
             setfees(parsedData.fees);
-            setTotalAmount(parsedData.TotalAmount)
+            setTotalAmount(parsedData.TotalAmount);
 
             if (parsedData.exchange_rate) {
               setExchRate(parsedData.exchange_rate);
             } else {
               await getExchangeRate(
                 parsedData.send_currency,
-                parsedData.receive_currency
+                parsedData.receive_currency,
               );
             }
             updateTempExchangeData(parsedData);
@@ -328,7 +330,7 @@ const SendMoney = () => {
           setfees(parsedData.fees);
           await getExchangeRate(
             parsedData.send_currency,
-            parsedData.receive_currency
+            parsedData.receive_currency,
           );
         } else {
           await getExchangeRate(initialValues.from, initialValues.to);
@@ -345,14 +347,31 @@ const SendMoney = () => {
 
   const handleTypeChange = (e) => {
     const { name, value } = e.target;
+
+    // 1️⃣ Update form field (from / to)
     handleChange(e);
 
-    const updated = { ...values, [name]: value };
-    updateTempExchangeData(updated);
+    // 2️⃣ CLEAR ALL AMOUNT RELATED STATES
+    setFieldValue("send_amt", "");
+    setFieldValue("exchange_amt", "");
+    setfees(0);
+    setTotalAmount(0);
+    setExchRate(null);
 
-    if (name === "from" || name === "to") {
-      debouncedConversion(name, value, "from");
-    }
+    // 3️⃣ CLEAR SESSION DATA FOR AMOUNTS
+    const cleared = {
+      ...values,
+      [name]: value,
+      send_amt: "",
+      exchange_amt: "",
+      fees: 0,
+      TotalAmount: 0,
+    };
+
+    updateTempExchangeData(cleared);
+
+    // 4️⃣ Trigger fresh rate for new pair
+    debouncedConversion(name, value, "from");
   };
 
   const handleAmountChange = (e) => {
@@ -442,7 +461,7 @@ const SendMoney = () => {
                         name="from"
                         value={values.from}
                         onChange={handleTypeChange}
-                      //disabled={isConverting}
+                        //disabled={isConverting}
                       >
                         {curr_in.map((curr) => (
                           <option key={curr} value={curr}>
@@ -462,7 +481,7 @@ const SendMoney = () => {
                         name="to"
                         value={values.to}
                         onChange={handleTypeChange}
-                      //disabled={isConverting}
+                        //disabled={isConverting}
                       >
                         {curr_out.map((curr) => (
                           <option key={curr} value={curr}>
@@ -485,9 +504,8 @@ const SendMoney = () => {
                         name="send_amt"
                         value={values.send_amt}
                         onChange={(e) => {
-                          if (e.target.value[0] == 0) return
-                          if (e.target.value <= 15000)
-                            handleAmountChange(e)
+                          if (e.target.value[0] == 0) return;
+                          if (e.target.value <= 15000) handleAmountChange(e);
                         }}
                         onBlur={handleAmountBlur}
                         //disabled={isConverting}
@@ -527,13 +545,18 @@ const SendMoney = () => {
                         <li>
                           Fee
                           <label>
-                            <b className="">{values.send_amt ? fees : "0.00"} {values.from}</b>
+                            <b className="">
+                              {values.send_amt ? fees : "0.00"} {values.from}
+                            </b>
                           </label>
                         </li>
                         <li>
                           Total to pay
                           <label>
-                            <b className="">{values.send_amt ? TotalAmount : "0.00"} {values.from}</b>
+                            <b className="">
+                              {values.send_amt ? TotalAmount : "0.00"}{" "}
+                              {values.from}
+                            </b>
                           </label>
                         </li>
                       </ul>

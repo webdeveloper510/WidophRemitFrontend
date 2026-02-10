@@ -1,14 +1,8 @@
-import { useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Form,
-  Button,
-} from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import SignupImage from "../../assets/images/signup-image.png";
-import { userRegisterCheck } from "../../services/Api";
+import { kycAddressList, userRegisterCheck } from "../../services/Api";
 import { parsePhoneNumber } from "libphonenumber-js";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -26,21 +20,22 @@ const validationSchema = Yup.object({
   email: Yup.string()
     .email("Invalid email format")
     .required("Email is required"),
-    
+
   password: Yup.string()
     .required("Password is required")
     .min(8, "Password must be at least 8 characters long")
     .matches(/[a-z]/, "Password must contain at least one lowercase letter")
     .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
     .matches(/[0-9]/, "Password must contain at least one number")
-    .matches(/[!@#$%^&*(),.?":{}|<>]/, "Password must contain at least one special character"),
+    .matches(
+      /[!@#$%^&*(),.?":{}|<>]/,
+      "Password must contain at least one special character",
+    ),
 
   confirmPassword: Yup.string()
     .required("Confirm password is required")
     .oneOf([Yup.ref("password")], "Passwords do not match"),
 });
-
-
 
 const Signup = () => {
   const [loading, setLoading] = useState(false);
@@ -50,6 +45,20 @@ const Signup = () => {
     current: false,
     confirm: false,
   });
+  const [countryOptions, setCountryOptions] = useState([]);
+
+  useEffect(() => {
+    kycAddressList().then((res) => {
+      const formatted = res.data.map((item) => ({
+        label: item.country,
+        value: item.country,
+        dialCode: item.dial_code.slice(1),
+        country_code: item.country_code,
+      }));
+
+      setCountryOptions(formatted);
+    });
+  }, []);
 
   const toggleVisibility = (field) => {
     setVisibility((prev) => ({
@@ -59,20 +68,20 @@ const Signup = () => {
   };
 
   const initialValues = {
-    location: "Australia",
+    location: "61-Australia",
     phone: "",
     email: "",
     password: "",
-    countryCode: "61", // default for Australia
+    countryCode: "61-Australia", // default for Australia
     confirmPassword: "",
   };
 
   const handleSubmit = async (values, { setSubmitting }) => {
-    setLoading(true);
+    // setLoading(true);
 
-    const fullPhone = `+${values.countryCode}${values.phone}`;
+    const fullPhone = `+${values.countryCode.split("-")[0]}${values.phone}`;
     let parsedMobile = fullPhone;
-    let country_code = values.countryCode === "61" ? "AU" : "NZ";
+    let country_code = values.location;
 
     try {
       const parsed = parsePhoneNumber(fullPhone);
@@ -87,7 +96,7 @@ const Signup = () => {
 
     const payload = {
       account_type: "individual",
-      location: values.location,
+      location: values.location.split("-")[1],
       email: values.email,
       password: values.password,
       confirmPassword: values.confirmPassword,
@@ -112,7 +121,6 @@ const Signup = () => {
       setSubmitting(false);
     }
   };
-
 
   return (
     <Container className="login-form-wrapper">
@@ -150,17 +158,9 @@ const Signup = () => {
                   setFieldTouched(name, true);
 
                   if (name === "location") {
-                    if (value === "Australia") {
-                      setFieldValue("countryCode", "61");
-                    } else if (value === "New Zealand") {
-                      setFieldValue("countryCode", "64");
-                    }
+                    setFieldValue("countryCode", value);
                   } else if (name === "countryCode") {
-                    if (value === "61") {
-                      setFieldValue("location", "Australia");
-                    } else if (value === "64") {
-                      setFieldValue("location", "New Zealand");
-                    }
+                    setFieldValue("location", value);
                   }
                 };
 
@@ -178,8 +178,13 @@ const Signup = () => {
                         onBlur={handleBlur}
                         isInvalid={touched.location && errors.location}
                       >
-                        <option value="Australia">Australia</option>
-                        <option value="New Zealand">New Zealand</option>
+                        {countryOptions.map((country) => (
+                          <option
+                            value={`${country.dialCode}-${country.value}`}
+                          >
+                            {country.value}
+                          </option>
+                        ))}
                       </Form.Select>
                       <Form.Control.Feedback type="invalid">
                         {errors.location}
@@ -203,8 +208,14 @@ const Signup = () => {
                             borderBottomRightRadius: 0,
                           }}
                         >
-                          <option value="61">+61 (AU)</option>
-                          <option value="64">+64 (NZ)</option>
+                          {countryOptions.map((country) => (
+                            <option
+                              key={country.value}
+                              value={`${country.dialCode}-${country.value}`}
+                            >
+                              +{country.dialCode} ({country.country_code})
+                            </option>
+                          ))}
                         </Form.Select>
 
                         <Form.Control
@@ -271,7 +282,9 @@ const Signup = () => {
                           </span>
                         </div>
                         {touched.password && errors.password && (
-                          <div className="invalid-feedback d-block">{errors.password}</div>
+                          <div className="invalid-feedback d-block">
+                            {errors.password}
+                          </div>
                         )}
                       </Col>
 
@@ -304,7 +317,6 @@ const Signup = () => {
                             {errors.confirmPassword}
                           </div>
                         )}
-
                       </Col>
                     </Row>
 
@@ -318,14 +330,15 @@ const Signup = () => {
                       {loading || isSubmitting ? "Processing..." : "SIGN UP"}
                     </Button>
 
-
                     <div className="mt-3">
                       Already have an account?{" "}
-                      <Link to="/login" className="text-success fw-bold forgotpassword-text">
+                      <Link
+                        to="/login"
+                        className="text-success fw-bold forgotpassword-text"
+                      >
                         Sign in
                       </Link>
                     </div>
-
                   </Form>
                 );
               }}

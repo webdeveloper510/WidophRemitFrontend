@@ -1,4 +1,4 @@
-import  { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import { Form, Col } from "react-bootstrap";
@@ -10,7 +10,7 @@ import { Formik, Form as FormikForm, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
 import LoginImage from "../../assets/images/login-image.png";
-import { userLogin } from "../../services/Api";
+import { kycAddressList, userLogin } from "../../services/Api";
 
 const Login = () => {
   const [visibility, setVisibility] = useState({ current: false });
@@ -18,6 +18,20 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const mobileInputRef = useRef(null);
+  const [countryOptions, setCountryOptions] = useState([]);
+
+  useEffect(() => {
+    kycAddressList().then((res) => {
+      const formatted = res.data.map((item) => ({
+        label: item.country,
+        value: item.country,
+        dialCode: item.dial_code.slice(1),
+        country_code: item.country_code,
+      }));
+
+      setCountryOptions(formatted);
+    });
+  }, []);
 
   useEffect(() => {
     if (inputType === "phone" && mobileInputRef.current) {
@@ -61,7 +75,7 @@ const Login = () => {
             const digitsOnly = value.replace(/\D/g, "");
             return /^\d{8,10}$/.test(digitsOnly);
           }
-        }
+        },
       ),
     password: Yup.string()
       .required("Password is required")
@@ -152,10 +166,11 @@ const Login = () => {
                               {...field}
                               type="text"
                               placeholder="Email / Mobile Number"
-                              className={`form-control ${errors.value && touched.value
-                                ? "is-invalid"
-                                : ""
-                                }`}
+                              className={`form-control ${
+                                errors.value && touched.value
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
                               onChange={(e) =>
                                 handleInputChange(e.target.value, setFieldValue)
                               }
@@ -175,8 +190,11 @@ const Login = () => {
                               borderBottomRightRadius: 0,
                             }}
                           >
-                            <option value="61">+61(AU)</option>
-                            <option value="64">+64(NZ)</option>
+                            {countryOptions.map((c) => (
+                              <option value={c.dialCode}>
+                                +{c.dialCode} ({c.country_code})
+                              </option>
+                            ))}
                           </Form.Select>
 
                           <Form.Control
@@ -216,10 +234,11 @@ const Login = () => {
                           <Form.Control
                             {...field}
                             placeholder="Password"
-                            className={`passowrdinput ${errors.password && touched.password
-                              ? "is-invalid"
-                              : ""
-                              }`}
+                            className={`passowrdinput ${
+                              errors.password && touched.password
+                                ? "is-invalid"
+                                : ""
+                            }`}
                             type={visibility.current ? "text" : "password"}
                           />
                         )}

@@ -10,8 +10,9 @@ const MonovaForm = ({
   readOnly = false,
   showCopy = false,
 }) => {
-  return <Form className="profile-form">
-    {/* <Row className="mb-3">
+  return (
+    <Form className="profile-form">
+      {/* <Row className="mb-3">
       <FloatingLabel
         as={Col}
         controlId="monova-payment-method"
@@ -34,122 +35,129 @@ const MonovaForm = ({
         )}
       </FloatingLabel>
     </Row> */}
-    <Row><p>Enter the details below to create your account number.</p></Row>
-    <Row className="mb-3">
-      <FloatingLabel
-        as={Col}
-        controlId="monova-bsb"
-        label="BSB Number"
-        className="mb-3"
-      >
-        <Form.Control
-          type="text"
-          // value={monovaForm.bsb}
-          value="257-480"
-          readOnly={readOnly}
-          onChange={(e) => onChange("bsb", e.target.value)}
-          isInvalid={!!monovaFormErrors.bsb}
-        />
-        {showCopy && (
-          <span
-            className="copyText"
-            onClick={() => navigator.clipboard.writeText(monovaForm.bsb)}
-            style={{ cursor: "pointer" }}
-          >
-            <RiFileCopyLine />
-          </span>
-        )}
-        {monovaFormErrors.bsb && (
-          <Form.Control.Feedback type="invalid">
-            {monovaFormErrors.bsb}
-          </Form.Control.Feedback>
-        )}
-      </FloatingLabel>
-    </Row>
-    {/* Account Number only for existing modal */}
-    {readOnly && (
+      <Row>
+        <p>Enter the details below to create your account number.</p>
+      </Row>
       <Row className="mb-3">
         <FloatingLabel
           as={Col}
-          controlId="monova-account"
-          label="Account Number"
+          controlId="monova-bsb"
+          label="BSB Number"
           className="mb-3"
         >
           <Form.Control
             type="text"
-            value={monovaForm.accountNumber}
-            readOnly
-            onChange={(e) => onChange("accountNumber", e.target.value)}
-            isInvalid={!!monovaFormErrors.accountNumber}
+            value={monovaForm.bsb}
+            // value="257-480"
+            readOnly={readOnly}
+            onChange={(e) => onChange("bsb", e.target.value)}
+            isInvalid={!!monovaFormErrors.bsb}
           />
           {showCopy && (
             <span
               className="copyText"
-              onClick={() => navigator.clipboard.writeText(monovaForm.accountNumber)}
+              onClick={() => navigator.clipboard.writeText(monovaForm.bsb)}
               style={{ cursor: "pointer" }}
             >
               <RiFileCopyLine />
             </span>
           )}
-          {monovaFormErrors.accountNumber && (
+          {monovaFormErrors.bsb && (
             <Form.Control.Feedback type="invalid">
-              {monovaFormErrors.accountNumber}
+              {monovaFormErrors.bsb}
             </Form.Control.Feedback>
           )}
         </FloatingLabel>
       </Row>
-    )}
-    <Row className="mb-3">
-      <FloatingLabel
-        as={Col}
-        controlId="monova-name"
-        label="Account Name"
-        className="mb-3"
-      >
-        <Form.Control
-          type="text"
-          value={monovaForm.accountName}
-          readOnly={readOnly}
-          onChange={(e) => onChange("accountName", e.target.value)}
-          isInvalid={!!monovaFormErrors.accountName}
-        />
-        {showCopy && (
-          <span
-            className="copyText"
-            onClick={() => navigator.clipboard.writeText(monovaForm.accountName)}
-            style={{ cursor: "pointer" }}
+      {/* Account Number only for existing modal */}
+      {readOnly && (
+        <Row className="mb-3">
+          <FloatingLabel
+            as={Col}
+            controlId="monova-account"
+            label="Account Number"
+            className="mb-3"
           >
-            <RiFileCopyLine />
-          </span>
-        )}
-        {monovaFormErrors.accountName && (
-          <Form.Control.Feedback type="invalid">
-            {monovaFormErrors.accountName}
-          </Form.Control.Feedback>
-        )}
-      </FloatingLabel>
-    </Row>
-    <Row className="mb-3">
-      <Col>
-        <Button
-          variant="light"
-          className="cancel-btn float-start"
-          onClick={onCancel}
+            <Form.Control
+              type="text"
+              value={monovaForm.accountNumber}
+              readOnly
+              onChange={(e) => onChange("accountNumber", e.target.value)}
+              isInvalid={!!monovaFormErrors.accountNumber}
+            />
+            {showCopy && (
+              <span
+                className="copyText"
+                onClick={() =>
+                  navigator.clipboard.writeText(monovaForm.accountNumber)
+                }
+                style={{ cursor: "pointer" }}
+              >
+                <RiFileCopyLine />
+              </span>
+            )}
+            {monovaFormErrors.accountNumber && (
+              <Form.Control.Feedback type="invalid">
+                {monovaFormErrors.accountNumber}
+              </Form.Control.Feedback>
+            )}
+          </FloatingLabel>
+        </Row>
+      )}
+      <Row className="mb-3">
+        <FloatingLabel
+          as={Col}
+          controlId="monova-name"
+          label="Account Name"
+          className="mb-3"
         >
-          Cancel
-        </Button>
-      </Col>
-      <Col>
-        <Button
-          variant="primary"
-          className="submit-btn float-end"
-          onClick={onContinue}
-        >
-          Continue
-        </Button>
-      </Col>
-    </Row>
-  </Form>
-}
+          <Form.Control
+            type="text"
+            value={monovaForm.accountName}
+            readOnly={readOnly}
+            onChange={(e) => onChange("accountName", e.target.value)}
+            isInvalid={!!monovaFormErrors.accountName}
+          />
+          {showCopy && (
+            <span
+              className="copyText"
+              onClick={() =>
+                navigator.clipboard.writeText(monovaForm.accountName)
+              }
+              style={{ cursor: "pointer" }}
+            >
+              <RiFileCopyLine />
+            </span>
+          )}
+          {monovaFormErrors.accountName && (
+            <Form.Control.Feedback type="invalid">
+              {monovaFormErrors.accountName}
+            </Form.Control.Feedback>
+          )}
+        </FloatingLabel>
+      </Row>
+      <Row className="mb-3">
+        <Col>
+          <Button
+            variant="light"
+            className="cancel-btn float-start"
+            onClick={onCancel}
+          >
+            Cancel
+          </Button>
+        </Col>
+        <Col>
+          <Button
+            variant="primary"
+            className="submit-btn float-end"
+            onClick={onContinue}
+          >
+            Continue
+          </Button>
+        </Col>
+      </Row>
+    </Form>
+  );
+};
 
 export default MonovaForm;

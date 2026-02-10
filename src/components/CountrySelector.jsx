@@ -94,9 +94,13 @@ export const CountrySelector = ({
                 color: "#212529", // text color
                 backgroundColor: isSelected ? "#e9ecef" : "white", // highlight selected
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f1f3f5")}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.backgroundColor = "#f1f3f5")
+              }
               onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = isSelected ? "#e9ecef" : "white")
+                (e.currentTarget.style.backgroundColor = isSelected
+                  ? "#e9ecef"
+                  : "white")
               }
               title={`${country.name} ${country.dial_code} (${country.code})`}
             >
@@ -127,4 +131,3 @@ export const CountrySelector = ({
     </Dropdown>
   );
 };
-    
