@@ -27,6 +27,7 @@ import { AnimatePresence } from "framer-motion";
 import { accessProvider } from "../../utils/accessProvider";
 import OtpImage from "../../assets/images/Otp-image.png";
 import OTPInput from "react-otp-input";
+import allCountries from "../../utils/AllCountries";
 
 const ProfileInformation = () => {
   const [modalShow, setModalShow] = useState(false);
@@ -48,11 +49,16 @@ const ProfileInformation = () => {
   const [otpPurpose, setOtpPurpose] = useState("");
   const navigate = useNavigate();
   const [countryOptions, setCountryOptions] = useState([]);
+  const [AllCountries, setAllCountries] = useState(
+    allCountries.map((c) => ({
+      label: c.name,
+      value: c.name,
+    })),
+  );
   // const countryOptions = [
   //   { value: "Australia", label: "Australia" },
   //   { value: "New Zealand", label: "New Zealand" },
   // ];
-
   useEffect(() => {
     kycAddressList().then((res) => {
       const formatted = res.data.map((item) => ({
@@ -612,7 +618,7 @@ const ProfileInformation = () => {
                                     name="dateOfBirth"
                                     type="date"
                                     value={formData.dateOfBirth}
-                                    // onChange={handleChange}
+                                    onChange={handleChange}
                                     required
                                     isInvalid={getInvalid("dateOfBirth")}
                                   />
@@ -629,9 +635,9 @@ const ProfileInformation = () => {
                                       <span style={{ color: "red" }}>*</span>
                                     </label>
                                     <Select
-                                      options={countryOptions}
+                                      options={AllCountries}
                                       name="countryOfBirth"
-                                      value={countryOptions.find(
+                                      value={AllCountries.find(
                                         (option) =>
                                           option.value ===
                                           formData.countryOfBirth,

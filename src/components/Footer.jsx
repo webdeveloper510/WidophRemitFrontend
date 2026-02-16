@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom"; 
+import { useLocation } from "react-router-dom";
 import footerlogo from "../../src/assets/images/footer-logo.png";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import {
@@ -10,7 +10,6 @@ import {
   FaPhoneVolume,
   FaWhatsapp,
 } from "react-icons/fa6";
-
 
 const Footer = () => {
   const location = useLocation();
@@ -29,10 +28,10 @@ const Footer = () => {
         <Row className="mb-4">
           <Col md={3}>
             <img src={footerlogo} alt="image" />
-            <p style={{ fontSize: "14px" }} className="mt-2">
+            {/* <p style={{ fontSize: "14px" }} className="mt-2">
               In publishing and graphic design, Lorem Ipsum is a placeholder
               text commonly...
-            </p>
+            </p> */}
             <div className="d-flex gap-2 social-icons">
               <a href="https://www.facebook.com/widophRemit">
                 <FaFacebookF />
@@ -56,9 +55,9 @@ const Footer = () => {
                 <strong>Quick Links</strong>
               </h6>
               <ul className="list-unstyled">
-                <li>
+                {/* <li>
                   <a href="https://widophremit.com/">Home</a>
-                </li>
+                </li> */}
                 {/* <li>
                   <a href="https://widophremit.com/notify-me/">
                     International Money Transfer
@@ -97,13 +96,16 @@ const Footer = () => {
                 <a href="tel:02 8001 6495"> 02 8001 6495, 0480 001 611</a>
               </li>
               <li>
-                <FaWhatsapp /> <a href="https://api.whatsapp.com/send/?phone=61480001611&text&type=phone_number&app_absent=0">+61480001611</a>
+                <FaWhatsapp />{" "}
+                <a href="https://api.whatsapp.com/send/?phone=61480001611&text&type=phone_number&app_absent=0">
+                  +61480001611
+                </a>
               </li>
             </ul>
           </Col>
 
           <Col md={3}>
-            <h6>
+            {/* <h6>
               <strong>Join Our Newsletter</strong>
             </h6>
             <Form className="d-flex mb-2">
@@ -113,12 +115,12 @@ const Footer = () => {
                 className="me-2"
               />
               <Button variant="dark">Subscribe</Button>
-            </Form>
+            </Form> */}
             <div style={{ fontSize: "14px" }}>
-              <h6 className="mt-4">
+              <h6 className="mt-0">
                 <strong>Address</strong>
               </h6>
-              <p>
+              <p className="address">
                 Level 14, 275 Alfred Street North
                 <br />
                 Sydney, NEW SOUTH WALES, 2060
@@ -133,7 +135,7 @@ const Footer = () => {
 
         <Row
           className="justify-content-between align-items-center sitelinks"
-          style={{ fontSize: "14px" }}
+          style={{ fontSize: "16px" }}
         >
           <Col md="auto">
             © Copyright Widoph Remit 2026. All Rights Reserved
@@ -143,9 +145,7 @@ const Footer = () => {
               Terms
             </a>
             &nbsp; | &nbsp;
-            <a href="https://widophremit.com/privacy-policy/">
-              Privacy
-            </a>
+            <a href="https://widophremit.com/privacy-policy/">Privacy</a>
             &nbsp; | &nbsp;
             <a href="https://widophremit.com/contact-us/">Contact</a>
           </Col>
@@ -154,6 +154,5 @@ const Footer = () => {
     </footer>
   );
 };
-
 
 export default Footer;

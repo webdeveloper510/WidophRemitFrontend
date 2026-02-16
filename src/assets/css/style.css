@@ -1111,7 +1111,10 @@ footer.footer ul li a {
   color: #434800;
   line-height: 30px;
   text-decoration: none;
-  font-size: 16px;
+  font-size: 18px;
+}
+p.address {
+    font-size: 18px;
 }
 
 footer.footer {
@@ -1128,7 +1131,7 @@ footer.footer ul li {
 }
 
 footer.footer h6 {
-  font-size: 22px;
+  font-size: 25px;
   font-weight: 700;
   color: #191c1f;
 }
@@ -1146,13 +1149,14 @@ footer.footer button {
 }
 
 .social-icons a {
-  color: #434800;
-  border: 1px solid rgb(67 72 0 / 10%);
-  border-radius: 100px;
-  width: 35px;
-  height: 35px;
-  text-align: center;
-  line-height: 26px;
+    color: #fff;
+    border: 1px solid rgb(67 72 0 / 10%);
+    border-radius: 100px;
+    width: 35px;
+    height: 35px;
+    text-align: center;
+    line-height: 26px;
+    background: #434800;
 }
 
 .social-icons a:hover {
@@ -1202,15 +1206,18 @@ footer.footer button {
 }
 
 .login-header a {
-  color: #434800;
-  text-decoration: none;
-  margin-left: 10px;
+    color: #434800;
+    text-decoration: none;
+    margin-left: 10px;
+    font-size: 16px;
 }
 
-.login-header svg {
-  color: #434800;
+.login-header .social-icons svg {
+  color: #fff;
 }
-
+.top-navbar .social-icons {
+    margin-top: 0;
+}
 .login-header a:hover svg {
   color: #fff !important;
 }
@@ -1456,6 +1463,9 @@ span.status-badge.in.progress {
   font-size: 14px;
 }
 
+.social-icons {
+    margin-top: 18px;
+}
 /*************** responsive css ****************/
 
 @media screen and (max-width: 1500px) {

@@ -30,17 +30,17 @@ const TopNavbar = ({ onToggleSidebar }) => {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="">
               <Nav.Link
-                as={NavLink}
-                to="/dashboard"
+                as="a"
+                href="https://widophremit.com"
                 className="fw-bold"
                 style={{ backgroundColor: "transparent" }}
               >
                 Home
               </Nav.Link>
-
+              {/* 
               <Nav.Link as="a" href="https://widophremit.com/notify-me/">
                 International Money Transfer
-              </Nav.Link>
+              </Nav.Link> */}
 
               {/* <NavDropdown title="How To" id="how-to-dropdown">
                 <NavDropdown.Item as="a" href="/">
@@ -122,7 +122,10 @@ const TopNavbar = ({ onToggleSidebar }) => {
                 </NavDropdown.Item>
               </NavDropdown>
 
-              <Nav.Link as="a" href="https://widophremit.com/community-responsibility/">
+              <Nav.Link
+                as="a"
+                href="https://widophremit.com/community-responsibility/"
+              >
                 SR
               </Nav.Link>
             </Nav>

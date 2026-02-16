@@ -26,6 +26,7 @@ import KYCimage from "../../assets/images/kyc-image.png";
 import { Veriff } from "@veriff/js-sdk";
 import { createVeriffFrame, MESSAGES } from "@veriff/incontext-sdk";
 import { toast } from "react-toastify";
+import allCountries from "../../utils/AllCountries";
 
 const KYCForm = () => {
   const navigate = useNavigate();
@@ -57,6 +58,12 @@ const KYCForm = () => {
     state: "",
   });
   const [countryOptions, setCountryOptions] = useState([]);
+  const [AllCountries, setAllCountries] = useState(
+    allCountries.map((c) => ({
+      label: c.name,
+      value: c.name,
+    })),
+  );
 
   useEffect(() => {
     kycAddressList().then((res) => {
@@ -165,6 +172,7 @@ const KYCForm = () => {
                 toast.info(
                   "Checking your ID verification status... Please wait.",
                 );
+                setActiveKey("step3");
 
                 const interval = setInterval(async () => {
                   try {
@@ -751,8 +759,8 @@ const KYCForm = () => {
                             <span style={{ color: "red" }}>*</span>
                           </label>
                           <Select
-                            options={countryOptions}
-                            value={countryOptions.find(
+                            options={AllCountries}
+                            value={AllCountries.find(
                               (option) =>
                                 option.value === formData.countryOfBirth,
                             )}
