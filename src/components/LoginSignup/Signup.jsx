@@ -1,14 +1,13 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import SignupImage from "../../assets/images/signup-image.png";
-import { kycAddressList, userRegisterCheck } from "../../services/Api";
+import { userRegisterCheck } from "../../services/Api";
 import { parsePhoneNumber } from "libphonenumber-js";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { Link } from "react-router-dom";
 
 const validationSchema = Yup.object({
   location: Yup.string().required("Location is required"),
@@ -45,20 +44,6 @@ const Signup = () => {
     current: false,
     confirm: false,
   });
-  const [countryOptions, setCountryOptions] = useState([]);
-
-  useEffect(() => {
-    kycAddressList().then((res) => {
-      const formatted = res.data.map((item) => ({
-        label: item.country,
-        value: item.country,
-        dialCode: item.dial_code.slice(1),
-        country_code: item.country_code,
-      }));
-
-      setCountryOptions(formatted);
-    });
-  }, []);
 
   const toggleVisibility = (field) => {
     setVisibility((prev) => ({
@@ -68,25 +53,32 @@ const Signup = () => {
   };
 
   const initialValues = {
-    location: "61-Australia",
+    location: "Australia",
     phone: "",
     email: "",
     password: "",
-    countryCode: "61-Australia", // default for Australia
+    countryCode: "61",
     confirmPassword: "",
   };
 
   const handleSubmit = async (values, { setSubmitting }) => {
-    // setLoading(true);
+    setLoading(true);
 
-    const fullPhone = `+${values.countryCode.split("-")[0]}${values.phone}`;
+    const fullPhone = `+${values.countryCode}${values.phone}`;
     let parsedMobile = fullPhone;
-    let country_code = values.location;
+
+    const countryCodeMap = {
+      61: "AU",
+      64: "NZ",
+      234: "NG",
+    };
+
+    let country_code = countryCodeMap[values.countryCode] || "AU";
 
     try {
       const parsed = parsePhoneNumber(fullPhone);
       parsedMobile = parsed.number;
-      country_code = parsed.country || "AU";
+      country_code = parsed.country || country_code;
     } catch (error) {
       toast.error("Invalid phone number format");
       setLoading(false);
@@ -96,7 +88,7 @@ const Signup = () => {
 
     const payload = {
       account_type: "individual",
-      location: values.location.split("-")[1],
+      location: values.location,
       email: values.email,
       password: values.password,
       confirmPassword: values.confirmPassword,
@@ -107,6 +99,7 @@ const Signup = () => {
 
     try {
       const response = await userRegisterCheck(payload);
+
       if (response?.code === "200") {
         sessionStorage.setItem("signupData", JSON.stringify(payload));
         navigate("/otp-verification", { state: { from: "signup" } });
@@ -125,7 +118,6 @@ const Signup = () => {
   return (
     <Container className="login-form-wrapper">
       <Row>
-        {/* Left Form Column */}
         <Col md={7} className="d-flex align-items-center justify-content-start">
           <div className="login-form-wrapper w-100">
             <div className="exchange-title">
@@ -158,9 +150,23 @@ const Signup = () => {
                   setFieldTouched(name, true);
 
                   if (name === "location") {
-                    setFieldValue("countryCode", value);
-                  } else if (name === "countryCode") {
-                    setFieldValue("location", value);
+                    if (value === "Australia") {
+                      setFieldValue("countryCode", "61");
+                    } else if (value === "New Zealand") {
+                      setFieldValue("countryCode", "64");
+                    } else if (value === "Nigeria") {
+                      setFieldValue("countryCode", "234");
+                    }
+                  }
+
+                  if (name === "countryCode") {
+                    if (value === "61") {
+                      setFieldValue("location", "Australia");
+                    } else if (value === "64") {
+                      setFieldValue("location", "New Zealand");
+                    } else if (value === "234") {
+                      setFieldValue("location", "Nigeria");
+                    }
                   }
                 };
 
@@ -178,20 +184,16 @@ const Signup = () => {
                         onBlur={handleBlur}
                         isInvalid={touched.location && errors.location}
                       >
-                        {countryOptions.map((country) => (
-                          <option
-                            value={`${country.dialCode}-${country.value}`}
-                          >
-                            {country.value}
-                          </option>
-                        ))}
+                        <option value="Australia">Australia</option>
+                        <option value="New Zealand">New Zealand</option>
+                        <option value="Nigeria">Nigeria</option>
                       </Form.Select>
                       <Form.Control.Feedback type="invalid">
                         {errors.location}
                       </Form.Control.Feedback>
                     </Row>
 
-                    {/* Phone Number */}
+                    {/* Phone */}
                     <Row className="mb-3 mobile_numbero">
                       <label className="form-label">
                         Mobile Number<span>*</span>
@@ -208,14 +210,9 @@ const Signup = () => {
                             borderBottomRightRadius: 0,
                           }}
                         >
-                          {countryOptions.map((country) => (
-                            <option
-                              key={country.value}
-                              value={`${country.dialCode}-${country.value}`}
-                            >
-                              +{country.dialCode} ({country.country_code})
-                            </option>
-                          ))}
+                          <option value="61">+61 (AU)</option>
+                          <option value="64">+64 (NZ)</option>
+                          <option value="234">+234 (NG)</option>
                         </Form.Select>
 
                         <Form.Control
@@ -239,11 +236,11 @@ const Signup = () => {
                       )}
                     </Row>
 
+                    {/* Email */}
                     <Row className="mb-3">
                       <label className="form-label">
                         Email Address<span>*</span>
                       </label>
-
                       <Form.Control
                         type="email"
                         name="email"
@@ -257,6 +254,7 @@ const Signup = () => {
                         {errors.email}
                       </Form.Control.Feedback>
                     </Row>
+
                     {/* Passwords */}
                     <Row className="mb-3">
                       <Col>
@@ -265,8 +263,6 @@ const Signup = () => {
                         </label>
                         <div className="custom-password">
                           <Form.Control
-                            placeholder="Password"
-                            className="passowrdinput"
                             type={visibility.current ? "text" : "password"}
                             name="password"
                             value={values.password}
@@ -294,8 +290,6 @@ const Signup = () => {
                         </label>
                         <div className="custom-password">
                           <Form.Control
-                            placeholder="Confirm Password"
-                            className="passowrdinput"
                             type={visibility.confirm ? "text" : "password"}
                             name="confirmPassword"
                             value={values.confirmPassword}
@@ -320,10 +314,9 @@ const Signup = () => {
                       </Col>
                     </Row>
 
-                    {/* Submit */}
                     <Button
                       variant="success"
-                      className="custom-signin-btn mb-3 btn btn-primary"
+                      className="custom-signin-btn mb-3"
                       type="submit"
                       disabled={loading || isSubmitting}
                     >
@@ -351,7 +344,7 @@ const Signup = () => {
           className="d-none d-md-flex align-items-center justify-content-end"
         >
           <div className="image-wrapper">
-            <img src={SignupImage} alt="Login Art" className="clipped-img" />
+            <img src={SignupImage} alt="Signup Art" className="clipped-img" />
           </div>
         </Col>
       </Row>

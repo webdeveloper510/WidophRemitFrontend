@@ -10,7 +10,7 @@ import { Formik, Form as FormikForm, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
 import LoginImage from "../../assets/images/login-image.png";
-import { kycAddressList, userLogin } from "../../services/Api";
+import { userLogin } from "../../services/Api";
 
 const Login = () => {
   const [visibility, setVisibility] = useState({ current: false });
@@ -18,20 +18,6 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const mobileInputRef = useRef(null);
-  const [countryOptions, setCountryOptions] = useState([]);
-
-  useEffect(() => {
-    kycAddressList().then((res) => {
-      const formatted = res.data.map((item) => ({
-        label: item.country,
-        value: item.country,
-        dialCode: item.dial_code.slice(1),
-        country_code: item.country_code,
-      }));
-
-      setCountryOptions(formatted);
-    });
-  }, []);
 
   useEffect(() => {
     if (inputType === "phone" && mobileInputRef.current) {
@@ -92,6 +78,14 @@ const Login = () => {
   const handleSubmit = async (values, { setSubmitting }) => {
     setLoading(true);
 
+    const countryCodeMap = {
+      61: "AU",
+      64: "NZ",
+      234: "NG",
+    };
+
+    const selectedCountry = countryCodeMap[values.countryCode] || "AU";
+
     const payload = {
       password: values.password,
     };
@@ -105,6 +99,7 @@ const Login = () => {
 
     try {
       const response = await userLogin(payload);
+
       if (response?.code === 200 || response?.code === "200") {
         navigate("/otp-verification", {
           state: {
@@ -112,7 +107,7 @@ const Login = () => {
             otpData: {
               email: payload.email || "",
               mobile: payload.mobile || "",
-              country_code: "AU",
+              country_code: selectedCountry, // ✅ FIXED
             },
           },
         });
@@ -190,11 +185,9 @@ const Login = () => {
                               borderBottomRightRadius: 0,
                             }}
                           >
-                            {countryOptions.map((c) => (
-                              <option value={c.dialCode}>
-                                +{c.dialCode} ({c.country_code})
-                              </option>
-                            ))}
+                            <option value="61">+61 (AU)</option>
+                            <option value="64">+64 (NZ)</option>
+                            <option value="234">+234 (NG)</option>
                           </Form.Select>
 
                           <Form.Control

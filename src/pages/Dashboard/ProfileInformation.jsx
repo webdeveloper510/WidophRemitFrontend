@@ -48,7 +48,6 @@ const ProfileInformation = () => {
   const [user, setuser] = useState({});
   const [otpPurpose, setOtpPurpose] = useState("");
   const navigate = useNavigate();
-  const [countryOptions, setCountryOptions] = useState([]);
   const [AllCountries, setAllCountries] = useState(
     allCountries.map((c) => ({
       label: c.name,
@@ -59,17 +58,12 @@ const ProfileInformation = () => {
   //   { value: "Australia", label: "Australia" },
   //   { value: "New Zealand", label: "New Zealand" },
   // ];
-  useEffect(() => {
-    kycAddressList().then((res) => {
-      const formatted = res.data.map((item) => ({
-        label: item.country,
-        value: item.country,
-        country_code: item.country_code,
-      }));
 
-      setCountryOptions(formatted);
-    });
-  }, []);
+  const countryOptions = [
+    { value: "Australia", label: "Australia", country_code: "AU" },
+    { value: "Nigeria", label: "Nigeria", country_code: "NG" },
+    { value: "New Zealand", label: "New Zealand", country_code: "NZ" },
+  ];
 
   const countryOfBirthOptions = getNames().map((country) => ({
     value: country,

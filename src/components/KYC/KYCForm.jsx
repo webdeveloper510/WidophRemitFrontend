@@ -17,7 +17,6 @@ import "./KYCForm.css";
 import { useNavigate } from "react-router-dom";
 import {
   getVeriffStatus,
-  kycAddressList,
   updateProfile,
   userProfile,
 } from "../../services/Api";
@@ -26,7 +25,6 @@ import KYCimage from "../../assets/images/kyc-image.png";
 import { Veriff } from "@veriff/js-sdk";
 import { createVeriffFrame, MESSAGES } from "@veriff/incontext-sdk";
 import { toast } from "react-toastify";
-import allCountries from "../../utils/AllCountries";
 
 const KYCForm = () => {
   const navigate = useNavigate();
@@ -57,25 +55,7 @@ const KYCForm = () => {
     zip: "",
     state: "",
   });
-  const [countryOptions, setCountryOptions] = useState([]);
-  const [AllCountries, setAllCountries] = useState(
-    allCountries.map((c) => ({
-      label: c.name,
-      value: c.name,
-    })),
-  );
 
-  useEffect(() => {
-    kycAddressList().then((res) => {
-      const formatted = res.data.map((item) => ({
-        label: item.country,
-        value: item.country,
-        dialCode: item.dial_code.slice(1),
-      }));
-
-      setCountryOptions(formatted);
-    });
-  }, []);
   useEffect(() => {
     if (activeKey === "step2" && !idVerified && !verifyingID) {
       handleVeriffClick();
@@ -136,10 +116,10 @@ const KYCForm = () => {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
 
-  // const countryOptions = getNames().map((country) => ({
-  //   value: country,
-  //   label: country,
-  // }));
+  const countryOptions = getNames().map((country) => ({
+    value: country,
+    label: country,
+  }));
 
   const handleVeriffClick = () => {
     setVerifyingID(true);
@@ -310,6 +290,12 @@ const KYCForm = () => {
     else if (!/\S+@\S+\.\S+/.test(formData.email))
       newErrors.email = "Email format is invalid";
 
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Mobile number is required";
+    } else if (!/^\d{8,10}$/.test(formData.phone)) {
+      newErrors.phone = "Mobile number must be between 8 and 10 digits";
+    }
+
     if (!formData.dob) {
       newErrors.dob = "Date of birth is required";
     } else {
@@ -328,8 +314,6 @@ const KYCForm = () => {
 
     if (!formData.occupation.trim())
       newErrors.occupation = "Occupation is required";
-
-    console.log(newErrors);
 
     setErrors((prev) => ({ ...prev, ...newErrors }));
     return Object.keys(newErrors).length === 0;
@@ -697,6 +681,7 @@ const KYCForm = () => {
                           >
                             <option value="61">+61 (AU)</option>
                             <option value="64">+64 (NZ)</option>
+                            <option value="234">+234 (NG)</option>
                           </Form.Select>
 
                           <Form.Control
@@ -759,8 +744,8 @@ const KYCForm = () => {
                             <span style={{ color: "red" }}>*</span>
                           </label>
                           <Select
-                            options={AllCountries}
-                            value={AllCountries.find(
+                            options={countryOptions}
+                            value={countryOptions.find(
                               (option) =>
                                 option.value === formData.countryOfBirth,
                             )}
@@ -840,12 +825,11 @@ const KYCForm = () => {
                           disabled={isLoading}
                         >
                           <option value="">Select Country</option>
-                          {countryOptions.map((country) => (
-                            <option value={country.value}>
-                              {country.value}
-                            </option>
-                          ))}
+                          <option value="Australia">Australia</option>
+                          <option value="Nigeria">Nigeria</option>
+                          <option value="New Zealand">New Zealand</option>
                         </Form.Select>
+
                         {touched.country && errors.country && (
                           <div className="text-danger mt-1 small">
                             {errors.country}

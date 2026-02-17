@@ -19,7 +19,7 @@ const ForgotPassword = () => {
   const formik = useFormik({
     initialValues: {
       mobile: "",
-      countryCode: "61" // default for Australia
+      countryCode: "61", // Default Australia
     },
     validationSchema: Yup.object({
       mobile: Yup.string()
@@ -31,7 +31,7 @@ const ForgotPassword = () => {
             if (!value) return false;
             const digitsOnly = value.replace(/\D/g, "");
             return /^\d{8,10}$/.test(digitsOnly);
-          }
+          },
         ),
     }),
     onSubmit: async (values, { setSubmitting }) => {
@@ -61,6 +61,7 @@ const ForgotPassword = () => {
           });
 
           localStorage.setItem("token_forgot", response.data.token);
+
           navigate("/reset-password", {
             state: { customer_id: response.data.data.customer_id },
           });
@@ -80,12 +81,14 @@ const ForgotPassword = () => {
     },
   });
 
-  const handleCustomChange = (e) => {
-    const { name, value } = e.target;
-    const digitsOnly = value.replace(/\D/g, "");
+  const handleMobileChange = (e) => {
+    const digitsOnly = e.target.value.replace(/\D/g, "");
+    formik.setFieldValue("mobile", digitsOnly);
+    formik.setFieldTouched("mobile", true);
+  };
 
-    formik.setFieldValue(name, digitsOnly);
-    formik.setFieldTouched(name, true);
+  const handleCountryChange = (e) => {
+    formik.setFieldValue("countryCode", e.target.value);
   };
 
   return (
@@ -97,7 +100,6 @@ const ForgotPassword = () => {
             <div className="exchange-title">
               Forgot <br /> Password
               <span className="exchange_rate optTagLine">
-                {" "}
                 To send money securely.
               </span>
             </div>
@@ -108,12 +110,12 @@ const ForgotPassword = () => {
                   <Form.Label>
                     Your Mobile Number <span style={{ color: "red" }}>*</span>
                   </Form.Label>
+
                   <div className="d-flex align-items-stretch p-0">
                     <Form.Select
                       name="countryCode"
                       value={formik.values.countryCode}
-                      onChange={handleCustomChange}
-                      onBlur={formik.handleBlur}
+                      onChange={handleCountryChange}
                       style={{
                         maxWidth: "110px",
                         borderTopRightRadius: 0,
@@ -122,6 +124,7 @@ const ForgotPassword = () => {
                     >
                       <option value="61">+61 (AU)</option>
                       <option value="64">+64 (NZ)</option>
+                      <option value="234">+234 (NG)</option>
                     </Form.Select>
 
                     <Form.Control
@@ -129,7 +132,7 @@ const ForgotPassword = () => {
                       name="mobile"
                       placeholder="Enter mobile number"
                       value={formik.values.mobile}
-                      onChange={handleCustomChange}
+                      onChange={handleMobileChange}
                       onBlur={formik.handleBlur}
                       isInvalid={formik.touched.mobile && formik.errors.mobile}
                       style={{
@@ -138,6 +141,7 @@ const ForgotPassword = () => {
                       }}
                     />
                   </div>
+
                   {formik.touched.mobile && formik.errors.mobile && (
                     <div className="invalid-feedback d-block">
                       {formik.errors.mobile}
@@ -159,13 +163,14 @@ const ForgotPassword = () => {
                   to={"/login"}
                   className="text-success fw-bold forgotpassword-text"
                 >
-                  Back to Login{" "}
+                  Back to Login
                 </Link>
               </div>
             </Form>
           </div>
         </Col>
 
+        {/* Right Image Column */}
         <Col
           md={5}
           className="d-none d-md-flex align-items-center justify-content-end"
