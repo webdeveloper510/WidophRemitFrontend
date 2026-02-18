@@ -13,6 +13,7 @@ const TopNavbar = ({ onToggleSidebar }) => {
 
   const [howToOpen, setHowToOpen] = useState(false);
   const [blogOpen, setBlogOpen] = useState(false);
+  const [ourCoverage, setOurCoverage] = useState(false);
 
   const handleToggle = () => {
     setCollapsed((prev) => !prev);
@@ -73,6 +74,19 @@ const TopNavbar = ({ onToggleSidebar }) => {
                 </NavDropdown.Item>
               </NavDropdown>
 
+              <NavDropdown
+                title="Our Coverage"
+                id="how-to-dropdown"
+                className="text-dark"
+                show={ourCoverage}
+                onMouseEnter={() => setOurCoverage(true)}
+                onMouseLeave={() => setOurCoverage(false)}
+              >
+                <NavDropdown.Item href="https://widophremit.com/send-money-to-burkina-faso/">
+                  Send Money from Australia to Burkina Faso
+                </NavDropdown.Item>
+              </NavDropdown>
+
               {/* <NavDropdown title="Blog" id="blog-dropdown">
                 <NavDropdown.Item as="a" href="/">
                   Tips
@@ -91,7 +105,7 @@ const TopNavbar = ({ onToggleSidebar }) => {
                 onMouseLeave={() => setBlogOpen(false)}
               >
                 <NavDropdown.Item href="https://widophremit.com/category/money-transfer/">
-                  Money Transfer
+                  send-money-to-burkina-faso
                 </NavDropdown.Item>
                 <NavDropdown.Item href="https://widophremit.com/category/education/">
                   Education

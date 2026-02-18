@@ -611,6 +611,15 @@ const ProfileInformation = () => {
                                   <Form.Control
                                     name="dateOfBirth"
                                     type="date"
+                                    max={
+                                      new Date(
+                                        new Date().setFullYear(
+                                          new Date().getFullYear() - 18,
+                                        ),
+                                      )
+                                        .toISOString()
+                                        .split("T")[0]
+                                    }
                                     value={formData.dateOfBirth}
                                     onChange={handleChange}
                                     required
