@@ -276,10 +276,16 @@ const SendMoney = () => {
         const currencyRes = await getCurrencies();
         if (currencyRes?.code === "200") {
           setCurrOut(
-            currencyRes?.data?.payout_currencies?.map((cr) => cr.currency),
+            currencyRes?.data?.payout_currencies?.map((cr) => ({
+              currency: cr.currency,
+              country: cr.country,
+            })),
           );
           setCurrIn(
-            currencyRes?.data?.payin_currencies?.map((cr) => cr.currency),
+            currencyRes?.data?.payin_currencies?.map((cr) => ({
+              currency: cr.currency,
+              country: cr.country,
+            })),
           );
         }
 
@@ -464,8 +470,8 @@ const SendMoney = () => {
                         //disabled={isConverting}
                       >
                         {curr_in.map((curr) => (
-                          <option key={curr} value={curr}>
-                            {curr}
+                          <option key={curr.currency} value={curr.currency}>
+                            {curr.country} ({curr.currency})
                           </option>
                         ))}
                       </Form.Select>
@@ -484,8 +490,8 @@ const SendMoney = () => {
                         //disabled={isConverting}
                       >
                         {curr_out.map((curr) => (
-                          <option key={curr} value={curr}>
-                            {curr}
+                          <option key={curr.currency} value={curr.currency}>
+                            {curr.country} ({curr.currency})
                           </option>
                         ))}
                       </Form.Select>

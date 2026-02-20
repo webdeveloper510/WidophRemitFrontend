@@ -1129,7 +1129,11 @@ const ProfileInformation = () => {
             </div>
           ) : (
             <>
-              <h4>Verify your account by entering the code</h4>
+              <h4>
+                Verify your account by entering the verification code sent to
+                <br />
+                {formData.mobile}
+              </h4>
               <p className="m-4">
                 <img src={OtpImage} alt="image" />
               </p>

@@ -39,8 +39,9 @@ const ConfirmTransfer = () => {
     }
   }, [location]);
 
-  const fullName = `${sender?.First_name || ""} ${sender?.Last_name || ""
-    }`.trim();
+  const fullName = `${sender?.First_name || ""} ${
+    sender?.Last_name || ""
+  }`.trim();
 
   useEffect(() => {
     const storedAmount = sessionStorage.getItem("transfer_data");
@@ -129,14 +130,15 @@ const ConfirmTransfer = () => {
         matcher = JSON.parse(matcherData);
       } else {
         toast.error(
-          "Bank account matching not found. Please go back and select Monoova again."
+          "Bank account matching not found. Please go back and select Monoova again.",
         );
         return false;
       }
 
       // Prepare payment payload
       const payload = {
-        amount: JSON.parse(sessionStorage.getItem("payload")).amount.fee_total_amount,
+        amount: JSON.parse(sessionStorage.getItem("payload")).amount
+          .fee_total_amount,
         bsbNumber: matcher.bsb,
         accountNumber: matcher.bankAccountNumber,
         accountName: matcher.bankAccountName,
@@ -151,11 +153,11 @@ const ConfirmTransfer = () => {
       if (response?.transactionId && response.transactionId !== 0) {
         sessionStorage.setItem(
           "monova_transaction_id",
-          sessionStorage.getItem("transaction_id")
+          sessionStorage.getItem("transaction_id"),
         );
         sessionStorage.setItem(
           "monova_payment_response",
-          JSON.stringify(response)
+          JSON.stringify(response),
         );
 
         await createTransaction({
@@ -177,9 +179,7 @@ const ConfirmTransfer = () => {
 
         return true;
       } else {
-        toast.error(
-          response?.statusDescription || "payment creation failed."
-        );
+        toast.error(response?.statusDescription || "payment creation failed.");
         return false;
       }
     } catch (err) {
@@ -214,7 +214,7 @@ const ConfirmTransfer = () => {
       if (zaiResponse?.code === "400") {
         sessionStorage.setItem(
           "zai_payment_response",
-          JSON.stringify(zaiResponse)
+          JSON.stringify(zaiResponse),
         );
         return true;
       } else {
@@ -286,7 +286,7 @@ const ConfirmTransfer = () => {
 
   const processTransferPayments = async () => {
     const currentPaymentMethod = sessionStorage.getItem(
-      "selected_payment_method"
+      "selected_payment_method",
     );
     let paymentSuccess = false;
 
@@ -349,7 +349,7 @@ const ConfirmTransfer = () => {
             variant="link"
             onClick={() => {
               const currentPaymentMethod = sessionStorage.getItem(
-                "selected_payment_method"
+                "selected_payment_method",
               );
               if (currentPaymentMethod === "monova")
                 navigate("/virtual-account-detail", {
@@ -468,7 +468,7 @@ const ConfirmTransfer = () => {
                   className="cancel-btn float-start"
                   onClick={() => {
                     const currentPaymentMethod = sessionStorage.getItem(
-                      "selected_payment_method"
+                      "selected_payment_method",
                     );
                     if (currentPaymentMethod === "monova")
                       navigate("/virtual-account-detail", {
@@ -520,7 +520,10 @@ const ConfirmTransfer = () => {
             </div>
           ) : (
             <>
-              <h4>Verify your account by entering the code</h4>
+              <h4>
+                Verify your account by entering the code sent to <br />
+                {JSON.parse(sessionStorage.getItem("user_data")).mobile}
+              </h4>
               <p className="m-4">
                 <img src={OtpImage} alt="image" />
               </p>

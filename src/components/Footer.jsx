@@ -97,8 +97,8 @@ const Footer = () => {
               </li>
               <li>
                 <FaWhatsapp />{" "}
-                <a href="https://api.whatsapp.com/send/?phone=61480001611&text&type=phone_number&app_absent=0">
-                  +61480001611
+                <a href="https://api.whatsapp.com/send/?phone=0480001611&text&type=phone_number&app_absent=0">
+                  +0480001611
                 </a>
               </li>
             </ul>

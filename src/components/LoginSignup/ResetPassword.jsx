@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import { Form, Col } from "react-bootstrap";
@@ -20,8 +20,15 @@ const ResetPassword = () => {
     confirmPassword: false,
   });
 
-  const { customer_id } = useLocation().state || {};
+  const { customer_id, isfromforgotpassword, fullPhone } =
+    useLocation().state || {};
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isfromforgotpassword) {
+      navigate("/login", { replace: true });
+    }
+  }, [isfromforgotpassword, navigate]);
 
   const toggleVisibility = (field) => {
     setVisibility((prev) => ({
@@ -35,12 +42,15 @@ const ResetPassword = () => {
       .length(6, "OTP must be of 6 digits")
       .required("OTP is required"),
     password: Yup.string()
-      .required("Password is required")                          
+      .required("Password is required")
       .min(8, "Password must be at least 8 characters long")
       .matches(/[a-z]/, "Password must contain at least one lowercase letter")
       .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
       .matches(/[0-9]/, "Password must contain at least one number")
-      .matches(/[!@#$%^&*(),.?":{}|<>]/, "Password must contain at least one special character"),
+      .matches(
+        /[!@#$%^&*(),.?":{}|<>]/,
+        "Password must contain at least one special character",
+      ),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password")], "Passwords did not match")
       .required("Confirm Password is required"),
@@ -73,12 +83,15 @@ const ResetPassword = () => {
     } catch (error) {
       const errRes = error?.response;
       toast.error(
-        errRes?.message || errRes?.data?.message || errRes?.non_field_errors || "Error occurred",
+        errRes?.message ||
+          errRes?.data?.message ||
+          errRes?.non_field_errors ||
+          "Error occurred",
         {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: true,
-        }
+        },
       );
     } finally {
       setLoading(false);
@@ -93,7 +106,12 @@ const ResetPassword = () => {
           <div className="login-form-wrapper w-100">
             <div className="exchange-title">
               Reset <br /> Password
-              <span className="exchange_rate optTagLine">To send money securely.</span>
+              <span className="exchange_rate optTagLine">
+                To send money securely.
+              </span>
+              <span className="exchange_rate optTagLine">
+                Please enter the verification code sent to {fullPhone}
+              </span>
             </div>
 
             <Formik
@@ -119,7 +137,6 @@ const ResetPassword = () => {
               }}
             >
               {({ errors, touched, isSubmitting, values, setFieldValue }) => {
-
                 return (
                   <FormikForm className="exchange-form">
                     {/* OTP Field */}
@@ -136,13 +153,18 @@ const ResetPassword = () => {
                             placeholder="Enter OTP"
                             value={values.reset_password_otp}
                             onChange={(e) => {
-                              const filtered = e.target.value.replace(/[^0-9]/g, "");
+                              const filtered = e.target.value.replace(
+                                /[^0-9]/g,
+                                "",
+                              );
                               setFieldValue("reset_password_otp", filtered);
                             }}
-                            className={`${errors.reset_password_otp && touched.reset_password_otp
-                              ? "is-invalid"
-                              : ""
-                              }`}
+                            className={`${
+                              errors.reset_password_otp &&
+                              touched.reset_password_otp
+                                ? "is-invalid"
+                                : ""
+                            }`}
                           />
                         )}
                       </Field>
@@ -165,8 +187,11 @@ const ResetPassword = () => {
                               {...field}
                               type={visibility.password ? "text" : "password"}
                               placeholder="Password"
-                              className={`passowrdinput ${errors.password && touched.password ? "is-invalid" : ""
-                                }`}
+                              className={`passowrdinput ${
+                                errors.password && touched.password
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
                             />
                           )}
                         </Field>
@@ -185,7 +210,6 @@ const ResetPassword = () => {
                           className="invalid-feedback d-block"
                         />
                       </div>
-
                     </Row>
 
                     {/* Confirm Password */}
@@ -198,12 +222,16 @@ const ResetPassword = () => {
                           {({ field }) => (
                             <Form.Control
                               {...field}
-                              type={visibility.confirmPassword ? "text" : "password"}
+                              type={
+                                visibility.confirmPassword ? "text" : "password"
+                              }
                               placeholder="Confirm Password"
-                              className={`passowrdinput ${errors.confirmPassword && touched.confirmPassword
-                                ? "is-invalid"
-                                : ""
-                                }`}
+                              className={`passowrdinput ${
+                                errors.confirmPassword &&
+                                touched.confirmPassword
+                                  ? "is-invalid"
+                                  : ""
+                              }`}
                             />
                           )}
                         </Field>
@@ -212,7 +240,11 @@ const ResetPassword = () => {
                           className="password-eye"
                           style={{ cursor: "pointer" }}
                         >
-                          {visibility.confirmPassword ? <FaEyeSlash /> : <FaEye />}
+                          {visibility.confirmPassword ? (
+                            <FaEyeSlash />
+                          ) : (
+                            <FaEye />
+                          )}
                         </span>
                       </div>
                       <div className="w-100">
@@ -222,7 +254,6 @@ const ResetPassword = () => {
                           className="invalid-feedback d-block"
                         />
                       </div>
-
                     </Row>
 
                     {/* Submit Button */}
@@ -236,7 +267,10 @@ const ResetPassword = () => {
 
                     <div>
                       Back to Login{" "}
-                      <Link to="/login" className="text-success fw-bold forgotpassword-text">
+                      <Link
+                        to="/login"
+                        className="text-success fw-bold forgotpassword-text"
+                      >
                         Go Back
                       </Link>
                     </div>

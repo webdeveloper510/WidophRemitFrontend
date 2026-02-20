@@ -163,6 +163,13 @@ li.rounded {
   margin-top: 0;
   min-height: 600px;
 }
+.nav_main a {
+    color: #434800B3 !important;
+}
+.nav_main a.active {
+    color: #434800 !important;
+    background: none;
+}
 
 ul.nav.flex-column li a span,
 ul.nav.flex-column li button span {

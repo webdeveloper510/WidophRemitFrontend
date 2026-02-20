@@ -63,7 +63,11 @@ const ForgotPassword = () => {
           localStorage.setItem("token_forgot", response.data.token);
 
           navigate("/reset-password", {
-            state: { customer_id: response.data.data.customer_id },
+            state: {
+              customer_id: response.data.data.customer_id,
+              fullPhone,
+              isfromforgotpassword: true,
+            },
           });
         } else {
           toast.error(response?.data?.message || "Something went wrong", {
