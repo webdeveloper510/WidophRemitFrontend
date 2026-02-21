@@ -105,8 +105,8 @@ const Login = () => {
           state: {
             from: "login",
             otpData: {
-              email: payload.email || "",
-              mobile: payload.mobile || "",
+              email: response.data.email || "",
+              mobile: response.data.mobile || "",
               country_code: selectedCountry, // ✅ FIXED
             },
           },
