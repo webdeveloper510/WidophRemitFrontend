@@ -1,12 +1,5 @@
 import { useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Nav,
-  Navbar,
-  NavDropdown,
-} from "react-bootstrap";
+import { Container, Row, Col, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import logo from "../../assets/images/login-logo.png";
 import {
   FaFacebookF,
@@ -24,11 +17,9 @@ const TopNavbar = () => {
   const [blogOpen, setBlogOpen] = useState(false);
   const [ourCoverage, setOurCoverage] = useState(false);
 
-  const isDesktop = () => window.innerWidth > 991;
-
   return (
     <div className="top-navbar">
-      {/* ================= TOP STRIP ================= */}
+      {/* Top Contact Info Strip */}
       <div className="top-strip py-2 text-black">
         <Container>
           <Row className="align-items-center justify-content-between login-header">
@@ -37,32 +28,29 @@ const TopNavbar = () => {
               md={6}
               className="d-flex flex-wrap gap-4 align-items-center"
             >
-              <span className="d-flex align-items-center gap-0">
+              <span className="d-flex flex-wrap align-items-center">
                 <FaPhoneVolume />
                 <a href="tel:02 8001 6495">02 8001 6495</a>
               </span>
-
-              <span className="d-flex align-items-center gap-0">
+              <span className="d-flex flex-wrap align-items-center">
                 <FaWhatsapp />
-                <a href="https://api.whatsapp.com/send/?phone=61480001611">
+                <a href="https://api.whatsapp.com/send/?phone=61480001611&text&type=phone_number&app_absent=0">
                   +61480001611
                 </a>
               </span>
             </Col>
-
             <Col
               xs={12}
               md={6}
-              className="social-box d-flex justify-content-md-end gap-1 mt-2 mt-md-0"
+              className="d-flex justify-content-md-end gap-4 mt-2 mt-md-0 align-items-center"
             >
-              <span className="d-flex align-items-center gap-0">
+              <span className="d-flex flex-wrap align-items-center">
                 <FaRegEnvelope />
                 <a href="mailto:support@widophremit.com">
                   support@widophremit.com
                 </a>
               </span>
-
-              <div className="d-flex social-icons gap-0">
+              <div className="d-flex social-icons">
                 <a href="https://www.facebook.com/widophRemit">
                   <FaFacebookF />
                 </a>
@@ -81,45 +69,34 @@ const TopNavbar = () => {
         </Container>
       </div>
 
-      {/* ================= MAIN NAVBAR ================= */}
-      <Navbar expand="lg" className="pt-3 pb-3">
-        <Container>
+      {/* Logo Section */}
+      <Container className="d-flex justify-content-between align-items-center pt-3 pb-3">
+        <Navbar.Brand href="https://widophremit.com/">
+          <img src={logo} alt="WidophRemit" className="logo-img" height="40" />
+        </Navbar.Brand>
 
-          <Navbar.Brand href="https://widophremit.com/">
-            <img src={logo} alt="WidophRemit" height="40" />
-          </Navbar.Brand>
+        <Nav className="mx-auto gap-1 align-items-center nav_main">
+          <Nav.Link href="https://widophremit.com/" className="text-dark">
+            Home
+          </Nav.Link>
 
-          <Navbar.Toggle aria-controls="main-navbar-nav" />
+          {/* <Nav.Link
+            href="https://widophremit.com/notify-me/"
+            className="text-dark"
+          >
+            International Money Transfer
+          </Nav.Link> */}
 
-          {/* ✅ MOBILE LOGIN/SIGNUP BELOW TOGGLE */}
-          <div className="w-100 d-lg-none mt-3 mobile_btns">
-            <Link to="/signup" className="btn mb-2 sign_up">
-              SIGN UP
-            </Link>
-            <Link to="/login" className="btn login-btn">
-              LOG IN
-            </Link>
-          </div>
-
-          <Navbar.Collapse id="main-navbar-nav">
-            <Nav className="mx-auto gap-lg-3 nav_main mt-3 mt-lg-0">
-
-              <Nav.Link href="https://widophremit.com/" className="text-dark">
-                Home
-              </Nav.Link>
-
-              {/* FAQ */}
-              <NavDropdown
-                title="FAQ"
-                id="faq-dropdown"
-                show={howToOpen}
-                onMouseEnter={() => isDesktop() && setHowToOpen(true)}
-                onMouseLeave={() => isDesktop() && setHowToOpen(false)}
-                onClick={() =>
-                  !isDesktop() && setHowToOpen(!howToOpen)
-                }
-              >
-                <NavDropdown.Item href="https://widophremit.com/how-to-download-signup-order-on-the-widoph-remit-app/">
+          {/* How To Dropdown (on hover) */}
+          <NavDropdown
+            title="FAQ"
+            id="how-to-dropdown"
+            className="text-dark"
+            show={howToOpen}
+            onMouseEnter={() => setHowToOpen(true)}
+            onMouseLeave={() => setHowToOpen(false)}
+          >
+            <NavDropdown.Item href="https://widophremit.com/how-to-download-signup-order-on-the-widoph-remit-app/">
               Download, Signup & Order on the Widoph Remit App
             </NavDropdown.Item>
             <NavDropdown.Item href="https://widophremit.com/how-to-send-and-receive-money-with-the-widoph-remit-app/">
@@ -144,20 +121,18 @@ const TopNavbar = () => {
             <NavDropdown.Item href="https://widophremit.com/how-to-view-transaction-history-on-widoph-remit-app/">
               How to View Transaction History on Widoph Remit App
             </NavDropdown.Item>
-              </NavDropdown>
+          </NavDropdown>
 
-              {/* Blog */}
-              <NavDropdown
-                title="Blog"
-                id="blog-dropdown"
-                show={blogOpen}
-                onMouseEnter={() => isDesktop() && setBlogOpen(true)}
-                onMouseLeave={() => isDesktop() && setBlogOpen(false)}
-                onClick={() =>
-                  !isDesktop() && setBlogOpen(!blogOpen)
-                }
-              >
-                <NavDropdown.Item href="https://widophremit.com/category/money-transfer/">
+          {/* Blog Dropdown (on hover) */}
+          <NavDropdown
+            title="Blog"
+            id="blog-dropdown"
+            className="text-dark"
+            show={blogOpen}
+            onMouseEnter={() => setBlogOpen(true)}
+            onMouseLeave={() => setBlogOpen(false)}
+          >
+            <NavDropdown.Item href="https://widophremit.com/category/money-transfer/">
               Money Transfer
             </NavDropdown.Item>
             <NavDropdown.Item href="https://widophremit.com/category/education/">
@@ -187,25 +162,17 @@ const TopNavbar = () => {
             <NavDropdown.Item href="https://widophremit.com/category/work-life-integration/">
               Work-Life Integration
             </NavDropdown.Item>
-              </NavDropdown>
+          </NavDropdown>
 
-              {/* Coverage */}
-              <NavDropdown
-                title="Our Coverage"
-                id="coverage-dropdown"
-                show={ourCoverage}
-                onMouseEnter={() =>
-                  isDesktop() && setOurCoverage(true)
-                }
-                onMouseLeave={() =>
-                  isDesktop() && setOurCoverage(false)
-                }
-                onClick={() =>
-                  !isDesktop() &&
-                  setOurCoverage(!ourCoverage)
-                }
-              >
-                <NavDropdown.Item href="https://widophremit.com/send-money-from-australia-to-burkina-faso/">
+          <NavDropdown
+            title="Our Coverage"
+            id="how-to-dropdown"
+            className="text-dark"
+            show={ourCoverage}
+            onMouseEnter={() => setOurCoverage(true)}
+            onMouseLeave={() => setOurCoverage(false)}
+          >
+            <NavDropdown.Item href="https://widophremit.com/send-money-from-australia-to-burkina-faso/">
               Send Money from Australia to Burkina Faso
             </NavDropdown.Item>
             <NavDropdown.Item href="https://widophremit.com/send-money-from-australia-to-cameroon/">
@@ -253,30 +220,33 @@ const TopNavbar = () => {
             <NavDropdown.Item href="https://widophremit.com/send-money-to-cambodia-from-australia/">
               Send Money from Australia to Cambodia
             </NavDropdown.Item>
-              </NavDropdown>
+          </NavDropdown>
 
-              <Nav.Link
+          <Nav.Link
             href="https://widophremit.com/community-responsibility/"
             className="text-dark"
           >
             SR
           </Nav.Link>
+        </Nav>
 
-            </Nav>
-          </Navbar.Collapse>
-
-          {/* Desktop Buttons */}
-          <div className="d-none d-lg-flex align-items-center gap-3">
-            <Link to="/signup" className="px-4 text-dark signup">
-              SIGN UP
-            </Link>
-            <Link to="/login" className="px-4 rounded-pill login">
-              LOG IN
-            </Link>
-          </div>
-
-        </Container>
-      </Navbar>
+        <div className="d-flex align-items-center gap-3">
+          <Link
+            to="/signup"
+            variant="primary"
+            className="px-4 text-dark signup"
+          >
+            SIGN UP
+          </Link>
+          <Link
+            to="/login"
+            variant="primary"
+            className="px-4 rounded-pill login"
+          >
+            LOG IN
+          </Link>
+        </div>
+      </Container>
     </div>
   );
 };
