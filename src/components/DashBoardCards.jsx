@@ -8,11 +8,11 @@ const DashBoardCards = ({ receiversCount, transactionsCount }) => {
         <div className="col-md-7 dash_main">
             <div className="dashbaord-bg-image p-4">
                 <h2>Dashboard</h2>
-                <div className="row mt-5">
+                <div className="row mt-5 feilds_out">
                     <ReceiverCount receiversCount={receiversCount} />
                     <SendMoneyCard />
                 </div>
-                <div className="row">
+                <div className="row feilds_out">
                     <TransactionsCount transactionsCount={transactionsCount} />
                     <ProfileCard />
                 </div>

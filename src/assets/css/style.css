@@ -1528,13 +1528,34 @@ button.navbar-toggler {
   border: none;
 }
 }
+div#basic-navbar-nav a.dropdown-item {
+  border-bottom: 1px solid #cccccc7a;
+  padding: 8px;
+}
 @media (max-width: 480px) {
+  .add_receipent_row {
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    margin-top: 14px;
+}
+  .gYrAFt {
+    display: flex !important;
+    overflow: scroll;
+    padding-bottom: 60px;
+}
+  .right-side-content {
+    width: 100%;
+}
   button.navbar-toggler {
     left: 24px;
     position: relative;
   }
-  .dash_main {
-    width: 98vw;
+  .custom-width {
+    width: 90%;
+    padding: 0;
+    margin: 0 auto;
+    margin-bottom: 0.5rem!important;
 }
 .table-column {
   margin-top: 20px;
@@ -1555,7 +1576,7 @@ li.logout-row {
   bottom: 13px;
 }
 .page-title h1 {
-  font-size: 15px;
+  font-size: 22px;
 }
 .btn_text {
   flex-direction: column;
@@ -1567,7 +1588,24 @@ li.logout-row {
 .toggle-btn {
   left: -32px;
   top: 0;
+  z-index: 9;
 }  
+.exchangerate p, .exchangerate h4 {
+  z-index: 3;
+  position: relative;
+}
+button.submit-btn, .updateform {
+  padding: 10px 25px;
+}
+.page-title img {
+  width: 38px;
+}
+.download-button img {
+  width: 17px;
+}
+.nav_mobile {
+  z-index: 1;
+}
 div#basic-navbar-nav {
   padding-left: 20px;
 }

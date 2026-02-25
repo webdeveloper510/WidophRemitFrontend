@@ -338,7 +338,7 @@ const UpdateReceiver = () => {
           <Card className="receiver-card bg-white">
             <Card.Body>
               <Card.Title>Bank Information</Card.Title>
-              <Row className="mb-3">
+              <Row className="mb-3 feilds_out">
                 <Col style={{ position: "relative" }}>
                   <FloatingLabel
                     as={Col}
@@ -472,7 +472,7 @@ const UpdateReceiver = () => {
           <Card className="receiver-card mt-4 bg-white">
             <Card.Body>
               <Card.Title>Recipient Details</Card.Title>
-              <Row className="mb-3">
+              <Row className="mb-3 feilds_out">
                 <FloatingLabel
                   as={Col}
                   label={
@@ -558,7 +558,7 @@ const UpdateReceiver = () => {
                 </FloatingLabel>
               </Row>
 
-              <Row className="mb-3">
+              <Row className="mb-3 feilds_out">
                 {/* ...existing code... */}
                 <FloatingLabel
                   as={Col}
@@ -608,7 +608,7 @@ const UpdateReceiver = () => {
                 </FloatingLabel>
               </Row>
 
-              <Row className="mb-3 mobile_numbero">
+              <Row className="mb-3 mobile_numbero feilds_out">
                 <Col>
                   <FloatingLabel
                     label={
@@ -672,7 +672,7 @@ const UpdateReceiver = () => {
           <Card className="receiver-card mt-4 bg-white">
             <Card.Body>
               <Card.Title>Address</Card.Title>
-              <Row className="mb-3">
+              <Row className="mb-3 feilds_out">
                 <Col>
                   <div className="floating-label-wrapper kyc-country">
                     <label>
@@ -730,7 +730,7 @@ const UpdateReceiver = () => {
                 </Col>
               </Row>
 
-              <Row className="mb-3">
+              <Row className="mb-3 feilds_out">
                 <FloatingLabel
                   as={Col}
                   label={

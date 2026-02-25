@@ -25,7 +25,7 @@ const TopNavbar = ({ onToggleSidebar }) => {
       <button className="btn toggle-btn" onClick={handleToggle}>
         <img src={collapsed ? openToggle : closeToggle} alt="toggle" />
       </button>
-      <Navbar expand="lg" className="flex-grow-1">
+      <Navbar expand="lg" className="flex-grow-1 nav_mobile">
         <Container fluid>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">

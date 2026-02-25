@@ -141,7 +141,7 @@ const Receivers = () => {
     <>
       <AnimatedPage>
         <div className="page-title">
-          <div className="d-flex justify-content-between">
+          <div className="d-flex justify-content-between feilds_out">
             <div className="d-flex align-items-center">
               <img src={RecentReceiver} alt="img" /> <h1>Receivers List</h1>
             </div>

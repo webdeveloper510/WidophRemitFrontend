@@ -122,7 +122,7 @@ const TransferDetails = () => {
                     <Card.Body>
                       <Container>
                         <Row>
-                          <Col className="p-3 box">
+                          <Col className="p-1 p-md-3 box">
                             <span>Date Created</span>
                             <h3>{transactionData?.date}</h3>
                           </Col>
@@ -132,7 +132,7 @@ const TransferDetails = () => {
                           </Col>
                         </Row>
                         <Row>
-                          <Col className="p-3 box">
+                          <Col className="p-1 p-md-3 box">
                             <span>Transfer Id</span>
                             <h3>{transactionData?.transaction_id}</h3>
                           </Col>
