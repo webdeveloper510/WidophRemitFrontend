@@ -5,7 +5,7 @@ import TransactionsCount from "./TransactionsCount"
 
 const DashBoardCards = ({ receiversCount, transactionsCount }) => {
     return (
-        <div className="col-md-7">
+        <div className="col-md-7 dash_main">
             <div className="dashbaord-bg-image p-4">
                 <h2>Dashboard</h2>
                 <div className="row mt-5">

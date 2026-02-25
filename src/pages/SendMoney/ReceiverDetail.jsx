@@ -333,7 +333,7 @@ const ReceiverDetail = () => {
               <Card className="receiver-card bg-white">
                 <Card.Body>
                   <Card.Title>Bank Information</Card.Title>
-                  <Row className="mb-3">
+                  <Row className="mb-3 feilds_out">
                     {/* <FloatingLabel
                       as={Col}
                       controlId="floatingBankName"
@@ -507,7 +507,7 @@ const ReceiverDetail = () => {
               <Card className="receiver-card mt-4 bg-white">
                 <Card.Body>
                   <Card.Title>Recipient Details</Card.Title>
-                  <Row className="mb-3">
+                  <Row className="mb-3 feilds_out">
                     <FloatingLabel
                       as={Col}
                       controlId="floatingFirstName"
@@ -598,7 +598,7 @@ const ReceiverDetail = () => {
                     </FloatingLabel>
                   </Row>
 
-                  <Row className="mb-3">
+                  <Row className="mb-3 feilds_out">
                     {/* ...existing code... */}
                     <FloatingLabel
                       as={Col}
@@ -716,7 +716,7 @@ const ReceiverDetail = () => {
                 <Card.Body>
                   <Card.Title>Address</Card.Title>
 
-                  <Row className="mb-3">
+                  <Row className="mb-3 feilds_out">
                     <Col>
                       <div className="floating-label-wrapper kyc-country">
                         <label>
@@ -783,7 +783,7 @@ const ReceiverDetail = () => {
                     </Col>
                   </Row>
 
-                  <Row className="mb-3">
+                  <Row className="mb-3 feilds_out">
                     <FloatingLabel
                       as={Col}
                       controlId="floatingCity"
@@ -881,7 +881,7 @@ const ReceiverDetail = () => {
                     </FloatingLabel>
                   </Row>
 
-                  <Row className="mb-3">
+                  <Row className="mb-3 feilds_out">
                     <Col>
                       <Button
                         variant="light"

@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import TopNavbar from "./Navbar";
 import Footer from "./Footer";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
 
@@ -14,11 +14,33 @@ const Layout = () => {
 
   const location = useLocation();
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target)
+      ) {
+        setCollapsed(true); // Always close
+        sessionStorage.setItem("collapsed", "true");
+      }
+    };
+  
+    document.addEventListener("mousedown", handleClickOutside);
+  
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const sidebarRef = useRef()
+
   return (
     <>
       <div className="p-3 d-flex flex-row customdashboardheight">
         <div className="d-flex w-100">
-          <Sidebar collapsed={collapsed} />
+        <div ref={sidebarRef}>
+           <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
+       </div>
 
           <div className="flex-grow-1 d-flex flex-column right-side-content">
             <TopNavbar onToggleSidebar={() => setCollapsed(!collapsed)} />

@@ -477,7 +477,7 @@ const KYCForm = () => {
   return (
     <>
       {/* <TopNavbar /> */}
-      <Container className="py-5 pt-2 mt-5 mb-5 d-flex justify-content-between">
+      <Container className="py-5 pt-2 mt-4 mt-md-5 mb-5 d-flex justify-content-center">
         <Tab.Container
           activeKey={activeKey}
           onSelect={(k) => {
@@ -554,7 +554,7 @@ const KYCForm = () => {
 
                   <Form className="profile-form">
                     <h3 className="mb-3 mt-3">Personal Details</h3>
-                    <Row className="mb-3">
+                    <Row className="mb-3 feilds_out">
                       <FloatingLabel
                         as={Col}
                         label={
@@ -639,7 +639,7 @@ const KYCForm = () => {
                       </FloatingLabel>
                     </Row>
 
-                    <Row className="mb-3">
+                    <Row className="mb-3 feilds_out">
                       <FloatingLabel
                         as={Col}
                         label={
@@ -697,7 +697,7 @@ const KYCForm = () => {
                       </FloatingLabel>
                     </Row>
 
-                    <Row className="mb-3">
+                    <Row className="mb-3 feilds_out">
                       <FloatingLabel
                         as={Col}
                         label={
@@ -804,7 +804,7 @@ const KYCForm = () => {
                       </FloatingLabel>
                     </Row>
 
-                    <Row className="mb-3 mt-3">
+                    <Row className="mb-3 mt-3 feilds_out">
                       <h3>Your Address </h3>
                       <FloatingLabel
                         as={Col}
@@ -865,7 +865,7 @@ const KYCForm = () => {
                       </FloatingLabel>
                     </Row>
 
-                    <Row className="mb-3">
+                    <Row className="mb-3 feilds_out">
                       <FloatingLabel
                         as={Col}
                         label={
@@ -962,7 +962,7 @@ const KYCForm = () => {
                       </FloatingLabel>
                     </Row>
 
-                    <Row className="mb-3">
+                    <Row className="mb-3 feilds_out">
                       <Col>
                         <Button
                           variant="success"

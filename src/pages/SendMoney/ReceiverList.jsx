@@ -124,7 +124,7 @@ const ReceiverList = () => {
   return (
     <AnimatedPage>
       <div className="page-title">
-        <div className="d-flex justify-content-between">
+        <div className="d-flex justify-content-between btn_text">
           <div className="d-flex align-items-center">
             <Link to="/send-money" state={{ backFromReceivers: true }}>
               <img src={Back} alt="Back" />

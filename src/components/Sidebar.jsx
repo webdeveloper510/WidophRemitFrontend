@@ -16,7 +16,7 @@ const menuItems = [
   { path: "/receivers", name: "Receivers", icon: <LuUsers /> },
 ];
 
-const Sidebar = ({ collapsed, disabled = false }) => {
+const Sidebar = ({ collapsed, disabled = false, setCollapsed }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -44,6 +44,7 @@ const Sidebar = ({ collapsed, disabled = false }) => {
     if (location.pathname === "/transaction-success") {
       clearSessionStorageData();
     }
+    setCollapsed(!collapsed)
   };
 
   const handleLogout = () => {

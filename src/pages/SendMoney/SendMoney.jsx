@@ -456,7 +456,7 @@ const SendMoney = () => {
                   onSubmit={handleSubmit}
                   noValidate
                 >
-                  <Row className="mb-4">
+                  <Row className="mb-4 feilds_out">
                     <FloatingLabel
                       as={Col}
                       controlId="from"
@@ -498,7 +498,7 @@ const SendMoney = () => {
                     </FloatingLabel>
                   </Row>
 
-                  <Row className="mb-3">
+                  <Row className="mb-3 feilds_out">
                     <FloatingLabel
                       as={Col}
                       controlId="send_amt"
@@ -545,7 +545,7 @@ const SendMoney = () => {
                     </FloatingLabel>
                   </Row>
 
-                  <Row className="mb-3">
+                  <Row className="mb-3 feilds_out">
                     <Col xs={6} className="ms-auto">
                       <ul className="total-payment">
                         <li>

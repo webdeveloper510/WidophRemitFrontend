@@ -501,6 +501,7 @@ ul.total-payment li label {
 } */
 .receiver-card.card {
   border-radius: 30px;
+  margin-top: 20px;
 }
 
 /* .stats-row {
@@ -1528,6 +1529,70 @@ button.navbar-toggler {
 }
 }
 @media (max-width: 480px) {
+  button.navbar-toggler {
+    left: 24px;
+    position: relative;
+  }
+  .dash_main {
+    width: 98vw;
+}
+.table-column {
+  margin-top: 20px;
+}
+.stripe2 h2, .stripe3 h2 {
+  font-size: 20px;
+}
+.paymentdetail::before, .paymentdetail::after {
+  width: 15%;
+}
+  .sidebar {
+    width: 305px;
+    position: absolute;
+    z-index: 9;
+    left: 36px;
+}
+li.logout-row {
+  bottom: 13px;
+}
+.page-title h1 {
+  font-size: 15px;
+}
+.btn_text {
+  flex-direction: column;
+  gap: 14px;
+}
+.receiver-card.card {
+  padding: 20px 10px !important;
+}
+.toggle-btn {
+  left: -32px;
+  top: 0;
+}  
+div#basic-navbar-nav {
+  padding-left: 20px;
+}
+  .sidebar-steps {
+    width: 90%;
+    margin: 0 auto;
+}
+.sidebar-steps {
+  height: auto;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  margin-bottom: 20px;
+}
+.feilds_out {
+  flex-direction: column;
+}
+.receiver-card .feilds_out {
+  gap: 25px;
+}
+.mobile_numbero .dropdown {
+  flex: 0 0 110px !important;
+}
+.sidebar-steps .nav-pills .nav-link {
+  padding: 5px 20px;
+}
 .social-box {
   flex-direction: column;
 }
@@ -1559,9 +1624,6 @@ p.address {
     font-size: 14px;
     width: 30px;
     height: 30px;
-}
-button.navbar-toggler.collapsed {
-  border: none;
 }
 button.navbar-toggler.collapsed span {
   color: #000 !important;
