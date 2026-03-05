@@ -54,11 +54,9 @@ const TopNavbar = () => {
               md={6}
               className="social-box d-flex justify-content-md-end gap-1 mt-2 mt-md-0"
             >
-<<<<<<< HEAD
               
 
               <div className="d-flex social-icons gap-0">
-=======
               <span className="d-flex align-items-center gap-0">
                 <FaRegEnvelope />
                 <a href="mailto:support@widophremit.com">
@@ -72,7 +70,6 @@ const TopNavbar = () => {
               className="d-flex justify-content-md-end gap-4 mt-2 mt-md-0 align-items-center"
             >
               <div className="d-flex social-icons">
->>>>>>> 69d27e3e6274ca27b0fefd3cdcedb3ddbba139cb
                 <a href="https://www.facebook.com/widophRemit">
                   <FaFacebookF />
                 </a>
@@ -86,14 +83,11 @@ const TopNavbar = () => {
                   <FaRss />
                 </a>
               </div>
-<<<<<<< HEAD
               <a href="https://widophremit.com/#app-section" className="download_btn">Download App</a>
-=======
 
               <button className="download-btn">
                 <a href="https://widophremit.com/#app-section">Download App</a>
               </button>
->>>>>>> 69d27e3e6274ca27b0fefd3cdcedb3ddbba139cb
             </Col>
           </Row>
         </Container>
@@ -134,7 +128,6 @@ const TopNavbar = () => {
                 onClick={() => !isDesktop() && setHowToOpen(!howToOpen)}
               >
                 <NavDropdown.Item href="https://widophremit.com/how-to-download-signup-order-on-the-widoph-remit-app/">
-<<<<<<< HEAD
               Download, Signup & Order on the Widoph Remit App
             </NavDropdown.Item>
             <NavDropdown.Item href="https://widophremit.com/how-to-send-and-receive-money-with-the-widoph-remit-app/">
@@ -160,7 +153,6 @@ const TopNavbar = () => {
               Update Your Profile, Check Rate And View History With The Widoph
               Remit App
             </NavDropdown.Item>
-=======
                   Download, Signup & Order on the Widoph Remit App
                 </NavDropdown.Item>
                 <NavDropdown.Item href="https://widophremit.com/how-to-send-and-receive-money-with-the-widoph-remit-app/">
@@ -185,7 +177,6 @@ const TopNavbar = () => {
                 <NavDropdown.Item href="https://widophremit.com/how-to-view-transaction-history-on-widoph-remit-app/">
                   How to View Transaction History on Widoph Remit App
                 </NavDropdown.Item>
->>>>>>> 69d27e3e6274ca27b0fefd3cdcedb3ddbba139cb
               </NavDropdown>
 
               {/* Blog */}
