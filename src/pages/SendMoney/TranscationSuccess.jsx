@@ -108,20 +108,19 @@ const TransactionSuccess = () => {
         statusParam === "success"
           ? "Success"
           : statusParam === "cancelled"
-          ? "Cancelled"
-          : statusParam;
+            ? "Cancelled"
+            : statusParam;
     } else if (selectedMethod === "monova") {
       setMonoovaGeneratedTransactionId(
-        JSON.parse(sessionStorage.getItem("monova_payment_response"))
-          ?.transactionId
+        JSON.parse(sessionStorage.getItem("transaction_id")),
       );
-      finalTransactionId = sessionStorage.getItem("monova_transaction_id");
+      finalTransactionId = sessionStorage.getItem("transaction_id");
     } else {
       finalTransactionId = sessionStorage.getItem("transaction_id");
     }
 
     const transferData = JSON.parse(
-      sessionStorage.getItem("transfer_data") || "{}"
+      sessionStorage.getItem("transfer_data") || "{}",
     );
 
     setTransaction({
@@ -243,7 +242,7 @@ const TransactionSuccess = () => {
                                   {typeof transaction.fee_amount === "number"
                                     ? `${
                                         JSON.parse(
-                                          sessionStorage.getItem("payload")
+                                          sessionStorage.getItem("payload"),
                                         ).amount.fee_amount
                                       } ${OutCurr}`
                                     : "N/A"}

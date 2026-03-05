@@ -7,11 +7,12 @@ import { RiFileCopyLine } from "react-icons/ri";
 import { toast } from "react-toastify";
 const VirtualAccountDetail = () => {
   const [monovaform, setmonovaform] = useState(
-    JSON.parse(sessionStorage.getItem("monova_form_data"))
+    JSON.parse(sessionStorage.getItem("monova_form_data")),
   );
 
   const [PaymentMethod, setPaymentMethod] = useState(
-    JSON.parse(sessionStorage.getItem("monova_form_data")).payment_mode
+    JSON.parse(sessionStorage.getItem("monova_form_data")).payment_mode ||
+      "npp",
   );
   const [paymemtError, setpaymemtError] = useState("");
   const [payload, setpaylaod] = useState({});
@@ -67,7 +68,7 @@ const VirtualAccountDetail = () => {
         </div>
       </div>
 
-      <Row className="mt-5">
+      {/* <Row className="mt-5">
         <FloatingLabel
           controlId="floatingPaymentMethod"
           as={Col}
@@ -93,7 +94,7 @@ const VirtualAccountDetail = () => {
             </Form.Control.Feedback>
           )}
         </FloatingLabel>
-      </Row>
+      </Row> */}
 
       <Table striped bordered style={{ marginTop: "2rem" }}>
         <tbody>

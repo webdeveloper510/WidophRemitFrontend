@@ -150,32 +150,32 @@ const ConfirmTransfer = () => {
 
       const { data: response } = await createMonovaPayment(payload);
 
-      if (response?.transactionId && response.transactionId !== 0) {
-        sessionStorage.setItem(
-          "monova_transaction_id",
-          sessionStorage.getItem("transaction_id"),
-        );
-        sessionStorage.setItem(
-          "monova_payment_response",
-          JSON.stringify(response),
-        );
+      if (response?.id && response.id !== 0) {
+        // sessionStorage.setItem(
+        //   "monova_transaction_id",
+        //   sessionStorage.getItem("transaction_id"),
+        // );
+        // sessionStorage.setItem(
+        //   "monova_payment_response",
+        //   JSON.stringify(response),
+        // );
 
-        await createTransaction({
-          transaction_id: sessionStorage.getItem("transaction_id"),
-          newTransaction_id: `${response.transactionId}`,
-          monoova_payment: true,
-          recipient_id: receiverData.id,
-          amount: {
-            send_amount: payloadData.amount.send_amount,
-            receive_amount: payloadData.amount.receive_amount,
-            send_currency: payloadData.amount.send_currency,
-            receive_currency: payloadData.amount.receive_currency,
-            receive_method: payloadData.amount.receive_method,
-            payout_partner: receiverData.bank_name,
-            reason: sessionStorage.getItem("final_transfer_reason"),
-            exchange_rate: payloadData.amount.exchange_rate,
-          },
-        });
+        // await createTransaction({
+        //   transaction_id: sessionStorage.getItem("transaction_id"),
+        //   newTransaction_id: `${response.transactionId}`,
+        //   monoova_payment: true,
+        //   recipient_id: receiverData.id,
+        //   amount: {
+        //     send_amount: payloadData.amount.send_amount,
+        //     receive_amount: payloadData.amount.receive_amount,
+        //     send_currency: payloadData.amount.send_currency,
+        //     receive_currency: payloadData.amount.receive_currency,
+        //     receive_method: payloadData.amount.receive_method,
+        //     payout_partner: receiverData.bank_name,
+        //     reason: sessionStorage.getItem("final_transfer_reason"),
+        //     exchange_rate: payloadData.amount.exchange_rate,
+        //   },
+        // });
 
         return true;
       } else {
