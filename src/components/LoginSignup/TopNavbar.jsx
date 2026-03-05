@@ -48,22 +48,6 @@ const TopNavbar = () => {
                 </a>
               </span>
             </Col>
-
-            <Col
-              xs={12}
-              md={6}
-              className="social-box d-flex justify-content-md-end gap-1 mt-2 mt-md-0"
-            >
-              
-
-              <div className="d-flex social-icons gap-0">
-              <span className="d-flex align-items-center gap-0">
-                <FaRegEnvelope />
-                <a href="mailto:support@widophremit.com">
-                  support@widophremit.com
-                </a>
-              </span>
-            </Col>
             <Col
               xs={12}
               md={6}
@@ -85,9 +69,7 @@ const TopNavbar = () => {
               </div>
               <a href="https://widophremit.com/#app-section" className="download_btn">Download App</a>
 
-              <button className="download-btn">
-                <a href="https://widophremit.com/#app-section">Download App</a>
-              </button>
+             
             </Col>
           </Row>
         </Container>
@@ -152,7 +134,8 @@ const TopNavbar = () => {
             <NavDropdown.Item href="https://widophremit.com/how-to-update-your-profile-check-rate-and-view-history-with-the-widoph-remit-app/">
               Update Your Profile, Check Rate And View History With The Widoph
               Remit App
-            </NavDropdown.Item>
+                </NavDropdown.Item>
+                <NavDropdown.Item>
                   Download, Signup & Order on the Widoph Remit App
                 </NavDropdown.Item>
                 <NavDropdown.Item href="https://widophremit.com/how-to-send-and-receive-money-with-the-widoph-remit-app/">
