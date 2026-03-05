@@ -16,7 +16,7 @@ const TopNavbar = ({ onToggleSidebar }) => {
   const [ourCoverage, setOurCoverage] = useState(false);
 
   const handleToggle = () => {
-    setCollapsed((prev) => !prev);
+    // setCollapsed((prev) => !prev);
     onToggleSidebar();
   };
 
@@ -198,7 +198,7 @@ const TopNavbar = ({ onToggleSidebar }) => {
                 as="a"
                 href="https://widophremit.com/community-responsibility/"
               >
-                SR
+                Social Responsibility
               </Nav.Link>
             </Nav>
 

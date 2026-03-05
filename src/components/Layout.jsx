@@ -8,31 +8,35 @@ import { useLocation } from "react-router-dom";
 
 const Layout = () => {
   const [collapsed, setCollapsed] = useState(() => {
-  const stored = sessionStorage.getItem("collapsed");
-  return stored === "true"; 
-});
+    const stored = sessionStorage.getItem("collapsed");
+    return stored === "true";
+  });
 
   const location = useLocation();
+  const sidebarRef = useRef(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        sidebarRef.current &&
-        !sidebarRef.current.contains(event.target)
-      ) {
-        setCollapsed(true); // Always close
-        sessionStorage.setItem("collapsed", "true");
-      }
-    };
-  
-    document.addEventListener("mousedown", handleClickOutside);
-  
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    const isMobile = window.innerWidth < 768;
 
-  const sidebarRef = useRef()
+    if (
+      isMobile &&
+      sidebarRef.current &&
+      !sidebarRef.current.contains(event.target)
+    ) {
+      setCollapsed(true);
+      sessionStorage.setItem("collapsed", "true");
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
+
 
   return (
     <>

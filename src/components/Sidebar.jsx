@@ -40,12 +40,15 @@ const Sidebar = ({ collapsed, disabled = false, setCollapsed }) => {
     sessionStorage.removeItem("pageIsReloading");
   }
 
-  const handleLinkClick = () => {
-    if (location.pathname === "/transaction-success") {
-      clearSessionStorageData();
-    }
-    setCollapsed(!collapsed)
-  };
+const handleLinkClick = () => {
+  if (location.pathname === "/transaction-success") {
+    clearSessionStorageData();
+  }
+
+  if (window.innerWidth <= 991) {
+    setCollapsed(!collapsed);
+  }
+};
 
   const handleLogout = () => {
     sessionStorage.clear();
