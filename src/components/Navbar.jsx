@@ -198,7 +198,7 @@ const TopNavbar = ({ onToggleSidebar }) => {
                 as="a"
                 href="https://widophremit.com/community-responsibility/"
               >
-                SR
+                Social Responsibility
               </Nav.Link>
             </Nav>
 

@@ -170,6 +170,16 @@ li.rounded {
     color: #434800 !important;
     background: none;
 }
+button.download-btn {
+    font-size: 16px;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+button.download-btn a {
+    margin-left: 0;
+}
 
 ul.nav.flex-column li a span,
 ul.nav.flex-column li button span {
