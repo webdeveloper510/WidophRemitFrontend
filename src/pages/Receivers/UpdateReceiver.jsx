@@ -115,7 +115,7 @@ const UpdateReceiver = () => {
         .trim()
         .required("IBAN/Account Number is required")
         .min(8, "Minimum 8 characters")
-        .max(10, "Maximum 10 characters")
+        .max(15, "Maximum 15 characters")
         .matches(
           /^[a-zA-Z0-9 -]+$/,
           "Only letters, numbers, spaces, and hyphens are allowed",
@@ -434,7 +434,7 @@ const UpdateReceiver = () => {
                       const value = e.target.value;
                       if (
                         !value ||
-                        (/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 10)
+                        (/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 15)
                       )
                         handleChange(e);
                     }}
