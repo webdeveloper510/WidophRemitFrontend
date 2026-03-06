@@ -172,8 +172,7 @@ const ReceiverDetail = () => {
     post_code: Yup.string()
       .trim()
       .required("Postal code is required")
-      .max(9, "Postal code cannot exceed 9 digits")
-      .matches(/^\d+$/, "Only numbers are allowed"),
+      .max(9, "Postal code cannot exceed 9 digits"),
 
     address: Yup.string().trim().required("Address is required"),
 
@@ -828,10 +827,7 @@ const ReceiverDetail = () => {
                         value={values.post_code}
                         onChange={(e) => {
                           const value = e.target.value;
-                          if (
-                            (value.length <= 9 && /^\d+$/.test(value)) ||
-                            !value
-                          ) {
+                          if (value.length <= 9 || !value) {
                             handleChange(e);
                           }
                         }}
