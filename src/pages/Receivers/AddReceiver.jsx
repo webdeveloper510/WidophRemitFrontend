@@ -114,7 +114,6 @@ const AddReceiver = () => {
       .trim()
       .required("IBAN/Account Number is required")
       .min(8, "Minimum 8 characters")
-      .max(15, "Maximum 15 characters")
       .matches(
         /^[a-zA-Z0-9 -]+$/,
         "Only letters, numbers, spaces, and hyphens are allowed",
@@ -151,9 +150,8 @@ const AddReceiver = () => {
       .email("Please enter a valid email address"),
 
     phone: Yup.string()
-      .trim()
       .required("Mobile number is required")
-      .matches(/^\d{8,10}$/, "Mobile number must be between 8 and 10 digits"),
+      .matches(/^\d{8,}$/, "Mobile number must be at least 8 digits"),
 
     country: Yup.string().required("Country is required"),
 
@@ -403,10 +401,7 @@ const AddReceiver = () => {
                     value={values.account_number}
                     onChange={(e) => {
                       const value = e.target.value;
-                      if (
-                        !value ||
-                        (/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 15)
-                      )
+                      if (!value || /^[a-zA-Z0-9 -]+$/.test(value))
                         handleChange(e);
                     }}
                     onBlur={handleBlur}
@@ -633,7 +628,7 @@ const AddReceiver = () => {
                             /\D/g,
                             "",
                           );
-                          if (numericValue.length <= 10 || !numericValue)
+                          if (numericValue.length || !numericValue)
                             setFieldValue("phone", numericValue);
                         }}
                         onBlur={handleBlur}

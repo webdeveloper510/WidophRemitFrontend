@@ -88,10 +88,6 @@ const TopNavbar = () => {
               >
                 Download App
               </a>
-
-              <button className="download-btn">
-                <a href="https://widophremit.com/#app-section">Download App</a>
-              </button>
             </Col>
           </Row>
         </Container>
@@ -131,38 +127,19 @@ const TopNavbar = () => {
                 onMouseLeave={() => isDesktop() && setHowToOpen(false)}
                 onClick={() => !isDesktop() && setHowToOpen(!howToOpen)}
               >
-                <NavDropdown.Item href="https://widophremit.com/how-to-download-signup-order-on-the-widoph-remit-app/">
-                  Download, Signup & Order on the Widoph Remit App
+                <NavDropdown.Item href="https://widophremit.com/how-to-sign-up-on-widoph-remit-app-using-veriff/">
+                  How To Sign Up On Widoph Remit App Using Veriff
                 </NavDropdown.Item>
                 <NavDropdown.Item href="https://widophremit.com/how-to-send-and-receive-money-with-the-widoph-remit-app/">
                   Send And Receive Money With The Widoph Remit App
+                </NavDropdown.Item>
+                <NavDropdown.Item href="https://widophremit.com/how-to-change-your-password-with-widoph-remit-app/">
+                  How to Change Your Password With Widoph Remit App
+                </NavDropdown.Item>
+                <NavDropdown.Item href="https://widophremit.com/how-to-view-transaction-history-on-widoph-remit-app/">
+                  How to View Transaction History on Widoph Remit App
                 </NavDropdown.Item>
 
-                <NavDropdown.Item href="https://widophremit.com/how-to-reset-password-on-the-widoph-remit-app/">
-                  Reset Your Password on The Widoph Remit App
-                </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/how-to-change-your-password-with-widoph-remit-app/">
-                  How to Change Your Password With Widoph Remit App
-                </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/how-to-check-rate-with-widoph-remit/">
-                  How To Check rate With Widoph Remit
-                </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/how-to-contact-widoph-remit-support-via-phone-or-whatsapp/">
-                  How to Contact Widoph Remit Support via Phone or WhatsApp
-                </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/how-to-view-transaction-history-on-widoph-remit-app/">
-                  How to View Transaction History on Widoph Remit App
-                </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/how-to-update-your-profile-check-rate-and-view-history-with-the-widoph-remit-app/">
-                  Update Your Profile, Check Rate And View History With The
-                  Widoph Remit App
-                </NavDropdown.Item>
-                <NavDropdown.Item>
-                  Download, Signup & Order on the Widoph Remit App
-                </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/how-to-send-and-receive-money-with-the-widoph-remit-app/">
-                  Send And Receive Money With The Widoph Remit App
-                </NavDropdown.Item>
                 <NavDropdown.Item href="https://widophremit.com/how-to-update-your-profile-check-rate-and-view-history-with-the-widoph-remit-app/">
                   Update Your Profile, Check Rate And View History With The
                   Widoph Remit App
@@ -170,17 +147,11 @@ const TopNavbar = () => {
                 <NavDropdown.Item href="https://widophremit.com/how-to-reset-password-on-the-widoph-remit-app/">
                   Reset Your Password on The Widoph Remit App
                 </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/how-to-change-your-password-with-widoph-remit-app/">
-                  How to Change Your Password With Widoph Remit App
-                </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/how-to-check-rate-with-widoph-remit/">
-                  How To Check rate With Widoph Remit
-                </NavDropdown.Item>
                 <NavDropdown.Item href="https://widophremit.com/how-to-contact-widoph-remit-support-via-phone-or-whatsapp/">
                   How to Contact Widoph Remit Support via Phone or WhatsApp
                 </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/how-to-view-transaction-history-on-widoph-remit-app/">
-                  How to View Transaction History on Widoph Remit App
+                <NavDropdown.Item href="https://widophremit.com/how-to-check-rate-with-widoph-remit/">
+                  How To Check rate With Widoph Remit
                 </NavDropdown.Item>
               </NavDropdown>
 

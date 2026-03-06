@@ -115,7 +115,6 @@ const UpdateReceiver = () => {
         .trim()
         .required("IBAN/Account Number is required")
         .min(8, "Minimum 8 characters")
-        .max(15, "Maximum 15 characters")
         .matches(
           /^[a-zA-Z0-9 -]+$/,
           "Only letters, numbers, spaces, and hyphens are allowed",
@@ -153,8 +152,7 @@ const UpdateReceiver = () => {
 
       mobile: Yup.string()
         .required("Mobile number is required")
-        .matches(/^\d{8,10}$/, "Mobile number must be between 8 and 10 digits"),
-
+        .matches(/^\d{8,}$/, "Mobile number must be at least 8 digits"),
       country: Yup.string().trim().required("Country is required"),
 
       state: Yup.string()
@@ -432,10 +430,7 @@ const UpdateReceiver = () => {
                     value={values.account_number}
                     onChange={(e) => {
                       const value = e.target.value;
-                      if (
-                        !value ||
-                        (/^[a-zA-Z0-9 -]+$/.test(value) && value.length <= 15)
-                      )
+                      if (!value || /^[a-zA-Z0-9 -]+$/.test(value))
                         handleChange(e);
                     }}
                     onBlur={handleBlur}
@@ -647,7 +642,7 @@ const UpdateReceiver = () => {
                             /\D/g,
                             "",
                           );
-                          if (numericValue.length <= 10 || !numericValue)
+                          if (numericValue.length || !numericValue)
                             setFieldValue("mobile", numericValue);
                         }}
                         onBlur={handleBlur}
