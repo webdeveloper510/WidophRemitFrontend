@@ -52,20 +52,6 @@ const TopNavbar = () => {
             <Col
               xs={12}
               md={6}
-              className="social-box d-flex justify-content-md-end gap-1 mt-2 mt-md-0"
-            >
-              <div className="d-flex social-icons gap-0">
-                <span className="d-flex align-items-center gap-0">
-                  <FaRegEnvelope />
-                  <a href="mailto:support@widophremit.com">
-                    support@widophremit.com
-                  </a>
-                </span>
-              </div>
-            </Col>
-            <Col
-              xs={12}
-              md={6}
               className="d-flex justify-content-md-end gap-4 mt-2 mt-md-0 align-items-center"
             >
               <div className="d-flex social-icons">
