@@ -45,7 +45,7 @@ const PaymentDetail = () => {
   const [monovaFormErrors, setMonovaFormErrors] = useState({});
   const userData = JSON.parse(sessionStorage.getItem("user_data") || "{}");
   const [monovaForm, setMonovaForm] = useState({
-    bsb: "",
+    bsb: "802-985",
     accountNumber: "",
     accountName: `${userData.First_name || ""} ${userData.Last_name || ""}`,
     paymentMethod: "",
@@ -74,10 +74,10 @@ const PaymentDetail = () => {
 
   useEffect(() => {
     const storedTransferData = JSON.parse(
-      sessionStorage.getItem("transfer_data") || "null"
+      sessionStorage.getItem("transfer_data") || "null",
     );
     const receiver = JSON.parse(
-      sessionStorage.getItem("selected_receiver") || "null"
+      sessionStorage.getItem("selected_receiver") || "null",
     );
     const txnId = sessionStorage.getItem("transaction_id") || "";
     const reason = sessionStorage.getItem("transfer_reason") || "";
@@ -120,7 +120,7 @@ const PaymentDetail = () => {
 
   const CancelMonovaContinue = () => {
     setMonovaForm({
-      bsb: "",
+      bsb: "802-985",
       accountNumber: "",
       accountName: `${
         JSON.parse(sessionStorage.getItem("user_data")).First_name
@@ -180,8 +180,8 @@ const PaymentDetail = () => {
     }
   };
 
-  const handleMonovaContinue = async (formData = null) => {
-    const currentForm = modalShowMonova ? monovaForm : formData;
+  const handleMonovaContinue = async (formData = null, newuser = false) => {
+    const currentForm = newuser ? monovaForm : formData;
     const errors = {};
     // if (!currentForm.bsb) errors.bsb = "BSB is required.";
     if (!currentForm.accountName)
@@ -197,10 +197,10 @@ const PaymentDetail = () => {
     if (Object.keys(errors).length === 0) {
       let res;
       try {
-        if (modalShowMonova) {
+        if (newuser) {
           try {
             const receiver = JSON.parse(
-              sessionStorage.getItem("selected_receiver") || "null"
+              sessionStorage.getItem("selected_receiver") || "null",
             );
 
             if (!receiver || !receiver.first_name || !receiver.last_name) {
@@ -229,10 +229,10 @@ const PaymentDetail = () => {
 
             sessionStorage.setItem(
               "monova_automatcher",
-              JSON.stringify(res.data)
+              JSON.stringify(res.data),
             );
             toast.success(
-              "Your account number account has been successfully created."
+              "Your account number account has been successfully created.",
             );
           } catch (automatcherErr) {
             console.error("Automatcher creation failed:", automatcherErr);
@@ -243,33 +243,33 @@ const PaymentDetail = () => {
 
         sessionStorage.setItem(
           "monova_payment_data",
-          JSON.stringify(currentForm)
+          JSON.stringify(currentForm),
         );
         sessionStorage.setItem("selected_payment_method", "monova");
 
         const temp = {
           amount: amount,
           bsbNumber: currentForm.bsb,
-          accountNumber: modalShowMonova
+          accountNumber: newuser
             ? res.data.bankAccountNumber
             : currentForm.accountNumber,
-          accountName: modalShowMonova
+          accountName: newuser
             ? res.data.bankAccountName
             : currentForm.accountName,
-          clientUniqueId: modalShowMonova
+          clientUniqueId: newuser
             ? res?.data?.clientUniqueId
             : currentForm.clientUniqueId,
         };
 
         const monoovaformdata = JSON.parse(
-          sessionStorage.getItem("monova_form_data")
+          sessionStorage.getItem("monova_form_data"),
         );
         sessionStorage.setItem(
           "monova_form_data",
           JSON.stringify({
             ...monoovaformdata,
             ...temp,
-          })
+          }),
         );
         const finalReason =
           transferReason === "Other" ? otherReason : transferReason;
@@ -411,7 +411,7 @@ const PaymentDetail = () => {
       let AutoMatcherRes = await GetAutoMatcher();
       let matcher = null;
       const receiver = JSON.parse(
-        sessionStorage.getItem("selected_receiver") || "null"
+        sessionStorage.getItem("selected_receiver") || "null",
       );
       const monovaFormData = sessionStorage.getItem("monova_form_data");
       let monovaFormParsed = {};
@@ -426,14 +426,26 @@ const PaymentDetail = () => {
         !AutoMatcherRes.data.bankAccountNumber
       ) {
         setMonovaForm({
-          bsb: "257-480",
+          bsb: "802-985",
           accountNumber: "",
           accountName: `${userData.First_name || ""} ${
             userData.Last_name || ""
           }`,
           paymentMethod: "",
         });
-        setModalShowMonova(true);
+
+        await handleMonovaContinue(
+          {
+            bsb: "802-985",
+            accountNumber: "",
+            accountName: `${userData.First_name || ""} ${
+              userData.Last_name || ""
+            }`,
+            paymentMethod: "",
+          },
+          true,
+        );
+        // setModalShowMonova(true);
       } else if (
         AutoMatcherRes?.code === "200" &&
         AutoMatcherRes.data.bankAccountNumber
@@ -450,10 +462,10 @@ const PaymentDetail = () => {
 
         sessionStorage.setItem(
           "monova_automatcher",
-          JSON.stringify(bankDetails)
+          JSON.stringify(bankDetails),
         );
         // setModalShowMonovaExisting(true);
-        await handleMonovaContinue(updatedMonovaForm);
+        await handleMonovaContinue(updatedMonovaForm, false);
       } else {
         toast.error("Some Error while creating account number.");
       }
@@ -545,7 +557,7 @@ const PaymentDetail = () => {
                           setPaymentType("payid");
                           sessionStorage.setItem(
                             "selected_payment_method",
-                            "payid"
+                            "payid",
                           );
                           sessionStorage.removeItem("monova_payment_data");
                           sessionStorage.removeItem("payto_limit_data");
@@ -573,7 +585,7 @@ const PaymentDetail = () => {
                           sessionStorage.removeItem("budpay_payment_data");
                           sessionStorage.setItem(
                             "selected_payment_method",
-                            "monova"
+                            "monova",
                           );
                         }}
                       />
@@ -626,7 +638,7 @@ const PaymentDetail = () => {
                           setReasonError("");
                           sessionStorage.setItem(
                             "transfer_reason",
-                            e.target.value
+                            e.target.value,
                           );
 
                           // Clear other reason if not selecting "Other"
@@ -670,7 +682,7 @@ const PaymentDetail = () => {
                             setReasonError("");
                             sessionStorage.setItem(
                               "other_reason",
-                              e.target.value
+                              e.target.value,
                             );
                           }}
                           onKeyDown={(e) => {
