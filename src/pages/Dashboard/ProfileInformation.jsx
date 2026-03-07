@@ -158,8 +158,15 @@ const ProfileInformation = () => {
           }));
 
           if (userData.mobile && userData.mobile.startsWith("+")) {
-            const countryCode = userData.mobile.substring(1, 3);
-            const phoneNumber = userData.mobile.substring(3);
+            let countryCode, phoneNumber;
+            //check for +243 nigeria
+            if (userData.mobile.substring(1, 4) === 234) {
+              countryCode = userData.mobile.substring(1, 4);
+              phoneNumber = userData.mobile.substring(4);
+            } else {
+              countryCode = userData.mobile.substring(1, 3);
+              phoneNumber = userData.mobile.substring(3);
+            }
             setCountryCode(countryCode);
             setRawMobile(phoneNumber);
           }
@@ -578,6 +585,7 @@ const ProfileInformation = () => {
                                       >
                                         <option value="61">+61 (AU)</option>
                                         <option value="64">+64 (NZ)</option>
+                                        <option value="234">+234 (NGN)</option>
                                       </Form.Select>
                                       <Form.Control
                                         type="text"

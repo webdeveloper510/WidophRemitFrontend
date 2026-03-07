@@ -70,7 +70,9 @@ const KYCForm = () => {
 
   const extractPhoneNumber = (mobile) => {
     if (!mobile) return "";
-    return mobile.replace(/^\+\d{2}/, "");
+    return mobile.substring(1, 4) == "234"
+      ? mobile.replace(/^\+\d{3}/, "")
+      : mobile.replace(/^\+\d{2}/, "");
   };
 
   useEffect(() => {
@@ -103,7 +105,10 @@ const KYCForm = () => {
             state: userData.state,
             country: userData.country || "",
             phone: extractPhoneNumber(userData.mobile),
-            countryCode: userData.mobile.substring(1, 3),
+            countryCode:
+              userData.mobile.substring(1, 4) == "234"
+                ? userData.mobile.substring(1, 4)
+                : userData.mobile.substring(1, 3),
           }));
         }
       } catch (error) {
