@@ -159,8 +159,7 @@ const ProfileInformation = () => {
 
           if (userData.mobile && userData.mobile.startsWith("+")) {
             let countryCode, phoneNumber;
-            //check for +243 nigeria
-            if (userData.mobile.substring(1, 4) === 234) {
+            if (userData.mobile.substring(1, 4) == "234") {
               countryCode = userData.mobile.substring(1, 4);
               phoneNumber = userData.mobile.substring(4);
             } else {
