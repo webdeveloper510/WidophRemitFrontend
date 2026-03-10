@@ -21,14 +21,14 @@ const TopNavbar = ({ onToggleSidebar }) => {
   };
 
   return (
-    <div className="d-flex align-items-center">
+    <div className="d-flex align-items-center top-navbar">
       <button className="btn toggle-btn" onClick={handleToggle}>
         <img src={collapsed ? openToggle : closeToggle} alt="toggle" />
       </button>
       <Navbar expand="lg" className="flex-grow-1 nav_mobile">
         <Container fluid>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
+          <Navbar.Toggle aria-controls="main-navbar-nav" />
+          <Navbar.Collapse id="main-navbar-nav">
             <Nav className="nav_main">
               <Nav.Link
                 as="a"
