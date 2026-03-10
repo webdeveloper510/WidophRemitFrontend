@@ -127,7 +127,6 @@ const KYCForm = () => {
   }));
 
   const handleVeriffClick = () => {
-    setVerifyingID(true);
     const veriff = Veriff({
       apiKey: import.meta.env.VITE_APP_VERIFF_KEY,
       parentId: "veriff-root",
@@ -154,10 +153,10 @@ const KYCForm = () => {
                 setVerifyingID(true);
 
                 let intervalCleared = false;
-                toast.info(
+                const toastId = toast.loading(
                   "Checking your ID verification status... Please wait.",
+                  { autoClose: false },
                 );
-                setActiveKey("step3");
 
                 const interval = setInterval(async () => {
                   try {
@@ -168,12 +167,14 @@ const KYCForm = () => {
                     if (res?.data?.status === "approved") {
                       clearInterval(interval);
                       intervalCleared = true;
+                      toast.dismiss(toastId);
                       setVerifyingID(false);
                       setIdVerified(true);
                       setActiveKey("step3");
                     } else if (res?.data?.status === "declined") {
                       clearInterval(interval);
                       intervalCleared = true;
+                      toast.dismiss(toastId);
                       setVerifyingID(false);
                       setVeriffMessage(
                         "Verification declined. Please try again.",
@@ -185,11 +186,13 @@ const KYCForm = () => {
                       clearInterval(interval);
                       intervalCleared = true;
                       setVerifyingID(false);
+                      toast.dismiss(toastId);
                       setIdVerified(true);
                       setActiveKey("step3");
                     }
                   } catch (err) {
                     console.error("Veriff status check error", err);
+                    toast.dismiss(toastId);
                     clearInterval(interval);
                     intervalCleared = true;
                     setVerifyingID(false);
@@ -1019,30 +1022,11 @@ const KYCForm = () => {
                     </div>
 
                     <div className="verify-container">
-                      <div id="veriff-root" style={{ marginTop: "20px" }}></div>
-                      {/* {!verifyingID && (
-                        <button
-                          className={`verify-btn ${idVerified ? "verified" : ""}`}
-                          type="button"
-                          onClick={handleVeriffClick}
-                          // disabled={idVerified}
-                        >
-                          {idVerified ? "ID VERIFIED ✓" : "VERIFY YOUR ID"}
-                        </button>
-                      )} */}
-
-                      {/* {idVerified && (
-                        <p className="text-success mt-3">
-                          <strong>
-                            ✓ ID Verification Completed Successfully!
-                          </strong>
-                          </p>
-                          )}
-                          
-                          {idVerified && <p className="verify-description">
-                          <strong>Veriff</strong> is an identity verification
-                          provider that helps companies connect with customers.
-                          </p>} */}
+                      <div
+                        id="veriff-root"
+                        className={verifyingID ? "veriff-disabled" : ""}
+                        style={{ marginTop: "20px" }}
+                      ></div>
                     </div>
 
                     <div className="d-flex gap-2 justify-content-start">
@@ -1053,13 +1037,15 @@ const KYCForm = () => {
                       >
                         Previous
                       </Button>
-                      <Button
-                        variant="secondary"
-                        className="skipbtn"
-                        onClick={() => navigate("/dashboard")}
-                      >
-                        Skip
-                      </Button>
+                      {!verifyingID && (
+                        <Button
+                          variant="secondary"
+                          className="skipbtn"
+                          onClick={() => navigate("/dashboard")}
+                        >
+                          Skip
+                        </Button>
+                      )}
                     </div>
                     {VeriffMessage && <p>{VeriffMessage}</p>}
                   </div>

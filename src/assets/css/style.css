@@ -1499,6 +1499,10 @@ span.status-badge.in.progress {
 }
 }
 
+.veriff-disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
 
 /* new 24 feb responsive css*/
 .dropdown-menu[data-bs-popper] {
