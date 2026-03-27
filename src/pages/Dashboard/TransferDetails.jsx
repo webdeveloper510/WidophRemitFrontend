@@ -219,7 +219,7 @@ const TransferDetails = () => {
                           <th>Payment Mode</th>
                           <td>
                             {transactionData?.send_method === ""
-                              ? "N/A"
+                              ? "Monoova PayId"
                               : transactionData?.send_method ===
                                 "zai_payid_per_user"
                               ? "PayID"

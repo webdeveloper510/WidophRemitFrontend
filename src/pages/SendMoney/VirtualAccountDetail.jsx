@@ -11,8 +11,8 @@ const VirtualAccountDetail = () => {
   );
 
   const [PaymentMethod, setPaymentMethod] = useState(
-    JSON.parse(sessionStorage.getItem("monova_form_data")).payment_mode ||
-      "npp",
+    JSON.parse(sessionStorage.getItem("monova_form_data"))?.payment_mode ||
+    "npp",
   );
   const [paymemtError, setpaymemtError] = useState("");
   const [payload, setpaylaod] = useState({});
@@ -170,32 +170,74 @@ const VirtualAccountDetail = () => {
               </span>
             </td>
           </tr>
+          {sessionStorage.getItem("selected_payment_method") === "monoovaPayId" && <tr>
+            <td style={{ width: "80%" }}>Monoova PayID</td>
+            <td style={{ width: "15%" }}>{sessionStorage.getItem("MonoovaPayid")}</td>
+            <td>
+              <span
+                className="copyText"
+                onClick={() => copyToClipboard(sessionStorage.getItem("MonoovaPayid"))}
+                style={{
+                  cursor: "pointer",
+                  position: "relative",
+                  top: "0",
+                  right: "0",
+                }}
+              >
+                <RiFileCopyLine />
+              </span>
+            </td>
+          </tr>}
         </tbody>
       </Table>
       <br />
 
-      <p>
-        You’re almost done, Please complete the payment steps here on the Widoph
-        Remit portal first.
-        <br />
-        After that, continue with the following steps in your banking app:
-      </p>
-      <ul>
-        <li>Log in to your banking portal or app.</li>
-        <li>
-          Initiate a payment of {payload.send_currency}{" "}
-          {payload.fee_total_amount} to your Virtual Auto-Matcher Account using
-          above mentioned details.
-        </li>
-        <li>
-          Enter your Transaction ID: {sessionStorage.getItem("transaction_id")}{" "}
-          in the payment reference field.
-        </li>
-        <li>
-          Once we receive the funds, your transfer will automatically move to
-          the next stage.
-        </li>
-      </ul>
+      {sessionStorage.getItem("selected_payment_method") === "monoovaPayId" ? (
+        <>
+          <p>
+            You’re almost done. Please complete the payment using PayID from your banking app.
+          </p>
+          <ul>
+            <li>Log in to your banking portal or app.</li>
+            <li>
+              Select PayID as the payment method and use the above PayID details.
+            </li>
+            <li>
+              Initiate a payment of {payload.send_currency}{" "}
+              {payload.fee_total_amount}.
+            </li>
+            <li>
+              Enter your Transaction ID: {sessionStorage.getItem("transaction_id")} in the reference field.
+            </li>
+            <li>
+              Once we receive the funds, your transfer will automatically move to the next stage.
+            </li>
+          </ul>
+        </>
+      ) : (
+        <>
+          <p>
+            You’re almost done, Please complete the payment steps here on the Widoph
+            Remit portal first.
+            <br />
+            After that, continue with the following steps in your banking app:
+          </p>
+          <ul>
+            <li>Log in to your banking portal or app.</li>
+            <li>
+              Initiate a payment of {payload.send_currency}{" "}
+              {payload.fee_total_amount} to your Virtual Auto-Matcher Account using
+              above mentioned details.
+            </li>
+            <li>
+              Enter your Transaction ID: {sessionStorage.getItem("transaction_id")} in the payment reference field.
+            </li>
+            <li>
+              Once we receive the funds, your transfer will automatically move to the next stage.
+            </li>
+          </ul>
+        </>
+      )}
       <Row className="mt-5">
         <Col>
           <Button

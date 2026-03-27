@@ -110,7 +110,7 @@ const TransactionSuccess = () => {
           : statusParam === "cancelled"
             ? "Cancelled"
             : statusParam;
-    } else if (selectedMethod === "monova") {
+    } else if (selectedMethod === "monova" || selectedMethod === "monoovaPayId") {
       setMonoovaGeneratedTransactionId(
         JSON.parse(sessionStorage.getItem("transaction_id")),
       );
@@ -132,6 +132,7 @@ const TransactionSuccess = () => {
     setStatus(finalStatus);
     if (
       selectedMethod === "monova" ||
+      selectedMethod === "monoovaPayId" ||
       (selectedMethod === "budpay" && statusParam === "success") ||
       selectedMethod === "payid"
     ) {
@@ -240,11 +241,10 @@ const TransactionSuccess = () => {
                                 <td>Fee Amount</td>
                                 <td>
                                   {typeof transaction.fee_amount === "number"
-                                    ? `${
-                                        JSON.parse(
-                                          sessionStorage.getItem("payload"),
-                                        ).amount.fee_amount
-                                      } ${OutCurr}`
+                                    ? `${JSON.parse(
+                                      sessionStorage.getItem("payload"),
+                                    ).amount.fee_amount
+                                    } ${OutCurr}`
                                     : "N/A"}
                                 </td>
                               </tr>
@@ -350,10 +350,9 @@ const TransactionSuccess = () => {
                             <tr>
                               <td>Fee Amount</td>
                               <td>
-                                {` ${
-                                  JSON.parse(sessionStorage.getItem("payload"))
+                                {` ${JSON.parse(sessionStorage.getItem("payload"))
                                     .amount.fee_amount || "N/A"
-                                } ${OutCurr}`}
+                                  } ${OutCurr}`}
                               </td>
                             </tr>
                             <tr>

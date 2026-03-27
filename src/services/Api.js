@@ -205,6 +205,37 @@ export const GetAutoMatcher = async () => {
   }
 };
 
+export const GetExistingMonoovaPayid = async () => {
+  try {
+    const response = await private_instance.get("/monoova/exist-payid/", {
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    return error?.response || { error: "Unknown error occurred" };
+  }
+};
+
+export const CreateMonoovaPayid = async () => {
+  try {
+    const response = await private_instance.post(
+      "/monoova/create-payid/",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    return error?.response || { error: "Unknown error occurred" };
+  }
+};
+
 export const verifyEmail = async (data) => {
   const response = await public_instance
     .post("/verify-email/", data)

@@ -293,7 +293,7 @@ const ConfirmTransfer = () => {
     try {
       if (currentPaymentMethod === "payid") {
         paymentSuccess = await handlePayIDPayment();
-      } else if (currentPaymentMethod === "monova") {
+      } else if (currentPaymentMethod === "monova" ||currentPaymentMethod === "monoovaPayId" ) {
         paymentSuccess = await handleMonovaPayment();
       } else if (currentPaymentMethod === "zai") {
         paymentSuccess = await handleZaiPayment();
