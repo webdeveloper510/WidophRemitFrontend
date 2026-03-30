@@ -237,13 +237,13 @@ const TransferDetails = () => {
                           <th>Transfer Reason</th>
                           <td>{transactionData?.reason}</td>
                         </tr>
-                        <tr>
+                        {/* <tr>
                           <th>PayID</th>
                           <td>
                             {transactionData?.send_method_details?.payid ||
                               "N/A"}
                           </td>
-                        </tr>
+                        </tr> */}
                       </tbody>
                     </Table>
                   </div>

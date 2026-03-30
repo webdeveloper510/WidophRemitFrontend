@@ -316,19 +316,17 @@ const PaymentDetail = () => {
 
     if (
       !MonoovaPayidResponse?.data?.id) {
-      // Create MonoovaPayid
       NewpayIdresponse = await CreateMonoovaPayid();
+      console.log(NewpayIdresponse);
     }
 
     const temp = {
       amount: amount,
       bsbNumber: "802-985",
-      accountNumber: MonoovaPayidResponse?.data?.bankAccountNumber,
+      accountNumber: MonoovaPayidResponse?.data?.id ? MonoovaPayidResponse?.data?.bankAccountNumber : NewpayIdresponse?.data?.PayIdDetails?.BankAccountNumber,
       accountName: "Widoph Remit Pty Ltd",
       clientUniqueId: AutoMatcherRes?.data?.clientUniqueId
     };
-
-    console.log(MonoovaPayidResponse?.data);
 
 
     sessionStorage.setItem(
@@ -338,7 +336,7 @@ const PaymentDetail = () => {
       }),
     );
     sessionStorage.setItem("monova_automatcher", JSON.stringify(AutoMatcherRes.data),);
-    sessionStorage.setItem("MonoovaPayid", MonoovaPayidResponse.data.PayId);
+    sessionStorage.setItem("MonoovaPayid", MonoovaPayidResponse?.data?.id ? MonoovaPayidResponse.data.PayId : NewpayIdresponse?.data?.PayIdDetails?.PayId);
 
     const finalReason =
       transferReason === "Other" ? otherReason : transferReason;
