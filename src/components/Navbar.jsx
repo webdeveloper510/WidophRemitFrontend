@@ -20,6 +20,129 @@ const TopNavbar = ({ onToggleSidebar }) => {
     onToggleSidebar();
   };
 
+   const OurCoverages = [
+    {
+      "title": "Austria",
+      "link": "https://widophremit.com/send-money-to-austria/"
+    },
+    {
+      "title": "Bangladesh",
+      "link": "https://widophremit.com/send-money-online-to-the-bangladesh-from-australia/"
+    },
+    {
+      "title": "Belgium",
+      "link": "https://widophremit.com/send-money-to-belgium/"
+    },
+    {
+      "title": "Cameroon",
+      "link": "https://widophremit.com/australia-to-cameroon/"
+    },
+    {
+      "title": "Canada",
+      "link": "https://widophremit.com/australia-to-canada/"
+    },
+    {
+      "title": "Central African Republic",
+      "link": "https://widophremit.com/send-money-from-australia-to-the-central-african-republic/"
+    },
+    {
+      "title": "Dr Congo",
+      "link": "https://widophremit.com/send-money-from-australia-to-dr-congo-widoph-remit/"
+    },
+    {
+      "title": "Ghana",
+      "link": "https://widophremit.com/australia-to-ghana/"
+    },
+    {
+      "title": "India",
+      "link": "https://widophremit.com/australia-to-india/"
+    },
+    {
+      "title": "Indonesia",
+      "link": "https://widophremit.com/send-money-from-australia-to-indonesia-widoph-remit/"
+    },
+    {
+      "title": "Ivory Coast",
+      "link": "https://widophremit.com/senegal-2/"
+    },
+    {
+      "title": "Kenya",
+      "link": "https://widophremit.com/australia-to-kenya/"
+    },
+    {
+      "title": "Malawi",
+      "link": "https://widophremit.com/australia-to-malawi/"
+    },
+    {
+      "title": "Maritius",
+      "link": "https://widophremit.com/australia-to-mauritius/"
+    },
+    {
+      "title": "Mozambique",
+      "link": "https://widophremit.com/send-money-from-australia-to-mozambique-widoph-remit/"
+    },
+    {
+      "title": "Namibia",
+      "link": "https://widophremit.com/australia-to-namibia/"
+    },
+    {
+      "title": "Nepal",
+      "link": "https://widophremit.com/australia-to-nepal/"
+    },
+    {
+      "title": "Nigeria",
+      "link": "https://widophremit.com/australia-to-nigeria/"
+    },
+    {
+      "title": "Philipines",
+      "link": "https://widophremit.com/send-money-from-australia-to-philipines/"
+    },
+    {
+      "title": "Rwanda",
+      "link": "https://widophremit.com/australia-to-rwanda/"
+    },
+    {
+      "title": "Senegal",
+      "link": "https://widophremit.com/send-money-online-to-senegal-from-australia/"
+    },
+    {
+      "title": "South Africa",
+      "link": "https://widophremit.com/send-money-online-to-south-africa-from-australia/"
+    },
+    {
+      "title": "Sri Lanka",
+      "link": "https://widophremit.com/send-money-from-austrakia-to-sri-lanka/"
+    },
+    {
+      "title": "Tanzania",
+      "link": "https://widophremit.com/send-money-from-australia-to-tanzania/"
+    },
+    {
+      "title": "Uganda",
+      "link": "https://widophremit.com/send-money-from-australia-to-uganda-fast-transfers-widoph-remit/"
+    },
+    {
+      "title": "United Kingdom",
+      "link": "https://widophremit.com/send-money-from-australia-to-united-kingdom/"
+    },
+    {
+      "title": "USA",
+      "link": "https://widophremit.com/usa/"
+    },
+    {
+      "title": "Vietnam",
+      "link": "https://widophremit.com/send-money-from-australia-to-vietnam-widoph-remit/"
+    },
+    {
+      "title": "West Africa CFA",
+      "link": "https://widophremit.com/send-money-from-australia-to-west-africa-cfa-widoph-remit/"
+    },
+    {
+      "title": "Zambia",
+      "link": "https://widophremit.com/australia-to-zambia/"
+    }
+  ]
+
   return (
     <div className="d-flex align-items-center top-navbar">
       <button className="btn toggle-btn" onClick={handleToggle}>
@@ -135,54 +258,9 @@ const TopNavbar = ({ onToggleSidebar }) => {
                 onMouseEnter={() => setOurCoverage(true)}
                 onMouseLeave={() => setOurCoverage(false)}
               >
-                <NavDropdown.Item href="https://widophremit.com/send-money-from-australia-to-burkina-faso/">
-                  Send Money from Australia to Burkina Faso
-                </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/send-money-from-australia-to-cameroon/">
-                  Send Money from Australia to Cameroon
-                </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/send-money-from-australia-to-ethiopia/">
-                  Send Money from Australia to Ethiopia
-                </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/send-money-from-australia-to-the-central-african-republic/">
-                  Send Money from Australia to the Central African Republic
-                </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/send-money-from-australia-to-togo/">
-                  Send Money from Australia to Togo
-                </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/send-money-online-to-senegal-from-australia/">
-                  Send money from Australia to Senegal
-                </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/send-money-online-to-south-africa-from-australia/">
-                  Send Money From Australia to South Africa
-                </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/send-money-to-andorra/">
-                  Send money from Australia to Andorra
-                </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/send-money-to-austria/">
-                  Send money from Australia to Austria
-                </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/send-money-to-bailiwick-of-guernsey/">
-                  Send Money from Australia to Bailiwick of Guernsey
-                </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/send-money-online-to-the-bangladesh-from-australia/">
-                  Send Money from Australia to Bangladesh
-                </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/send-money-to-belgium/">
-                  Send Money from Australia to Belgium
-                </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/send-money-online-to-botswana-from-australia/">
-                  Send Money from Australia to Botswana
-                </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/send-money-to-brazil-from-australia/">
-                  Send Money from Australia To Brazil
-                </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/send-money-to-bulgaria/">
-                  Send Money from Australia to Bulgaria
-                </NavDropdown.Item>
-                <NavDropdown.Item href="https://widophremit.com/send-money-to-cambodia-from-australia/">
-                  Send Money from Australia to Cambodia
-                </NavDropdown.Item>
+                  {OurCoverages.map(e=>(<NavDropdown.Item href={e.link}>
+                 Send Money from Australia to {e.title}
+                </NavDropdown.Item>))}
               </NavDropdown>
 
               {/* <NavDropdown title="Blog" id="blog-dropdown">

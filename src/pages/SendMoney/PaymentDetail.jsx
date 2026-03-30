@@ -10,6 +10,7 @@ import {
   Row,
   Card,
   Button,
+  Collapse,
 } from "react-bootstrap";
 import Back from "../../assets/images/back.png";
 import { RiFileCopyLine } from "react-icons/ri";
@@ -56,6 +57,8 @@ const PaymentDetail = () => {
   const [payToFormErrors, setPayToFormErrors] = useState({});
   const [isCreatingAgreement, setIsCreatingAgreement] = useState(false);
   const [bsb, setbsb] = useState(0);
+  const [openPayId, setOpenPayId] = useState(false);
+  const [openBank, setOpenBank] = useState(false);
   const [monovaForm, setMonovaForm] = useState({
     bsb: "802-985",
     accountNumber: "",
@@ -703,120 +706,101 @@ const PaymentDetail = () => {
                 <Form>
                   <Row>
                     <label>Payment type</label>
-                    <div className="d-flex mb-3 mt-3 align-items-center">
-                      {/* <Form.Check
-                        inline
-                        className="paymentoptions"
-                        label="Pay TO"
-                        name="paymentType"
-                        type="radio"
-                        checked={paymentType === "payto"}
-                        onChange={() => {
-                          setPaymentType("payto");
-                          sessionStorage.setItem(
-                            "selected_payment_method",
-                            "zai"
-                          );
-                          sessionStorage.removeItem("monova_payment_data");
-                          sessionStorage.removeItem("payid_data");
-                        }}
-                      /> */}
-                      <Form.Check
-                        inline
-                        className="paymentoptions"
-                        label="Monoova Pay ID"
-                        name="paymentType"
-                        type="radio"
-                        checked={paymentType === "monoovaPayId"}
-                        onChange={() => {
-                          setPaymentType("monoovaPayId");
-                          sessionStorage.setItem(
-                            "selected_payment_method",
-                            "monoovaPayId"
-                          );
-                          sessionStorage.removeItem("monova_payment_data");
-                          sessionStorage.removeItem("payid_data");
-                          sessionStorage.removeItem("payto_limit_data");
-                          sessionStorage.removeItem("payto_agreement_response");
-                        }}
-                      />
-                      <Form.Check
-                        inline
-                        label="Pay ID"
-                        className="paymentoptions"
-                        name="paymentType"
-                        type="radio"
-                        checked={paymentType === "payid"}
-                        onChange={() => {
-                          setPaymentType("payid");
-                          sessionStorage.setItem(
-                            "selected_payment_method",
-                            "payid",
-                          );
-                          sessionStorage.removeItem("monova_payment_data");
-                          sessionStorage.removeItem("payto_limit_data");
-                          sessionStorage.removeItem("payto_agreement_response");
-                        }}
-                      />
 
-                      <Form.Check
-                        inline
-                        label="Bank Transfer"
-                        name="paymentType"
-                        className="paymentoptions m-0"
-                        type="radio"
-                        checked={
-                          paymentType === "bank_transfer" ||
-                          paymentType === "monova" ||
-                          paymentType === "budpay"
-                        }
-                        onChange={() => {
-                          setPaymentType("monova");
-                          sessionStorage.removeItem("payto_limit_data");
-                          sessionStorage.removeItem("payto_agreement_response");
-                          sessionStorage.removeItem("payid_data");
-                          sessionStorage.removeItem("monova_payment_data");
-                          sessionStorage.removeItem("budpay_payment_data");
-                          sessionStorage.setItem(
-                            "selected_payment_method",
-                            "monova",
-                          );
-                        }}
-                      />
+                    <Row className="mt-2">
+                      {/* PAYID COLUMN */}
+                      <Col md={6}>
+                        <div
+                          style={{ cursor: "pointer" }}
+                          className="fw-bold"
+                          onClick={() => setOpenPayId(!openPayId)}
+                        >
+                          PayID {openPayId ? "▲" : "▼"}
+                        </div>
 
-                      {
-                        // (paymentType === "bank_transfer" ||
-                        //   paymentType === "monova" ||
-                        //   paymentType === "budpay") && (
-                        //     <Form.Select
-                        //       className="ms-3 payment-select"
-                        //       style={{ width: "200px" }}
-                        //       value={paymentType === "monova" ? "monova" : paymentType === "budpay" ? "budpay" : ""}
-                        //       onChange={(e) => {
-                        //         const selectedGateway = e.target.value;
-                        //         if (selectedGateway === "monova") {
-                        //           setPaymentType("monova");
-                        //           sessionStorage.setItem("selected_payment_method", "monova");
-                        //           sessionStorage.removeItem("budpay_payment_data");
-                        //         } else if (selectedGateway === "budpay") {
-                        //           setPaymentType("budpay");
-                        //           sessionStorage.setItem("selected_payment_method", "budpay");
-                        //           sessionStorage.removeItem("monova_payment_data");
-                        //         } else {
-                        //           setPaymentType("bank_transfer");
-                        //           sessionStorage.setItem("selected_payment_method", "bank_transfer");
-                        //           sessionStorage.removeItem("monova_payment_data");
-                        //           sessionStorage.removeItem("budpay_payment_data");
-                        //         }
-                        //       }}
-                        //     >
-                        //       <option value="">Select Gateway</option>
-                        //       <option value="monova">Monoova</option>
-                        //       {/* <option value="budpay">BudPay</option> */}
-                        //     </Form.Select>
-                        //   )
-                      }
-                    </div>
+
+                        <Collapse in={openPayId}>
+                          <div className="mt-2">
+                            <Form.Check
+                              className="paymentoptions"
+                              label="Monoova Pay ID"
+                              name="paymentType"
+                              type="radio"
+                              checked={paymentType === "monoovaPayId"}
+                              onChange={() => {
+                                setPaymentType("monoovaPayId");
+                                sessionStorage.setItem("selected_payment_method", "monoovaPayId");
+                                sessionStorage.removeItem("monova_payment_data");
+                                sessionStorage.removeItem("payid_data");
+                                sessionStorage.removeItem("payto_limit_data");
+                                sessionStorage.removeItem("payto_agreement_response");
+                              }}
+                            />
+
+                            <Form.Check
+                              className="paymentoptions"
+                              label="Pay ID"
+                              name="paymentType"
+                              type="radio"
+                              checked={paymentType === "payid"}
+                              onChange={() => {
+                                setPaymentType("payid");
+                                sessionStorage.setItem("selected_payment_method", "payid");
+                                sessionStorage.removeItem("monova_payment_data");
+                                sessionStorage.removeItem("payto_limit_data");
+                                sessionStorage.removeItem("payto_agreement_response");
+                              }}
+                            />
+                          </div>
+                        </Collapse>
+                      </Col>
+
+                      {/* BANK TRANSFER COLUMN */}
+                      <Col md={6}>
+                        <div
+                          style={{ cursor: "pointer" }}
+                          className="fw-bold"
+                          onClick={() => setOpenBank(!openBank)}
+                        >
+                          Bank Transfer {openBank ? "▲" : "▼"}
+                        </div>
+
+                        <Collapse in={openBank}>
+                          <div className="mt-2">
+                            <Form.Check
+                              className="paymentoptions"
+                              label="Monoova"
+                              name="paymentType"
+                              type="radio"
+                              checked={paymentType === "monova"}
+                              onChange={() => {
+                                setPaymentType("monova");
+                                sessionStorage.removeItem("payto_limit_data");
+                                sessionStorage.removeItem("payto_agreement_response");
+                                sessionStorage.removeItem("payid_data");
+                                sessionStorage.removeItem("monova_payment_data");
+                                sessionStorage.removeItem("budpay_payment_data");
+                                sessionStorage.setItem("selected_payment_method", "monova");
+                              }}
+                            />
+
+                            {/* <Form.Check
+                              className="paymentoptions"
+                              label="Pay To"
+                              name="paymentType"
+                              type="radio"
+                              checked={paymentType === "payto"}
+                              onChange={() => {
+                                setPaymentType("payto");
+                                sessionStorage.setItem("selected_payment_method", "zai");
+                                sessionStorage.removeItem("monova_payment_data");
+                                sessionStorage.removeItem("payid_data");
+                              }}
+                            /> */}
+                          </div>
+                        </Collapse>
+                      </Col>
+                    </Row>
                   </Row>
                   <Row className="mt-5">
                     <FloatingLabel

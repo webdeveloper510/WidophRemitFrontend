@@ -40,15 +40,22 @@ const SendMoney = () => {
   const [defaultExchange, setDefaultExchange] = useState();
   const [isConverting, setIsConverting] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [maxSendAmount, setMaxSendAmount] = useState(null);
 
   const amtSchema = Yup.object().shape({
     send_amt: Yup.string()
       .required("Send amount is required")
-      .test("min-amount", "Amount must be between $100 and $15000", (value) => {
+      .test("max-limit", function (value) {
         if (!value) return false;
         const amount = Number(commaRemover(value));
-        // return amount >= 100 && amount <= 15000;
-        return amount <= 15000;
+
+        if (maxSendAmount && amount > maxSendAmount) {
+          return this.createError({
+            message: `Maximum allowed is ${maxSendAmount}`,
+          });
+        }
+
+        return true;
       }),
     exchange_amt: Yup.string().required("Exchange amount is required"),
     from: Yup.string().required("Source currency is required"),
@@ -201,6 +208,7 @@ const SendMoney = () => {
         });
         if (response) {
           setExchRate(response?.rate);
+          setMaxSendAmount(response.maximum_send_amount);
           setDefaultExchange(response.default_exchange);
           return response;
         }
@@ -228,6 +236,8 @@ const SendMoney = () => {
 
       if (key === "from" || key === "to") {
         payload[key] = value;
+        payload.amount = "1";
+      } else {
         payload.amount = commaRemover(values.send_amt) || "1";
       }
 
@@ -236,6 +246,7 @@ const SendMoney = () => {
         const response = await exchangeRate(payload);
         setfees(response.incoming_fixed);
         setTotalAmount(response.final_incoming);
+        setMaxSendAmount(response.maximum_send_amount);
         if (response) {
           if (dir === "from") {
             setFieldValue("exchange_amt", response.amount);
@@ -467,7 +478,7 @@ const SendMoney = () => {
                         name="from"
                         value={values.from}
                         onChange={handleTypeChange}
-                        //disabled={isConverting}
+                      //disabled={isConverting}
                       >
                         {curr_in.map((curr) => (
                           <option key={curr.currency} value={curr.currency}>
@@ -487,7 +498,7 @@ const SendMoney = () => {
                         name="to"
                         value={values.to}
                         onChange={handleTypeChange}
-                        //disabled={isConverting}
+                      //disabled={isConverting}
                       >
                         {curr_out.map((curr) => (
                           <option key={curr.currency} value={curr.currency}>
@@ -510,8 +521,17 @@ const SendMoney = () => {
                         name="send_amt"
                         value={values.send_amt}
                         onChange={(e) => {
-                          if (e.target.value[0] == 0) return;
-                          if (e.target.value <= 15000) handleAmountChange(e);
+                          const value = e.target.value;
+
+                          if (value[0] == 0) return;
+
+                          const numericValue = Number(commaRemover(value));
+
+                          if (maxSendAmount && numericValue > maxSendAmount) {
+                            return;
+                          }
+
+                          handleAmountChange(e);
                         }}
                         onBlur={handleAmountBlur}
                         //disabled={isConverting}
