@@ -709,7 +709,7 @@ const PaymentDetail = () => {
 
                     <Row className="mt-2">
                       {/* PAYID COLUMN */}
-                      <Col md={6}>
+                      <Col md={4}>
                         <div
                           style={{ cursor: "pointer" }}
                           className="fw-bold"
@@ -723,7 +723,7 @@ const PaymentDetail = () => {
                           <div className="mt-2">
                             <Form.Check
                               className="paymentoptions"
-                              label="Monoova Pay ID"
+                              label="Monoova (PayID)"
                               name="paymentType"
                               type="radio"
                               checked={paymentType === "monoovaPayId"}
@@ -739,7 +739,7 @@ const PaymentDetail = () => {
 
                             <Form.Check
                               className="paymentoptions"
-                              label="Pay ID"
+                              label="Zai (PayID)"
                               name="paymentType"
                               type="radio"
                               checked={paymentType === "payid"}
@@ -756,7 +756,7 @@ const PaymentDetail = () => {
                       </Col>
 
                       {/* BANK TRANSFER COLUMN */}
-                      <Col md={6}>
+                      <Col md={4}>
                         <div
                           style={{ cursor: "pointer" }}
                           className="fw-bold"
@@ -769,7 +769,7 @@ const PaymentDetail = () => {
                           <div className="mt-2">
                             <Form.Check
                               className="paymentoptions"
-                              label="Monoova"
+                              label="Monoova (Bank Transfer)"
                               name="paymentType"
                               type="radio"
                               checked={paymentType === "monova"}
