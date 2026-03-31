@@ -238,7 +238,7 @@ const SendMoney = () => {
         payload[key] = value;
         payload.amount = "1";
       } else {
-        payload.amount = commaRemover(values.send_amt) || "1";
+        payload.amount = cleanValue || "1";
       }
 
       setIsConverting(true);
@@ -275,7 +275,7 @@ const SendMoney = () => {
 
     if (isReload && location.state?.backFromReceivers) {
       navigate(location.pathname, {
-        replace: true,
+        replace: true, 
         state: { ...location.state, backFromReceivers: false },
       });
     }

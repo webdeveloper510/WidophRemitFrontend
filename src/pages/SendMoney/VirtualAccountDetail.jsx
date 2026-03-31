@@ -64,7 +64,7 @@ const VirtualAccountDetail = () => {
           >
             <img src={Back} alt="Back" />
           </Button>
-          <h1>Bank transfer account Detail</h1>
+          <h1>{sessionStorage.getItem("selected_payment_method") !== "monoovaPayId" ? "Bank transfer account" : "PayID"} Detail</h1>
         </div>
       </div>
 
@@ -98,7 +98,7 @@ const VirtualAccountDetail = () => {
 
       <Table striped bordered style={{ marginTop: "2rem" }}>
         <tbody>
-          <tr>
+          {sessionStorage.getItem("selected_payment_method") !== "monoovaPayId" ? <> <tr>
             <td style={{ width: "80%" }}>Account Number</td>
             <td style={{ width: "15%" }}>{monovaform.accountNumber}</td>
             <td>
@@ -116,78 +116,79 @@ const VirtualAccountDetail = () => {
               </span>
             </td>
           </tr>
-          <tr>
-            <td style={{ width: "80%" }}>Account Name</td>
-            <td style={{ width: "15%" }}>{monovaform.accountName}</td>
-            <td>
-              <span
-                className="copyText"
-                onClick={() => copyToClipboard(monovaform.accountName)}
-                style={{
-                  cursor: "pointer",
-                  position: "relative",
-                  top: "0",
-                  right: "0",
-                }}
-              >
-                <RiFileCopyLine />
-              </span>
-            </td>
-          </tr>
-          <tr>
-            <td style={{ width: "80%" }}>BSB Number</td>
-            <td style={{ width: "15%" }}>{monovaform.bsbNumber}</td>
-            <td>
-              <span
-                className="copyText"
-                onClick={() => copyToClipboard(monovaform.bsbNumber)}
-                style={{
-                  cursor: "pointer",
-                  position: "relative",
-                  top: "0",
-                  right: "0",
-                }}
-              >
-                <RiFileCopyLine />
-              </span>
-            </td>
-          </tr>
-          <tr>
-            <td style={{ width: "80%" }}>Refrence ID</td>
-            <td style={{ width: "15%" }}>{monovaform.clientUniqueId}</td>
-            <td>
-              <span
-                className="copyText"
-                onClick={() => copyToClipboard(monovaform.clientUniqueId)}
-                style={{
-                  cursor: "pointer",
-                  position: "relative",
-                  top: "0",
-                  right: "0",
-                }}
-              >
-                <RiFileCopyLine />
-              </span>
-            </td>
-          </tr>
-          {sessionStorage.getItem("selected_payment_method") === "monoovaPayId" && <tr>
-            <td style={{ width: "80%" }}>Monoova PayID</td>
-            <td style={{ width: "15%" }}>{sessionStorage.getItem("MonoovaPayid")}</td>
-            <td>
-              <span
-                className="copyText"
-                onClick={() => copyToClipboard(sessionStorage.getItem("MonoovaPayid"))}
-                style={{
-                  cursor: "pointer",
-                  position: "relative",
-                  top: "0",
-                  right: "0",
-                }}
-              >
-                <RiFileCopyLine />
-              </span>
-            </td>
-          </tr>}
+            <tr>
+              <td style={{ width: "80%" }}>Account Name</td>
+              <td style={{ width: "15%" }}>{monovaform.accountName}</td>
+              <td>
+                <span
+                  className="copyText"
+                  onClick={() => copyToClipboard(monovaform.accountName)}
+                  style={{
+                    cursor: "pointer",
+                    position: "relative",
+                    top: "0",
+                    right: "0",
+                  }}
+                >
+                  <RiFileCopyLine />
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td style={{ width: "80%" }}>BSB Number</td>
+              <td style={{ width: "15%" }}>{monovaform.bsbNumber}</td>
+              <td>
+                <span
+                  className="copyText"
+                  onClick={() => copyToClipboard(monovaform.bsbNumber)}
+                  style={{
+                    cursor: "pointer",
+                    position: "relative",
+                    top: "0",
+                    right: "0",
+                  }}
+                >
+                  <RiFileCopyLine />
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td style={{ width: "80%" }}>Refrence ID</td>
+              <td style={{ width: "15%" }}>{monovaform.clientUniqueId}</td>
+              <td>
+                <span
+                  className="copyText"
+                  onClick={() => copyToClipboard(monovaform.clientUniqueId)}
+                  style={{
+                    cursor: "pointer",
+                    position: "relative",
+                    top: "0",
+                    right: "0",
+                  }}
+                >
+                  <RiFileCopyLine />
+                </span>
+              </td>
+            </tr>
+          </>
+            : <tr>
+              <td style={{ width: "80%" }}>Monoova PayID</td>
+              <td style={{ width: "15%" }}>{sessionStorage.getItem("MonoovaPayid")}</td>
+              <td>
+                <span
+                  className="copyText"
+                  onClick={() => copyToClipboard(sessionStorage.getItem("MonoovaPayid"))}
+                  style={{
+                    cursor: "pointer",
+                    position: "relative",
+                    top: "0",
+                    right: "0",
+                  }}
+                >
+                  <RiFileCopyLine />
+                </span>
+              </td>
+            </tr>}
         </tbody>
       </Table>
       <br />
