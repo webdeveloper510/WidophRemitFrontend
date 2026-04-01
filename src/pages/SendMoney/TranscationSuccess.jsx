@@ -319,7 +319,7 @@ const TransactionSuccess = () => {
     <AnimatedPage>
       <div className="page-title">
         <div className="d-flex align-items-center">
-          <h1>Your transfer is being processed</h1>
+          <h1>Your transfer status is {status}</h1>
         </div>
       </div>
 
@@ -351,7 +351,7 @@ const TransactionSuccess = () => {
                               <td>Fee Amount</td>
                               <td>
                                 {` ${JSON.parse(sessionStorage.getItem("payload"))
-                                    .amount.fee_amount || "N/A"
+                                  .amount.fee_amount || "N/A"
                                   } ${OutCurr}`}
                               </td>
                             </tr>
@@ -435,6 +435,39 @@ const TransactionSuccess = () => {
                             </ul>
                           </>
                         )}
+
+                        {
+                          paymentMethod === "monoovaPayId" && (
+                            <>
+                              {paymentMethod === "monoovaPayId" && (
+                                <>
+                                  <h4>Next Step: Complete Your PayID Transfer</h4>
+                                  <p>
+                                    You’re almost done. Please complete the payment using PayID from your banking app.
+                                  </p>
+                                  <ul>
+                                    <li>Log in to your banking portal or app.</li>
+                                    <li>
+                                      Select PayID as the payment method and use the provided PayID details.
+                                    </li>
+                                    <li>
+                                      Initiate a payment of {payload.send_currency} {TotalAmount}.
+                                    </li>
+                                    <li>
+                                      Enter your Transaction ID: {monoovaGeneratedTransactionId} in the reference field.
+                                    </li>
+                                    <li>
+                                      Ensure the PayID name matches before confirming the payment.
+                                    </li>
+                                    <li>
+                                      Once we receive the funds, your transfer will automatically move to the next stage.
+                                    </li>
+                                  </ul>
+                                </>
+                              )}
+                            </>
+                          )
+                        }
                         <p>
                           For any assistance with the transfers, please contact
                           us at{"  "}
