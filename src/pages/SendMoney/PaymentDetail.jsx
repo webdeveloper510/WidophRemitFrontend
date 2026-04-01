@@ -352,7 +352,7 @@ const PaymentDetail = () => {
       },
     };
 
-    const txResponse = await createTransaction(updatedTransferData);
+    const txResponse = await createTransaction({...updatedTransferData,monova_payment:"payid"});
 
     if (txResponse?.code === "200") {
       navigate("/virtual-account-detail", {
@@ -462,7 +462,7 @@ const PaymentDetail = () => {
         };
 
         try {
-          const txResponse = await createTransaction(updatedTransferData);
+          const txResponse = await createTransaction({...updatedTransferData,monova_payment:"payin"});
 
           if (txResponse?.code === "200") {
             setModalShowMonova(false);
