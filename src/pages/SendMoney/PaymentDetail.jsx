@@ -737,7 +737,7 @@ const PaymentDetail = () => {
                               }}
                             />
 
-                            <Form.Check
+                            {/* <Form.Check
                               className="paymentoptions"
                               label="Zai (PayID)"
                               name="paymentType"
@@ -750,7 +750,7 @@ const PaymentDetail = () => {
                                 sessionStorage.removeItem("payto_limit_data");
                                 sessionStorage.removeItem("payto_agreement_response");
                               }}
-                            />
+                            /> */}
                           </div>
                         </Collapse>
                       </Col>
