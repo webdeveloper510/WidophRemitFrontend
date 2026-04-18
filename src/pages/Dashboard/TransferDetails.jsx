@@ -111,7 +111,7 @@ const TransferDetails = () => {
                       <span>Total Amount paid</span>
                       <h2>
                         {transactionData?.fee_total_amount}{" "}
-                        {transactionData?.receive_currency}
+                        {transactionData?.send_currency}
                       </h2>
                     </Col>
                   </Row>
