@@ -3,9 +3,9 @@ import Row from "react-bootstrap/Row";
 import Card from "react-bootstrap/Card";
 import AnimatedPage from "../../components/AnimatedPage";
 import PayID from "../../assets/images/payid.png";
-import PayTo from "../../assets/images/payto.png";
+import PayTo from "../../assets/images/new.svg";
 import { useState, useEffect } from "react";
-import { getAgreementList, GetAutoMatcher, getPayID } from "../../services/Api";
+import { getAgreementList, GetAutoMatcher, GetExistingMonoovaPayid, getPayID } from "../../services/Api";
 import Loader from "../../components/Loader";
 
 const PaymentInfo = () => {
@@ -18,13 +18,15 @@ const PaymentInfo = () => {
     (async () => {
       try {
         const [payIdRes, agreementRes, AutoMatcherRes] = await Promise.all([
-          getPayID(),
+          GetExistingMonoovaPayid(),
           getAgreementList(),
           GetAutoMatcher(),
         ]);
 
-        if (payIdRes.code === "200" && payIdRes.data?.payid) {
-          setPayIdDetail(payIdRes.data);
+        if (payIdRes.code === "200" && payIdRes.data?.PayId) {
+          console.log(payIdRes.data.PayId);
+          
+          setPayIdDetail(payIdRes.data.PayId);
         }
 
         if (
@@ -75,7 +77,7 @@ const PaymentInfo = () => {
                     </Col>
                     <Col>
                       <label>Pay ID</label>
-                      <p>{payIdDetail.payid || "—"}</p>
+                      <p>{payIdDetail || "—"}</p>
                     </Col>
                   </Row>
                 </Card.Body>
@@ -92,7 +94,7 @@ const PaymentInfo = () => {
                   <h5>Auto Matcher Detail</h5>
                   <Row className="mb-3 mt-4">
                     <Col xs={3}>
-                      <img src={PayID} alt="Pay ID" />
+                      <img src={PayTo} height={100} width={180} alt="Pay ID" />
                     </Col>
                     <Col>
                       <label>Bank Account Name</label>

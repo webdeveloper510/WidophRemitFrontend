@@ -113,6 +113,8 @@ const TransfersList = () => {
       );
     }
 
+    console.log(filtered);
+    
     return filtered;
   }, [list, filterText, selectedStatus]);
 
@@ -187,9 +189,9 @@ const TransfersList = () => {
     },
     {
       name: "Amount Paid",
-      selector: (row) => row.amount,
+      selector: (row) => row.fee_total_amount,
       sortable: true,
-      cell: (row) => <strong>{row.send_currency + " " + row.amount}</strong>,
+      cell: (row) => <strong>{row.send_currency + " " + row.fee_total_amount}</strong>,
     },
     {
       name: "Date",
